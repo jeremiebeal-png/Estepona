@@ -3,40 +3,44 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Carte — Quartiers d’Estepona</title>
-  <meta name="description" content="Carte interactive d’Estepona avec quartiers colorés (zones indicatives) et points d’intérêt." />
+  <title>Plan de la ville — Estepona en Français</title>
+  <meta name="description" content="Plan interactif d’Estepona avec quartiers, plages, services et points d’intérêt." />
   <link rel="preload" href="styles.css" as="style" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌴</text></svg>">
-  <!-- Leaflet CSS -->
+
+  <!-- Leaflet -->
   <link rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin="anonymous" />
+        crossorigin="anonymous"/>
+
   <style>
-    /* Ajustements minimes compatibles avec la charte */
-    #map { width:100%; height:520px; border-radius:14px; box-shadow: var(--shadow); border:1px solid rgba(148,163,184,.15) }
-    .map-tools { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px }
-    .legend { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:10px; color:var(--muted) }
-    .legend .item { display:flex; align-items:center; gap:8px; }
-    .legend .swatch { width:14px; height:14px; border-radius:3px; border:1px solid rgba(148,163,184,.35) }
-    .leaflet-popup-content-wrapper{background:#0b1220;color:var(--text);border:1px solid rgba(148,163,184,.25)}
+    /* Ajustements compatibles avec la charte existante */
+    #map { width:100%; height:560px; border-radius:16px; border:1px solid rgba(148,163,184,.15); box-shadow: var(--shadow); }
+    .map-controls{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 16px}
+    .legend{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:10px; color:var(--muted)}
+    .legend .item{display:flex; align-items:center; gap:8px}
+    .legend .swatch{width:14px; height:14px; border-radius:3px; border:1px solid rgba(148,163,184,.35)}
+    .leaflet-popup-content-wrapper{background:#0b1220; color:var(--text); border:1px solid rgba(148,163,184,.25)}
     .leaflet-popup-tip{background:#0b1220}
     body.light .leaflet-popup-content-wrapper, body.light .leaflet-popup-tip{ background:#ffffff; color:#0f172a; border-color: rgba(15,23,42,.15) }
+    /* Petits labels plats */
+    .map-label{pointer-events:none; white-space:nowrap; color:#0f172a; font: 12px/1.1 system-ui, Segoe UI, Roboto, Arial}
+    body:not(.light) .map-label{ color:#e5e7eb; text-shadow:0 1px 2px rgba(0,0,0,.55) }
   </style>
 </head>
 <body>
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="Accueil Estepona en Français">🌴 Estepona en Français</a>
+    <a class="brand" href="index.html">🌴 Estepona en Français</a>
     <button id="theme-toggle" class="btn" type="button">Mode clair</button>
     <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">
       <span></span><span></span><span></span>
     </button>
-    <nav id="site-nav" class="site-nav" aria-label="Navigation principale">
+    <nav id="site-nav" class="site-nav">
       <a href="index.html#decouvrir">Découvrir</a>
       <a href="index.html#plages">Plages & Chiringuitos</a>
-      <a href="index.html#carte">Carte</a>
       <a href="index.html#restaurants">Restaurants</a>
       <a href="index.html#installer">S’installer</a>
       <a href="index.html#blog">Blog</a>
@@ -50,17 +54,20 @@
     <div class="container">
       <a class="btn" href="index.html">← Retour à l’accueil</a>
       <header class="section-head" style="margin-top:12px">
-        <h2>Carte des quartiers d’Estepona</h2>
-        <p>Zones <em>indicatives</em> (non officielles) — survolez ou cliquez pour les détails.</p>
+        <h2>Plan de la ville d’Estepona</h2>
+        <p>Carte “style brochure” : quartiers colorés, principaux axes, plages et services utiles.</p>
       </header>
 
-      <div class="map-tools">
-        <button class="btn primary" data-layer="zones">Zones</button>
-        <button class="btn" data-layer="points">Points</button>
-        <button class="btn" data-layer="route">E‑15 / A‑7</button>
+      <!-- Filtres / outils -->
+      <div class="map-controls" id="mapControls">
+        <button class="btn primary" data-layer="zones">Quartiers</button>
+        <button class="btn" data-layer="axes">Axes</button>
+        <button class="btn" data-layer="plages">Plages</button>
+        <button class="btn" data-layer="services">Services</button>
+        <button class="btn" data-layer="loisirs">Loisirs</button>
       </div>
 
-      <div id="map" role="region" aria-label="Carte d’Estepona et quartiers"></div>
+      <div id="map" role="region" aria-label="Plan interactif d’Estepona"></div>
       <div class="legend" id="legend"></div>
     </div>
   </section>
@@ -78,118 +85,132 @@
 </footer>
 
 <script src="app.js"></script>
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin="anonymous"></script>
 <script>
 (function(){
-  // Carte centrée sur Estepona
-  const map = L.map('map', {scrollWheelZoom:true}).setView([36.4276, -5.1459], 13);
+  // --- Carte centrée sur Estepona
+  const map = L.map('map', {scrollWheelZoom:true}).setView([36.427, -5.147], 13.2);
 
-  // Fond de carte : OSM par défaut (tu peux passer à Carto Positron si tu préfères un fond gris)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // Basemap “brochure” (CARTO Voyager clair)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
-    attribution: '&copy; OpenStreetMap'
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(map);
 
-  // ---- Couleurs de quartiers (cohérentes avec la charte) ----
-  const colors = {
-    casco: '#22d3ee',       // cyan
-    puerto: '#fbbf24',      // amber
-    seghers: '#34d399',     // emerald
-    rada: '#60a5fa',        // blue
-    cristo: '#f472b6',      // pink
-    cancelada: '#a78bfa',   // violet
-    guadalmansa: '#fb7185', // rose
-    bahiadorada: '#f59e0b'  // orange
+  // === Couleurs (alignées à la charte)
+  const C = {
+    casco:'#22d3ee', puerto:'#fbbf24', seghers:'#34d399', rada:'#60a5fa',
+    cristo:'#f472b6', cancelada:'#a78bfa', guadalmansa:'#fb7185', bahiadorada:'#f59e0b'
   };
 
-  // ---- Zones (polygones approximatifs, à affiner) ----
-  const zones = [
-    {id:'casco', name:'Casco Antiguo (Vieille ville)', color:colors.casco, desc:'Centre historique : ruelles blanches, fresques, Plaza de las Flores.', coords:[[36.4280,-5.1495],[36.4275,-5.1430],[36.4225,-5.1420],[36.4222,-5.1490]]},
-    {id:'puerto', name:'Puerto Deportivo', color:colors.puerto, desc:'Port de plaisance : bars, restaurants, marina.', coords:[[36.4218,-5.1636],[36.4212,-5.1578],[36.4184,-5.1583],[36.4185,-5.1639]]},
-    {id:'seghers', name:'Seghers', color:colors.seghers, desc:'Quartier résidentiel au-dessus du port, proche Playa del Cristo.', coords:[[36.4215,-5.1685],[36.4205,-5.1760],[36.4165,-5.1745],[36.4178,-5.1666]]},
-    {id:'rada', name:'Playa de la Rada (zone urbaine)', color:colors.rada, desc:'Grande plage centrale et paseo maritime.', coords:[[36.4283,-5.1529],[36.4277,-5.1375],[36.4213,-5.1358],[36.4202,-5.1519]]},
-    {id:'cristo', name:'Playa del Cristo', color:colors.cristo, desc:'Crique abritée, eau calme — idéale en famille.', coords:[[36.4178,-5.1687],[36.4169,-5.1660],[36.4153,-5.1668],[36.4160,-5.1693]]},
-    {id:'cancelada', name:'Cancelada (est)', color:colors.cancelada, desc:'Zone résidentielle vers l’est, proche Saladillo.', coords:[[36.4622,-5.0496],[36.4592,-5.0410],[36.4531,-5.0459],[36.4555,-5.0535]]},
-    {id:'guadalmansa', name:'Guadalmansa', color:colors.guadalmansa, desc:'Secteur de plages plus calmes, à l’est du centre.', coords:[[36.4548,-5.0662],[36.4539,-5.0583],[36.4493,-5.0617],[36.4499,-5.0695]]},
-    {id:'bahiadorada', name:'Bahía Dorada (ouest)', color:colors.bahiadorada, desc:'Urbanisation côté ouest, plages plus sauvages.', coords:[[36.4391,-5.1918],[36.4379,-5.1829],[36.4326,-5.1861],[36.4336,-5.1938]]}
-  ];
-
-  const layers = {
+  // === Calques
+  const LAYERS = {
     zones: L.featureGroup().addTo(map),
-    points: L.layerGroup().addTo(map),
-    route: L.layerGroup().addTo(map)
+    axes:  L.layerGroup().addTo(map),
+    plages:L.layerGroup().addTo(map),
+    services:L.layerGroup().addTo(map),
+    loisirs:L.layerGroup().addTo(map)
   };
 
-  // Ajout des polygones + labels
-  zones.forEach(z=>{
-    const poly = L.polygon(z.coords, {
-      color: z.color, weight: 2, fillColor: z.color, fillOpacity: .22
-    })
-    .bindPopup(`<b>${z.name}</b><br>${z.desc}<br><small>Zone indicative</small>`)
-    .on('mouseover', function(){ this.setStyle({fillOpacity:.35, weight:3}); })
-    .on('mouseout', function(){ this.setStyle({fillOpacity:.22, weight:2}); });
+  // === QUARTIERS (zones approximatives à affiner)
+  const ZONES = [
+    {id:'casco', name:'Casco Antiguo', color:C.casco, desc:'Vieille ville : ruelles blanches, fresques, Plaza de las Flores.',
+      coords:[[36.4280,-5.1495],[36.4275,-5.1430],[36.4225,-5.1420],[36.4222,-5.1490]]},
+    {id:'puerto', name:'Puerto Deportivo', color:C.puerto, desc:'Port de plaisance : bars, restaurants, marina.',
+      coords:[[36.4218,-5.1636],[36.4212,-5.1578],[36.4184,-5.1583],[36.4185,-5.1639]]},
+    {id:'seghers', name:'Seghers', color:C.seghers, desc:'Résidentiel au-dessus du port, proche Playa del Cristo.',
+      coords:[[36.4215,-5.1685],[36.4205,-5.1760],[36.4165,-5.1745],[36.4178,-5.1666]]},
+    {id:'rada', name:'Playa de la Rada (urbain)', color:C.rada, desc:'Grande plage + paseo maritime.',
+      coords:[[36.4283,-5.1529],[36.4277,-5.1375],[36.4213,-5.1358],[36.4202,-5.1519]]},
+    {id:'cristo', name:'Playa del Cristo', color:C.cristo, desc:'Crique abritée, eau calme (familles).',
+      coords:[[36.4178,-5.1687],[36.4169,-5.1660],[36.4153,-5.1668],[36.4160,-5.1693]]},
+    {id:'cancelada', name:'Cancelada', color:C.cancelada, desc:'Secteur résidentiel à l’est.',
+      coords:[[36.4622,-5.0496],[36.4592,-5.0410],[36.4531,-5.0459],[36.4555,-5.0535]]},
+    {id:'guadalmansa', name:'Guadalmansa', color:C.guadalmansa, desc:'Plages plus calmes à l’est.',
+      coords:[[36.4548,-5.0662],[36.4539,-5.0583],[36.4493,-5.0617],[36.4499,-5.0695]]},
+    {id:'bahiadorada', name:'Bahía Dorada', color:C.bahiadorada, desc:'Urbanisation ouest, plages plus sauvages.',
+      coords:[[36.4391,-5.1918],[36.4379,-5.1829],[36.4326,-5.1861],[36.4336,-5.1938]]}
+  ];
 
-    poly.addTo(layers.zones);
-
-    // Label centré
-    const center = poly.getBounds().getCenter();
-    L.marker(center, {
-      interactive:false,
-      icon: L.divIcon({
-        className:'label',
-        html:`<div style="padding:2px 6px;border-radius:8px;background:rgba(0,0,0,.45);color:#fff;font-size:12px">${z.name}</div>`
-      })
-    }).addTo(layers.zones);
+  ZONES.forEach(z=>{
+    const poly=L.polygon(z.coords,{color:z.color,weight:2,fillColor:z.color,fillOpacity:.22})
+      .bindPopup(`<b>${z.name}</b><br>${z.desc}<br><small>Zone indicative</small>`)
+      .on('mouseover',function(){this.setStyle({fillOpacity:.35,weight:3})})
+      .on('mouseout',function(){this.setStyle({fillOpacity:.22,weight:2})})
+      .addTo(LAYERS.zones);
+    const c=poly.getBounds().getCenter();
+    L.marker(c,{interactive:false,icon:L.divIcon({className:'map-label',html:z.name})}).addTo(LAYERS.zones);
   });
 
-  // Route E‑15 / A‑7 (approx)
-  const e15 = [
-    [36.46,-5.03],[36.45,-5.05],[36.445,-5.07],[36.44,-5.09],[36.435,-5.11],
-    [36.432,-5.13],[36.43,-5.145],[36.427,-5.16],[36.425,-5.17],[36.422,-5.19]
-  ];
-  L.polyline(e15, {color:'#000', weight:6, opacity:.25}).addTo(layers.route); // casing
-  L.polyline(e15, {color:'#22d3ee', weight:3.5}).addTo(layers.route).bindPopup('E‑15 / A‑7');
+  // === AXES (E‑15/A‑7 + Paseo, tracés simples)
+  const E15 = [[36.46,-5.03],[36.45,-5.05],[36.445,-5.07],[36.44,-5.09],[36.435,-5.11],[36.432,-5.13],[36.43,-5.145],[36.427,-5.16],[36.425,-5.17],[36.422,-5.19]];
+  L.polyline(E15,{color:'#000',weight:6,opacity:.25}).addTo(LAYERS.axes);
+  L.polyline(E15,{color:'#22d3ee',weight:3.5}).addTo(LAYERS.axes).bindPopup('E‑15 / A‑7');
 
-  // Points d’intérêt (exemples)
-  const places = [
-    {cat:'point', name:'Ayuntamiento', coord:[36.427,-5.147]},
-    {cat:'point', name:'Puerto Deportivo', coord:[36.420,-5.161]},
-    {cat:'point', name:'Orchidarium', coord:[36.4296,-5.1468]},
-    {cat:'point', name:'Playa del Cristo', coord:[36.4166,-5.1663]},
+  const PASEO = [[36.433,-5.158],[36.432,-5.155],[36.431,-5.151],[36.429,-5.147],[36.427,-5.144],[36.425,-5.141],[36.424,-5.138],[36.423,-5.136]];
+  L.polyline(PASEO,{color:'#0ea5e9',weight:3,opacity:.8,dashArray:'6 4'}).addTo(LAYERS.axes).bindPopup('Paseo Marítimo');
+
+  // === PLAGES
+  const PLAGES = [
+    {name:'Playa de la Rada', coords:[36.4237,-5.1455]},
+    {name:'Playa del Cristo', coords:[36.4166,-5.1663]},
+    {name:'Playa del Saladillo', coords:[36.4584,-5.0421]},
+    {name:'Playa Guadalmansa', coords:[36.4514,-5.0587]}
   ];
-  places.forEach(p=>{
-    L.circleMarker(p.coord, {radius:5, color:'#0f172a', weight:2, fillColor:'#0f172a', fillOpacity:.9})
-      .addTo(layers.points)
-      .bindPopup(`<b>${p.name}</b>`);
+  PLAGES.forEach(p=>{
+    L.circleMarker(p.coords,{radius:6,color:'#2563eb',weight:2,fillColor:'#2563eb',fillOpacity:.9})
+      .addTo(LAYERS.plages).bindPopup(`<b>${p.name}</b>`);
   });
 
-  // Légende
+  // === SERVICES (icônes SVG inline)
+  const icon = (emoji)=>L.divIcon({className:'',html:`<div style="font-size:18px;line-height:1.1">`+emoji+`</div>`,iconSize:[24,24],iconAnchor:[12,12]});
+  const SERVICES = [
+    {name:'Ayuntamiento (Mairie)', coords:[36.4269,-5.1470], icon:'🏛️'},
+    {name:'Hôpital / Urgences', coords:[36.4368,-5.1335], icon:'🏥'},
+    {name:'Police Nationale', coords:[36.4307,-5.1535], icon:'👮'},
+    {name:'Gare routière (bus)', coords:[36.4386,-5.1478], icon:'🚌'},
+    {name:'Taxi', coords:[36.4246,-5.1485], icon:'🚕'},
+    {name:'Office du Tourisme', coords:[36.4238,-5.1469], icon:'ℹ️'},
+    {name:'Église Los Remedios', coords:[36.4256,-5.1487], icon:'⛪'},
+    {name:'Parc / Jardin', coords:[36.4313,-5.1457], icon:'🌳'}
+  ];
+  SERVICES.forEach(s=>{
+    L.marker(s.coords,{icon:icon(s.icon)}).addTo(LAYERS.services)
+      .bindPopup(`<b>${s.name}</b>`);
+  });
+
+  // === LOISIRS (musée, orchidarium, chiringuito ex.)
+  const LOISIRS = [
+    {name:'Orchidarium', coords:[36.4296,-5.1468], icon:'🌺'},
+    {name:'Chiringuito (ex.)', coords:[36.4232,-5.1408], icon:'🍹'},
+    {name:'Port de Plaisance', coords:[36.4202,-5.1593], icon:'⛵'}
+  ];
+  LOISIRS.forEach(l=>{
+    L.marker(l.coords,{icon:icon(l.icon)}).addTo(LAYERS.loisirs)
+      .bindPopup(`<b>${l.name}</b>`);
+  });
+
+  // === Légende couleurs quartiers
   const legend = document.getElementById('legend');
-  legend.innerHTML = zones.map(z=>(
-    `<span class="item"><span class="swatch" style="background:${z.color}"></span>${z.name}</span>`
-  )).join('') + 
-  ` <span class="item"><span class="swatch" style="background:#22d3ee"></span>E‑15 / A‑7</span>`;
+  legend.innerHTML = ZONES.map(z=>`<span class="item"><span class="swatch" style="background:${z.color}"></span>${z.name}</span>`).join('')
+    + ` <span class="item"><span class="swatch" style="background:#22d3ee"></span>E‑15 / Paseo</span>`
+    + ` <span class="item"><span class="swatch" style="background:#2563eb"></span>Plages</span>`
+    + ` <span class="item"><span class="swatch" style="background:#111827"></span>Services / Loisirs</span>`;
 
-  // Fit bounds
-  map.fitBounds(L.featureGroup([layers.zones]).getBounds().pad(0.2));
+  // === Fit bounds
+  map.fitBounds([[36.40,-5.22],[36.49,-5.00]]);
 
-  // Boutons de calques (Zones / Points / Route)
-  document.querySelector('.map-tools').addEventListener('click', (e)=>{
+  // === Filtres (boutons)
+  document.getElementById('mapControls').addEventListener('click', (e)=>{
     const btn = e.target.closest('.btn'); if(!btn) return;
-    document.querySelectorAll('.map-tools .btn').forEach(b=>b.classList.remove('primary'));
+    document.querySelectorAll('#mapControls .btn').forEach(b=>b.classList.remove('primary'));
     btn.classList.add('primary');
     const id = btn.dataset.layer;
-    // tout visible par défaut; bouton -> bascule affichage de la couche choisie
-    if(id==='zones'){
-      if(map.hasLayer(layers.zones)) map.removeLayer(layers.zones); else layers.zones.addTo(map);
-    } else if(id==='points'){
-      if(map.hasLayer(layers.points)) map.removeLayer(layers.points); else layers.points.addTo(map);
-    } else if(id==='route'){
-      if(map.hasLayer(layers.route)) map.removeLayer(layers.route); else layers.route.addTo(map);
-    }
+    const layer = LAYERS[id];
+    if(!layer) return;
+    if(map.hasLayer(layer)) map.removeLayer(layer); else layer.addTo(map);
   });
 })();
 </script>
