@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galerie photo — Estepona</title>
+<style>
+  :root{
+    --bg:#0b1022; --text:#e5e7eb; --muted:#94a3b8;
+    --accent:#38bdf8; --card:#111831; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Inter,Arial;background:var(--bg);color:var(--text)}
+  .wrap{max-width:1100px;margin:32px auto;padding:0 18px}
+  header h1{margin:0 0 8px;font-size:clamp(22px,3.6vw,34px)}
+  header p{margin:0 0 16px;color:var(--muted)}
+  /* Filtres */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .btn{border:1px solid rgba(148,163,184,.25);background:rgba(148,163,184,.08);color:var(--text);
+       padding:8px 12px;border-radius:999px;cursor:pointer}
+  .btn[aria-pressed="true"]{background:linear-gradient(90deg,#38bdf8,#22d3ee);color:#00131f;border:0}
+  /* Grille */
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}
+  @media (max-width:980px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:460px){.grid{grid-template-columns:1fr}}
+  .card{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--card);
+        border:1px solid rgba(148,163,184,.2);cursor:zoom-in}
+  .card img{width:100%;height:100%;display:block;object-fit:cover;aspect-ratio:4/3;transition:transform .25s}
+  .card:hover img{transform:scale(1.02)}
+  .caption{position:absolute;left:8px;bottom:8px;background:rgba(2,6,23,.55);backdrop-filter:blur(4px);
+           padding:6px 10px;border-radius:10px;font-size:13px}
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(2,6,23,.9);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-inner{max-width:92vw;max-height:86vh;display:grid;gap:10px;justify-items:center}
+  .lb-media{position:relative}
+  .lb-media img{max-width:92vw;max-height:78vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .lb-cap{color:#cbd5e1;text-align:center}
+  .lb-close, .lb-prev, .lb-next{
+    position:fixed; top:50%; transform:translateY(-50%); border:1px solid rgba(148,163,184,.35);
+    background:rgba(148,163,184,.1); color:#e5e7eb; width:44px;height:44px;border-radius:50%;
+    display:grid;place-items:center;font-size:20px;cursor:pointer;user-select:none
+  }
+  .lb-close{top:24px;right:24px;transform:none}
+  .lb-prev{left:20px}
+  .lb-next{right:20px}
+  .lb-close:hover,.lb-prev:hover,.lb-next:hover{background:rgba(148,163,184,.2)}
+  /* Visually hidden for a11y */
+  .sr{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Galerie — Estepona</h1>
+      <p>Plages, vieille ville, chiringuitos et paysages de la Sierra Bermeja.</p>
+    </header>
+
+    <!-- Filtres par catégorie -->
+    <div class="filters" role="toolbar" aria-label="Filtres de la galerie">
+      <button class="btn" data-filter="all" aria-pressed="true">Tout</button>
+      <button class="btn" data-filter="plages" aria-pressed="false">Plages</button>
+      <button class="btn" data-filter="vieille-ville" aria-pressed="false">Vieille ville</button>
+      <button class="btn" data-filter="chiringuitos" aria-pressed="false">Chiringuitos</button>
+      <button class="btn" data-filter="nature" aria-pressed="false">Nature</button>
+    </div>
+
+    <!-- Grille d’images -->
+    <section class="grid" id="gallery" aria-live="polite">
+      <!-- Exemples (remplace les src par tes propres fichiers dans /img/) -->
+      <figure class="card" data-cat="vieille-ville">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1560179707-f14e90ef44d4?q=80&w=1200&auto=format&fit=crop" alt="Ruelle fleurie d’Estepona">
+        <figcaption class="caption">Vieille ville</figcaption>
+      </figure>
+
+      <figure class="card" data-cat="plages">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1542621334-0a236e97f1d1?q=80&w=1200&auto=format&fit=crop" alt="Plage dorée au coucher de soleil">
+        <figcaption class="caption">Playa de la Rada</figcaption>
+      </figure>
+
+      <figure class="card" data-cat="chiringuitos">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1529927066849-66e1d4a4ad39?q=80&w=1200&auto=format&fit=crop" alt="Assiette de tapas et boissons">
+        <figcaption class="caption">Tapas & chiringuitos</figcaption>
+      </figure>
+
+      <figure class="card" data-cat="nature">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1528821154947-1aa3d1bbec2f?q=80&w=1200&auto=format&fit=crop" alt="Reliefs de la Sierra Bermeja">
+        <figcaption class="caption">Sierra Bermeja</figcaption>
+      </figure>
+
+      <!-- Duplique autant de <figure> que nécessaire… -->
+    </section>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" aria-label="Agrandissement image">
+    <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">✕</button>
+    <button class="lb-prev"  id="lbPrev"  aria-label="Précédent (←)">❮</button>
+    <div class="lb-inner">
+      <div class="lb-media"><img id="lbImg" alt=""></div>
+      <div class="lb-cap" id="lbCap"></div>
+    </div>
+    <button class="lb-next"  id="lbNext"  aria-label="Suivant (→)">❯</button>
+  </div>
+
+<script>
+(function(){
+  const gallery = document.getElementById('gallery');
+  const cards = [...gallery.querySelectorAll('.card')];
+
+  // --------- Filtres ----------
+  const buttons = document.querySelectorAll('.filters .btn');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.setAttribute('aria-pressed','false'));
+      btn.setAttribute('aria-pressed','true');
+      const f = btn.dataset.filter;
+      cards.forEach(c=>{
+        const show = (f==='all') || c.dataset.cat===f;
+        c.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // --------- Lightbox ----------
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCap = document.getElementById('lbCap');
+  const lbClose = document.getElementById('lbClose');
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  let current = -1;
+  let visible = cards;
+
+  function openAt(i){
+    visible = cards.filter(c=>c.style.display!=='none');
+    current = Math.max(0, Math.min(i, visible.length-1));
+    const fig = visible[current];
+    const img = fig.querySelector('img');
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lbCap.textContent = fig.querySelector('.caption')?.textContent || '';
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden','false');
+  }
+  function closeLB(){
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden','true');
+    lbImg.src = '';
+  }
+  function prev(){ if(current>0) openAt(current-1); }
+  function next(){ if(current<visible.length-1) openAt(current+1); }
+
+  cards.forEach((c, i)=>{
+    c.addEventListener('click', ()=>openAt(i));
+    c.addEventListener('keydown', e=>{ if(e.key==='Enter') openAt(i); });
+    c.tabIndex = 0; // focusable
+  });
+  lbClose.addEventListener('click', closeLB);
+  lbPrev.addEventListener('click', prev);
+  lbNext.addEventListener('click', next);
+  document.addEventListener('keydown', e=>{
+    if(lb.classList.contains('open')){
+      if(e.key==='Escape') closeLB();
+      if(e.key==='ArrowLeft') prev();
+      if(e.key==='ArrowRight') next();
+    }
+  });
+  // swipe simple
+  let sx=0; lb.addEventListener('touchstart',e=>sx=e.touches[0].clientX);
+  lb.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx)>50) (dx>0?prev:next)();
+  });
+})();
+</script>
+</body>
+</html>
