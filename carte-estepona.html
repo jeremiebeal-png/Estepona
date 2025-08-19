@@ -3,66 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Galerie — Estepona en Français</title>
-  <meta name="description" content="Galerie photo d’Estepona : vieilles ruelles fleuries, plages, chiringuitos et Sierra Bermeja." />
-  <link rel="preload" href="styles.css" as="style" />
+  <title>Carte interactive — Estepona en Français</title>
+  <meta name="description" content="Carte interactive d’Estepona avec quartiers, plages, restaurants et points d’intérêt." />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌴</text></svg>">
-  <style>
-    /* Styles complémentaires, minimalistes et compatibles avec la charte existante */
-    .gallery-head { margin-bottom: 18px; }
-    .gallery-tools { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 20px; }
-    .gallery-tools .btn { padding:8px 12px; }
-    .cards.gallery { /* réutilise .card, .cards, .grid-3 */
-      align-items:stretch;
-    }
-    .card-media-img{
-      width:100%; height:220px; object-fit:cover;
-      display:block;
-    }
-    @media (max-width: 640px){ .card-media-img{ height: 180px } }
 
-    /* Lightbox sobre, respectant le thème (dark/light) */
-    .lightbox{
-      position:fixed; inset:0; display:none; place-items:center; z-index:100;
-      background: rgba(2,6,23,.85);
-      backdrop-filter: blur(2px);
-    }
-    body.light .lightbox{ background: rgba(15,23,42,.85); }
-    .lightbox.open{ display:grid; }
-    .lightbox-inner{ max-width:92vw; max-height:88vh; display:grid; gap:10px; justify-items:center }
-    .lightbox-img{ max-width:92vw; max-height:80vh; border-radius:14px; box-shadow: var(--shadow); }
-    .lightbox-cap{ color: var(--muted); text-align:center }
-    .lb-nav{
-      position:fixed; top:50%; transform: translateY(-50%);
-      width:44px; height:44px; border-radius:999px;
-      display:grid; place-items:center; font-weight:700;
-      background: rgba(255,255,255,.08); border:1px solid rgba(148,163,184,.25); color:#e5e7eb; cursor:pointer;
-    }
-    .lb-prev{ left:16px } .lb-next{ right:16px }
-    .lb-close{
-      position:fixed; top:18px; right:18px; width:42px; height:42px;
-      border-radius:999px; display:grid; place-items:center; font-weight:700;
-      background: rgba(255,255,255,.08); border:1px solid rgba(148,163,184,.25); color:#e5e7eb; cursor:pointer;
-    }
-    body.light .lb-nav, body.light .lb-close{
-      background: rgba(0,0,0,.06); color:#0f172a; border-color: rgba(15,23,42,.15);
-    }
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    #map { width: 100%; height: 500px; border-radius: 14px; box-shadow: var(--shadow); }
+    .map-wrap { margin-top: 20px; }
+    .leaflet-popup-content { font-size: 14px; line-height: 1.4; }
   </style>
 </head>
 <body>
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="Accueil Estepona en Français">🌴 Estepona en Français</a>
-    <!-- Option: conserver le bouton thème si présent dans index.html -->
-    <button id="theme-toggle" class="btn" type="button" aria-label="Basculer le thème">Mode clair</button>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">
-      <span></span><span></span><span></span>
-    </button>
-    <nav id="site-nav" class="site-nav" aria-label="Navigation principale">
+    <a class="brand" href="index.html">🌴 Estepona en Français</a>
+    <button id="theme-toggle" class="btn" type="button">Mode clair</button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    <nav id="site-nav" class="site-nav">
       <a href="index.html#decouvrir">Découvrir</a>
       <a href="index.html#plages">Plages & Chiringuitos</a>
-      <a href="index.html#carte">Carte</a>
       <a href="index.html#restaurants">Restaurants</a>
       <a href="index.html#installer">S’installer</a>
       <a href="index.html#blog">Blog</a>
@@ -72,69 +35,18 @@
 </header>
 
 <main>
-  <!-- Hero/entête de section dans la même esthétique -->
   <section class="section">
     <div class="container">
-      <div class="gallery-head">
-        <a class="btn" href="index.html">← Retour à l’accueil</a>
-      </div>
+      <!-- Bouton retour -->
+      <a href="index.html" class="btn">← Retour à l’accueil</a>
+
       <header class="section-head">
-        <h2>Galerie photo</h2>
-        <p>Explorez Estepona en images : vieille ville fleurie, plages, chiringuitos et Sierra Bermeja.</p>
+        <h2>Carte interactive</h2>
+        <p>Explorez Estepona : plages, vieille ville, restaurants et quartiers à visiter.</p>
       </header>
 
-      <!-- Outils (filtres simples) -->
-      <div class="gallery-tools">
-        <button class="btn" data-filter="all">Tout</button>
-        <button class="btn" data-filter="vieille-ville">Vieille ville</button>
-        <button class="btn" data-filter="plages">Plages</button>
-        <button class="btn" data-filter="chiringuitos">Chiringuitos</button>
-        <button class="btn" data-filter="nature">Nature</button>
-      </div>
-
-      <!-- Grille de cartes conforme à la charte (.card, .cards, .grid-3) -->
-      <div class="cards grid-3 gallery" id="gallery">
-        <!-- Exemple 1 -->
-        <article class="card" data-cat="vieille-ville">
-          <img class="card-media-img" src="assets/img/ruelle.jpg" alt="Ruelle fleurie d’Estepona (vieille ville)">
-          <div class="card-body">
-            <h3>Vieille ville</h3>
-            <p>Ruelles blanches, pots fleuris et fresques murales.</p>
-            <a class="btn ghost" href="#" data-view>Voir en grand</a>
-          </div>
-        </article>
-
-        <!-- Exemple 2 -->
-        <article class="card" data-cat="plages">
-          <img class="card-media-img" src="assets/img/plage.jpg" alt="Playa de la Rada au coucher du soleil">
-          <div class="card-body">
-            <h3>Playa de la Rada</h3>
-            <p>Grande plage urbaine le long du paseo.</p>
-            <a class="btn ghost" href="#" data-view>Voir en grand</a>
-          </div>
-        </article>
-
-        <!-- Exemple 3 -->
-        <article class="card" data-cat="chiringuitos">
-          <img class="card-media-img" src="assets/img/chiringuito.jpg" alt="Chiringuito en bord de mer">
-          <div class="card-body">
-            <h3>Chiringuito</h3>
-            <p>Tapas, poissons grillés et vue mer.</p>
-            <a class="btn ghost" href="#" data-view>Voir en grand</a>
-          </div>
-        </article>
-
-        <!-- Exemple 4 -->
-        <article class="card" data-cat="nature">
-          <img class="card-media-img" src="assets/img/sierra.jpg" alt="Reliefs de la Sierra Bermeja">
-          <div class="card-body">
-            <h3>Sierra Bermeja</h3>
-            <p>Paysages naturels à quelques minutes d’Estepona.</p>
-            <a class="btn ghost" href="#" data-view>Voir en grand</a>
-          </div>
-        </article>
-
-        <!-- Duplique autant d’articles que nécessaire… -->
+      <div class="map-wrap">
+        <div id="map"></div>
       </div>
     </div>
   </section>
@@ -146,91 +58,33 @@
     <nav class="footer-nav">
       <a href="index.html#accueil">Haut de page</a>
       <a href="index.html#contact">Contact</a>
-      <a href="#" rel="nofollow">Mentions légales</a>
+      <a href="#">Mentions légales</a>
     </nav>
   </div>
 </footer>
 
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lb-close" id="lbClose" aria-label="Fermer">✕</button>
-  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Précédent">❮</button>
-  <div class="lightbox-inner">
-    <img class="lightbox-img" id="lbImg" alt="">
-    <div class="lightbox-cap" id="lbCap"></div>
-  </div>
-  <button class="lb-nav lb-next" id="lbNext" aria-label="Suivant">❯</button>
-</div>
-
 <script src="app.js"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-  // --- Filtres (cohérents avec les classes .btn existantes) ---
-  (function(){
-    const wrap = document.querySelector('.gallery-tools');
-    const gallery = document.getElementById('gallery');
-    const cards = [...gallery.querySelectorAll('.card')];
-    let active = 'all';
+  // Initialisation de la carte
+  const map = L.map('map').setView([36.4256, -5.1460], 13); // Coordonnées Estepona
 
-    wrap.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.btn'); if(!btn) return;
-      active = btn.dataset.filter || 'all';
-      // style visuel : on bascule .primary sur le bouton actif
-      wrap.querySelectorAll('.btn').forEach(b=>b.classList.remove('primary'));
-      btn.classList.add('primary');
+  // Fond de carte
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-      cards.forEach(c=>{
-        const show = (active==='all') || c.dataset.cat === active;
-        c.style.display = show ? '' : 'none';
-      });
-    });
-
-    // Active "Tout" par défaut
-    wrap.querySelector('[data-filter="all"]').classList.add('primary');
-  })();
-
-  // --- Lightbox (bouton "Voir en grand") ---
-  (function(){
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImg');
-    const lbCap = document.getElementById('lbCap');
-    const prevBtn = document.getElementById('lbPrev');
-    const nextBtn = document.getElementById('lbNext');
-    const closeBtn = document.getElementById('lbClose');
-    const items = [...document.querySelectorAll('#gallery .card')];
-    let index = -1;
-    function open(i){
-      index = i;
-      const card = items[index];
-      const img = card.querySelector('.card-media-img');
-      const title = card.querySelector('h3')?.textContent || '';
-      lbImg.src = img.src; lbImg.alt = img.alt || title;
-      lbCap.textContent = title;
-      lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
-    }
-    function close(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); }
-    function prev(){ if(index>0) open(index-1); }
-    function next(){ if(index<items.length-1) open(index+1); }
-
-    items.forEach((card, i)=>{
-      card.querySelector('[data-view]')?.addEventListener('click', (e)=>{ e.preventDefault(); open(i); });
-      card.querySelector('.card-media-img')?.addEventListener('click', ()=>open(i));
-    });
-    closeBtn.addEventListener('click', close);
-    prevBtn.addEventListener('click', prev);
-    nextBtn.addEventListener('click', next);
-    document.addEventListener('keydown', (e)=>{
-      if(!lb.classList.contains('open')) return;
-      if(e.key==='Escape') close();
-      if(e.key==='ArrowLeft') prev();
-      if(e.key==='ArrowRight') next();
-    });
-    // Swipe mobile
-    let sx=0; lb.addEventListener('touchstart',e=>sx=e.touches[0].clientX);
-    lb.addEventListener('touchend',e=>{
-      const dx=e.changedTouches[0].clientX - sx;
-      if(Math.abs(dx)>50) (dx>0?prev:next)();
-    });
-  })();
+  // Exemple de marqueurs
+  const lieux = [
+    {coords:[36.4237,-5.1454], nom:"Vieille ville", desc:"Ruelles fleuries et fresques murales"},
+    {coords:[36.4214,-5.1419], nom:"Playa de la Rada", desc:"Plage principale d’Estepona"},
+    {coords:[36.4190,-5.1500], nom:"Chiringuito La Peseta", desc:"Restaurant en bord de mer"},
+    {coords:[36.4302,-5.1440], nom:"Quartier portuaire", desc:"Bars, restaurants et marina"}
+  ];
+  lieux.forEach(l=>{
+    L.marker(l.coords).addTo(map).bindPopup("<b>"+l.nom+"</b><br>"+l.desc);
+  });
 </script>
 </body>
 </html>
