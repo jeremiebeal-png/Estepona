@@ -145,123 +145,31 @@
         </div>
       </article>
 
-    
-    <!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carte d’Estepona  — Quartiers & routes</title>
+      <!-- Restaurants (icône couverts) -->
+      <article class="card">
+        <img class="media"
+             src="img/restaurant.png"
+             alt="Les Restaurants">
+        <div class="content">
+          <span class="kicker">Les Restaurants</span>
+          <p>Les differents restaurant du centre et du port.</p>
+          <a class="btn" href="#">En savoir plus</a>
+        </div>
+      </article>
+  
 
-<!-- Leaflet CSS -->
-<link rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin="anonymous"/>
+      <!-- S’installer à Estepona -->
+      <article class="card">
+        <img class="media"
+             src="img/banderilla_estepona.png"
+             alt="Drapeau de Estepona">
+        <div class="content">
+          <span class="kicker">S’installer à Estepona</span>
+          <p>NIE, empadronamiento, banques, quartiers où vivre, écoles : le guide pas‑à‑pas.</p>
+          <a class="btn" href="#">En savoir plus</a>
+        </div>
+      </article>
 
-<style>
-  html,body{height:100%;margin:0;background:#f3f4f6;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#111827}
-  .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
-  h1{margin:8px 0 10px;font-size:clamp(20px,3.4vw,30px)}
-  .note{color:#6b7280;margin:0 0 10px}
-  #map{height:72vh;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 12px 28px rgba(0,0,0,.08)}
-  .legend{margin:10px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-  .legend .item{display:flex;align-items:center;gap:7px;color:#374151;font-size:14px}
-  .swatch{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.25)}
-  /* Labels “plats” qui ne captent pas la souris */
-  .lbl{pointer-events:none;white-space:nowrap;color:#1f2937;
-       text-shadow:0 1px 2px rgba(255,255,255,.8)}
-  .lbl.small{font-size:12px;color:#334155}
-  /* bulle popup sombre pour rester lisible sur le fond clair */
-  .leaflet-popup-content-wrapper{background:#0b1220;color:#e5e7eb;border:1px solid rgba(255,255,255,.2)}
-  .leaflet-popup-tip{background:#0b1220}
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>Estepona — Quartiers & principaux axes</h1>
-    <p class="note">Fond clair façon “gris”, zones approximatives pour l’illustration. Clique sur un point ou une zone pour plus d’infos.</p>
-    <div id="map" role="region" aria-label="Carte d’Estepona"></div>
-    <div class="legend">
-      <span class="item"><span class="swatch" style="background:#cbd5e1"></span> Sierra Bermeja (zone montagneuse)</span>
-      <span class="item"><span class="swatch" style="background:#0ea5e9"></span> E‑15 (trait principal)</span>
-      <span class="item"><span class="swatch" style="background:#111827"></span> Lieux & quartiers</span>
-    </div>
-  </div>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin="anonymous"></script>
-
-  <script>
-  // Carte centrée sur Estepona
-  const map = L.map('map', {scrollWheelZoom:true}).setView([36.43, -5.15], 12.9);
-
-  // Fond “gris” type Carto Positron (léger et lisible)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap &copy; CARTO'
-  }).addTo(map);
-
-  // --- Zone montagneuse Sierra Bermeja (approx) ---
-  const sierra = L.polygon([
-    [36.56,-5.29],[36.54,-5.24],[36.52,-5.21],[36.49,-5.19],[36.48,-5.16],
-    [36.48,-5.12],[36.50,-5.10],[36.52,-5.06],[36.54,-5.00],[36.57,-4.98],
-    [36.59,-5.05],[36.60,-5.14],[36.58,-5.23]
-  ], {
-    color:'#9ca3af', weight:1, fillColor:'#9ca3af', fillOpacity:0.35
-  }).addTo(map).bindPopup('<b>Sierra Bermeja</b><br>Zone montagneuse (limites schématiques).');
-
-  // Label “Sierra Bermeja”
-  const sierraCenter = sierra.getBounds().getCenter();
-  L.marker(sierraCenter, {interactive:false,
-    icon:L.divIcon({className:'lbl small', html:'Sierra Bermeja'})}).addTo(map);
-
-  // --- E‑15 (approx) : double trait pour faire un “casing” lisible ---
-  const E15 = [
-    [36.46,-5.03], [36.45,-5.05], [36.445,-5.07], [36.44,-5.09], [36.435,-5.11],
-    [36.432,-5.13], [36.43,-5.145], [36.427,-5.16], [36.425,-5.17], [36.422,-5.19]
-  ];
-  L.polyline(E15, {color:'#111827', weight:6, opacity:0.35}).addTo(map);  // ombre
-  L.polyline(E15, {color:'#0ea5e9', weight:3.5}).addTo(map).bindPopup('E‑15 / A‑7 (axe principal)');
-
-  // --- Points d’intérêt / quartiers (approx) ---
-  const places = [
-    {name:'Bahía Dorada',       coord:[36.439,-5.192]},
-    {name:'Valle Romano',       coord:[36.433,-5.205]},
-    {name:'Seghers',            coord:[36.420,-5.166]},
-    {name:'Ayuntamiento',       coord:[36.427,-5.147]},
-    {name:'Altos de Estepona',  coord:[36.445,-5.161]},
-    {name:'Las Lomas',          coord:[36.434,-5.135]},
-    {name:'Punta Pinillos',     coord:[36.420,-5.154]},
-    {name:'El Velerín',         coord:[36.451,-5.057]},
-    {name:'Benamara',           coord:[36.455,-5.026]},
-    {name:'Paraíso‑Borronal',   coord:[36.481,-5.040]}
-  ];
-
-  // style “point + libellé à côté”
-  const dotStyle = {radius:5, color:'#111827', weight:2, fillColor:'#111827', fillOpacity:0.9};
-
-  places.forEach(p=>{
-    L.circleMarker(p.coord, dotStyle).addTo(map).bindPopup('<b>'+p.name+'</b>');
-    // label à droite du point
-    const dx = 0.0025; // petit décalage longitud.
-    L.marker([p.coord[0], p.coord[1]+dx], {
-      interactive:false,
-      icon: L.divIcon({className:'lbl small', html:p.name})
-    }).addTo(map);
-  });
-
-  // --- Côte (bande décorative claire en bord de mer – optionnel) ---
-  // (On laisse le bleu de la mer tel quel via le fond de carte Positron)
-
-  // Ajuste la vue
-  map.fitBounds([[36.40,-5.22],[36.49,-5.00]]);
-
-  </script>
-</body>
-</html>
 
     
     
