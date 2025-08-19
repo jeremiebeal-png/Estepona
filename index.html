@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estepona en Français — Visiter & S’installer</title>
+  <meta name="description" content="Guide francophone d’Estepona : à voir, plages, chiringuitos, restaurants, et démarches pour s’installer." />
+  <link rel="preload" href="styles.css" as="style" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌴</text></svg>">
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="anonymous"
+  />
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#accueil" aria-label="Accueil Estepona en Français">🌴 Estepona en Français</a>
+    <button id="theme-toggle" class="btn" type="button" aria-label="Basculer le thème">Mode clair</button>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Navigation principale">
+      <a href="#decouvrir">Découvrir</a>
+      <a href="#plages">Plages & Chiringuitos</a>
+      <a href="#carte">Carte</a>
+      <a href="#restaurants">Restaurants</a>
+      <a href="#installer">S’installer</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="accueil">
+  <section class="hero" role="banner" aria-label="Introduction">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h1>Estepona, le jardin de la Costa del Sol</h1>
+        <p>Un guide 100% francophone pour explorer la vieille ville fleurie, choisir la meilleure plage, dénicher les chiringuitos incontournables et réussir votre installation.</p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#decouvrir">Commencer la visite</a>
+          <a class="btn" href="#installer">S’installer à Estepona</a>
+        </div>
+      </div>
+      <figure class="hero-media" aria-hidden="true">
+        <div class="hero-placeholder shimmer" aria-hidden="true"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="decouvrir" class="section">
+    <div class="container">
+      <header class="section-head">
+        <h2>Découvrir Estepona</h2>
+        <p>Vieille ville, fresques murales, Orchidarium, activités plein air…</p>
+      </header>
+      <div class="cards grid-3">
+        <article class="card">
+          <div class="card-media bg-photo old-town"></div>
+          <div class="card-body">
+            <h3>Vieille ville & Patrimoine</h3>
+            <p>Ruelles blanches fleuries, <em>Plaza de las Flores</em>, street art et fresques géantes.</p>
+            <a class="btn ghost" href="#blog">En savoir plus</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-media bg-photo orchid"></div>
+          <div class="card-body">
+            <h3>Musées & Culture</h3>
+            <p>L’<strong>Orchidarium</strong>, musées locaux, événements culturels toute l’année.</p>
+            <a class="btn ghost" href="#blog">Programme & billets</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-media bg-photo golf"></div>
+          <div class="card-body">
+            <h3>Activités & Loisirs</h3>
+            <p>Golf, paddle, randonnées, sorties en mer, plongée, vélo sur la Senda Litoral.</p>
+            <a class="btn ghost" href="#blog">Idées & réservations</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="plages" class="section alt">
+    <div class="container">
+      <header class="section-head">
+        <h2>Plages & Chiringuitos</h2>
+        <p>De la Playa de la Rada à la crique d’El Cristo, trouvez votre spot.</p>
+      </header>
+      <div class="grid-2 stack">
+        <div class="panel">
+          <h3>Plages à ne pas manquer</h3>
+          <ul class="checklist">
+            <li>La Rada — large et familiale</li>
+            <li>El Cristo — eau calme idéale avec enfants</li>
+            <li>Bahía Dorada — plus sauvage</li>
+            <li>Saladillo & Guadalmansa — longues étendues</li>
+          </ul>
+          <a class="btn" rel="noopener" target="_blank" href="https://www.google.com/maps?q=Estepona">Voir sur la carte</a>
+        </div>
+        <div class="panel">
+          <h3>Chiringuitos conseillés</h3>
+          <div class="list-items">
+            <div class="list-item">
+              <span class="badge">Paella</span>
+              <b>La Rada Beach</b><br><small>Poissons grillés, couchers de soleil</small>
+            </div>
+            <div class="list-item">
+              <span class="badge">Tapas</span>
+              <b>El Cristo Bay</b><br><small>Ambiance détente, musique</small>
+            </div>
+            <div class="list-item">
+              <span class="badge">Familial</span>
+              <b>Saladillo</b><br><small>Tables pieds dans le sable</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Carte interactive ===== -->
+  <section id="carte" class="section">
+    <div class="container">
+      <header class="section-head">
+        <h2>Carte interactive</h2>
+        <p>Plages, chiringuitos et restaurants recommandés — cliquez sur un marqueur pour les détails.</p>
+      </header>
+      <div class="map-toolbar">
+        <label><input type="checkbox" class="filter" data-cat="plage" checked> Plages</label>
+        <label><input type="checkbox" class="filter" data-cat="chiringuito" checked> Chiringuitos</label>
+        <label><input type="checkbox" class="filter" data-cat="restaurant" checked> Restaurants</label>
+      </div>
+      <div id="map" class="leaflet-map" role="region" aria-label="Carte d’Estepona"></div>
+      <p class="note">Sources cartographiques © OpenStreetMap — <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">détails</a>.</p>
+    </div>
+  </section>
+
+  <section id="restaurants" class="section">
+    <div class="container">
+      <header class="section-head">
+        <h2>Restaurants & Sorties</h2>
+        <p>Tapas traditionnelles, restaurants de fruits de mer et adresses pour sortir.</p>
+      </header>
+      <div class="cards grid-3">
+        <article class="card">
+          <div class="card-media icon">🍤</div>
+          <div class="card-body">
+            <h3>Fruits de mer</h3>
+            <p>Espetos de sardines, fritura malagueña, poulpe grillé…</p>
+            <a class="btn ghost" href="#blog">Nos adresses</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-media icon">🥘</div>
+          <div class="card-body">
+            <h3>Tapas & Paellas</h3>
+            <p>Classiques andalous et paellas bord de mer.</p>
+            <a class="btn ghost" href="#blog">Par budget</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-media icon">🎶</div>
+          <div class="card-body">
+            <h3>Bars & Musique</h3>
+            <p>Vins locaux, rooftops, live bands et ambiance port.</p>
+            <a class="btn ghost" href="#blog">Sortir ce soir</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="installer" class="section alt">
+    <div class="container">
+      <header class="section-head">
+        <h2>S’installer à Estepona</h2>
+        <p>Le guide pas-à-pas pour une installation sereine.</p>
+      </header>
+      <div class="grid-3 stack">
+        <div class="panel">
+          <h3>1. Trouver un logement</h3>
+          <ul class="bullets">
+            <li>Quartiers : Vieille ville, Seghers, Cancelada, Atalaya…</li>
+            <li>Location vs achat : documents, frais, agences</li>
+            <li>Conseils : contrats, état des lieux, charges</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>2. Démarches administratives</h3>
+          <ol>
+            <li><strong>NIE</strong> (numéro d’étranger)</li>
+            <li>Empadronamiento (inscription mairie)</li>
+            <li>Sécurité sociale / système de santé</li>
+            <li>Ouverture de compte bancaire</li>
+          </ol>
+          <p class="note">Nous pouvons vous accompagner dans ces démarches.</p>
+        </div>
+        <div class="panel">
+          <h3>3. Vie quotidienne</h3>
+          <ul class="bullets">
+            <li>Écoles & crèches</li>
+            <li>Transports & voiture</li>
+            <li>Coût de la vie et assurances</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="blog" class="section">
+    <div class="container">
+      <header class="section-head">
+        <h2>Blog & Actualités</h2>
+        <p>Événements locaux, conseils d’expats, itinéraires d’un week‑end.</p>
+      </header>
+      <div class="cards grid-3">
+        <article class="post">
+          <div class="post-thumb shimmer"></div>
+          <div class="post-body">
+            <h3>Itinéraire 48h à Estepona</h3>
+            <p>Vieille ville, Orchidarium, plage El Cristo, tapas…</p>
+            <a class="btn ghost" href="#">Lire</a>
+          </div>
+        </article>
+        <article class="post">
+          <div class="post-thumb shimmer"></div>
+          <div class="post-body">
+            <h3>Les plus beaux chiringuitos</h3>
+            <p>Notre sélection par ambiance, carte et vue.</p>
+            <a class="btn ghost" href="#">Lire</a>
+          </div>
+        </article>
+        <article class="post">
+          <div class="post-thumb shimmer"></div>
+          <div class="post-body">
+            <h3>Obtenir son NIE : le guide</h3>
+            <p>Documents, RDV, délais : tout savoir.</p>
+            <a class="btn ghost" href="#">Lire</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section alt">
+    <div class="container">
+      <header class="section-head">
+        <h2>Contact</h2>
+        <p>Besoin d’aide pour organiser votre séjour ou votre installation ?</p>
+      </header>
+      <form class="contact-form" action="mailto:contact@example.com" method="post" enctype="text/plain">
+        <div class="grid-2">
+          <label>Nom
+            <input type="text" name="name" required aria-required="true" />
+          </label>
+          <label>Email
+            <input type="email" name="email" required aria-required="true" />
+          </label>
+        </div>
+        <label>Message
+          <textarea name="message" rows="5" required aria-required="true" placeholder="Dites‑nous ce dont vous avez besoin…"></textarea>
+        </label>
+        <button class="btn primary" type="submit">Envoyer</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© <span id="year"></span> Estepona en Français — Guide non officiel</p>
+    <nav class="footer-nav">
+      <a href="#accueil">Haut de page</a>
+      <a href="#contact">Contact</a>
+      <a href="#" rel="nofollow">Mentions légales</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin="anonymous"></script>
+<script src="app.js"></script>
+</body>
+</html>
