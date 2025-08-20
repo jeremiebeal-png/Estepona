@@ -14,7 +14,7 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin="anonymous" />
   <style>
-    /* Ajustements minimes compatibles avec la charte */
+    /* Ajustements compatibles avec la charte */
     #map { width:100%; height:560px; border-radius:16px; border:1px solid rgba(148,163,184,.15); box-shadow: var(--shadow); }
     .map-tools { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 16px }
     .legend { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:10px; color:var(--muted) }
@@ -23,6 +23,20 @@
     .leaflet-popup-content-wrapper{background:#0b1220;color:var(--text);border:1px solid rgba(148,163,184,.25)}
     .leaflet-popup-tip{background:#0b1220}
     body.light .leaflet-popup-content-wrapper, body.light .leaflet-popup-tip{ background:#ffffff; color:#0f172a; border-color: rgba(15,23,42,.15) }
+
+    /* Panneau de liens utiles */
+    .links-panel { margin-top:18px; }
+    .card.links { padding:16px; }
+    .links h3 { margin:0 0 8px }
+    .links p { margin:0 0 10px; color:var(--muted) }
+    .links .cols { display:grid; grid-template-columns:repeat(2,1fr); gap:12px }
+    @media (max-width:760px){ .links .cols{ grid-template-columns:1fr } }
+    .links ul{ margin:0; padding-left:18px }
+    .links li + li{ margin-top:6px }
+    .links a{ color:var(--primary, #2563eb); text-decoration:none }
+    .links a:hover{ text-decoration:underline }
+    .links .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px }
+    .muted{ color:var(--muted) }
   </style>
 </head>
 <body>
@@ -50,7 +64,7 @@
       <a class="btn" href="index.html">← Retour à l’accueil</a>
       <header class="section-head" style="margin-top:12px">
         <h2>Services & Loisirs — Carte interactive</h2>
-        <p>Repères utiles (mairie, police, hôpital, bus…) et lieux de loisirs </p>
+        <p>Repères utiles (mairie, police, hôpital, bus…) et lieux de loisirs</p>
       </header>
 
       <div class="map-tools" id="mapTools">
@@ -60,6 +74,28 @@
 
       <div id="map" role="region" aria-label="Carte des services et loisirs d’Estepona"></div>
       <div class="legend" id="legend"></div>
+
+      <!-- 🔗 Panneau de liens utiles (auto-généré depuis les points avec "link") -->
+      <div class="links-panel">
+        <article class="card links">
+          <h3>Liens utiles des lieux sur la carte</h3>
+          <p class="muted">Cette liste se met à jour automatiquement en fonction des points qui possèdent un site internet.</p>
+          <div class="cols">
+            <div>
+              <strong>Services</strong>
+              <ul id="links-services"></ul>
+            </div>
+            <div>
+              <strong>Loisirs</strong>
+              <ul id="links-loisirs"></ul>
+            </div>
+          </div>
+          <div class="btns">
+            <button id="copy-links" class="btn ghost">Copier tous les liens</button>
+            <span id="copy-state" class="muted" aria-live="polite"></span>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 </main>
@@ -102,37 +138,43 @@
     iconSize:[24,24], iconAnchor:[12,12]
   });
 
-  // --- SERVICES (exemples que tu peux modifier/compléter) ---
+  // --- SERVICES (tu peux compléter/ajuster) ---
   const SERVICES = [
     {name:'Ayuntamiento (Mairie)', coords:[36.424704587449064, -5.149520168244875], icon:'🏛️', link:'https://ayuntamiento.estepona.es/'},
     {name:'Hôpital / Urgences',    coords:[36.4368,-5.1335], icon:'🏥', link:'https://www.hospitallacostadelsol.es/'},
-    {name:'Hôpital Cenyt / Urgences',    coords:[36.42803358238216, -5.138337439384645], icon:'🏥'},
-    {name:'Hôpital Hospiten / Urgences',    coords:[36.45279349006559, -5.083765066383493], icon:'🏥'},
+    {name:'Hôpital Cenyt / Urgences', coords:[36.42803358238216, -5.138337439384645], icon:'🏥', link:'https://cenythospital.com/'},
+    {name:'Hôpital Hospiten',      coords:[36.45279349006559, -5.083765066383493], icon:'🏥', link:'https://www.hospiten.com/'},
     {name:'Police Nationale',      coords:[36.432256578056794, -5.149475402679913], icon:'👮'},
     {name:'Police Locale',         coords:[36.4175,-5.1691], icon:'👮'},
-    {name:'Office du Tourisme',    coords:[36.42598683672326, -5.145477049783284], icon:'ℹ️'},
-    {name:'Gare routière (bus)',   coords:[36.43036021569422, -5.127477488845281], icon:'🚌'},
-    
+    {name:'Office du Tourisme',    coords:[36.42598683672326, -5.145477049783284], icon:'ℹ️', link:'https://turismo.estepona.es/'},
+    {name:'Gare routière (bus)',   coords:[36.43036021569422, -5.127477488845281], icon:'🚌', link:'https://www.avanzabus.com/'},
     {name:'Pompiers',              coords:[36.432248863354, -5.161996617595514], icon:'🚒'}
   ];
 
   SERVICES.forEach(s=>{
-    L.marker(s.coords,{icon:emIcon(s.icon)}).addTo(layers.services)
-      .bindPopup(`<b>${s.name}</b>`);
+    let html = `<b>${s.name}</b>`;
+    if(s.link){
+      html += `<br><a href="${s.link}" target="_blank" rel="noopener">Voir le site</a>`;
+    }
+    L.marker(s.coords,{icon:emIcon(s.icon)}).addTo(layers.services).bindPopup(html);
   });
 
-  // --- LOISIRS (exemples) ---
+  // --- LOISIRS (tu peux compléter/ajuster) ---
   const LOISIRS = [
-    {name:'Orchidarium',         coords:[36.4296,-5.1468], icon:'🌺'},
+    {name:'Orchidarium',         coords:[36.4296,-5.1468], icon:'🌺', link:'https://turismo.estepona.es/visitel-orchidarium/'},
     {name:'Port de Plaisance',   coords:[36.4202,-5.1593], icon:'⛵'},
+    {name:'Chiringuito La Rada', coords:[36.4232,-5.1408], icon:'🍹'},
     {name:'Plaza de las Flores', coords:[36.4254,-5.1486], icon:'🌸'},
     {name:'Musée Municipal',     coords:[36.4262,-5.1510], icon:'🏛️'},
     {name:'Parc / Jardin',       coords:[36.4313,-5.1457], icon:'🌳'}
   ];
 
   LOISIRS.forEach(l=>{
-    L.marker(l.coords,{icon:emIcon(l.icon)}).addTo(layers.loisirs)
-      .bindPopup(`<b>${l.name}</b>`);
+    let html = `<b>${l.name}</b>`;
+    if(l.link){
+      html += `<br><a href="${l.link}" target="_blank" rel="noopener">Voir le site</a>`;
+    }
+    L.marker(l.coords,{icon:emIcon(l.icon)}).addTo(layers.loisirs).bindPopup(html);
   });
 
   // Légende
@@ -145,8 +187,7 @@
   // Filtres boutons
   document.getElementById('mapTools').addEventListener('click', (e)=>{
     const btn = e.target.closest('.btn'); if(!btn) return;
-    document.querySelectorAll('.map-tools .btn').forEach(b=>b.classList.remove('primary'));
-    btn.classList.add('primary');
+    btn.classList.toggle('primary'); // on/off
     const id = btn.dataset.layer;
     const layer = layers[id];
     if(!layer) return;
@@ -155,6 +196,47 @@
 
   // Cadre
   map.fitBounds([[36.40,-5.20],[36.46,-5.10]]);
+
+  // ======= Génération auto du panneau de liens =======
+  function renderLinks(){
+    const sUL = document.getElementById('links-services');
+    const lUL = document.getElementById('links-loisirs');
+    sUL.innerHTML = '';
+    lUL.innerHTML = '';
+
+    const sLinks = SERVICES.filter(x=>x.link).map(x=>({name:x.name, link:x.link}));
+    const lLinks = LOISIRS.filter(x=>x.link).map(x=>({name:x.name, link:x.link}));
+
+    if(sLinks.length===0) sUL.innerHTML = '<li class="muted">Aucun lien renseigné pour les services.</li>';
+    if(lLinks.length===0) lUL.innerHTML = '<li class="muted">Aucun lien renseigné pour les loisirs.</li>';
+
+    sLinks.forEach(item=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${item.link}" target="_blank" rel="noopener">${item.name}</a>`;
+      sUL.appendChild(li);
+    });
+    lLinks.forEach(item=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${item.link}" target="_blank" rel="noopener">${item.name}</a>`;
+      lUL.appendChild(li);
+    });
+  }
+  renderLinks();
+
+  // Copier tous les liens
+  document.getElementById('copy-links').addEventListener('click', async ()=>{
+    const links = [
+      ...SERVICES.filter(x=>x.link).map(x=>`${x.name}: ${x.link}`),
+      ...LOISIRS.filter(x=>x.link).map(x=>`${x.name}: ${x.link}`)
+    ].join('\n');
+    try{
+      await navigator.clipboard.writeText(links || 'Aucun lien disponible.');
+      document.getElementById('copy-state').textContent = 'Liens copiés dans le presse‑papiers ✅';
+      setTimeout(()=>document.getElementById('copy-state').textContent='', 3000);
+    }catch(e){
+      document.getElementById('copy-state').textContent = 'Impossible de copier (droits navigateur).';
+    }
+  });
 })();
 </script>
 </body>
