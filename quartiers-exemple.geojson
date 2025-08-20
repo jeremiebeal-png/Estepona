@@ -1,0 +1,74 @@
+{
+  "type": "FeatureCollection",
+  "name": "quartiers-estepona-exemple",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Casco Antiguo",
+        "color": "#f59e0b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-5.1495, 36.4280],
+          [-5.1430, 36.4275],
+          [-5.1420, 36.4225],
+          [-5.1490, 36.4222],
+          [-5.1495, 36.4280]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Puerto Deportivo",
+        "color": "#38bdf8"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-5.1636, 36.4218],
+          [-5.1578, 36.4212],
+          [-5.1583, 36.4184],
+          [-5.1639, 36.4185],
+          [-5.1636, 36.4218]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Seghers",
+        "color": "#34d399"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-5.1685, 36.4215],
+          [-5.1760, 36.4205],
+          [-5.1745, 36.4165],
+          [-5.1666, 36.4178],
+          [-5.1685, 36.4215]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Selwo",
+        "color": "#a78bfa"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-5.0800, 36.4610],
+          [-5.0650, 36.4610],
+          [-5.0650, 36.4470],
+          [-5.0800, 36.4470],
+          [-5.0800, 36.4610]
+        ]]
+      }
+    }
+  ]
+}
