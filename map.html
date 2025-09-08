@@ -3,390 +3,80 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bons plans à Estepona — Guide local : quartiers, visites, restos</title>
-  <meta name="description" content="Le guide malin d’Estepona : vidéos, quartiers, visites, restaurants, itinéraires et carte interactive." />
+  <title>Carte — Quartiers d’Estepona</title>
+  <meta name="description" content="Carte interactive des quartiers d’Estepona (zones indicatives)." />
   <meta name="theme-color" content="#0b3c49" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Bons plans à Estepona — Guide local" />
-  <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
-  <meta property="og:image" content="/assets/og-estepona.jpg" />
-
-  <link rel="preload" href="/video/Video_Estepona.mp4" as="video" type="video/mp4" />
-  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css" />
-
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <style>
-    :root{
-      --brand:#0b3c49; --brand-2:#e3f2ef; --text:#0e1115; --muted:#6b7a85; --card:#ffffff;
-      --ring: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08);
-      --radius: 20px;
-    }
-    html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-    a{color:var(--brand);text-decoration:none}
-    .container{max-width:1200px;margin:auto;padding:0 16px}
-
-    /* Header */
-    header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
-    header .inner{display:flex;align-items:center;gap:16px;justify-content:space-between;height:64px}
-    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
-    .logo img{height:40px;width:auto}
-    nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
-    nav a{padding:8px 12px;border-radius:12px}
-    nav a:hover{background:#eef6f4}
-
-    /* Hero vidéo */
-    .hero{position:relative;isolation:isolate}
-    .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:contrast(1) brightness(0.9)}
-    .hero .overlay{padding:84px 0 96px}
-    .hero .content{color:#000}
-    .content-box{display:inline-block;background:rgba(255,255,255,.7);backdrop-filter:blur(4px);padding:18px 20px;border-radius:16px;box-shadow:var(--ring)}
-    .chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.5);padding:6px 10px;border-radius:999px;color:#000}
-    .title{font-size:clamp(28px,5vw,52px);line-height:1.05;margin:12px 0 10px;font-weight:800}
-    .subtitle{font-size:clamp(16px,2.2vw,20px);opacity:.95;max-width:800px}
-    .searchbar{display:flex;gap:8px;margin-top:18px;background:rgba(255,255,255,.9);padding:10px;border-radius:16px}
-    .searchbar input{flex:1;border:0;background:transparent;padding:10px 12px;font-size:16px}
-    .searchbar button{border:0;border-radius:12px;padding:10px 14px;background:#0b3c49;color:#fff}
-
-    /* Sections */
-    section{padding:40px 0}
-    .section-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:16px}
-    .section-header h2{font-size:28px;margin:0}
-    .section-header p{color:var(--muted);margin:6px 0 0}
-
-    /* Cards / grids */
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .card{grid-column:span 4;background:var(--card);border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring);display:flex;flex-direction:column}
-    .card img{width:100%;height:180px;object-fit:cover}
-    .card .body{padding:14px}
-    .card .body h3{margin:0 0 8px;font-size:18px}
-    .card .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
-
-    /* Routes */
-    .route{grid-column:span 6;display:flex;gap:16px;background:#fff;border:1px solid #e7efec;border-radius:var(--radius);box-shadow:var(--ring);overflow:hidden}
-    .route img{width:44%;object-fit:cover}
-    .route .body{padding:14px}
-
-    /* Deals */
-    .deal{grid-column:span 4;background:#0b3c49;color:#fff;border-radius:var(--radius);padding:18px}
-    .deal .cta{display:inline-block;margin-top:8px;background:#fff;color:#0b3c49;padding:10px 14px;border-radius:12px;text-decoration:none}
-
-    /* FAQ */
-    .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
-    .acc-item+.acc-item{border-top:1px solid #e7efec}
-    .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px}
-    .acc-panel{display:none;padding:0 16px 16px;color:#334}
-
-    /* Footer */
-    footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
-    footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
-    footer a{color:#cfe1dc}
-    footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
-
-    /* Responsive */
-    @media (max-width: 1000px){
-      .card{grid-column:span 6}
-      .route{grid-column:span 12}
-      footer .inner{grid-template-columns:1fr 1fr}
-    }
-    @media (max-width: 640px){
-      .hero .overlay{padding:72px 0}
-      .card{grid-column:span 12}
-      .deal{grid-column:span 12}
-      .grid{gap:12px}
-      nav ul{display:none}
-    }
+    #map{height:80vh;border-radius:16px;border:1px solid #e7efec}
+    .legend{background:#fff;padding:8px 10px;border-radius:10px;border:1px solid #e7efec;box-shadow:0 4px 12px rgba(0,0,0,.06);font-size:14px}
+    .badge{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+    .wrap{max-width:1200px;margin:auto;padding:16px}
+    header{padding:14px 0}
+    header a{color:#0b3c49}
   </style>
-
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Bons plans à Estepona",
-    "url": "https://example.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://example.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="site">
-    <div class="container inner">
-      <div class="logo">
-        <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
-        <span>Estepona — Bons plans</span>
-      </div>
-      <nav aria-label="Navigation principale">
-        <ul>
-          <li><a href="#voir">À voir</a></li>
-          <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets</a></li>
-          <li><a href="#itin">Itinéraires</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ul>
-      </nav>
-      <!-- Pas de CTA header -->
-    </div>
-  </header>
+  <div class="wrap">
+    <header>
+      <a href="/index.html">← Retour</a>
+      <h1>Carte des quartiers d’Estepona</h1>
+      <p>Zones indicatives pour vous repérer rapidement (centre, plage, port).</p>
+    </header>
 
-  <!-- HERO VIDEO -->
-  <section class="hero" aria-label="Introduction vidéo">
-    <video id="heroVideo" class="media" autoplay playsinline muted loop>
-      <source src="/video/Video_Estepona.mp4" type="video/mp4" />
-    </video>
-    <div class="overlay">
-      <div class="container content">
-        <span class="chip">🎥 Vidéo • Aperçu d’Estepona</span>
-        <div class="content-box">
-          <h1 class="title">Votre guide local pour profiter d’Estepona</h1>
-          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques et billets coupe-file. Tout ce qu’il faut pour un séjour réussi.</p>
-        </div>
-        <form class="searchbar" role="search" action="/" method="get" onsubmit="event.preventDefault(); scrollToResult()">
-          <input type="search" name="q" placeholder="Rechercher : plage, vieille ville, tapas…" aria-label="Rechercher dans le site" />
-          <button type="submit">Rechercher</button>
-        </form>
-      </div>
-    </div>
-  </section>
+    <div id="map" role="application" aria-label="Carte d’Estepona"></div>
+  </div>
 
-  <!-- À VOIR / À FAIRE -->
-  <section id="voir" class="container">
-    <div class="section-header">
-      <div>
-        <h2>À voir / À faire</h2>
-        <p>Nos lieux et activités immanquables à Estepona</p>
-      </div>
-      <a href="#" aria-label="Voir toutes les catégories">Tout voir →</a>
-    </div>
-    <div class="grid">
-      <article class="card">
-        <img src="/assets/cards/old-town.jpg" alt="Vieille ville d’Estepona" />
-        <div class="body">
-          <h3>Vieille ville & fresques</h3>
-          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés, à la chasse aux fresques murales.</p>
-          <div class="meta">⏱️ 2–3 h · Gratuit</div>
-        </div>
-      </article>
-      <article class="card">
-        <img src="/assets/cards/beach.jpg" alt="Plage et paseo marítimo" />
-        <div class="body">
-          <h3>Plages & paseo marítimo</h3>
-          <p>Des kilomètres de sable avec chiringuitos, douches, jeux enfants et un paseo idéal à vélo.</p>
-          <div class="meta">☀️ Idéal familles</div>
-        </div>
-      </article>
-      <article class="card">
-        <img src="/assets/cards/selwo.jpg" alt="Selwo Aventura" />
-        <div class="body">
-          <h3>Selwo Aventura</h3>
-          <p>Parc naturel aux airs de safari pour une journée dépaysante avec les enfants.</p>
-          <div class="meta">🎟️ Réservation conseillée</div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- RESTAURANTS -->
-  <section id="manger" class="container">
-    <div class="section-header">
-      <div>
-        <h2>Restaurants & tapas</h2>
-        <p>Nos bonnes adresses triées par budget et quartier</p>
-      </div>
-      <a href="#">Tous les restos →</a>
-    </div>
-    <div class="grid">
-      <article class="card">
-        <img src="/assets/cards/tapas.jpg" alt="Bar à tapas" />
-        <div class="body">
-          <h3>Tapas authentiques</h3>
-          <p>Bars du centre historique pour croquetas, boquerones et tortilla.</p>
-          <div class="meta">€ · Centre</div>
-        </div>
-      </article>
-      <article class="card">
-        <img src="/assets/cards/paella.jpg" alt="Paella en bord de mer" />
-        <div class="body">
-          <h3>Paella face mer</h3>
-          <p>Chiringuitos conviviaux sur la plage pour un déjeuner au soleil.</p>
-          <div class="meta">€€ · Playa</div>
-        </div>
-      </article>
-      <article class="card">
-        <img src="/assets/cards/rooftop.jpg" alt="Rooftop avec vue" />
-        <div class="body">
-          <h3>Rooftops & cocktails</h3>
-          <p>Pour admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
-          <div class="meta">€€€ · Port</div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- BILLETS & ACTIVITÉS (menu conservé, pas de CTA header) -->
-  <section id="billets" class="container">
-    <div class="section-header">
-      <div>
-        <h2>Billets & activités</h2>
-        <p>Réservez vos incontournables au meilleur prix</p>
-      </div>
-      <a href="#">Voir tout →</a>
-    </div>
-    <div class="grid">
-      <div class="deal">
-        <h3>⚓ Sortie bateau dauphins</h3>
-        <p>2 h en mer avec boisson incluse. Départs du port d’Estepona.</p>
-        <a class="cta" href="#">Réserver</a>
-      </div>
-      <div class="deal">
-        <h3>🎟️ Selwo Aventura</h3>
-        <p>Entrée datée avec coupe-file. Options famille disponibles.</p>
-        <a class="cta" href="#">Réserver</a>
-      </div>
-      <div class="deal">
-        <h3>🚲 Location vélos</h3>
-        <p>VAE ou classiques. Parfait pour le paseo marítimo.</p>
-        <a class="cta" href="#">Réserver</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ITINÉRAIRES -->
-  <section id="itin" class="container">
-    <div class="section-header">
-      <div>
-        <h2>Itinéraires prêts à l’emploi</h2>
-        <p>Optimisez votre temps selon la durée de votre séjour</p>
-      </div>
-      <a href="#">Tous les itinéraires →</a>
-    </div>
-    <div class="grid">
-      <article class="route">
-        <img src="/assets/routes/1j.jpg" alt="Itinéraire 1 jour" />
-        <div class="body">
-          <h3>Estepona en 1 jour</h3>
-          <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
-          <a href="#">Voir le détail →</a>
-        </div>
-      </article>
-      <article class="route">
-        <img src="/assets/routes/3j.jpg" alt="Itinéraire 3 jours" />
-        <div class="body">
-          <h3>Weekend prolongé (3 jours)</h3>
-        <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
-          <a href="#">Voir le détail →</a>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- CARTE DES QUARTIERS -->
-  <section class="container">
-    <div class="section-header">
-      <div>
-        <h2>Carte des quartiers</h2>
-        <p>Retrouvez nos zones conseillées (indicatives) : centre, plage, port, environs</p>
-      </div>
-      <a href="/map.html">Ouvrir la carte →</a>
-    </div>
-    <div style="border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring)">
-      <iframe title="Carte d’Estepona" src="/map.html" loading="lazy" width="100%" height="420" style="display:block;border:0"></iframe>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="container">
-    <div class="section-header">
-      <div>
-        <h2>FAQ</h2>
-        <p>Questions fréquentes pour préparer votre séjour</p>
-      </div>
-    </div>
-    <div class="accordion" id="faqList">
-      <div class="acc-item">
-        <button class="acc-btn" aria-expanded="false">Quelle est la meilleure période pour venir ?</button>
-        <div class="acc-panel">De mai à octobre pour la plage. Avril et novembre pour la douceur et moins d’affluence.</div>
-      </div>
-      <div class="acc-item">
-        <button class="acc-btn" aria-expanded="false">Où loger à Estepona ?</button>
-        <div class="acc-panel">Centre historique pour l’ambiance, bord de mer pour la plage, port pour la vie nocturne.</div>
-      </div>
-      <div class="acc-item">
-        <button class="acc-btn" aria-expanded="false">Faut-il une voiture ?</button>
-        <div class="acc-panel">Non en centre. Utile pour explorer les environs (Casares, Ronda, Marbella, Gibraltar).</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container inner">
-      <div>
-        <h3>Estepona — Bons plans</h3>
-        <p>Le guide local et indépendant pour découvrir Estepona facilement.</p>
-      </div>
-      <div>
-        <h4>Découvrir</h4>
-        <ul>
-          <li><a href="#voir">À voir</a></li>
-          <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Pratique</h4>
-        <ul>
-          <li><a href="#itin">Itinéraires</a></li>
-          <li><a href="/mentions.html">Mentions légales</a></li>
-          <li><a href="/confidentialite.html">Confidentialité</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Suivre</h4>
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">TikTok</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="container bottom">© <span id="year"></span> Estepona — Bons plans. Tous droits réservés.</div>
-  </footer>
-
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    // Lecture vidéo : relance si autoplay est bloqué
-    const v = document.getElementById('heroVideo');
-    if (v) {
-      v.play().catch(()=>{
-        v.muted = true;
-        v.play().catch(()=>{/* ignore */});
-      });
-    }
+    const m = L.map('map', {scrollWheelZoom:true}).setView([36.426, -5.146], 13);
 
-    // Recherche → scroll vers la première section
-    function scrollToResult(){
-      const el = document.querySelector('#voir');
-      if(el) el.scrollIntoView({behavior:'smooth'});
-    }
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(m);
 
-    // Accordéon FAQ
-    document.querySelectorAll('.acc-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!expanded));
-        const panel = btn.nextElementSibling;
-        panel.style.display = expanded ? 'none' : 'block';
-      });
-    });
+    // Styles
+    const sCentre = { color:'#0b3c49', weight:2, fillColor:'#0b3c49', fillOpacity:.12 };
+    const sPlage  = { color:'#2c7a7b', weight:2, fillColor:'#2c7a7b', fillOpacity:.12 };
+    const sPort   = { color:'#805ad5', weight:2, fillColor:'#805ad5', fillOpacity:.12 };
 
-    // Footer année en cours
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Polygones très indicatifs (approximatifs)
+    const centre = L.polygon([
+      [36.4269,-5.1516],[36.4287,-5.1491],[36.4286,-5.1445],[36.4265,-5.1426],
+      [36.4247,-5.1449],[36.4246,-5.1494]
+    ], sCentre).bindPopup('<b>Centre historique</b><br>Ruelles blanches & fresques.');
+
+    const plage = L.polygon([
+      [36.4321,-5.1506],[36.4320,-5.1379],[36.4278,-5.1364],[36.4245,-5.1388],
+      [36.4247,-5.1487]
+    ], sPlage).bindPopup('<b>Plage & Paseo</b><br>Chiringuitos, balade, jeux.');
+
+    const port = L.polygon([
+      [36.4219,-5.1604],[36.4229,-5.1580],[36.4248,-5.1567],[36.4260,-5.1587],
+      [36.4250,-5.1620]
+    ], sPort).bindPopup('<b>Port & marina</b><br>Rooftops et sorties bateau.');
+
+    centre.addTo(m); plage.addTo(m); port.addTo(m);
+
+    // Repère centre-ville
+    L.marker([36.4279, -5.1455]).addTo(m).bindPopup('Vieille ville');
+
+    // Légende
+    const legend = L.control({position:'bottomleft'});
+    legend.onAdd = function(){
+      const div = L.DomUtil.create('div','legend');
+      div.innerHTML = `
+        <div><span class="badge" style="background:#0b3c49"></span>Centre historique</div>
+        <div><span class="badge" style="background:#2c7a7b"></span>Plage & paseo</div>
+        <div><span class="badge" style="background:#805ad5"></span>Port & marina</div>`;
+      return div;
+    };
+    legend.addTo(m);
   </script>
 </body>
 </html>
