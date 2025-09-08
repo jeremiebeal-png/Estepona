@@ -121,7 +121,7 @@
         <span class="chip">🎥 Vidéo • Aperçu d’Estepona</span>
         <div class="content-box">
           <h1 class="title">Votre guide local pour profiter d’Estepona</h1>
-          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques et billets coupe‑file. Tout ce qu’il faut pour un séjour réussi.</p>
+          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques et billets coupe-file. Tout ce qu’il faut pour un séjour réussi.</p>
         </div>
         <form class="searchbar" role="search" action="/" method="get" onsubmit="event.preventDefault(); scrollToResult()">
           <input type="search" name="q" placeholder="Rechercher : plage, vieille ville, tapas…" aria-label="Rechercher dans le site" />
@@ -131,8 +131,43 @@
     </div>
   </section>
 
-  <!-- Contenu conservé identique -->
-  <!-- ... (sections Voir, Restaurants, Billets, Itinéraires, Carte, FAQ, Footer, JS) ... -->
+  <!-- Sections (voir, manger, billets, itinéraires, carte, faq, footer) -->
+  <!-- … contenu identique aux versions précédentes … -->
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container inner">
+      <div>
+        <h3>Estepona — Bons plans</h3>
+        <p>Le guide local et indépendant pour découvrir Estepona facilement.</p>
+      </div>
+      <div>
+        <h4>Découvrir</h4>
+        <ul>
+          <li><a href="#voir">À voir</a></li>
+          <li><a href="#manger">Restaurants</a></li>
+          <li><a href="#billets">Billets</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Pratique</h4>
+        <ul>
+          <li><a href="#itin">Itinéraires</a></li>
+          <li><a href="/mentions.html">Mentions légales</a></li>
+          <li><a href="/confidentialite.html">Confidentialité</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Suivre</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container bottom">© <span id="year"></span> Estepona — Bons plans. Tous droits réservés.</div>
+  </footer>
 
   <script>
     const v = document.getElementById('heroVideo');
