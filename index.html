@@ -11,7 +11,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Bons plans à Estepona — Guide local" />
   <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
-  <meta property="og:image" content="/assets/og-estepona.jpg" />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
 
   <link rel="preload" href="/video/Video_Estepona.mp4" as="video" type="video/mp4" />
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -98,21 +98,6 @@
       nav ul{display:none}
     }
   </style>
-
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Bons plans à Estepona",
-    "url": "https://example.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://example.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
 </head>
 <body>
   <!-- HEADER -->
@@ -131,7 +116,6 @@
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </nav>
-      <!-- Pas de CTA header -->
     </div>
   </header>
 
@@ -145,7 +129,7 @@
         <span class="chip">🎥 Vidéo • Aperçu d’Estepona</span>
         <div class="content-box">
           <h1 class="title">Votre guide local pour profiter d’Estepona</h1>
-          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, activités nautiques. Tout ce qu’il faut pour un séjour réussi.</p>
+          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques et billets coupe-file. Tout ce qu’il faut pour un séjour réussi.</p>
         </div>
         <form class="searchbar" role="search" action="/" method="get" onsubmit="event.preventDefault(); scrollToResult()">
           <input type="search" name="q" placeholder="Rechercher : plage, vieille ville, tapas…" aria-label="Rechercher dans le site" />
@@ -166,7 +150,7 @@
     </div>
     <div class="grid">
       <article class="card">
-        <img src="/img/Centre_fleuri.png" alt="Vieille ville d’Estepona" />
+        <img src="/img/old-town.jpg" alt="Vieille ville d’Estepona" />
         <div class="body">
           <h3>Vieille ville & fresques</h3>
           <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés, à la chasse aux fresques murales.</p>
@@ -174,7 +158,7 @@
         </div>
       </article>
       <article class="card">
-        <img src="/img/Plage.png" alt="Plage et paseo marítimo" />
+        <img src="/img/beach.jpg" alt="Plage et paseo marítimo" />
         <div class="body">
           <h3>Plages & paseo marítimo</h3>
           <p>Des kilomètres de sable avec chiringuitos, douches, jeux enfants et un paseo idéal à vélo.</p>
@@ -182,7 +166,7 @@
         </div>
       </article>
       <article class="card">
-        <img src="/assets/cards/selwo.jpg" alt="Selwo Aventura" />
+        <img src="/img/selwo.jpg" alt="Selwo Aventura" />
         <div class="body">
           <h3>Selwo Aventura</h3>
           <p>Parc naturel aux airs de safari pour une journée dépaysante avec les enfants.</p>
@@ -203,7 +187,7 @@
     </div>
     <div class="grid">
       <article class="card">
-        <img src="/video/restaurant.png" alt="Bar à tapas" />
+        <img src="/img/tapas.jpg" alt="Bar à tapas" />
         <div class="body">
           <h3>Tapas authentiques</h3>
           <p>Bars du centre historique pour croquetas, boquerones et tortilla.</p>
@@ -211,7 +195,7 @@
         </div>
       </article>
       <article class="card">
-        <img src="/assets/cards/paella.jpg" alt="Paella en bord de mer" />
+        <img src="/img/paella.jpg" alt="Paella en bord de mer" />
         <div class="body">
           <h3>Paella face mer</h3>
           <p>Chiringuitos conviviaux sur la plage pour un déjeuner au soleil.</p>
@@ -219,7 +203,7 @@
         </div>
       </article>
       <article class="card">
-        <img src="/assets/cards/rooftop.jpg" alt="Rooftop avec vue" />
+        <img src="/img/rooftop.jpg" alt="Rooftop avec vue" />
         <div class="body">
           <h3>Rooftops & cocktails</h3>
           <p>Pour admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
@@ -229,7 +213,7 @@
     </div>
   </section>
 
-  <!-- BILLETS & ACTIVITÉS (menu conservé, pas de CTA header) -->
+  <!-- BILLETS & ACTIVITÉS -->
   <section id="billets" class="container">
     <div class="section-header">
       <div>
@@ -268,7 +252,7 @@
     </div>
     <div class="grid">
       <article class="route">
-        <img src="/assets/routes/1j.jpg" alt="Itinéraire 1 jour" />
+        <img src="/img/1j.jpg" alt="Itinéraire 1 jour" />
         <div class="body">
           <h3>Estepona en 1 jour</h3>
           <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
@@ -276,10 +260,10 @@
         </div>
       </article>
       <article class="route">
-        <img src="/assets/routes/3j.jpg" alt="Itinéraire 3 jours" />
+        <img src="/img/3j.jpg" alt="Itinéraire 3 jours" />
         <div class="body">
           <h3>Weekend prolongé (3 jours)</h3>
-        <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
+          <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
           <a href="#">Voir le détail →</a>
         </div>
       </article>
@@ -336,57 +320,4 @@
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Pratique</h4>
-        <ul>
-          <li><a href="#itin">Itinéraires</a></li>
-          <li><a href="/mentions.html">Mentions légales</a></li>
-          <li><a href="/confidentialite.html">Confidentialité</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Suivre</h4>
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">TikTok</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="container bottom">© <span id="year"></span> Estepona — Bons plans. Tous droits réservés.</div>
-  </footer>
-
-  <script>
-    // Lecture vidéo : relance si autoplay est bloqué
-    const v = document.getElementById('heroVideo');
-    if (v) {
-      v.play().catch(()=>{
-        v.muted = true;
-        v.play().catch(()=>{/* ignore */});
-      });
-    }
-
-    // Recherche → scroll vers la première section
-    function scrollToResult(){
-      const el = document.querySelector('#voir');
-      if(el) el.scrollIntoView({behavior:'smooth'});
-    }
-
-    // Accordéon FAQ
-    document.querySelectorAll('.acc-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!expanded));
-        const panel = btn.nextElementSibling;
-        panel.style.display = expanded ? 'none' : 'block';
-      });
-    });
-
-    // Footer année en cours
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+          <li><a href="#billets">Bil
