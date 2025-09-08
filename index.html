@@ -193,5 +193,22 @@
     
     </section>
   </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const v = document.getElementById('bgVideo');
+  if (!v) return;
+
+  const tryPlay = () => v.play().catch(() => {});
+  tryPlay();
+
+  // relance après 1ère interaction utilisateur
+  ['click','touchstart','scroll','keydown'].forEach(evt => {
+    window.addEventListener(evt, () => tryPlay(), { once: true });
+  });
+});
+</script>
+
+  
 </body>
 </html>
