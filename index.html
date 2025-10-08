@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bons plans à Estepona — Guide local : quartiers, visites, restos</title>
-  <meta name="description" content="Le guide malin d’Estepona : vidéos, quartiers, visites, restaurants, itinéraires et carte interactive." />
+  <meta name="description" content="Le guide malin d’Estepona : vidéos, quartiers, visites, restaurants et carte interactive." />
   <meta name="theme-color" content="#0b3c49" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Bons plans à Estepona — Guide local" />
-  <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
+  <meta property="og:description" content="Vidéos, quartiers, visites, restos et carte interactive pour découvrir Estepona." />
   <meta property="og:image" content="/img/og-estepona.jpg" />
 
   <!-- Preloads -->
@@ -27,8 +27,6 @@
     html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     a{color:var(--brand);text-decoration:none}
     .container{max-width:1200px;margin:auto;padding:0 16px}
-
-    /* Header */
     header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
     header .inner{display:flex;align-items:center;gap:16px;justify-content:space-between;height:64px}
     .logo{display:flex;align-items:center;gap:10px;font-weight:700}
@@ -36,8 +34,6 @@
     nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
     nav a{padding:8px 12px;border-radius:12px}
     nav a:hover{background:#eef6f4}
-
-    /* Hero vidéo */
     .hero{position:relative;isolation:isolate}
     .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:contrast(1) brightness(0.9)}
     .hero .overlay{padding:84px 0 96px}
@@ -49,52 +45,37 @@
     .searchbar{display:flex;gap:8px;margin-top:18px;background:rgba(255,255,255,.9);padding:10px;border-radius:16px}
     .searchbar input{flex:1;border:0;background:transparent;padding:10px 12px;font-size:16px}
     .searchbar button{border:0;border-radius:12px;padding:10px 14px;background:#0b3c49;color:#fff;cursor:pointer}
-
-    /* Sections */
     section{padding:40px 0}
     .section-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:16px}
     .section-header h2{font-size:28px;margin:0}
     .section-header p{color:var(--muted);margin:6px 0 0}
-
-    /* Cards / grids */
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
     .card{grid-column:span 4;background:var(--card);border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring);display:flex;flex-direction:column}
     .card img{width:100%;height:180px;object-fit:cover}
     .card .body{padding:14px}
     .card .body h3{margin:0 0 8px;font-size:18px}
     .card .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
-
-    /* Routes */
-    .route{grid-column:span 6;display:flex;gap:16px;background:#fff;border:1px solid #e7efec;border-radius:var(--radius);box-shadow:var(--ring);overflow:hidden}
-    .route img{width:44%;object-fit:cover}
-    .route .body{padding:14px}
-
-    /* FAQ */
+    .route-link{display:block;text-align:center;background:#0b3c49;color:#fff;padding:20px;border-radius:var(--radius);font-weight:600;text-decoration:none;box-shadow:var(--ring)}
+    .route-link:hover{background:#09505f}
     .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
     .acc-item+.acc-item{border-top:1px solid #e7efec}
     .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer}
     .acc-panel{display:none;padding:0 16px 16px;color:#334}
-
-    /* Footer */
     footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
     footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
     footer a{color:#cfe1dc}
     footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
-
-    /* Responsive */
     @media (max-width: 1000px){
       .card{grid-column:span 6}
-      .route{grid-column:span 12}
       footer .inner{grid-template-columns:1fr 1fr}
     }
     @media (max-width: 640px){
-      .hero .overlay{padding:72px 0}
       .card{grid-column:span 12}
-      .grid{gap:12px}
       nav ul{display:none}
     }
   </style>
 </head>
+
 <body>
   <!-- HEADER -->
   <header class="site">
@@ -103,20 +84,20 @@
         <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
         <span>Estepona — Bons plans</span>
       </div>
-      <nav aria-label="Navigation principale">
+      <nav>
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#itin">Itinéraires</a></li>
+          <li><a href="#itin">Que faire</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- HERO VIDEO -->
-  <section class="hero" aria-label="Introduction vidéo">
-    <video id="heroVideo" class="media" autoplay playsinline muted loop>
+  <!-- HERO -->
+  <section class="hero">
+    <video id="heroVideo" autoplay playsinline muted loop>
       <source src="video/Video-estepona.mp4" type="video/mp4" />
     </video>
     <div class="overlay">
@@ -124,11 +105,11 @@
         <span class="chip">Hola Estepona</span>
         <div class="content-box">
           <h1 class="title">Venez profiter d’Estepona</h1>
-          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques. Tout ce qu’il faut pour un séjour réussi.</p>
+          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops et plus encore pour un séjour réussi.</p>
         </div>
-        <form class="searchbar" role="search" onsubmit="event.preventDefault(); scrollToResult()">
-          <input type="search" name="q" placeholder="Rechercher : Animations, vieille ville, tapas…" aria-label="Rechercher dans le site" />
-          <button type="submit" aria-label="Lancer la recherche">Rechercher</button>
+        <form class="searchbar" onsubmit="event.preventDefault(); scrollToResult()">
+          <input type="search" placeholder="Rechercher : Animations, vieille ville, tapas…" />
+          <button type="submit">Rechercher</button>
         </form>
       </div>
     </div>
@@ -141,14 +122,13 @@
         <h2>À voir / À faire</h2>
         <p>Nos lieux et activités immanquables à Estepona</p>
       </div>
-      <a href="#" aria-label="Voir toutes les catégories">Tout voir →</a>
     </div>
     <div class="grid">
       <article class="card">
         <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" loading="lazy" />
         <div class="body">
           <h3>Vieille ville & fresques</h3>
-          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés.</p>
+          <p>Ruelles blanches et pots de fleurs colorés à la chasse aux fresques murales.</p>
           <div class="meta">⏱️ 2–3 h · Gratuit</div>
         </div>
       </article>
@@ -156,7 +136,7 @@
         <img src="img/aquarelle_paseo.png" alt="Plage et paseo marítimo" loading="lazy" />
         <div class="body">
           <h3>Plages & paseo marítimo</h3>
-          <p>Des kilomètres de sable avec chiringuitos, douches et jeux enfants.</p>
+          <p>Des kilomètres de sable avec chiringuitos, douches et aire de jeux.</p>
           <div class="meta">☀️ Idéal familles</div>
         </div>
       </article>
@@ -164,8 +144,8 @@
         <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona" loading="lazy" />
         <div class="body">
           <h3>Actualité Estepona</h3>
-          <p>Toutes les actualités sur Estepona.</p>
-          <a class="cta" href="Actualites.html">Actualité →</a>
+          <p>Toutes les actualités locales et bons plans.</p>
+          <a class="cta" href="Actualites.html">Voir →</a>
         </div>
       </article>
     </div>
@@ -175,17 +155,16 @@
   <section id="manger" class="container">
     <div class="section-header">
       <div>
-        <h2>Restaurants Chiringuito</h2>
+        <h2>Restaurants & Chiringuitos</h2>
         <p>Nos bonnes adresses triées par budget et quartier</p>
       </div>
-      <a href="#">Tous les restos →</a>
     </div>
     <div class="grid">
       <article class="card">
         <img src="img/restaurant.png" alt="Bar à tapas" loading="lazy" />
         <div class="body">
-          <h3>Chiringuito</h3>
-          <p>Les meilleurs chiringuitos de la plage d’Estepona.</p>
+          <h3>Chiringuitos</h3>
+          <p>Les meilleurs bars de plage d’Estepona pour profiter du soleil.</p>
           <div class="meta">€ · Playa</div>
         </div>
       </article>
@@ -193,49 +172,33 @@
         <img src="img/paella.jpg" alt="Paella en bord de mer" loading="lazy" />
         <div class="body">
           <h3>Paella face mer</h3>
-          <p>Déjeunez au soleil dans une ambiance locale.</p>
-          <div class="meta">€€ · Playa</div>
+          <p>Ambiance locale et fruits de mer frais sur la plage.</p>
+          <div class="meta">€€ · Bord de mer</div>
         </div>
       </article>
       <article class="card">
-        <img src="/img/rooftop.jpg" alt="Rooftop avec vue sur Estepona" loading="lazy" />
+        <img src="/img/rooftop.jpg" alt="Rooftop avec vue" loading="lazy" />
         <div class="body">
           <h3>Rooftops & cocktails</h3>
-          <p>Admirez le coucher de soleil sur le port.</p>
+          <p>Pour admirer le coucher de soleil sur le port.</p>
           <div class="meta">€€€ · Port</div>
         </div>
       </article>
     </div>
   </section>
 
-  <!-- ITINÉRAIRES -->
+  <!-- QUE FAIRE -->
   <section id="itin" class="container">
     <div class="section-header">
       <div>
-        <h2>Itinéraires prêts à l’emploi</h2>
-        <p>Optimisez votre temps selon la durée de votre séjour</p>
+        <h2>Que faire à Estepona</h2>
+        <p>Retrouvez nos suggestions détaillées d’activités et de balades</p>
       </div>
-      <a href="#">Tous les itinéraires →</a>
     </div>
-    <div class="grid">
-      <article class="route">
-        <img src="/img/1j.jpg" alt="Itinéraire Estepona en 1 jour" loading="lazy" />
-        <div class="body">
-          <h3>Estepona en 1 jour</h3>
-          <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
-        </div>
-      </article>
-      <article class="route">
-        <img src="/img/3j.jpg" alt="Itinéraire Estepona en 3 jours" loading="lazy" />
-        <div class="body">
-          <h3>Weekend prolongé (3 jours)</h3>
-          <p>Selwo, fresques, chiringuitos et balade jusqu’au phare & marina.</p>
-        </div>
-      </article>
-    </div>
+    <a class="route-link" href="quefaire.html">Découvrir quoi faire à Estepona →</a>
   </section>
 
-  <!-- CARTE DES QUARTIERS -->
+  <!-- CARTE -->
   <section class="container">
     <div class="section-header">
       <div>
@@ -245,7 +208,7 @@
       <a href="/map.html">Ouvrir la carte →</a>
     </div>
     <div style="border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring)">
-      <iframe title="Carte d’Estepona" src="map.html" loading="lazy" width="100%" height="420" style="display:block;border:0"></iframe>
+      <iframe title="Carte d’Estepona" src="map.html" loading="lazy" width="100%" height="420" style="border:0"></iframe>
     </div>
   </section>
 
@@ -257,7 +220,7 @@
         <p>Questions fréquentes pour préparer votre séjour</p>
       </div>
     </div>
-    <div class="accordion" id="faqList">
+    <div class="accordion">
       <div class="acc-item">
         <button class="acc-btn" aria-expanded="false">Quelle est la meilleure période pour venir ?</button>
         <div class="acc-panel">De mai à octobre pour la plage, avril et novembre pour la tranquillité.</div>
@@ -285,7 +248,7 @@
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#itin">Itinéraires</a></li>
+          <li><a href="#itin">Que faire</a></li>
         </ul>
       </div>
       <div>
@@ -311,10 +274,10 @@
     </div>
   </footer>
 
-  <!-- SCRIPT GLOBAL -->
+  <!-- SCRIPT -->
   <script>
-  // Accordéon FAQ + scroll fluide + animation au scroll + vidéo optimisée
   (function(){
+    // Accordéon FAQ
     const faqBtns = document.querySelectorAll(".acc-btn");
     faqBtns.forEach(btn=>{
       btn.addEventListener("click",()=>{
@@ -329,7 +292,11 @@
         }
       });
     });
+    // Recherche → défilement
     window.scrollToResult=function(){
       document.querySelector("#voir")?.scrollIntoView({behavior:"smooth"});
     };
-    document.addEventListener("click",e=>{
+  })();
+  </script>
+</body>
+</html>
