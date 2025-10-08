@@ -1,270 +1,346 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Que faire et que voir à Estepona | DSIHOTEL</title>
-  <meta name="description" content="Guide pratique : meilleures choses à faire et à voir à Estepona – centre historique, plages, Orquidarium, promenade maritime, murales, Selwo Aventura, randonnées, sorties en mer, conseils et itinéraires." />
-  <meta property="og:title" content="Que faire et que voir à Estepona" />
-  <meta property="og:description" content="Culture, nature, plages et idées d'itinéraires. Le meilleur d'Estepona en un coup d'œil." />
-  <meta property="og:type" content="article" />
-  <meta property="og:locale" content="fr_FR" />
-  <link rel="canonical" href="/estepona-que-faire-que-voir" />
-  <!-- IMPORTANT : Conserver les mêmes fichiers CSS/JS, en-tête et composants que index.html (charte DSIHOTEL). -->
-  <link rel="preload" href="/assets/fonts/primary.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Styles locaux supprimés pour respecter strictement la charte index.html. Toutes les couleurs, composants et classes proviennent désormais de la feuille de style globale. -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Que faire et que voir à Estepona",
-    "description": "Guide pratique des meilleures activités et sites à Estepona : centre historique, plages, Orquidarium, promenade maritime, murales, Selwo Aventura, randonnées, sorties en mer, conseils et itinéraires.",
-    "inLanguage": "fr-FR",
-    "mainEntity": {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {"@type":"Question","name":"Quelles sont les plages incontournables ?","acceptedAnswer":{"@type":"Answer","text":"Playa de la Rada (centrale et équipée) et Playa del Cristo (protégée, idéale en famille)."}},
-        {"@type":"Question","name":"Que voir dans le centre historique ?","acceptedAnswer":{"@type":"Answer","text":"La Plaza de las Flores, la Torre del Reloj, l’église Nª Sª de los Remedios et les ruelles fleuries."}},
-        {"@type":"Question","name":"Y a‑t‑il des activités nature ?","acceptedAnswer":{"@type":"Answer","text":"Oui : Orquidarium, promenade maritime, randonnées en Sierra Bermeja, observation des dauphins, parc Selwo Aventura."}}
-      ]
+  <title>Bons plans à Estepona — Guide local : quartiers, visites, restos</title>
+  <meta name="description" content="Le guide malin d’Estepona : vidéos, quartiers, visites, restaurants, itinéraires et carte interactive." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bons plans à Estepona — Guide local" />
+  <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
+
+  <!-- Assets globaux : on hérite intégralement des couleurs/styles d'index.html -->
+  <link rel="preload" href="/video/Video_Estepona.mp4" as="video" type="video/mp4" />
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css" />
+
+  <style>
+    /* Respect strict de la charte d'index.html :
+       - Les couleurs s'alignent sur les variables globales si elles existent (fallbacks fournis)
+       - Vous pouvez supprimer ce bloc dès que /styles.css expose les mêmes utilitaires/components
+    */
+    :root{
+      --brand: var(--color-brand, #0b3c49);
+      --brand-2: var(--color-brand-2, #e3f2ef);
+      --text: var(--color-text, #0e1115);
+      --muted: var(--color-muted, #6b7a85);
+      --card: var(--color-card, #ffffff);
+      --ring: var(--shadow-ring, 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08));
+      --radius: var(--radius-lg, 20px);
+      --bg: var(--color-bg, #f7faf9);
     }
-  }
-  </script>
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    a{color:var(--brand);text-decoration:none}
+    .container{max-width:1200px;margin:auto;padding:0 16px}
+
+    /* Header - remplacé par l'include exact d'index.html */
+    header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
+
+    /* Hero vidéo */
+    .hero{position:relative;isolation:isolate}
+    .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:contrast(1) brightness(0.9)}
+    .hero .overlay{padding:84px 0 96px}
+    .hero .content{color:#000}
+    .content-box{display:inline-block;background:rgba(255,255,255,.7);backdrop-filter:blur(4px);padding:18px 20px;border-radius:16px;box-shadow:var(--ring)}
+    .chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.5);padding:6px 10px;border-radius:999px;color:#000}
+    .title{font-size:clamp(28px,5vw,52px);line-height:1.05;margin:12px 0 10px;font-weight:800}
+    .subtitle{font-size:clamp(16px,2.2vw,20px);opacity:.95;max-width:800px}
+    .searchbar{display:flex;gap:8px;margin-top:18px;background:rgba(255,255,255,.9);padding:10px;border-radius:16px}
+    .searchbar input{flex:1;border:0;background:transparent;padding:10px 12px;font-size:16px}
+    .searchbar button{border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff}
+
+    /* Sections */
+    section{padding:40px 0}
+    .section-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:16px}
+    .section-header h2{font-size:28px;margin:0}
+    .section-header p{color:var(--muted);margin:6px 0 0}
+
+    /* Cards / grids */
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{grid-column:span 4;background:var(--card);border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring);display:flex;flex-direction:column}
+    .card img{width:100%;height:180px;object-fit:cover}
+    .card .body{padding:14px}
+    .card .body h3{margin:0 0 8px;font-size:18px}
+    .card .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+
+    /* Routes */
+    .route{grid-column:span 6;display:flex;gap:16px;background:#fff;border:1px solid #e7efec;border-radius:var(--radius);box-shadow:var(--ring);overflow:hidden}
+    .route img{width:44%;object-fit:cover}
+    .route .body{padding:14px}
+
+    /* Deals */
+    .deal{grid-column:span 4;background:var(--brand);color:#fff;border-radius:var(--radius);padding:18px}
+    .deal .cta{display:inline-block;margin-top:8px;background:#fff;color:var(--brand);padding:10px 14px;border-radius:12px;text-decoration:none}
+
+    /* FAQ */
+    .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
+    .acc-item+.acc-item{border-top:1px solid #e7efec}
+    .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px}
+    .acc-panel{display:none;padding:0 16px 16px;color:#334}
+
+    /* Footer (structure conservée, styles couleurs héritées) */
+    footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
+    footer a{color:inherit}
+
+    /* Map */
+    #mapEstepona{height:420px}
+
+    /* Responsive */
+    @media (max-width: 1000px){
+      .card{grid-column:span 6}
+      .route{grid-column:span 12}
+      footer .inner{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 640px){
+      .hero .overlay{padding:72px 0}
+      .card{grid-column:span 12}
+      .deal{grid-column:span 12}
+      .grid{gap:12px}
+    }
+  </style>
 </head>
 <body>
-  <!-- Reprendre le même header que index.html (logo DSIHOTEL, menu, CTA) -->
+  <!-- HEADER : même composant que index.html -->
   <header id="site-header">
-  <!-- Inclure exactement le même header que index.html -->
-  <!--#include virtual="/partials/header.html" -->
-</header>
+    <!--#include virtual="/partials/header.html" -->
+  </header>
 
-  <main id="content">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container">
-        <p class="eyebrow">Costa del Sol – Guide local</p>
-        <h1 class="title">Que faire et que voir à Estepona</h1>
-        <p class="lead">Culture andalouse, ruelles fleuries, plages familiales, nature préservée et œuvres murales géantes : voici l’essentiel pour planifier votre séjour.</p>
-        <div class="toc" aria-label="Navigation de la page">
-          <a class="btn" href="#incontournables">Incontournables</a>
-          <a class="btn" href="#culture">Culture & patrimoine</a>
-          <a class="btn" href="#nature">Nature & plein air</a>
-          <a class="btn" href="#itineraire">Itinéraires</a>
-          <a class="btn" href="#pratique">Conseils pratiques</a>
-          <a class="btn" href="#faq">FAQ</a>
+  <!-- HERO VIDEO -->
+  <section class="hero" aria-label="Introduction vidéo">
+    <video id="heroVideo" class="media" autoplay playsinline muted loop>
+      <source src="/video/Video_Estepona.mp4" type="video/mp4" />
+    </video>
+    <div class="overlay">
+      <div class="container content">
+        <span class="chip">Hola Estepona</span>
+        <div class="content-box">
+          <h1 class="title">Venez profiter d’Estepona</h1>
+          <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques. Tout ce qu’il faut pour un séjour réussi.</p>
         </div>
-        <div class="kpis" role="list" aria-label="Points forts">
-          <div class="kpi" role="listitem"><strong>+20</strong><br><span class="muted">murales urbaines</span></div>
-          <div class="kpi" role="listitem"><strong>2</strong><br><span class="muted">plages phares</span></div>
-          <div class="kpi" role="listitem"><strong>1</strong><br><span class="muted">Orquidarium unique</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- INCONTOURNABLES -->
-    <section id="incontournables" class="section">
-      <div class="container">
-        <h2>Les incontournables d’Estepona</h2>
-        <div class="grid grid-3" role="list">
-          <article class="card" role="listitem">
-            <span class="badge">Vieille ville</span>
-            <h3>Casco Antiguo</h3>
-            <p class="muted">Ruelles blanches fleuries, places conviviales et façades colorées : l’âme d’Estepona.</p>
-          </article>
-          <article class="card" role="listitem">
-            <span class="badge">Nature</span>
-            <h3>Orquidarium</h3>
-            <p class="muted">Serres tropicales, cascade intérieure et l’une des plus belles collections d’orchidées d’Andalousie.</p>
-          </article>
-          <article class="card" role="listitem">
-            <span class="badge">Bord de mer</span>
-            <h3>Paseo Marítimo</h3>
-            <p class="muted">Grande promenade littorale ponctuée de cafés, œuvres et aires de détente.</p>
-          </article>
-          <article class="card" role="listitem">
-            <span class="badge">Plages</span>
-            <h3>Playa de la Rada</h3>
-            <p class="muted">Large, centrale et bien équipée – parfaite pour une journée soleil & tapas.</p>
-          </article>
-          <article class="card" role="listitem">
-            <span class="badge">Famille</span>
-            <h3>Playa del Cristo</h3>
-            <p class="muted">Une crique abritée aux eaux calmes, idéale avec enfants.</p>
-          </article>
-          <article class="card" role="listitem">
-            <span class="badge">Street art</span>
-            <h3>Route des murales</h3>
-            <p class="muted">Itinéraire de fresques monumentales dans toute la ville (demandez la carte à l’office de tourisme).</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- CULTURE & PATRIMOINE -->
-    <section id="culture" class="section">
-      <div class="container grid grid-2">
-        <div>
-          <h2>Culture & patrimoine</h2>
-          <ul>
-            <li><strong>Plaza de las Flores</strong> – place centrale parfumée d’orangers, cafés et galeries.</li>
-            <li><strong>Torre del Reloj</strong> – vestige emblématique de l’ancienne église.</li>
-            <li><strong>Iglesia Nª Sª de los Remedios</strong> – édifice XVIIIᵉ, façade baroque.</li>
-            <li><strong>Museo Arqueológico</strong> (Casa del Aljibe) – histoire locale et collections.</li>
-            <li><strong>Casa de las Tejerinas / MAD</strong> – expositions d’art contemporain sur la Plaza de las Flores.</li>
-          </ul>
-        </div>
-        <div>
-          <figure class="media ratio-16x9 rounded-xl overflow-hidden shadow-sm">
-  <img src="/assets/img/estepona-casco-antiguo.jpg" alt="Ruelles fleuries du Casco Antiguo d’Estepona" loading="lazy" width="1280" height="720" />
-</figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- NATURE & PLEIN AIR -->
-    <section id="nature" class="section">
-      <div class="container grid grid-2">
-        <div>
-          <figure class="media ratio-16x9 rounded-xl overflow-hidden shadow-sm">
-  <img src="/assets/img/estepona-casco-antiguo.jpg" alt="Ruelles fleuries du Casco Antiguo d’Estepona" loading="lazy" width="1280" height="720" />
-</figure>
-        </div>
-        <div>
-          <h2>Nature & plein air</h2>
-          <ul>
-            <li><strong>Promenade maritime</strong> – sculptures, aires de jeux, cafés en bord de mer.</li>
-            <li><strong>Selwo Aventura</strong> – parc semi‑safari (2 000+ animaux) à la périphérie.</li>
-            <li><strong>Sierra Bermeja</strong> – randonnées vers le <em>Pico de los Realès</em>, vues sur Gibraltar et l’Afrique par temps clair.</li>
-            <li><strong>Golf & équitation</strong> – parcours réputés et École d’Art Équestre Costa del Sol.</li>
-            <li><strong>Sorties en mer</strong> – observation des dauphins et petites croisières depuis le port.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ITINÉRAIRES SUGGÉRÉS -->
-    <section id="itineraire" class="section">
-      <div class="container">
-        <h2>Idées d’itinéraires</h2>
-        <div class="grid grid-2">
-          <div class="card">
-            <h3>En 1 jour</h3>
-            <ol>
-              <li>Matin : balade dans le <strong>Casco Antiguo</strong> & <strong>Plaza de las Flores</strong>.</li>
-              <li>Midi : déjeuner tapas près de la <strong>Playa de la Rada</strong>.</li>
-              <li>Après‑midi : visite de l’<strong>Orquidarium</strong> puis coucher de soleil sur le <strong>Paseo Marítimo</strong>.</li>
-            </ol>
-          </div>
-          <div class="card">
-            <h3>En 2–3 jours</h3>
-            <ol>
-              <li>Jour 1 : centre historique, murales, musées.</li>
-              <li>Jour 2 : <strong>Selwo Aventura</strong> ou randonnée en <strong>Sierra Bermeja</strong>, plage du <strong>Cristo</strong>.</li>
-              <li>Jour 3 : sortie en mer (dauphins) + golf/équitation selon envies.</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONSEILS PRATIQUES -->
-    <section id="pratique" class="section">
-      <div class="container grid grid-2">
-        <div>
-          <h2>Conseils pratiques</h2>
-          <ul>
-            <li><strong>Carte des murales</strong> : disponible à l’office de tourisme.</li>
-            <li><strong>Horaires</strong> : certains musées ferment en milieu d’après‑midi (siesta).</li>
-            <li><strong>Gastronomie</strong> : fruits de mer, <em>pescaito frito</em>, tapas locales.</li>
-            <li><strong>Mobilité</strong> : centre facilement praticable à pied ou à vélo.</li>
-          </ul>
-          <a class="btn btn-primary" href="#contact">Demander un itinéraire personnalisé</a>
-        </div>
-        <div>
-          <div class="card">
-            <h3>Plan & accès</h3>
-            <div id="map" class="media" style="height:420px;">
-              <!-- Carte Leaflet intégrée -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="section">
-      <div class="container">
-        <h2>FAQ</h2>
-        <dl class="faq">
-          <dt>Quelles sont les meilleures plages ?</dt>
-          <dd>La <strong>Playa de la Rada</strong> (spacieuse, équipée) et la <strong>Playa del Cristo</strong> (protégée, idéale en famille).</dd>
-          <dt>Que voir absolument dans le centre ?</dt>
-          <dd>La <strong>Plaza de las Flores</strong>, la <strong>Torre del Reloj</strong>, l’<strong>église Nª Sª de los Remedios</strong> et les ruelles fleuries.</dd>
-          <dt>Quelles activités nature à proximité ?</dt>
-          <dd>L’<strong>Orquidarium</strong>, la <strong>promenade maritime</strong>, la <strong>Sierra Bermeja</strong>, les sorties en mer et le <strong>Selwo Aventura</strong>.</dd>
-        </dl>
-      </div>
-    </section>
-
-    <!-- CONTACT / CTA -->
-    <section id="contact" class="section">
-      <div class="container grid grid-2">
-        <div>
-          <h2>On organise votre séjour ?</h2>
-          <p class="muted">Besoin d’un programme sur‑mesure, de réservations d’activités ou d’un transfert aéroport ? Notre équipe s’occupe de tout.</p>
-          <a class="btn btn-primary" href="/contact">Contactez‑nous</a>
-        </div>
-        <form class="card" action="/api/lead" method="post" aria-label="Formulaire de contact rapide">
-          <label for="name">Nom</label>
-          <input id="name" name="name" type="text" required />
-          <label for="email">E‑mail</label>
-          <input id="email" name="email" type="email" required />
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" placeholder="Parlez‑nous de votre projet à Estepona…"></textarea>
-          <div class="form-row">
-            <label class="checkbox">
-              <input type="checkbox" name="consent" required />
-              <span>J’accepte que mes données soient utilisées pour me recontacter au sujet de ma demande. <a href="/politique-confidentialite" target="_blank" rel="noopener">Politique de confidentialité</a>.</span>
-            </label>
-          </div>
-          <input type="hidden" name="topic" value="Estepona" />
-          <input type="hidden" name="source" value="page_estepona" />
-          <button class="btn btn-primary" type="submit">Envoyer</button>
+        <form class="searchbar" role="search" action="/recherche" method="get" onsubmit="event.preventDefault(); scrollToResult()">
+          <input type="search" name="q" placeholder="Rechercher : Animations, vieille ville, tapas…" aria-label="Rechercher dans le site" />
+          <button type="submit">Rechercher</button>
         </form>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <!-- Reprendre le même footer que index.html -->
+  <!-- À VOIR / À FAIRE -->
+  <section id="voir" class="container">
+    <div class="section-header">
+      <div>
+        <h2>À voir / À faire</h2>
+        <p>Nos lieux et activités immanquables à Estepona</p>
+      </div>
+      <a href="#" aria-label="Voir toutes les catégories">Tout voir →</a>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <img src="/img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" loading="lazy" />
+        <div class="body">
+          <h3>Vieille ville & fresques</h3>
+          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés, à la chasse aux fresques murales.</p>
+          <div class="meta">⏱️ 2–3 h · Gratuit</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="/img/aquerelle_paseo.png" alt="Plage et paseo marítimo" loading="lazy" />
+        <div class="body">
+          <h3>Plages & paseo marítimo</h3>
+          <p>Des kilomètres de sable avec chiringuitos, douches, jeux enfants et un paseo idéal à vélo.</p>
+          <div class="meta">☀️ Idéal familles</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="/img/News_Actualite_Estepona.png" alt="Actualités d’Estepona" loading="lazy" />
+        <div class="body">
+          <h3>Actualité Estepona</h3>
+          <p>Toutes les actualités sur Estepona</p>
+          <div class="meta"></div>
+          <a class="cta" href="/Actualites.html">Actualité</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- RESTAURANTS -->
+  <section id="manger" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Restaurants & Chiringuitos</h2>
+        <p>Nos bonnes adresses triées par budget et quartier</p>
+      </div>
+      <a href="#">Tous les restos →</a>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <img src="/img/restaurant.png" alt="Bar à tapas" loading="lazy" />
+        <div class="body">
+          <h3>Chiringuitos</h3>
+          <p>Les chiringuitos de plage d’Estepona.</p>
+          <div class="meta">€ · Playa</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="/img/paella.jpg" alt="Paella en bord de mer" loading="lazy" />
+        <div class="body">
+          <h3>Paella face mer</h3>
+          <p>Chiringuitos conviviaux sur la plage pour un déjeuner au soleil.</p>
+          <div class="meta">€€ · Playa</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="/img/rooftop.jpg" alt="Rooftop avec vue" loading="lazy" />
+        <div class="body">
+          <h3>Rooftops & cocktails</h3>
+          <p>Pour admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
+          <div class="meta">€€€ · Port</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- BILLETS & ACTIVITÉS -->
+  <section id="billets" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Billets & activités</h2>
+        <p>Réservez vos incontournables au meilleur prix</p>
+      </div>
+      <a href="#">Voir tout →</a>
+    </div>
+    <div class="grid">
+      <div class="deal">
+        <h3>⚓ Sortie bateau dauphins</h3>
+        <p>2 h en mer avec boisson incluse. Départs du port d’Estepona.</p>
+        <a class="cta" href="#">Réserver</a>
+      </div>
+      <div class="deal">
+        <h3>🎟️ Selwo Aventura</h3>
+        <p>Entrée datée avec coupe-file. Options famille disponibles.</p>
+        <a class="cta" href="https://www.selwo.es/">Réserver</a>
+      </div>
+      <div class="deal">
+        <h3>🚲 Location vélos</h3>
+        <p>VAE ou classiques. Parfait pour le paseo marítimo.</p>
+        <a class="cta" href="https://www.getyourguide.com/fr-fr/-l2164/-tc49/?cmp=bing&ad_id=77996819431611&adgroup_id=1247947030403829&bid_match_type=be&campaign_id=710111877&device=c&feed_item_id=&keyword=estepona+delfines%21&loc_interest_ms=164642&loc_physical_ms=164642&match_type=e&msclkid=20bb06acded41361b5d86e6e63f708b1&network=o&partner_id=CD951&target_id=kwd-77997058990356%3Aloc-170&utm_adgroup=lc%3D2164%3Aestepona%7Cfn%3Df4%7Cci%3D1120%3Adolphin+tour&utm_campaign=dc%3D21%3Aes%7Clc%3D2164%3Aestepona%7Cct%3Dcore%7Cln%3D109%3Aes%7Ctc%3Dall&utm_keyword=estepona+delfines%21&utm_medium=paid_search&utm_query=dolphin+estepona&utm_source=bing&visitor-id=LAL95Z6BC7IGA5COPH6RWLIQCIPVE0NS&locale_autoredirect_optout=true">Réserver</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ITINÉRAIRES -->
+  <section id="itin" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Itinéraires prêts à l’emploi</h2>
+        <p>Optimisez votre temps selon la durée de votre séjour</p>
+      </div>
+      <a href="#">Tous les itinéraires →</a>
+    </div>
+    <div class="grid">
+      <article class="route">
+        <img src="/img/1j.jpg" alt="Itinéraire 1 jour" loading="lazy" />
+        <div class="body">
+          <h3>Estepona en 1 jour</h3>
+          <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
+          <a href="#">Voir le détail →</a>
+        </div>
+      </article>
+      <article class="route">
+        <img src="/img/3j.jpg" alt="Itinéraire 3 jours" loading="lazy" />
+        <div class="body">
+          <h3>Weekend prolongé (3 jours)</h3>
+          <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
+          <a href="#">Voir le détail →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CARTE DES QUARTIERS (Leaflet) -->
+  <section id="carte" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Carte des quartiers</h2>
+        <p>Retrouvez nos zones conseillées (indicatives) : centre, plage, port, environs</p>
+      </div>
+      <a href="/map.html">Ouvrir la carte →</a>
+    </div>
+    <div style="border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring)">
+      <div id="mapEstepona"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT / LEAD -->
+  <section id="contact" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Un itinéraire sur‑mesure ?</h2>
+        <p>Nous vous répondons sous 24 h (hors week‑end)</p>
+      </div>
+    </div>
+    <form class="grid card" action="/api/lead" method="post" style="grid-template-columns:repeat(12,1fr);padding:16px;gap:16px">
+      <div style="grid-column:span 6">
+        <label for="name">Nom</label>
+        <input id="name" name="name" type="text" required />
+      </div>
+      <div style="grid-column:span 6">
+        <label for="email">E‑mail</label>
+        <input id="email" name="email" type="email" required />
+      </div>
+      <div style="grid-column:span 12">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" placeholder="Dates, centres d’intérêt, budget…"></textarea>
+      </div>
+      <div style="grid-column:span 12">
+        <label class="checkbox" style="display:flex;gap:10px;align-items:start">
+          <input type="checkbox" name="consent" required />
+          <span>J’accepte que mes données soient utilisées pour me recontacter au sujet de ma demande. <a href="/politique-confidentialite" target="_blank" rel="noopener">Politique de confidentialité</a>.</span>
+        </label>
+      </div>
+      <input type="hidden" name="topic" value="Estepona" />
+      <input type="hidden" name="source" value="page_bons_plans_estepona" />
+      <div style="grid-column:span 12;display:flex;gap:10px;justify-content:flex-end">
+        <button type="submit" class="cta">Envoyer</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- FOOTER : même composant que index.html -->
   <footer id="site-footer">
-  <!-- Inclure exactement le même footer que index.html -->
-  <!--#include virtual="/partials/footer.html" -->
-</footer>
+    <!--#include virtual="/partials/footer.html" -->
+  </footer>
 
-  <!-- Scripts de votre thème (réutiliser ceux d'index.html) -->
-  <script>
-    // Exemple: ancrage doux (si pas déjà dans le bundle global)
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'});} });
-    });
-  </script>
-  <!-- Librairies Leaflet (carte) -->
+  <!-- Leaflet (CDN) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
-  <!-- Scripts de votre thème (réutiliser ceux d'index.html) -->
+
   <script>
-    // Ancrage doux (si absent du bundle global)
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'});} });
+    // Recherche : simple scroll vers la première section de résultats
+    function scrollToResult(){
+      const el = document.querySelector('#voir');
+      if(el) el.scrollIntoView({behavior:'smooth'});
+    }
+
+    // FAQ Accordéon accessible
+    document.querySelectorAll('.acc-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        const panel = btn.nextElementSibling; panel.style.display = expanded ? 'none' : 'block';
+      });
     });
 
-    // Initialisation Leaflet
+    // Carte Leaflet + POI
     (function(){
-      const mapEl = document.getElementById('map');
+      const mapEl = document.getElementById('mapEstepona');
       if(!mapEl) return;
-      const map = L.map('map', { scrollWheelZoom:false }).setView([36.4270, -5.1450], 13);
+      const map = L.map('mapEstepona', { scrollWheelZoom:false }).setView([36.4270, -5.1450], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(map);
-
       const poi = [
         {name:'Plaza de las Flores', coords:[36.42594,-5.14576]},
         {name:'Orquidarium', coords:[36.42762,-5.14767]},
@@ -272,9 +348,7 @@
         {name:'Playa del Cristo', coords:[36.41643,-5.16709]},
         {name:'Selwo Aventura', coords:[36.46655,-5.09370]},
         {name:'Torre del Reloj', coords:[36.42639,-5.14618]},
-        {name:'Iglesia Nª Sª de los Remedios', coords:[36.42691,-5.14634]},
-        {name:'Museo Arqueológico (Casa del Aljibe)', coords:[36.42657,-5.14673]},
-        {name:'Casa de las Tejerinas / MAD', coords:[36.42595,-5.14573]}
+        {name:'Église Nª Sª de los Remedios', coords:[36.42691,-5.14634]}
       ];
       poi.forEach(p=> L.marker(p.coords).addTo(map).bindPopup('<strong>'+p.name+'</strong>'));
     })();
