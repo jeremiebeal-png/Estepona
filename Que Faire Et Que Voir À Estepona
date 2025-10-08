@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Que faire et que voir à Estepona | DSIHOTEL</title>
+  <meta name="description" content="Guide pratique : meilleures choses à faire et à voir à Estepona – centre historique, plages, Orquidarium, promenade maritime, murales, Selwo Aventura, randonnées, sorties en mer, conseils et itinéraires." />
+  <meta property="og:title" content="Que faire et que voir à Estepona" />
+  <meta property="og:description" content="Culture, nature, plages et idées d'itinéraires. Le meilleur d'Estepona en un coup d'œil." />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="fr_FR" />
+  <link rel="canonical" href="/estepona-que-faire-que-voir" />
+  <!-- IMPORTANT : Conserver les mêmes fichiers CSS/JS, en-tête et composants que index.html (charte DSIHOTEL). -->
+  <link rel="preload" href="/assets/fonts/primary.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* NOTE: N'utilisez pas ce bloc si vos styles globaux existent déjà. Il sert seulement de secours.
+       Respect de la charte : classes utilitaires et composants existants (.container, .btn, .grid, .card, etc.) */
+    :root { --accent:#0ea5e9; --bg:#fff; --text:#0f172a; --muted:#475569; }
+    .hero{padding:6rem 0 3rem;background:linear-gradient(180deg, rgba(14,165,233,.08), transparent)}
+    .container{max-width:1100px;margin:0 auto;padding:0 1rem}
+    .eyebrow{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+    .title{font-size:clamp(1.8rem,3.5vw,2.6rem);line-height:1.15;margin:.4rem 0 1rem}
+    .lead{color:var(--muted);font-size:1.05rem}
+    .btn{display:inline-block;padding:.85rem 1.1rem;border-radius:999px;border:1px solid var(--accent)}
+    .btn-primary{background:var(--accent);color:#fff}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+    .kpi{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:1rem;text-align:center}
+    .section{padding:3.5rem 0}
+    .grid{display:grid;gap:1.25rem}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.1rem}
+    .card h3{margin:.2rem 0 .6rem;font-size:1.1rem}
+    .muted{color:var(--muted)}
+    .badge{display:inline-block;background:#f1f5f9;color:#0f172a;border-radius:999px;padding:.2rem .6rem;font-size:.85rem}
+    .toc{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+    .toc a{font-size:.95rem}
+    .media{aspect-ratio:16/9;background:#e2e8f0;border-radius:16px;display:grid;place-items:center;color:#64748b}
+    .faq dt{font-weight:600;margin-top:1rem}
+    .faq dd{margin:0 0 1rem}
+    @media (max-width:900px){.grid-2,.grid-3,.kpis{grid-template-columns:1fr}}
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Que faire et que voir à Estepona",
+    "description": "Guide pratique des meilleures activités et sites à Estepona : centre historique, plages, Orquidarium, promenade maritime, murales, Selwo Aventura, randonnées, sorties en mer, conseils et itinéraires.",
+    "inLanguage": "fr-FR",
+    "mainEntity": {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"Quelles sont les plages incontournables ?","acceptedAnswer":{"@type":"Answer","text":"Playa de la Rada (centrale et équipée) et Playa del Cristo (protégée, idéale en famille)."}},
+        {"@type":"Question","name":"Que voir dans le centre historique ?","acceptedAnswer":{"@type":"Answer","text":"La Plaza de las Flores, la Torre del Reloj, l’église Nª Sª de los Remedios et les ruelles fleuries."}},
+        {"@type":"Question","name":"Y a‑t‑il des activités nature ?","acceptedAnswer":{"@type":"Answer","text":"Oui : Orquidarium, promenade maritime, randonnées en Sierra Bermeja, observation des dauphins, parc Selwo Aventura."}}
+      ]
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Reprendre le même header que index.html (logo DSIHOTEL, menu, CTA) -->
+  <header id="site-header"><!-- include/header.html --></header>
+
+  <main id="content">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow">Costa del Sol – Guide local</p>
+        <h1 class="title">Que faire et que voir à Estepona</h1>
+        <p class="lead">Culture andalouse, ruelles fleuries, plages familiales, nature préservée et œuvres murales géantes : voici l’essentiel pour planifier votre séjour.</p>
+        <div class="toc" aria-label="Navigation de la page">
+          <a class="btn" href="#incontournables">Incontournables</a>
+          <a class="btn" href="#culture">Culture & patrimoine</a>
+          <a class="btn" href="#nature">Nature & plein air</a>
+          <a class="btn" href="#itineraire">Itinéraires</a>
+          <a class="btn" href="#pratique">Conseils pratiques</a>
+          <a class="btn" href="#faq">FAQ</a>
+        </div>
+        <div class="kpis" role="list" aria-label="Points forts">
+          <div class="kpi" role="listitem"><strong>+20</strong><br><span class="muted">murales urbaines</span></div>
+          <div class="kpi" role="listitem"><strong>2</strong><br><span class="muted">plages phares</span></div>
+          <div class="kpi" role="listitem"><strong>1</strong><br><span class="muted">Orquidarium unique</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INCONTOURNABLES -->
+    <section id="incontournables" class="section">
+      <div class="container">
+        <h2>Les incontournables d’Estepona</h2>
+        <div class="grid grid-3" role="list">
+          <article class="card" role="listitem">
+            <span class="badge">Vieille ville</span>
+            <h3>Casco Antiguo</h3>
+            <p class="muted">Ruelles blanches fleuries, places conviviales et façades colorées : l’âme d’Estepona.</p>
+          </article>
+          <article class="card" role="listitem">
+            <span class="badge">Nature</span>
+            <h3>Orquidarium</h3>
+            <p class="muted">Serres tropicales, cascade intérieure et l’une des plus belles collections d’orchidées d’Andalousie.</p>
+          </article>
+          <article class="card" role="listitem">
+            <span class="badge">Bord de mer</span>
+            <h3>Paseo Marítimo</h3>
+            <p class="muted">Grande promenade littorale ponctuée de cafés, œuvres et aires de détente.</p>
+          </article>
+          <article class="card" role="listitem">
+            <span class="badge">Plages</span>
+            <h3>Playa de la Rada</h3>
+            <p class="muted">Large, centrale et bien équipée – parfaite pour une journée soleil & tapas.</p>
+          </article>
+          <article class="card" role="listitem">
+            <span class="badge">Famille</span>
+            <h3>Playa del Cristo</h3>
+            <p class="muted">Une crique abritée aux eaux calmes, idéale avec enfants.</p>
+          </article>
+          <article class="card" role="listitem">
+            <span class="badge">Street art</span>
+            <h3>Route des murales</h3>
+            <p class="muted">Itinéraire de fresques monumentales dans toute la ville (demandez la carte à l’office de tourisme).</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CULTURE & PATRIMOINE -->
+    <section id="culture" class="section">
+      <div class="container grid grid-2">
+        <div>
+          <h2>Culture & patrimoine</h2>
+          <ul>
+            <li><strong>Plaza de las Flores</strong> – place centrale parfumée d’orangers, cafés et galeries.</li>
+            <li><strong>Torre del Reloj</strong> – vestige emblématique de l’ancienne église.</li>
+            <li><strong>Iglesia Nª Sª de los Remedios</strong> – édifice XVIIIᵉ, façade baroque.</li>
+            <li><strong>Museo Arqueológico</strong> (Casa del Aljibe) – histoire locale et collections.</li>
+            <li><strong>Casa de las Tejerinas / MAD</strong> – expositions d’art contemporain sur la Plaza de las Flores.</li>
+          </ul>
+        </div>
+        <div>
+          <figure class="media" aria-label="Image d'illustration">
+            <!-- Remplacer par votre image/visuel conforme à la charte -->
+            <span>Visuel culture / galerie</span>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- NATURE & PLEIN AIR -->
+    <section id="nature" class="section">
+      <div class="container grid grid-2">
+        <div>
+          <figure class="media" aria-label="Image d'illustration">
+            <!-- Remplacer par votre image/visuel conforme à la charte -->
+            <span>Visuel plage / nature</span>
+          </figure>
+        </div>
+        <div>
+          <h2>Nature & plein air</h2>
+          <ul>
+            <li><strong>Promenade maritime</strong> – sculptures, aires de jeux, cafés en bord de mer.</li>
+            <li><strong>Selwo Aventura</strong> – parc semi‑safari (2 000+ animaux) à la périphérie.</li>
+            <li><strong>Sierra Bermeja</strong> – randonnées vers le <em>Pico de los Realès</em>, vues sur Gibraltar et l’Afrique par temps clair.</li>
+            <li><strong>Golf & équitation</strong> – parcours réputés et École d’Art Équestre Costa del Sol.</li>
+            <li><strong>Sorties en mer</strong> – observation des dauphins et petites croisières depuis le port.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ITINÉRAIRES SUGGÉRÉS -->
+    <section id="itineraire" class="section">
+      <div class="container">
+        <h2>Idées d’itinéraires</h2>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>En 1 jour</h3>
+            <ol>
+              <li>Matin : balade dans le <strong>Casco Antiguo</strong> & <strong>Plaza de las Flores</strong>.</li>
+              <li>Midi : déjeuner tapas près de la <strong>Playa de la Rada</strong>.</li>
+              <li>Après‑midi : visite de l’<strong>Orquidarium</strong> puis coucher de soleil sur le <strong>Paseo Marítimo</strong>.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>En 2–3 jours</h3>
+            <ol>
+              <li>Jour 1 : centre historique, murales, musées.</li>
+              <li>Jour 2 : <strong>Selwo Aventura</strong> ou randonnée en <strong>Sierra Bermeja</strong>, plage du <strong>Cristo</strong>.</li>
+              <li>Jour 3 : sortie en mer (dauphins) + golf/équitation selon envies.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONSEILS PRATIQUES -->
+    <section id="pratique" class="section">
+      <div class="container grid grid-2">
+        <div>
+          <h2>Conseils pratiques</h2>
+          <ul>
+            <li><strong>Carte des murales</strong> : disponible à l’office de tourisme.</li>
+            <li><strong>Horaires</strong> : certains musées ferment en milieu d’après‑midi (siesta).</li>
+            <li><strong>Gastronomie</strong> : fruits de mer, <em>pescaito frito</em>, tapas locales.</li>
+            <li><strong>Mobilité</strong> : centre facilement praticable à pied ou à vélo.</li>
+          </ul>
+          <a class="btn btn-primary" href="#contact">Demander un itinéraire personnalisé</a>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Plan & accès</h3>
+            <p class="muted">Intégrez ici votre carte (Google Maps / Leaflet) avec les points d’intérêt ci‑dessus.</p>
+            <div class="media" aria-label="Carte"><span>Emplacement carte</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <dl class="faq">
+          <dt>Quelles sont les meilleures plages ?</dt>
+          <dd>La <strong>Playa de la Rada</strong> (spacieuse, équipée) et la <strong>Playa del Cristo</strong> (protégée, idéale en famille).</dd>
+          <dt>Que voir absolument dans le centre ?</dt>
+          <dd>La <strong>Plaza de las Flores</strong>, la <strong>Torre del Reloj</strong>, l’<strong>église Nª Sª de los Remedios</strong> et les ruelles fleuries.</dd>
+          <dt>Quelles activités nature à proximité ?</dt>
+          <dd>L’<strong>Orquidarium</strong>, la <strong>promenade maritime</strong>, la <strong>Sierra Bermeja</strong>, les sorties en mer et le <strong>Selwo Aventura</strong>.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- CONTACT / CTA -->
+    <section id="contact" class="section">
+      <div class="container grid grid-2">
+        <div>
+          <h2>On organise votre séjour ?</h2>
+          <p class="muted">Besoin d’un programme sur‑mesure, de réservations d’activités ou d’un transfert aéroport ? Notre équipe s’occupe de tout.</p>
+          <a class="btn btn-primary" href="/contact">Contactez‑nous</a>
+        </div>
+        <form class="card" action="/lead" method="post" aria-label="Formulaire de contact rapide">
+          <label for="name">Nom</label>
+          <input id="name" name="name" type="text" required />
+          <label for="email">E‑mail</label>
+          <input id="email" name="email" type="email" required />
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Parlez‑nous de votre projet à Estepona…"></textarea>
+          <button class="btn btn-primary" type="submit">Envoyer</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Reprendre le même footer que index.html -->
+  <footer id="site-footer"><!-- include/footer.html --></footer>
+
+  <!-- Scripts de votre thème (réutiliser ceux d'index.html) -->
+  <script>
+    // Exemple: ancrage doux (si pas déjà dans le bundle global)
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'});} });
+    });
+  </script>
+</body>
+</html>
