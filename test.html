@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Que faire à Estepona — Incontournables, culture, nature, itinéraires</title>
+  <meta name="description" content="Toutes les idées pour profiter d’Estepona : incontournables, culture & patrimoine, nature & plein air, itinéraires et conseils pratiques." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Que faire à Estepona — Guide local" />
+  <meta property="og:description" content="Incontournables, culture, nature, itinéraires et conseils pratiques pour découvrir Estepona." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
+
+  <!-- Styles globaux -->
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css" />
+
+  <style>
+    :root{
+      --brand:#0b3c49; --brand-2:#e3f2ef; --text:#0e1115; --muted:#6b7a85; --card:#ffffff;
+      --ring: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08);
+      --radius: 20px;
+    }
+    html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    a{color:var(--brand);text-decoration:none}
+    .container{max-width:1100px;margin:auto;padding:0 16px}
+
+    /* Header (cohérent avec l’index) */
+    header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
+    header .inner{display:flex;align-items:center;gap:16px;justify-content:space-between;height:64px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo img{height:40px;width:auto}
+    nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
+    nav a{padding:8px 12px;border-radius:12px}
+    nav a:hover, nav a.active{background:#eef6f4}
+
+    /* Hero local */
+    .hero-mini{background:linear-gradient(180deg, #eaf5f2, #f7faf9);border-bottom:1px solid #e9f1ef}
+    .hero-mini .inner{padding:36px 0}
+    .kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e7efec;border-radius:999px;padding:6px 12px;box-shadow:var(--ring)}
+    h1{font-size:clamp(26px,4.5vw,40px);margin:12px 0 6px}
+    .sub{color:#51626e}
+
+    /* Sommaire / filtres */
+    .toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px}
+    .toc a{display:inline-block;padding:8px 12px;border:1px solid #e0ebe8;border-radius:999px;background:#fff}
+    .toc a:hover{background:#eef6f4}
+    .filterbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 24px}
+    .filterbar button{border:1px solid #dbe8e4;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
+    .filterbar button[aria-pressed="true"]{background:#0b3c49;color:#fff;border-color:#0b3c49}
+
+    /* Sections + cartes */
+    section{padding:28px 0}
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .section-header h2{margin:0;font-size:24px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .card{grid-column:span 6;background:var(--card);border:1px solid #e7efec;border-radius:var(--radius);box-shadow:var(--ring);padding:14px}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .badge{display:inline-block;margin-bottom:8px;font-size:12px;color:#50636d;background:#e9f3f1;border:1px solid #d8e7e3;border-radius:999px;padding:4px 8px}
+    .list{margin:0;padding-left:18px}
+    .list li{margin:6px 0}
+    .note{color:#6b7a85;font-size:14px;margin-top:6px}
+
+    /* Itinéraires en encadré */
+    .callout{background:#fff;border:1px dashed #cfe1dc;border-radius:16px;padding:16px;box-shadow:var(--ring)}
+
+    /* Accordéons (conseils pratiques) */
+    .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
+    .acc-item + .acc-item{border-top:1px solid #e7efec}
+    .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:14px 16px;font-size:16px;cursor:pointer}
+    .acc-panel{display:none;padding:0 16px 16px;color:#334}
+
+    /* Footer */
+    footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
+    footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
+    footer a{color:#cfe1dc}
+    footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
+
+    /* Responsive */
+    @media (max-width: 920px){
+      .card{grid-column:span 12}
+      footer .inner{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 640px){
+      nav ul{display:none}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="site">
+    <div class="container inner">
+      <div class="logo">
+        <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
+        <span>Estepona — Bons plans</span>
+      </div>
+      <nav aria-label="Navigation principale">
+        <ul>
+          <li><a href="/index.html#voir">À voir</a></li>
+          <li><a href="/index.html#manger">Restaurants</a></li>
+          <li><a href="/quefaire.html" class="active" aria-current="page">Que faire</a></li>
+          <li><a href="/index.html#faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO MINI -->
+  <section class="hero-mini">
+    <div class="container inner">
+      <span class="kicker">🎯 Guide local</span>
+      <h1>Que faire à Estepona</h1>
+      <p class="sub">Incontournables, culture & patrimoine, nature & plein air, itinéraires suggérés et conseils pratiques.</p>
+      <div class="toc" aria-label="Sommaire">
+        <a href="#incontournables">Incontournables</a>
+        <a href="#culture">Culture & patrimoine</a>
+        <a href="#nature">Nature & plein air</a>
+        <a href="#itineraires">Itinéraires suggérés</a>
+        <a href="#conseils">Conseils pratiques</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" id="content">
+    <!-- FILTRES (catégories) -->
+    <div class="filterbar" role="toolbar" aria-label="Filtres">
+      <button type="button" class="filter" data-target="incontournables" aria-pressed="true">Incontournables</button>
+      <button type="button" class="filter" data-target="culture" aria-pressed="false">Culture</button>
+      <button type="button" class="filter" data-target="nature" aria-pressed="false">Nature</button>
+      <button type="button" class="filter" data-target="itineraires" aria-pressed="false">Itinéraires</button>
+      <button type="button" class="filter" data-target="all" aria-pressed="false">Tout afficher</button>
+    </div>
+
+    <!-- INCONTOURNABLES -->
+    <section id="incontournables" data-section="incontournables">
+      <div class="section-header">
+        <h2>Incontournables</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">Casco Antiguo</span>
+          <h3>Ruelles blanches & façades fleuries</h3>
+          <ul class="list">
+            <li>Casco Antiguo — ruelles blanches fleuries, places conviviales et façades colorées.</li>
+            <li>Route des murales — fresques monumentales à découvrir dans toute la ville.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="badge">Jardin & musée vivant</span>
+          <h3>Orquidarium</h3>
+          <ul class="list">
+            <li>Orquidarium — serres tropicales, cascade intérieure et superbe collection d’orchidées.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="badge">Bord de mer</span>
+          <h3>Paseo & plages</h3>
+          <ul class="list">
+            <li>Paseo Marítimo — longue promenade littorale ponctuée de cafés et d’aires de jeux.</li>
+            <li>Playa de la Rada — grande plage centrale et bien équipée.</li>
+            <li>Playa del Cristo — crique abritée aux eaux calmes, parfaite en famille.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- CULTURE -->
+    <section id="culture" data-section="culture">
+      <div class="section-header">
+        <h2>Culture & patrimoine</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">Centre historique</span>
+          <h3>Places & monuments</h3>
+          <ul class="list">
+            <li>Plaza de las Flores — place centrale bordée de cafés et galeries.</li>
+            <li>Torre del Reloj — vestige emblématique de l’ancienne église.</li>
+            <li>Iglesia Nª Sª de los Remedios — édifice du XVIIIᵉ, façade baroque.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="badge">Musées</span>
+          <h3>Collections & expositions</h3>
+          <ul class="list">
+            <li>Museo Arqueológico (Casa del Aljibe) — collections d’histoire locale.</li>
+            <li>Casa de las Tejerinas / MAD — expositions d’art contemporain.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- NATURE -->
+    <section id="nature" data-section="nature">
+      <div class="section-header">
+        <h2>Nature & plein air</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">Parcs & faune</span>
+          <h3>Selwo & sorties marines</h3>
+          <ul class="list">
+            <li>Selwo Aventura — parc semi-safari (2 000+ animaux) à la périphérie.</li>
+            <li>Sorties en mer — observation des dauphins, petites croisières depuis le port.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="badge">Montagne</span>
+          <h3>Sierra Bermeja</h3>
+          <ul class="list">
+            <li>Sierra Bermeja — randonnées vers le Pico de los Realès, vues sur Gibraltar.</li>
+            <li>Golf & équitation — parcours réputés et École d’Art Équestre Costa del Sol.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ITINÉRAIRES -->
+    <section id="itineraires" data-section="itineraires">
+      <div class="section-header">
+        <h2>Itinéraires suggérés</h2>
+      </div>
+      <div class="callout">
+        <h3 style="margin-top:0">Propositions simples</h3>
+        <ul class="list">
+          <li>1 jour — Casco Antiguo & Plaza de las Flores → déjeuner près de la Rada → Orquidarium → coucher de soleil sur le paseo.</li>
+          <li>2–3 jours — Jour 1 : centre historique & murales · Jour 2 : Selwo ou Sierra Bermeja + plage du Cristo · Jour 3 : sortie en mer + golf/équitation selon envies.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONSEILS -->
+    <section id="conseils" data-section="conseils">
+      <div class="section-header">
+        <h2>Conseils pratiques</h2>
+      </div>
+
+      <div class="accordion" id="tips">
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false">Carte & horaires</button>
+          <div class="acc-panel">
+            <ul class="list">
+              <li>Carte des murales à récupérer à l’office de tourisme.</li>
+              <li>Horaires — certains musées ferment en milieu d’après-midi (siesta).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false">Gastronomie</button>
+          <div class="acc-panel">
+            <ul class="list">
+              <li>Gastronomie — fruits de mer, pescaito frito, tapas locales.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false">Mobilité</button>
+          <div class="acc-panel">
+            <ul class="list">
+              <li>Mobilité — centre praticable à pied ou à vélo.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">Astuce : pensez à réserver en haute saison (été, week-ends prolongés) pour les activités populaires.</p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container inner">
+      <div>
+        <h3>Estepona — Bons plans</h3>
+        <p>Le guide local et indépendant pour découvrir Estepona facilement.</p>
+      </div>
+      <div>
+        <h4>Découvrir</h4>
+        <ul>
+          <li><a href="/index.html#voir">À voir</a></li>
+          <li><a href="/index.html#manger">Restaurants</a></li>
+          <li><a href="/quefaire.html">Que faire</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infos utiles</h4>
+        <ul>
+          <li><a href="/map.html">Carte</a></li>
+          <li><a href="/index.html#faq">FAQ</a></li>
+          <li><a href="#">Mentions légales</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Suivez-nous</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container bottom">
+      © 2025 Bons Plans Estepona · Guide local indépendant
+    </div>
+  </footer>
+
+  <!-- Script : filtres, ancre douce, accordéons -->
+  <script>
+    // Défilement fluide pour le sommaire
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (id.length < 2) return;
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.pushState(null, "", id);
+      }
+    });
+
+    // Filtres simples par section
+    const buttons = document.querySelectorAll(".filterbar .filter");
+    const sections = document.querySelectorAll("main [data-section]");
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        const target = btn.dataset.target;
+        sections.forEach(sec => {
+          if (target === "all" || sec.dataset.section === target) {
+            sec.style.display = "";
+          } else {
+            sec.style.display = "none";
+          }
+        });
+        // scroll up to header of the shown section (if not "all")
+        if (target !== "all") {
+          const first = document.querySelector('[data-section="'+target+'"]');
+          first && first.scrollIntoView({behavior:"smooth", block:"start"});
+        }
+      });
+    });
+
+    // Accordéons (Conseils pratiques)
+    const accBtns = document.querySelectorAll(".acc-btn");
+    accBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        accBtns.forEach(b => {
+          b.setAttribute("aria-expanded", "false");
+          b.nextElementSibling.style.display = "none";
+        });
+        if (!expanded) {
+          btn.setAttribute("aria-expanded", "true");
+          btn.nextElementSibling.style.display = "block";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
