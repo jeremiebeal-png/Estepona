@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+tep<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -17,14 +17,13 @@
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css" />
 
-  <!-- Charte exacte d'index.html -->
   <style>
     :root{
       --brand:#0b3c49; --brand-2:#e3f2ef; --text:#0e1115; --muted:#6b7a85; --card:#ffffff;
       --ring: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08);
       --radius: 20px;
     }
-    html,body{margin:0;padding:0;background:#eef6f4;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     a{color:var(--brand);text-decoration:none}
     .container{max-width:1200px;margin:auto;padding:0 16px}
 
@@ -35,7 +34,7 @@
     .logo img{height:40px;width:auto}
     nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
     nav a{padding:8px 12px;border-radius:12px}
-    nav a:hover{background:#e3f2ef}
+    nav a:hover{background:#eef6f4}
 
     /* Hero vidéo */
     .hero{position:relative;isolation:isolate}
@@ -80,7 +79,7 @@
     .acc-panel{display:none;padding:0 16px 16px;color:#334}
 
     /* Footer */
-    footer{margin-top:40px;background:#0b3c49;color:#e3f2ef}
+    footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
     footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
     footer a{color:#cfe1dc}
     footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
@@ -101,25 +100,29 @@
   </style>
 </head>
 <body>
-  <!-- HEADER (identique à index) -->
+  <!-- HEADER -->
   <header class="site">
     <div class="container inner">
       <div class="logo">
-        <img src="/img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
+        <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
         <span>Estepona — Bons plans</span>
       </div>
       <nav aria-label="Navigation principale">
         <ul>
+          <li><a href="#voir">À voir</a></li>
+          <li><a href="#manger">Restaurants</a></li>
+          <li><a href="#billets">Billets</a></li>
+          <li><a href="#itin">Itinéraires</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- HERO VIDEO (mêmes styles, chemin vidéo unifié) -->
+  <!-- HERO VIDEO -->
   <section class="hero" aria-label="Introduction vidéo">
     <video id="heroVideo" class="media" autoplay playsinline muted loop>
-      <source src="/video/Video_Estepona.mp4" type="video/mp4" />
+      <source src="video/Video-estepona.mp4" type="video/mp4" />
     </video>
     <div class="overlay">
       <div class="container content">
@@ -128,7 +131,7 @@
           <h1 class="title">Venez profiter d’Estepona</h1>
           <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques. Tout ce qu’il faut pour un séjour réussi.</p>
         </div>
-        <form class="searchbar" role="search" action="/recherche" method="get" onsubmit="event.preventDefault(); scrollToResult()">
+        <form class="searchbar" role="search" action="/" method="get" onsubmit="event.preventDefault(); scrollToResult()">
           <input type="search" name="q" placeholder="Rechercher : Animations, vieille ville, tapas…" aria-label="Rechercher dans le site" />
           <button type="submit">Rechercher</button>
         </form>
@@ -136,103 +139,141 @@
     </div>
   </section>
 
-  <!-- À VOIR / À FAIRE -->
-  
-
-  <!-- RESTAURANTS -->
-  
-
-  <!-- BILLETS & ACTIVITÉS -->
-  
-
-  <!-- ITINÉRAIRES -->
-  
-  <!-- GUIDE COMPLET (texte fourni, mise en page charte index) -->
-  
-  <!-- Remplacement de « Billets & activités » par un lien vers quefarire.html -->
-  <section id="quefaire" class="container">
+  <!--Visiter / Actualité -->
+  <section id="voir" class="container">
     <div class="section-header">
       <div>
-        <h2>Que faire à Estepona ?</h2>
-        <p>Nos conseils, lieux et activités à ne pas manquer.</p>
+        <h2>À voir / À faire</h2>
+        <p>Nos lieux et activités immanquables à Estepona</p>
       </div>
-      <a href="/quefarire.html" aria-label="Voir la page Que faire à Estepona">Voir la page →</a>
-    </div>
-  </section>
-<section id="guide" class="container">
-    <div class="section-header">
-      <div>
-        <h2>Guide complet : que faire et que voir à Estepona</h2>
-        <p>Culture, nature, plages et idées d’itinéraires — tout l’essentiel en un clin d’œil.</p>
-      </div>
+      <a href="#" aria-label="Voir toutes les catégories">Tout voir →</a>
     </div>
     <div class="grid">
-      <article class="card" style="grid-column:span 12">
+      <article class="card">
+        <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" />
         <div class="body">
-          <h3>Incontournables</h3>
-          <ul>
-            <li><strong>Casco Antiguo</strong> — ruelles blanches fleuries, places conviviales et façades colorées.</li>
-            <li><strong>Orquidarium</strong> — serres tropicales, cascade intérieure et superbe collection d’orchidées.</li>
-            <li><strong>Paseo Marítimo</strong> — longue promenade littorale ponctuée de cafés et d’aires de jeux.</li>
-            <li><strong>Playa de la Rada</strong> — grande plage centrale et bien équipée.</li>
-            <li><strong>Playa del Cristo</strong> — crique abritée aux eaux calmes, parfaite en famille.</li>
-            <li><strong>Route des murales</strong> — fresques monumentales à découvrir dans toute la ville.</li>
-          </ul>
+          <h3>Vieille ville & fresques</h3>
+          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés, à la chasse aux fresques murales.</p>
+          <div class="meta">⏱️ 2–3 h · Gratuit</div>
         </div>
       </article>
-
-      <article class="card" style="grid-column:span 6">
+      <article class="card">
+        <img src="img/aquerelle_paseo.png" alt="Plage et paseo marítimo" />
         <div class="body">
-          <h3>Culture & patrimoine</h3>
-          <ul>
-            <li><strong>Plaza de las Flores</strong> — place centrale bordée de cafés et galeries.</li>
-            <li><strong>Torre del Reloj</strong> — vestige emblématique de l’ancienne église.</li>
-            <li><strong>Iglesia Nª Sª de los Remedios</strong> — édifice du XVIIIᵉ, façade baroque.</li>
-            <li><strong>Museo Arqueológico (Casa del Aljibe)</strong> — collections d’histoire locale.</li>
-            <li><strong>Casa de las Tejerinas / MAD</strong> — expositions d’art contemporain.</li>
-          </ul>
+          <h3>Plages & paseo marítimo</h3>
+          <p>Des kilomètres de sable avec chiringuitos, douches, jeux enfants et un paseo idéal à vélo.</p>
+          <div class="meta">☀️ Idéal familles</div>
         </div>
       </article>
-
-      <article class="card" style="grid-column:span 6">
+      <article class="card">
+        <img src="img/News_Actualite_Estepona.png" alt="Selwo Aventura" />
         <div class="body">
-          <h3>Nature & plein air</h3>
-          <ul>
-            <li><strong>Selwo Aventura</strong> — parc semi‑safari (2 000+ animaux) à la périphérie.</li>
-            <li><strong>Sierra Bermeja</strong> — randonnées vers le <em>Pico de los Realès</em>, vues sur Gibraltar.</li>
-            <li><strong>Sorties en mer</strong> — observation des dauphins, petites croisières depuis le port.</li>
-            <li><strong>Golf & équitation</strong> — parcours réputés et École d’Art Équestre Costa del Sol.</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="card" style="grid-column:span 6">
-        <div class="body">
-          <h3>Itinéraires suggérés</h3>
-          <ol>
-            <li><strong>1 jour</strong> — Casco Antiguo & Plaza de las Flores → déjeuner près de la Rada → Orquidarium → coucher de soleil sur le paseo.</li>
-            <li><strong>2–3 jours</strong> — Jour 1 : centre historique & murales · Jour 2 : Selwo ou Sierra Bermeja + plage du Cristo · Jour 3 : sortie en mer + golf/équitation selon envies.</li>
-          </ol>
-        </div>
-      </article>
-
-      <article class="card" style="grid-column:span 6">
-        <div class="body">
-          <h3>Conseils pratiques</h3>
-          <ul>
-            <li><strong>Carte des murales</strong> à récupérer à l’office de tourisme.</li>
-            <li><strong>Horaires</strong> — certains musées ferment en milieu d’après‑midi (siesta).</li>
-            <li><strong>Gastronomie</strong> — fruits de mer, <em>pescaito frito</em>, tapas locales.</li>
-            <li><strong>Mobilité</strong> — centre praticable à pied ou à vélo.</li>
-          </ul>
+          <h3>Actualité Estepona</h3>
+          <p>Toutes les actualités sur Estepona</p>
+          <div class="meta"></div>
+          
+           <a class="cta" href="Actualites.html">Actualité</a>
+          
         </div>
       </article>
     </div>
   </section>
 
+  <!-- RESTAURANTS -->
+  <section id="manger" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Restaurants Chiringuito</h2>
+        <p>Nos bonnes adresses triées par budget et quartier</p>
+      </div>
+      <a href="#">Tous les restos →</a>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <img src="img/restaurant.png" alt="Bar à tapas" />
+        <div class="body">
+          <h3>Chiringuito</h3>
+          <p>Les Chiringuito de Estepona.</p>
+          <div class="meta">€ · Playa</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="img/paella.jpg" alt="Paella en bord de mer" />
+        <div class="body">
+          <h3>Paella face mer</h3>
+          <p>Chiringuitos conviviaux sur la plage pour un déjeuner au soleil.</p>
+          <div class="meta">€€ · Playa</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="/img/rooftop.jpg" alt="Rooftop avec vue" />
+        <div class="body">
+          <h3>Rooftops & cocktails</h3>
+          <p>Pour admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
+          <div class="meta">€€€ · Port</div>
+        </div>
+      </article>
+    </div>
+  </section>
 
+  <!-- BILLETS & ACTIVITÉS -->
+  <section id="billets" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Billets & activités</h2>
+        <p>Réservez vos incontournables au meilleur prix</p>
+      </div>
+      <a href="#">Voir tout →</a>
+    </div>
+    <div class="grid">
+      <div class="deal">
+        <h3>⚓ Sortie bateau dauphins</h3>
+        <p>2 h en mer avec boisson incluse. Départs du port d’Estepona.</p>
+        <a class="cta" href="#">Réserver</a>
+      </div>
+      <div class="deal">
+        <h3>🎟️ Selwo Aventura</h3>
+        <p>Entrée datée avec coupe-file. Options famille disponibles.</p>
+        <a class="cta" href="https://www.selwo.es/">Réserver</a>
+      </div>
+      <div class="deal">
+        <h3>🚲 Location vélos</h3>
+        <p>VAE ou classiques. Parfait pour le paseo marítimo.</p>
+        <a class="cta" href="https://www.getyourguide.com/fr-fr/-l2164/-tc49/?cmp=bing&ad_id=77996819431611&adgroup_id=1247947030403829&bid_match_type=be&campaign_id=710111877&device=c&feed_item_id=&keyword=estepona+delfines%21&loc_interest_ms=164642&loc_physical_ms=164642&match_type=e&msclkid=20bb06acded41361b5d86e6e63f708b1&network=o&partner_id=CD951&target_id=kwd-77997058990356%3Aloc-170&utm_adgroup=lc%3D2164%3Aestepona%7Cfn%3Df4%7Cci%3D1120%3Adolphin+tour&utm_campaign=dc%3D21%3Aes%7Clc%3D2164%3Aestepona%7Cct%3Dcore%7Cln%3D109%3Aes%7Ctc%3Dall&utm_keyword=estepona+delfines%21&utm_medium=paid_search&utm_query=dolphin+estepona&utm_source=bing&visitor-id=LAL95Z6BC7IGA5COPH6RWLIQCIPVE0NS&locale_autoredirect_optout=true">Réserver</a>
+      </div>
+    </div>
+  </section>
 
-  <!-- CARTE DES QUARTIERS (iframe vers map.html conforme à la charte) -->
+  <!-- ITINÉRAIRES -->
+  <section id="itin" class="container">
+    <div class="section-header">
+      <div>
+        <h2>Itinéraires prêts à l’emploi</h2>
+        <p>Optimisez votre temps selon la durée de votre séjour</p>
+      </div>
+      <a href="#">Tous les itinéraires →</a>
+    </div>
+    <div class="grid">
+      <article class="route">
+        <img src="/img/1j.jpg" alt="Itinéraire 1 jour" />
+        <div class="body">
+          <h3>Estepona en 1 jour</h3>
+          <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
+          <a href="#">Voir le détail →</a>
+        </div>
+      </article>
+      <article class="route">
+        <img src="/img/3j.jpg" alt="Itinéraire 3 jours" />
+        <div class="body">
+          <h3>Weekend prolongé (3 jours)</h3>
+          <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
+          <a href="#">Voir le détail →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CARTE DES QUARTIERS -->
   <section class="container">
     <div class="section-header">
       <div>
@@ -242,46 +283,35 @@
       <a href="/map.html">Ouvrir la carte →</a>
     </div>
     <div style="border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring)">
-      <iframe title="Carte d’Estepona" src="/map.html" loading="lazy" width="100%" height="420" style="display:block;border:0"></iframe>
+      <iframe title="Carte d’Estepona" src="map.html" loading="lazy" width="100%" height="420" style="display:block;border:0"></iframe>
     </div>
   </section>
 
-  <!-- CONTACT / LEAD (conforme visuel + RGPD) -->
-  <section id="contact" class="container">
+  <!-- FAQ -->
+  <section id="faq" class="container">
     <div class="section-header">
       <div>
-        <h2>Un itinéraire sur‑mesure ?</h2>
-        <p>Nous vous répondons sous 24 h (hors week‑end)</p>
+        <h2>FAQ</h2>
+        <p>Questions fréquentes pour préparer votre séjour</p>
       </div>
     </div>
-    <form class="grid card" action="/api/lead" method="post" style="grid-template-columns:repeat(12,1fr);padding:16px;gap:16px">
-      <div style="grid-column:span 6">
-        <label for="name">Nom</label>
-        <input id="name" name="name" type="text" required />
+    <div class="accordion" id="faqList">
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false">Quelle est la meilleure période pour venir ?</button>
+        <div class="acc-panel">De mai à octobre pour la plage. Avril et novembre pour la douceur et moins d’affluence.</div>
       </div>
-      <div style="grid-column:span 6">
-        <label for="email">E‑mail</label>
-        <input id="email" name="email" type="email" required />
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false">Où loger à Estepona ?</button>
+        <div class="acc-panel">Centre historique pour l’ambiance, bord de mer pour la plage, port pour la vie nocturne.</div>
       </div>
-      <div style="grid-column:span 12">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="5" placeholder="Dates, centres d’intérêt, budget…"></textarea>
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false">Faut-il une voiture ?</button>
+        <div class="acc-panel">Non en centre. Utile pour explorer les environs (Casares, Ronda, Marbella, Gibraltar).</div>
       </div>
-      <div style="grid-column:span 12">
-        <label class="checkbox" style="display:flex;gap:10px;align-items:start">
-          <input type="checkbox" name="consent" required />
-          <span>J’accepte que mes données soient utilisées pour me recontacter au sujet de ma demande. <a href="/politique-confidentialite" target="_blank" rel="noopener">Politique de confidentialité</a>.</span>
-        </label>
-      </div>
-      <input type="hidden" name="topic" value="Estepona" />
-      <input type="hidden" name="source" value="page_bons_plans_estepona" />
-      <div style="grid-column:span 12;display:flex;gap:10px;justify-content:flex-end">
-        <button type="submit" style="border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff">Envoyer</button>
-      </div>
-    </form>
+    </div>
   </section>
 
-  <!-- FOOTER (mêmes styles/structure) -->
+  <!-- FOOTER -->
   <footer>
     <div class="container inner">
       <div>
@@ -293,50 +323,4 @@
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets</a></li>
-          <li><a href="#itin">Itinéraires</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Pratique</h4>
-        <ul>
-          <li><a href="/map.html">Carte</a></li>
-          <li><a href="/politique-confidentialite">Confidentialité</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Suivre</h4>
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">Facebook</a></li>
-          <li><a href="#">YouTube</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="container bottom">
-      © <span id="y"></span> Bons Plans Estepona — Tous droits réservés
-    </div>
-  </footer>
-
-  <script>
-    // Année footer
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Recherche : simple scroll vers la première section de résultats
-    function scrollToResult(){
-      const el = document.querySelector('#voir');
-      if(el) el.scrollIntoView({behavior:'smooth'});
-    }
-
-    // FAQ Accordéon accessible
-    document.querySelectorAll('.acc-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', !expanded);
-        const panel = btn.nextElementSibling; panel.style.display = expanded ? 'none' : 'block';
-      });
-    });
-  </script>
-</body>
-</html>
+          <li><a href="#billets">Bil
