@@ -12,34 +12,7 @@
   <link rel="canonical" href="/estepona-que-faire-que-voir" />
   <!-- IMPORTANT : Conserver les mêmes fichiers CSS/JS, en-tête et composants que index.html (charte DSIHOTEL). -->
   <link rel="preload" href="/assets/fonts/primary.woff2" as="font" type="font/woff2" crossorigin>
-  <style>
-    /* NOTE: N'utilisez pas ce bloc si vos styles globaux existent déjà. Il sert seulement de secours.
-       Respect de la charte : classes utilitaires et composants existants (.container, .btn, .grid, .card, etc.) */
-    :root { --accent:#0ea5e9; --bg:#fff; --text:#0f172a; --muted:#475569; }
-    .hero{padding:6rem 0 3rem;background:linear-gradient(180deg, rgba(14,165,233,.08), transparent)}
-    .container{max-width:1100px;margin:0 auto;padding:0 1rem}
-    .eyebrow{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
-    .title{font-size:clamp(1.8rem,3.5vw,2.6rem);line-height:1.15;margin:.4rem 0 1rem}
-    .lead{color:var(--muted);font-size:1.05rem}
-    .btn{display:inline-block;padding:.85rem 1.1rem;border-radius:999px;border:1px solid var(--accent)}
-    .btn-primary{background:var(--accent);color:#fff}
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
-    .kpi{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:1rem;text-align:center}
-    .section{padding:3.5rem 0}
-    .grid{display:grid;gap:1.25rem}
-    .grid-2{grid-template-columns:repeat(2,1fr)}
-    .grid-3{grid-template-columns:repeat(3,1fr)}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.1rem}
-    .card h3{margin:.2rem 0 .6rem;font-size:1.1rem}
-    .muted{color:var(--muted)}
-    .badge{display:inline-block;background:#f1f5f9;color:#0f172a;border-radius:999px;padding:.2rem .6rem;font-size:.85rem}
-    .toc{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
-    .toc a{font-size:.95rem}
-    .media{aspect-ratio:16/9;background:#e2e8f0;border-radius:16px;display:grid;place-items:center;color:#64748b}
-    .faq dt{font-weight:600;margin-top:1rem}
-    .faq dd{margin:0 0 1rem}
-    @media (max-width:900px){.grid-2,.grid-3,.kpis{grid-template-columns:1fr}}
-  </style>
+  <!-- Styles locaux supprimés pour respecter strictement la charte index.html. Toutes les couleurs, composants et classes proviennent désormais de la feuille de style globale. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -60,7 +33,10 @@
 </head>
 <body>
   <!-- Reprendre le même header que index.html (logo DSIHOTEL, menu, CTA) -->
-  <header id="site-header"><!-- include/header.html --></header>
+  <header id="site-header">
+  <!-- Inclure exactement le même header que index.html -->
+  <!--#include virtual="/partials/header.html" -->
+</header>
 
   <main id="content">
     <!-- HERO -->
@@ -138,10 +114,9 @@
           </ul>
         </div>
         <div>
-          <figure class="media" aria-label="Image d'illustration">
-            <!-- Remplacer par votre image/visuel conforme à la charte -->
-            <span>Visuel culture / galerie</span>
-          </figure>
+          <figure class="media ratio-16x9 rounded-xl overflow-hidden shadow-sm">
+  <img src="/assets/img/estepona-casco-antiguo.jpg" alt="Ruelles fleuries du Casco Antiguo d’Estepona" loading="lazy" width="1280" height="720" />
+</figure>
         </div>
       </div>
     </section>
@@ -150,10 +125,9 @@
     <section id="nature" class="section">
       <div class="container grid grid-2">
         <div>
-          <figure class="media" aria-label="Image d'illustration">
-            <!-- Remplacer par votre image/visuel conforme à la charte -->
-            <span>Visuel plage / nature</span>
-          </figure>
+          <figure class="media ratio-16x9 rounded-xl overflow-hidden shadow-sm">
+  <img src="/assets/img/estepona-casco-antiguo.jpg" alt="Ruelles fleuries du Casco Antiguo d’Estepona" loading="lazy" width="1280" height="720" />
+</figure>
         </div>
         <div>
           <h2>Nature & plein air</h2>
@@ -209,8 +183,9 @@
         <div>
           <div class="card">
             <h3>Plan & accès</h3>
-            <p class="muted">Intégrez ici votre carte (Google Maps / Leaflet) avec les points d’intérêt ci‑dessus.</p>
-            <div class="media" aria-label="Carte"><span>Emplacement carte</span></div>
+            <div id="map" class="media" style="height:420px;">
+              <!-- Carte Leaflet intégrée -->
+            </div>
           </div>
         </div>
       </div>
@@ -239,13 +214,21 @@
           <p class="muted">Besoin d’un programme sur‑mesure, de réservations d’activités ou d’un transfert aéroport ? Notre équipe s’occupe de tout.</p>
           <a class="btn btn-primary" href="/contact">Contactez‑nous</a>
         </div>
-        <form class="card" action="/lead" method="post" aria-label="Formulaire de contact rapide">
+        <form class="card" action="/api/lead" method="post" aria-label="Formulaire de contact rapide">
           <label for="name">Nom</label>
           <input id="name" name="name" type="text" required />
           <label for="email">E‑mail</label>
           <input id="email" name="email" type="email" required />
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="4" placeholder="Parlez‑nous de votre projet à Estepona…"></textarea>
+          <div class="form-row">
+            <label class="checkbox">
+              <input type="checkbox" name="consent" required />
+              <span>J’accepte que mes données soient utilisées pour me recontacter au sujet de ma demande. <a href="/politique-confidentialite" target="_blank" rel="noopener">Politique de confidentialité</a>.</span>
+            </label>
+          </div>
+          <input type="hidden" name="topic" value="Estepona" />
+          <input type="hidden" name="source" value="page_estepona" />
           <button class="btn btn-primary" type="submit">Envoyer</button>
         </form>
       </div>
@@ -253,7 +236,10 @@
   </main>
 
   <!-- Reprendre le même footer que index.html -->
-  <footer id="site-footer"><!-- include/footer.html --></footer>
+  <footer id="site-footer">
+  <!-- Inclure exactement le même footer que index.html -->
+  <!--#include virtual="/partials/footer.html" -->
+</footer>
 
   <!-- Scripts de votre thème (réutiliser ceux d'index.html) -->
   <script>
@@ -261,6 +247,37 @@
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'});} });
     });
+  </script>
+  <!-- Librairies Leaflet (carte) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  <!-- Scripts de votre thème (réutiliser ceux d'index.html) -->
+  <script>
+    // Ancrage doux (si absent du bundle global)
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'});} });
+    });
+
+    // Initialisation Leaflet
+    (function(){
+      const mapEl = document.getElementById('map');
+      if(!mapEl) return;
+      const map = L.map('map', { scrollWheelZoom:false }).setView([36.4270, -5.1450], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(map);
+
+      const poi = [
+        {name:'Plaza de las Flores', coords:[36.42594,-5.14576]},
+        {name:'Orquidarium', coords:[36.42762,-5.14767]},
+        {name:'Playa de la Rada', coords:[36.42335,-5.14559]},
+        {name:'Playa del Cristo', coords:[36.41643,-5.16709]},
+        {name:'Selwo Aventura', coords:[36.46655,-5.09370]},
+        {name:'Torre del Reloj', coords:[36.42639,-5.14618]},
+        {name:'Iglesia Nª Sª de los Remedios', coords:[36.42691,-5.14634]},
+        {name:'Museo Arqueológico (Casa del Aljibe)', coords:[36.42657,-5.14673]},
+        {name:'Casa de las Tejerinas / MAD', coords:[36.42595,-5.14573]}
+      ];
+      poi.forEach(p=> L.marker(p.coords).addTo(map).bindPopup('<strong>'+p.name+'</strong>'));
+    })();
   </script>
 </body>
 </html>
