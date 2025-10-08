@@ -13,7 +13,7 @@
   <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
   <meta property="og:image" content="/img/og-estepona.jpg" />
 
-  <!-- Preloads (alignés avec les sources réelles) -->
+  <!-- Preloads -->
   <link rel="preload" href="/video/Video-estepona.mp4" as="video" type="video/mp4" />
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css" />
@@ -69,10 +69,6 @@
     .route img{width:44%;object-fit:cover}
     .route .body{padding:14px}
 
-    /* Deals */
-    .deal{grid-column:span 4;background:#0b3c49;color:#fff;border-radius:var(--radius);padding:18px}
-    .deal .cta{display:inline-block;margin-top:8px;background:#fff;color:#0b3c49;padding:10px 14px;border-radius:12px;text-decoration:none}
-
     /* FAQ */
     .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
     .acc-item+.acc-item{border-top:1px solid #e7efec}
@@ -94,7 +90,6 @@
     @media (max-width: 640px){
       .hero .overlay{padding:72px 0}
       .card{grid-column:span 12}
-      .deal{grid-column:span 12}
       .grid{gap:12px}
       nav ul{display:none}
     }
@@ -112,7 +107,6 @@
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets</a></li>
           <li><a href="#itin">Itinéraires</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
@@ -132,7 +126,7 @@
           <h1 class="title">Venez profiter d’Estepona</h1>
           <p class="subtitle">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques. Tout ce qu’il faut pour un séjour réussi.</p>
         </div>
-        <form class="searchbar" role="search" action="/" method="get" onsubmit="event.preventDefault(); scrollToResult()">
+        <form class="searchbar" role="search" onsubmit="event.preventDefault(); scrollToResult()">
           <input type="search" name="q" placeholder="Rechercher : Animations, vieille ville, tapas…" aria-label="Rechercher dans le site" />
           <button type="submit" aria-label="Lancer la recherche">Rechercher</button>
         </form>
@@ -140,7 +134,7 @@
     </div>
   </section>
 
-  <!--Visiter / Actualité -->
+  <!-- À VOIR -->
   <section id="voir" class="container">
     <div class="section-header">
       <div>
@@ -154,7 +148,7 @@
         <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" loading="lazy" />
         <div class="body">
           <h3>Vieille ville & fresques</h3>
-          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés, à la chasse aux fresques murales.</p>
+          <p>Baladez-vous dans un labyrinthe de ruelles blanches et pots de fleurs colorés.</p>
           <div class="meta">⏱️ 2–3 h · Gratuit</div>
         </div>
       </article>
@@ -162,7 +156,7 @@
         <img src="img/aquarelle_paseo.png" alt="Plage et paseo marítimo" loading="lazy" />
         <div class="body">
           <h3>Plages & paseo marítimo</h3>
-          <p>Des kilomètres de sable avec chiringuitos, douches, jeux enfants et un paseo idéal à vélo.</p>
+          <p>Des kilomètres de sable avec chiringuitos, douches et jeux enfants.</p>
           <div class="meta">☀️ Idéal familles</div>
         </div>
       </article>
@@ -170,9 +164,8 @@
         <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona" loading="lazy" />
         <div class="body">
           <h3>Actualité Estepona</h3>
-          <p>Toutes les actualités sur Estepona</p>
-          <div class="meta"></div>
-          <a class="cta" href="Actualites.html">Actualité</a>
+          <p>Toutes les actualités sur Estepona.</p>
+          <a class="cta" href="Actualites.html">Actualité →</a>
         </div>
       </article>
     </div>
@@ -192,7 +185,7 @@
         <img src="img/restaurant.png" alt="Bar à tapas" loading="lazy" />
         <div class="body">
           <h3>Chiringuito</h3>
-          <p>Les Chiringuito de Estepona.</p>
+          <p>Les meilleurs chiringuitos de la plage d’Estepona.</p>
           <div class="meta">€ · Playa</div>
         </div>
       </article>
@@ -200,7 +193,7 @@
         <img src="img/paella.jpg" alt="Paella en bord de mer" loading="lazy" />
         <div class="body">
           <h3>Paella face mer</h3>
-          <p>Chiringuitos conviviaux sur la plage pour un déjeuner au soleil.</p>
+          <p>Déjeunez au soleil dans une ambiance locale.</p>
           <div class="meta">€€ · Playa</div>
         </div>
       </article>
@@ -208,38 +201,10 @@
         <img src="/img/rooftop.jpg" alt="Rooftop avec vue sur Estepona" loading="lazy" />
         <div class="body">
           <h3>Rooftops & cocktails</h3>
-          <p>Pour admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
+          <p>Admirez le coucher de soleil sur le port.</p>
           <div class="meta">€€€ · Port</div>
         </div>
       </article>
-    </div>
-  </section>
-
-  <!-- BILLETS & ACTIVITÉS -->
-  <section id="billets" class="container">
-    <div class="section-header">
-      <div>
-        <h2>Billets & activités</h2>
-        <p>Réservez vos incontournables au meilleur prix</p>
-      </div>
-      <a href="#">Voir tout →</a>
-    </div>
-    <div class="grid">
-      <div class="deal">
-        <h3>⚓ Sortie bateau dauphins</h3>
-        <p>2 h en mer avec boisson incluse. Départs du port d’Estepona.</p>
-        <a class="cta" href="#">Réserver</a>
-      </div>
-      <div class="deal">
-        <h3>🎟️ Selwo Aventura</h3>
-        <p>Entrée datée avec coupe-file. Options famille disponibles.</p>
-        <a class="cta" href="https://www.selwo.es/" target="_blank" rel="noopener">Réserver</a>
-      </div>
-      <div class="deal">
-        <h3>🚲 Location vélos</h3>
-        <p>VAE ou classiques. Parfait pour le paseo marítimo.</p>
-        <a class="cta" href="https://www.getyourguide.com/fr-fr/-l2164/-tc49/?cmp=bing&ad_id=77996819431611&adgroup_id=1247947030403829&bid_match_type=be&campaign_id=710111877&device=c&feed_item_id=&keyword=estepona+delfines%21&loc_interest_ms=164642&loc_physical_ms=164642&match_type=e&msclkid=20bb06acded41361b5d86e6e63f708b1&network=o&partner_id=CD951&target_id=kwd-77997058990356%3Aloc-170&utm_adgroup=lc%3D2164%3Aestepona%7Cfn%3Df4%7Cci%3D1120%3Adolphin+tour&utm_campaign=dc%3D21%3Aes%7Clc%3D2164%3Aestepona%7Cct%3Dcore%7Cln%3D109%3Aes%7Ctc%3Dall&utm_keyword=estepona+delfines%21&utm_medium=paid_search&utm_query=dolphin+estepona&utm_source=bing&visitor-id=LAL95Z6BC7IGA5COPH6RWLIQCIPVE0NS&locale_autoredirect_optout=true" target="_blank" rel="noopener">Réserver</a>
-      </div>
     </div>
   </section>
 
@@ -258,15 +223,13 @@
         <div class="body">
           <h3>Estepona en 1 jour</h3>
           <p>Vieille ville le matin, plage et port l’après-midi, rooftop au coucher du soleil.</p>
-          <a href="#">Voir le détail →</a>
         </div>
       </article>
       <article class="route">
         <img src="/img/3j.jpg" alt="Itinéraire Estepona en 3 jours" loading="lazy" />
         <div class="body">
           <h3>Weekend prolongé (3 jours)</h3>
-        <p>Selwo, route des fresques, chiringuitos, balade jusqu’au phare & marina.</p>
-          <a href="#">Voir le détail →</a>
+          <p>Selwo, fresques, chiringuitos et balade jusqu’au phare & marina.</p>
         </div>
       </article>
     </div>
@@ -277,7 +240,7 @@
     <div class="section-header">
       <div>
         <h2>Carte des quartiers</h2>
-        <p>Retrouvez nos zones conseillées (indicatives) : centre, plage, port, environs</p>
+        <p>Retrouvez nos zones conseillées : centre, plage, port, environs</p>
       </div>
       <a href="/map.html">Ouvrir la carte →</a>
     </div>
@@ -297,7 +260,7 @@
     <div class="accordion" id="faqList">
       <div class="acc-item">
         <button class="acc-btn" aria-expanded="false">Quelle est la meilleure période pour venir ?</button>
-        <div class="acc-panel">De mai à octobre pour la plage. Avril et novembre pour la douceur et moins d’affluence.</div>
+        <div class="acc-panel">De mai à octobre pour la plage, avril et novembre pour la tranquillité.</div>
       </div>
       <div class="acc-item">
         <button class="acc-btn" aria-expanded="false">Où loger à Estepona ?</button>
@@ -305,7 +268,7 @@
       </div>
       <div class="acc-item">
         <button class="acc-btn" aria-expanded="false">Faut-il une voiture ?</button>
-        <div class="acc-panel">Non en centre. Utile pour explorer les environs (Casares, Ronda, Marbella, Gibraltar).</div>
+        <div class="acc-panel">Non en centre, mais utile pour explorer Casares, Ronda, Marbella ou Gibraltar.</div>
       </div>
     </div>
   </section>
@@ -322,7 +285,6 @@
         <ul>
           <li><a href="#voir">À voir</a></li>
           <li><a href="#manger">Restaurants</a></li>
-          <li><a href="#billets">Billets & activités</a></li>
           <li><a href="#itin">Itinéraires</a></li>
         </ul>
       </div>
@@ -338,9 +300,9 @@
       <div>
         <h4>Suivez-nous</h4>
         <ul>
-          <li><a href="#" rel="noopener">Instagram</a></li>
-          <li><a href="#" rel="noopener">YouTube</a></li>
-          <li><a href="#" rel="noopener">TikTok</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">TikTok</a></li>
         </ul>
       </div>
     </div>
@@ -349,28 +311,25 @@
     </div>
   </footer>
 
+  <!-- SCRIPT GLOBAL -->
   <script>
-    // Accordéon FAQ (ouverture exclusive)
-    const buttons = document.querySelectorAll(".acc-btn");
-    buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        buttons.forEach(b => {
-          b.setAttribute("aria-expanded", "false");
-          if (b.nextElementSibling) b.nextElementSibling.style.display = "none";
+  // Accordéon FAQ + scroll fluide + animation au scroll + vidéo optimisée
+  (function(){
+    const faqBtns = document.querySelectorAll(".acc-btn");
+    faqBtns.forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const exp = btn.getAttribute("aria-expanded")==="true";
+        faqBtns.forEach(b=>{
+          b.setAttribute("aria-expanded","false");
+          b.nextElementSibling.style.display="none";
         });
-        if (!expanded) {
-          btn.setAttribute("aria-expanded", "true");
-          if (btn.nextElementSibling) btn.nextElementSibling.style.display = "block";
+        if(!exp){
+          btn.setAttribute("aria-expanded","true");
+          btn.nextElementSibling.style.display="block";
         }
       });
     });
-
-    // Recherche → défilement
-    function scrollToResult() {
-      const target = document.querySelector("#voir");
-      if (target) target.scrollIntoView({ behavior: "smooth" });
-    }
-  </script>
-</body>
-</html>
+    window.scrollToResult=function(){
+      document.querySelector("#voir")?.scrollIntoView({behavior:"smooth"});
+    };
+    document.addEventListener("click",e=>{
