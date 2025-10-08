@@ -13,32 +13,29 @@
   <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
   <meta property="og:image" content="/img/og-estepona.jpg" />
 
-  <!-- Assets globaux : on hérite intégralement des couleurs/styles d'index.html -->
   <link rel="preload" href="/video/Video_Estepona.mp4" as="video" type="video/mp4" />
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css" />
 
+  <!-- Charte exacte d'index.html -->
   <style>
-    /* Respect strict de la charte d'index.html :
-       - Les couleurs s'alignent sur les variables globales si elles existent (fallbacks fournis)
-       - Vous pouvez supprimer ce bloc dès que /styles.css expose les mêmes utilitaires/components
-    */
     :root{
-      --brand: var(--color-brand, #0b3c49);
-      --brand-2: var(--color-brand-2, #e3f2ef);
-      --text: var(--color-text, #0e1115);
-      --muted: var(--color-muted, #6b7a85);
-      --card: var(--color-card, #ffffff);
-      --ring: var(--shadow-ring, 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08));
-      --radius: var(--radius-lg, 20px);
-      --bg: var(--color-bg, #f7faf9);
+      --brand:#0b3c49; --brand-2:#e3f2ef; --text:#0e1115; --muted:#6b7a85; --card:#ffffff;
+      --ring: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08);
+      --radius: 20px;
     }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     a{color:var(--brand);text-decoration:none}
     .container{max-width:1200px;margin:auto;padding:0 16px}
 
-    /* Header - remplacé par l'include exact d'index.html */
+    /* Header */
     header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
+    header .inner{display:flex;align-items:center;gap:16px;justify-content:space-between;height:64px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo img{height:40px;width:auto}
+    nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
+    nav a{padding:8px 12px;border-radius:12px}
+    nav a:hover{background:#eef6f4}
 
     /* Hero vidéo */
     .hero{position:relative;isolation:isolate}
@@ -51,7 +48,7 @@
     .subtitle{font-size:clamp(16px,2.2vw,20px);opacity:.95;max-width:800px}
     .searchbar{display:flex;gap:8px;margin-top:18px;background:rgba(255,255,255,.9);padding:10px;border-radius:16px}
     .searchbar input{flex:1;border:0;background:transparent;padding:10px 12px;font-size:16px}
-    .searchbar button{border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff}
+    .searchbar button{border:0;border-radius:12px;padding:10px 14px;background:#0b3c49;color:#fff}
 
     /* Sections */
     section{padding:40px 0}
@@ -73,8 +70,8 @@
     .route .body{padding:14px}
 
     /* Deals */
-    .deal{grid-column:span 4;background:var(--brand);color:#fff;border-radius:var(--radius);padding:18px}
-    .deal .cta{display:inline-block;margin-top:8px;background:#fff;color:var(--brand);padding:10px 14px;border-radius:12px;text-decoration:none}
+    .deal{grid-column:span 4;background:#0b3c49;color:#fff;border-radius:var(--radius);padding:18px}
+    .deal .cta{display:inline-block;margin-top:8px;background:#fff;color:#0b3c49;padding:10px 14px;border-radius:12px;text-decoration:none}
 
     /* FAQ */
     .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
@@ -82,12 +79,11 @@
     .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px}
     .acc-panel{display:none;padding:0 16px 16px;color:#334}
 
-    /* Footer (structure conservée, styles couleurs héritées) */
+    /* Footer */
+    footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
     footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
-    footer a{color:inherit}
-
-    /* Map */
-    #mapEstepona{height:420px}
+    footer a{color:#cfe1dc}
+    footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
 
     /* Responsive */
     @media (max-width: 1000px){
@@ -100,16 +96,31 @@
       .card{grid-column:span 12}
       .deal{grid-column:span 12}
       .grid{gap:12px}
+      nav ul{display:none}
     }
   </style>
 </head>
 <body>
-  <!-- HEADER : même composant que index.html -->
-  <header id="site-header">
-    <!--#include virtual="/partials/header.html" -->
+  <!-- HEADER (identique à index) -->
+  <header class="site">
+    <div class="container inner">
+      <div class="logo">
+        <img src="/img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
+        <span>Estepona — Bons plans</span>
+      </div>
+      <nav aria-label="Navigation principale">
+        <ul>
+          <li><a href="#voir">À voir</a></li>
+          <li><a href="#manger">Restaurants</a></li>
+          <li><a href="#billets">Billets</a></li>
+          <li><a href="#itin">Itinéraires</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <!-- HERO VIDEO -->
+  <!-- HERO VIDEO (mêmes styles, chemin vidéo unifié) -->
   <section class="hero" aria-label="Introduction vidéo">
     <video id="heroVideo" class="media" autoplay playsinline muted loop>
       <source src="/video/Video_Estepona.mp4" type="video/mp4" />
@@ -171,17 +182,16 @@
   <section id="manger" class="container">
     <div class="section-header">
       <div>
-        <h2>Restaurants & Chiringuitos</h2>
+        <h2>Restaurants Chiringuito</h2>
         <p>Nos bonnes adresses triées par budget et quartier</p>
       </div>
-      <a href="#">Tous les restos →</a>
     </div>
     <div class="grid">
       <article class="card">
         <img src="/img/restaurant.png" alt="Bar à tapas" loading="lazy" />
         <div class="body">
-          <h3>Chiringuitos</h3>
-          <p>Les chiringuitos de plage d’Estepona.</p>
+          <h3>Chiringuito</h3>
+          <p>Les Chiringuito de Estepona.</p>
           <div class="meta">€ · Playa</div>
         </div>
       </article>
@@ -211,7 +221,6 @@
         <h2>Billets & activités</h2>
         <p>Réservez vos incontournables au meilleur prix</p>
       </div>
-      <a href="#">Voir tout →</a>
     </div>
     <div class="grid">
       <div class="deal">
@@ -239,7 +248,6 @@
         <h2>Itinéraires prêts à l’emploi</h2>
         <p>Optimisez votre temps selon la durée de votre séjour</p>
       </div>
-      <a href="#">Tous les itinéraires →</a>
     </div>
     <div class="grid">
       <article class="route">
@@ -261,8 +269,8 @@
     </div>
   </section>
 
-  <!-- CARTE DES QUARTIERS (Leaflet) -->
-  <section id="carte" class="container">
+  <!-- CARTE DES QUARTIERS (iframe vers map.html conforme à la charte) -->
+  <section class="container">
     <div class="section-header">
       <div>
         <h2>Carte des quartiers</h2>
@@ -271,11 +279,11 @@
       <a href="/map.html">Ouvrir la carte →</a>
     </div>
     <div style="border:1px solid #e7efec;border-radius:var(--radius);overflow:hidden;box-shadow:var(--ring)">
-      <div id="mapEstepona"></div>
+      <iframe title="Carte d’Estepona" src="/map.html" loading="lazy" width="100%" height="420" style="display:block;border:0"></iframe>
     </div>
   </section>
 
-  <!-- CONTACT / LEAD -->
+  <!-- CONTACT / LEAD (conforme visuel + RGPD) -->
   <section id="contact" class="container">
     <div class="section-header">
       <div>
@@ -305,21 +313,53 @@
       <input type="hidden" name="topic" value="Estepona" />
       <input type="hidden" name="source" value="page_bons_plans_estepona" />
       <div style="grid-column:span 12;display:flex;gap:10px;justify-content:flex-end">
-        <button type="submit" class="cta">Envoyer</button>
+        <button type="submit" style="border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff">Envoyer</button>
       </div>
     </form>
   </section>
 
-  <!-- FOOTER : même composant que index.html -->
-  <footer id="site-footer">
-    <!--#include virtual="/partials/footer.html" -->
+  <!-- FOOTER (mêmes styles/structure) -->
+  <footer>
+    <div class="container inner">
+      <div>
+        <h3>Estepona — Bons plans</h3>
+        <p>Le guide local et indépendant pour découvrir Estepona facilement.</p>
+      </div>
+      <div>
+        <h4>Découvrir</h4>
+        <ul>
+          <li><a href="#voir">À voir</a></li>
+          <li><a href="#manger">Restaurants</a></li>
+          <li><a href="#billets">Billets</a></li>
+          <li><a href="#itin">Itinéraires</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Pratique</h4>
+        <ul>
+          <li><a href="/map.html">Carte</a></li>
+          <li><a href="/politique-confidentialite">Confidentialité</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Suivre</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container bottom">
+      © <span id="y"></span> Bons Plans Estepona — Tous droits réservés
+    </div>
   </footer>
 
-  <!-- Leaflet (CDN) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
-
   <script>
+    // Année footer
+    document.getElementById('y').textContent = new Date().getFullYear();
+
     // Recherche : simple scroll vers la première section de résultats
     function scrollToResult(){
       const el = document.querySelector('#voir');
@@ -334,24 +374,6 @@
         const panel = btn.nextElementSibling; panel.style.display = expanded ? 'none' : 'block';
       });
     });
-
-    // Carte Leaflet + POI
-    (function(){
-      const mapEl = document.getElementById('mapEstepona');
-      if(!mapEl) return;
-      const map = L.map('mapEstepona', { scrollWheelZoom:false }).setView([36.4270, -5.1450], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(map);
-      const poi = [
-        {name:'Plaza de las Flores', coords:[36.42594,-5.14576]},
-        {name:'Orquidarium', coords:[36.42762,-5.14767]},
-        {name:'Playa de la Rada', coords:[36.42335,-5.14559]},
-        {name:'Playa del Cristo', coords:[36.41643,-5.16709]},
-        {name:'Selwo Aventura', coords:[36.46655,-5.09370]},
-        {name:'Torre del Reloj', coords:[36.42639,-5.14618]},
-        {name:'Église Nª Sª de los Remedios', coords:[36.42691,-5.14634]}
-      ];
-      poi.forEach(p=> L.marker(p.coords).addTo(map).bindPopup('<strong>'+p.name+'</strong>'));
-    })();
   </script>
 </body>
 </html>
