@@ -1,367 +1,421 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Que faire à Estepona — Incontournables, culture, nature, itinéraires</title>
-  <meta name="description" content="Toutes les idées pour profiter d’Estepona : incontournables, culture & patrimoine, nature & plein air, itinéraires et conseils pratiques." />
-  <meta name="theme-color" content="#0b3c49" />
+  <title>Le blog DSIHOTEL — Accueil</title>
+  <meta name="description" content="Blog DSIHOTEL — Articles, guides et actualités." />
+  <!--
+    GABARIT HOMEPAGE BLOG — « même forme » que https://blog.digimobil.es/
+    --------------------------------------------------------------
+    Objectif : reproduire la STRUCTURE et l’ERGONOMIE (header + catégories,
+    recherche, hero/slider, sections par catégories, cartes, pagination/footer),
+    tout en respectant la charte DSIHOTEL.
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Que faire à Estepona — Guide local" />
-  <meta property="og:description" content="Incontournables, culture, nature, itinéraires et conseils pratiques pour découvrir Estepona." />
-  <meta property="og:image" content="/img/og-estepona.jpg" />
-
-  <!-- Styles globaux -->
-  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/styles.css" />
-
+    ⚙️ Intégration :
+    - Remplacez les variables CSS (—color-*) par les couleurs de votre index.html
+    - Remplacez les logos, titres et liens par vos contenus.
+    - Les blocs .post-card sont pensés pour être bouclés depuis un CMS.
+  -->
   <style>
     :root{
-      --brand:#0b3c49; --brand-2:#e3f2ef; --text:#0e1115; --muted:#6b7a85; --card:#ffffff;
-      --ring: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.08);
-      --radius: 20px;
+      /* 🔧 À ADAPTER selon la charte index.html de DSIHOTEL */
+      --color-bg: #0a0f1a;
+      --color-surface: #0f1625;
+      --color-primary: #19b6ff; /* Accent proche DIGI, à changer si besoin */
+      --color-text: #e6eef8;
+      --color-muted: #9fb3c8;
+      --color-border: #1c2940;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    html,body{margin:0;padding:0;background:#f7faf9;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-    a{color:var(--brand);text-decoration:none}
-    .container{max-width:1100px;margin:auto;padding:0 16px}
+    html,body{margin:0;padding:0;background:var(--color-bg);color:var(--color-text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px, 92vw);margin-inline:auto}
 
-    /* Header (cohérent avec l’index) */
-    header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid #eef2f1}
-    header .inner{display:flex;align-items:center;gap:16px;justify-content:space-between;height:64px}
-    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
-    .logo img{height:40px;width:auto}
-    nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
-    nav a{padding:8px 12px;border-radius:12px}
-    nav a:hover, nav a.active{background:#eef6f4}
+    /* Topbar utilitaire */
+    .topbar{display:flex;gap:18px;align-items:center;justify-content:flex-end;padding:10px 0;color:var(--color-muted);font-size:14px}
+    .topbar a{opacity:.9}
 
-    /* Hero local */
-    .hero-mini{background:linear-gradient(180deg, #eaf5f2, #f7faf9);border-bottom:1px solid #e9f1ef}
-    .hero-mini .inner{padding:36px 0}
-    .kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e7efec;border-radius:999px;padding:6px 12px;box-shadow:var(--ring)}
-    h1{font-size:clamp(26px,4.5vw,40px);margin:12px 0 6px}
-    .sub{color:#51626e}
+    /* Header */
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg, rgba(10,15,26,.95), rgba(10,15,26,.9));backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--color-border)}
+    .header-row{display:flex;align-items:center;gap:22px;padding:18px 0}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;border:1px solid var(--color-border);box-shadow:var(--shadow)}
+    nav.primary{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.03)}
 
-    /* Sommaire / filtres */
-    .toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px}
-    .toc a{display:inline-block;padding:8px 12px;border:1px solid #e0ebe8;border-radius:999px;background:#fff}
-    .toc a:hover{background:#eef6f4}
-    .filterbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 24px}
-    .filterbar button{border:1px solid #dbe8e4;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
-    .filterbar button[aria-pressed="true"]{background:#0b3c49;color:#fff;border-color:#0b3c49}
+    /* Recherche */
+    .search{margin-left:auto;display:flex;gap:8px;align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:999px;padding:8px 12px}
+    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
 
-    /* Sections + cartes */
-    section{padding:28px 0}
-    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .section-header h2{margin:0;font-size:24px}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-    .card{grid-column:span 6;background:var(--card);border:1px solid #e7efec;border-radius:var(--radius);box-shadow:var(--ring);padding:14px}
-    .card h3{margin:0 0 8px;font-size:18px}
-    .badge{display:inline-block;margin-bottom:8px;font-size:12px;color:#50636d;background:#e9f3f1;border:1px solid #d8e7e3;border-radius:999px;padding:4px 8px}
-    .list{margin:0;padding-left:18px}
-    .list li{margin:6px 0}
-    .note{color:#6b7a85;font-size:14px;margin-top:6px}
+    /* Menu mobile */
+    .burger{display:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);background:var(--color-surface)}
+    @media (max-width: 980px){
+      nav.primary, .search{display:none}
+      .burger{display:inline-grid;place-items:center;margin-left:auto}
+    }
 
-    /* Itinéraires en encadré */
-    .callout{background:#fff;border:1px dashed #cfe1dc;border-radius:16px;padding:16px;box-shadow:var(--ring)}
+    /* Hero / Slider */
+    .hero{position:relative;margin:28px 0}
+    .slider{display:grid;grid-auto-flow:column;grid-auto-columns:100%;overflow:hidden;border-radius:var(--radius-xl);border:1px solid var(--color-border)}
+    .slide{position:relative;min-height:320px;background:linear-gradient(180deg, #152238, #0f1625)}
+    .slide > img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;filter:grayscale(10%) contrast(1.05) saturate(1.1)}
+    .slide .content{position:relative;padding:28px;display:grid;gap:14px;min-height:320px;align-content:end;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(10,15,26,.2) 45%, rgba(10,15,26,.85) 100%)}
+    .pill{display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted)}
+    .slide h2{margin:0;font-size:28px;line-height:1.2}
+    .slide .meta{font-size:14px;color:var(--color-muted)}
+    .slide .cta{display:inline-block;margin-top:6px;font-weight:600;color:#06131e;background:var(--color-primary);padding:10px 14px;border-radius:12px}
 
-    /* Accordéons (conseils pratiques) */
-    .accordion{border:1px solid #e7efec;border-radius:var(--radius);background:#fff;overflow:hidden}
-    .acc-item + .acc-item{border-top:1px solid #e7efec}
-    .acc-btn{width:100%;text-align:left;background:transparent;border:0;padding:14px 16px;font-size:16px;cursor:pointer}
-    .acc-panel{display:none;padding:0 16px 16px;color:#334}
+    .slider-nav{display:flex;gap:8px;position:absolute;bottom:14px;right:14px}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);border:1px solid var(--color-border);cursor:pointer}
+    .dot.active{background:var(--color-primary)}
+
+    /* Sections par catégorie */
+    section.category{margin:34px 0}
+    .section-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .section-head h3{margin:0;font-size:22px}
+    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
+
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    .post-card{display:grid;grid-template-rows:auto 1fr;gap:12px;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden}
+    .post-card .thumb{aspect-ratio:16/9;background:#0b1322}
+    .post-card .body{padding:14px 14px 18px}
+    .post-card .kicker{font-size:12px;color:var(--color-muted)}
+    .post-card h4{margin:4px 0 8px;font-size:18px;line-height:1.35}
+    .post-card .excerpt{color:var(--color-muted);font-size:14px}
 
     /* Footer */
-    footer{margin-top:40px;background:#0c2f38;color:#cfe1dc}
-    footer .inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;padding:28px 0}
-    footer a{color:#cfe1dc}
-    footer .bottom{border-top:1px solid #16454f;padding:14px 0;color:#9fc0b7}
-
-    /* Responsive */
-    @media (max-width: 920px){
-      .card{grid-column:span 12}
-      footer .inner{grid-template-columns:1fr 1fr}
-    }
-    @media (max-width: 640px){
-      nav ul{display:none}
-    }
+    footer{margin-top:54px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,22,37,1), rgba(10,15,26,1))}
+    .footer-top{padding:26px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .social{display:flex;gap:12px}
+    .social a{padding:8px 12px;border-radius:10px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
+    .footer-nav{display:flex;gap:16px;flex-wrap:wrap;color:var(--color-muted)}
+    .footer-bottom{padding:18px 0;color:var(--color-muted);font-size:14px}
   </style>
 </head>
-
 <body>
-  <!-- HEADER -->
-  <header class="site">
-    <div class="container inner">
-      <div class="logo">
-        <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" />
-        <span>Estepona — Bons plans</span>
-      </div>
-      <nav aria-label="Navigation principale">
-        <ul>
-          <li><a href="/index.html#voir">À voir</a></li>
-          <li><a href="/index.html#manger">Restaurants</a></li>
-          <li><a href="/quefaire.html" class="active" aria-current="page">Que faire</a></li>
-          <li><a href="/index.html#faq">FAQ</a></li>
-        </ul>
+  <!-- BARRE UTILE (liens corporate) -->
+  <div class="container topbar" aria-label="Liens utilitaires">
+    <a href="#">Aller sur DSIHOTEL</a>
+    <a href="#">Aide</a>
+    <a href="#">Contact</a>
+    <a href="#">Points de vente</a>
+  </div>
+
+  <!-- EN-TÊTE -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="#" aria-label="Accueil DSIHOTEL">
+        <span class="brand-logo">
+          <!-- Remplacer par le logo DSIHOTEL -->
+          <img src="https://via.placeholder.com/88x88.png?text=DSI" alt="DSIHOTEL" />
+        </span>
+        <strong>Le blog DSIHOTEL</strong>
+      </a>
+
+      <nav class="primary" aria-label="Catégories principales">
+        <a href="#">Actualités</a>
+        <a href="#">Technologie</a>
+        <a href="#">Cybersécurité</a>
+        <a href="#">Guides & Conseils</a>
+        <a href="#">Vie DSI</a>
+        <a href="#">Références</a>
       </nav>
+
+      <form class="search" role="search" aria-label="Recherche sur le blog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
+        <input type="search" placeholder="Rechercher un article…" />
+      </form>
+
+      <button class="burger" aria-label="Ouvrir le menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </header>
 
-  <!-- HERO MINI -->
-  <section class="hero-mini">
-    <div class="container inner">
-      <span class="kicker">🎯 Guide local</span>
-      <h1>Que faire à Estepona</h1>
-      <p class="sub">Incontournables, culture & patrimoine, nature & plein air, itinéraires suggérés et conseils pratiques.</p>
-      <div class="toc" aria-label="Sommaire">
-        <a href="#incontournables">Incontournables</a>
-        <a href="#culture">Culture & patrimoine</a>
-        <a href="#nature">Nature & plein air</a>
-        <a href="#itineraires">Itinéraires suggérés</a>
-        <a href="#conseils">Conseils pratiques</a>
+  <main class="container">
+    <!-- HERO / SLIDER (articles mis en avant) -->
+    <section class="hero" aria-label="Mises en avant">
+      <div class="slider" id="slider">
+        <!-- Slide 1 -->
+        <article class="slide">
+          <img class="bg" src="https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1400&auto=format&fit=crop" alt="Réseau hôtelier" />
+          <div class="content">
+            <span class="pill">Vie DSI</span>
+            <h2>Découvrez comment nous sécurisons le Wi‑Fi invité sans friction</h2>
+            <div class="meta">Publié le 29 septembre 2025 • 6 min</div>
+            <a class="cta" href="#">Lire l’article</a>
+          </div>
+        </article>
+        <!-- Slide 2 -->
+        <article class="slide">
+          <img class="bg" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1400&auto=format&fit=crop" alt="Supervision IT" />
+          <div class="content">
+            <span class="pill">Technologie</span>
+            <h2>Monitoring proactif : notre stack NinjaOne + Microsoft + Sophos</h2>
+            <div class="meta">Publié le 19 septembre 2025 • 5 min</div>
+            <a class="cta" href="#">Lire l’article</a>
+          </div>
+        </article>
+        <!-- Slide 3 -->
+        <article class="slide">
+          <img class="bg" src="https://images.unsplash.com/photo-1529101091764-c3526daf38fe?q=80&w=1400&auto=format&fit=crop" alt="Sécurité" />
+          <div class="content">
+            <span class="pill">Cybersécurité</span>
+            <h2>Carding : comment protéger vos paiements à la réception</h2>
+            <div class="meta">Publié le 12 septembre 2025 • 7 min</div>
+            <a class="cta" href="#">Lire l’article</a>
+          </div>
+        </article>
+        <!-- Slide 4 -->
+        <article class="slide">
+          <img class="bg" src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1400&auto=format&fit=crop" alt="Sauvegardes" />
+          <div class="content">
+            <span class="pill">Guides & Conseils</span>
+            <h2>Faire une sauvegarde fiable sur site et dans le cloud</h2>
+            <div class="meta">Publié le 3 septembre 2025 • 4 min</div>
+            <a class="cta" href="#">Lire l’article</a>
+          </div>
+        </article>
       </div>
-    </div>
-  </section>
+      <div class="slider-nav" id="sliderNav" aria-label="Navigation du slider"></div>
+    </section>
 
-  <main class="container" id="content">
-    <!-- FILTRES (catégories) -->
-    <div class="filterbar" role="toolbar" aria-label="Filtres">
-      <button type="button" class="filter" data-target="incontournables" aria-pressed="true">Incontournables</button>
-      <button type="button" class="filter" data-target="culture" aria-pressed="false">Culture</button>
-      <button type="button" class="filter" data-target="nature" aria-pressed="false">Nature</button>
-      <button type="button" class="filter" data-target="itineraires" aria-pressed="false">Itinéraires</button>
-      <button type="button" class="filter" data-target="all" aria-pressed="false">Tout afficher</button>
-    </div>
-
-    <!-- INCONTOURNABLES -->
-    <section id="incontournables" data-section="incontournables">
-      <div class="section-header">
-        <h2>Incontournables</h2>
+    <!-- SECTIONS par catégories (2 cartes + lien "Voir plus") -->
+    <section class="category" id="cat-vie-dsi">
+      <div class="section-head">
+        <h3>Vie DSI</h3>
+        <a class="more" href="#">Voir plus d’articles</a>
       </div>
       <div class="grid">
-        <article class="card">
-          <span class="badge">Casco Antiguo</span>
-          <h3>Ruelles blanches & façades fleuries</h3>
-          <ul class="list">
-            <li>Casco Antiguo — ruelles blanches fleuries, places conviviales et façades colorées.</li>
-            <li>Route des murales — fresques monumentales à découvrir dans toute la ville.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=900&auto=format&fit=crop" alt="Réunion d’équipe"/></a>
+          <div class="body">
+            <div class="kicker">Vie DSI — 7 octobre 2025</div>
+            <h4><a href="#">Rentrée : nos nouveautés pour vos ouvertures d’hôtels</a></h4>
+            <p class="excerpt">Tour d’horizon des évolutions de notre offre pour faciliter les déploiements multi‑sites.</p>
+          </div>
         </article>
-        <article class="card">
-          <span class="badge">Jardin & musée vivant</span>
-          <h3>Orquidarium</h3>
-          <ul class="list">
-            <li>Orquidarium — serres tropicales, cascade intérieure et superbe collection d’orchidées.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=900&auto=format&fit=crop" alt="Panorama hôtel"/></a>
+          <div class="body">
+            <div class="kicker">Vie DSI — 12 septembre 2025</div>
+            <h4><a href="#">DSIHOTEL partenaire de votre rénovation 2025‑2026</a></h4>
+            <p class="excerpt">Planning, réseaux, sécurité et formation : notre méthode clé en main.</p>
+          </div>
         </article>
-        <article class="card">
-          <span class="badge">Bord de mer</span>
-          <h3>Paseo & plages</h3>
-          <ul class="list">
-            <li>Paseo Marítimo — longue promenade littorale ponctuée de cafés et d’aires de jeux.</li>
-            <li>Playa de la Rada — grande plage centrale et bien équipée.</li>
-            <li>Playa del Cristo — crique abritée aux eaux calmes, parfaite en famille.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?q=80&w=900&auto=format&fit=crop" alt="Consulting IT"/></a>
+          <div class="body">
+            <div class="kicker">Vie DSI — 30 août 2025</div>
+            <h4><a href="#">Pourquoi un chef de projet dédié change tout</a></h4>
+            <p class="excerpt">Un interlocuteur unique pour coordonner infogérance, matériel et logiciels.</p>
+          </div>
         </article>
       </div>
     </section>
 
-    <!-- CULTURE -->
-    <section id="culture" data-section="culture">
-      <div class="section-header">
-        <h2>Culture & patrimoine</h2>
+    <section class="category" id="cat-entertainment">
+      <div class="section-head">
+        <h3>Actualités</h3>
+        <a class="more" href="#">Voir plus d’articles</a>
       </div>
       <div class="grid">
-        <article class="card">
-          <span class="badge">Centre historique</span>
-          <h3>Places & monuments</h3>
-          <ul class="list">
-            <li>Plaza de las Flores — place centrale bordée de cafés et galeries.</li>
-            <li>Torre del Reloj — vestige emblématique de l’ancienne église.</li>
-            <li>Iglesia Nª Sª de los Remedios — édifice du XVIIIᵉ, façade baroque.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1529336953121-ad5a0d43d0d2?q=80&w=900&auto=format&fit=crop" alt="Match ou événement"/></a>
+          <div class="body">
+            <div class="kicker">Actualités — 1 octobre 2025</div>
+            <h4><a href="#">Nos contenus d’octobre : nouveautés et temps forts</a></h4>
+            <p class="excerpt">Ce mois‑ci, découvrez nos meilleures études de cas et ressources pour vos équipes.</p>
+          </div>
         </article>
-        <article class="card">
-          <span class="badge">Musées</span>
-          <h3>Collections & expositions</h3>
-          <ul class="list">
-            <li>Museo Arqueológico (Casa del Aljibe) — collections d’histoire locale.</li>
-            <li>Casa de las Tejerinas / MAD — expositions d’art contemporain.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7?q=80&w=900&auto=format&fit=crop" alt="Écran TV"/></a>
+          <div class="body">
+            <div class="kicker">Actualités — 7 octobre 2025</div>
+            <h4><a href="#">Retour sur la semaine : projets livrés et chiffres clés</a></h4>
+            <p class="excerpt">Quelques métriques sur la qualité de service et les déploiements terminés.</p>
+          </div>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=900&auto=format&fit=crop" alt="Salle de conférence"/></a>
+          <div class="body">
+            <div class="kicker">Actualités — 28 septembre 2025</div>
+            <h4><a href="#">Événement : petit‑déjeuner Cybersécurité hôtelière</a></h4>
+            <p class="excerpt">Inscrivez‑vous pour échanger avec nos experts et partenaires.</p>
+          </div>
         </article>
       </div>
     </section>
 
-    <!-- NATURE -->
-    <section id="nature" data-section="nature">
-      <div class="section-header">
-        <h2>Nature & plein air</h2>
+    <section class="category" id="cat-tech">
+      <div class="section-head">
+        <h3>Technologie</h3>
+        <a class="more" href="#">Voir plus d’articles</a>
       </div>
       <div class="grid">
-        <article class="card">
-          <span class="badge">Parcs & faune</span>
-          <h3>Selwo & sorties marines</h3>
-          <ul class="list">
-            <li>Selwo Aventura — parc semi-safari (2 000+ animaux) à la périphérie.</li>
-            <li>Sorties en mer — observation des dauphins, petites croisières depuis le port.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1544198365-3c67a68b359c?q=80&w=900&auto=format&fit=crop" alt="Onduleur"/></a>
+          <div class="body">
+            <div class="kicker">Technologie — 19 septembre 2025</div>
+            <h4><a href="#">Rester connecté pendant une panne électrique</a></h4>
+            <p class="excerpt">Solutions simples pour maintenir la connectivité fibre en cas d’arrêt secteur.</p>
+          </div>
         </article>
-        <article class="card">
-          <span class="badge">Montagne</span>
-          <h3>Sierra Bermeja</h3>
-          <ul class="list">
-            <li>Sierra Bermeja — randonnées vers le Pico de los Realès, vues sur Gibraltar.</li>
-            <li>Golf & équitation — parcours réputés et École d’Art Équestre Costa del Sol.</li>
-          </ul>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=900&auto=format&fit=crop" alt="Applications"/></a>
+          <div class="body">
+            <div class="kicker">Technologie — 3 septembre 2025</div>
+            <h4><a href="#">Les applis indispensables pour la reprise</a></h4>
+            <p class="excerpt">Notre sélection pour gagner du temps au quotidien côté équipes.</p>
+          </div>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=900&auto=format&fit=crop" alt="Serveurs"/></a>
+          <div class="body">
+            <div class="kicker">Technologie — 25 août 2025</div>
+            <h4><a href="#">Choisir son serveur pour PMS et sauvegardes</a></h4>
+            <p class="excerpt">Critères matériels, redondance et dimensionnement pour hôtels 3‑5★.</p>
+          </div>
         </article>
       </div>
     </section>
 
-    <!-- ITINÉRAIRES -->
-    <section id="itineraires" data-section="itineraires">
-      <div class="section-header">
-        <h2>Itinéraires suggérés</h2>
+    <section class="category" id="cat-cyber">
+      <div class="section-head">
+        <h3>Cybersécurité</h3>
+        <a class="more" href="#">Voir plus d’articles</a>
       </div>
-      <div class="callout">
-        <h3 style="margin-top:0">Propositions simples</h3>
-        <ul class="list">
-          <li>1 jour — Casco Antiguo & Plaza de las Flores → déjeuner près de la Rada → Orquidarium → coucher de soleil sur le paseo.</li>
-          <li>2–3 jours — Jour 1 : centre historique & murales · Jour 2 : Selwo ou Sierra Bermeja + plage du Cristo · Jour 3 : sortie en mer + golf/équitation selon envies.</li>
-        </ul>
+      <div class="grid">
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1605901309584-818e25960a8b?q=80&w=900&auto=format&fit=crop" alt="Sécurité bancaire"/></a>
+          <div class="body">
+            <div class="kicker">Cybersécurité — 26 septembre 2025</div>
+            <h4><a href="#">Comprendre le carding et se protéger</a></h4>
+            <p class="excerpt">Les risques pour la réception et les meilleures pratiques de prévention.</p>
+          </div>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1591696205602-2f950c417cb9?q=80&w=900&auto=format&fit=crop" alt="Router"/></a>
+          <div class="body">
+            <div class="kicker">Cybersécurité — 27 août 2025</div>
+            <h4><a href="#">Arnaque au changement de routeur : les bons réflexes</a></h4>
+            <p class="excerpt">Comment reconnaître la fraude et protéger votre établissement.</p>
+          </div>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=900&auto=format&fit=crop" alt="MFA"/></a>
+          <div class="body">
+            <div class="kicker">Cybersécurité — 10 août 2025</div>
+            <h4><a href="#">MFA partout : pourquoi et comment le déployer</a></h4>
+            <p class="excerpt">O365, PMS, VPN : approche pragmatique et sensibilisation du personnel.</p>
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- CONSEILS -->
-    <section id="conseils" data-section="conseils">
-      <div class="section-header">
-        <h2>Conseils pratiques</h2>
+    <section class="category" id="cat-guides">
+      <div class="section-head">
+        <h3>Guides & Conseils</h3>
+        <a class="more" href="#">Voir plus d’articles</a>
       </div>
-
-      <div class="accordion" id="tips">
-        <div class="acc-item">
-          <button class="acc-btn" aria-expanded="false">Carte & horaires</button>
-          <div class="acc-panel">
-            <ul class="list">
-              <li>Carte des murales à récupérer à l’office de tourisme.</li>
-              <li>Horaires — certains musées ferment en milieu d’après-midi (siesta).</li>
-            </ul>
+      <div class="grid">
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=900&auto=format&fit=crop" alt="Backup"/></a>
+          <div class="body">
+            <div class="kicker">Guides — 15 septembre 2025</div>
+            <h4><a href="#">Faire une bonne copie de sauvegarde sur mobile</a></h4>
+            <p class="excerpt">De la photo au document : paramétrer intelligemment vos sauvegardes.</p>
           </div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn" aria-expanded="false">Gastronomie</button>
-          <div class="acc-panel">
-            <ul class="list">
-              <li>Gastronomie — fruits de mer, pescaito frito, tapas locales.</li>
-            </ul>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=900&auto=format&fit=crop" alt="LAN"/></a>
+          <div class="body">
+            <div class="kicker">Guides — 2 septembre 2025</div>
+            <h4><a href="#">Segmenter son réseau hôtelier sans prise de tête</a></h4>
+            <p class="excerpt">Invités, administratifs, IoT : plan d’adressage et VLANs types.</p>
           </div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn" aria-expanded="false">Mobilité</button>
-          <div class="acc-panel">
-            <ul class="list">
-              <li>Mobilité — centre praticable à pied ou à vélo.</li>
-            </ul>
+        </article>
+        <article class="post-card">
+          <a class="thumb" href="#"><img src="https://images.unsplash.com/photo-1550041728-8b5d6b72338a?q=80&w=900&auto=format&fit=crop" alt="Téléphonie"/></a>
+          <div class="body">
+            <div class="kicker">Guides — 20 août 2025</div>
+            <h4><a href="#">Téléphonie IP : réussir sa migration</a></h4>
+            <p class="excerpt">Choix du trunk, QoS, compatibilité PMS et paging d’urgence.</p>
           </div>
-        </div>
+        </article>
       </div>
-
-      <p class="note">Astuce : pensez à réserver en haute saison (été, week-ends prolongés) pour les activités populaires.</p>
     </section>
+
   </main>
 
-  <!-- FOOTER -->
+  <!-- PIED DE PAGE -->
   <footer>
-    <div class="container inner">
-      <div>
-        <h3>Estepona — Bons plans</h3>
-        <p>Le guide local et indépendant pour découvrir Estepona facilement.</p>
-      </div>
-      <div>
-        <h4>Découvrir</h4>
-        <ul>
-          <li><a href="/index.html#voir">À voir</a></li>
-          <li><a href="/index.html#manger">Restaurants</a></li>
-          <li><a href="/quefaire.html">Que faire</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Infos utiles</h4>
-        <ul>
-          <li><a href="/map.html">Carte</a></li>
-          <li><a href="/index.html#faq">FAQ</a></li>
-          <li><a href="#">Mentions légales</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Suivez-nous</h4>
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">TikTok</a></li>
-        </ul>
+    <div class="container footer-top">
+      <a class="brand" href="#">
+        <span class="brand-logo"><img src="https://via.placeholder.com/88x88.png?text=DSI" alt="DSIHOTEL" /></span>
+        <strong>Le blog DSIHOTEL</strong>
+      </a>
+      <nav class="footer-nav" aria-label="Navigation de pied de page">
+        <a href="#">Mentions légales</a>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Politique de cookies</a>
+      </nav>
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="X">X</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+        <a href="#" aria-label="YouTube">YouTube</a>
       </div>
     </div>
-    <div class="container bottom">
-      © 2025 Bons Plans Estepona · Guide local indépendant
+    <div class="container footer-bottom">
+      © DSIHOTEL — 2025
     </div>
   </footer>
 
-  <!-- Script : filtres, ancre douce, accordéons -->
   <script>
-    // Défilement fluide pour le sommaire
-    document.addEventListener("click", (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-      const id = a.getAttribute("href");
-      if (id.length < 2) return;
-      const target = document.querySelector(id);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        history.pushState(null, "", id);
-      }
-    });
+    // Slider minimaliste (auto + points) — sans dépendances
+    const slider = document.getElementById('slider');
+    const slides = Array.from(slider.children);
+    const nav = document.getElementById('sliderNav');
+    let index = 0, timer;
 
-    // Filtres simples par section
-    const buttons = document.querySelectorAll(".filterbar .filter");
-    const sections = document.querySelectorAll("main [data-section]");
-    buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        buttons.forEach(b => b.setAttribute("aria-pressed", "false"));
-        btn.setAttribute("aria-pressed", "true");
-        const target = btn.dataset.target;
-        sections.forEach(sec => {
-          if (target === "all" || sec.dataset.section === target) {
-            sec.style.display = "";
-          } else {
-            sec.style.display = "none";
-          }
-        });
-        // scroll up to header of the shown section (if not "all")
-        if (target !== "all") {
-          const first = document.querySelector('[data-section="'+target+'"]');
-          first && first.scrollIntoView({behavior:"smooth", block:"start"});
-        }
+    function renderDots(){
+      nav.innerHTML = '';
+      slides.forEach((_, i)=>{
+        const d = document.createElement('button');
+        d.className = 'dot' + (i===index ? ' active' : '');
+        d.setAttribute('aria-label', 'Aller à la diapositive ' + (i+1));
+        d.addEventListener('click', ()=>{ go(i,true); });
+        nav.appendChild(d);
       });
-    });
+    }
 
-    // Accordéons (Conseils pratiques)
-    const accBtns = document.querySelectorAll(".acc-btn");
-    accBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        accBtns.forEach(b => {
-          b.setAttribute("aria-expanded", "false");
-          b.nextElementSibling.style.display = "none";
-        });
-        if (!expanded) {
-          btn.setAttribute("aria-expanded", "true");
-          btn.nextElementSibling.style.display = "block";
-        }
-      });
-    });
+    function go(i, user=false){
+      index = (i + slides.length) % slides.length;
+      slider.style.transform = `translateX(-${index*100}%)`;
+      slider.style.transition = 'transform .6s ease';
+      renderDots();
+      if(user) restart();
+    }
+
+    function next(){ go(index+1); }
+    function restart(){ clearInterval(timer); timer = setInterval(next, 6000); }
+
+    renderDots();
+    restart();
+
+    // Accessibilité : pause au focus/hover
+    slider.addEventListener('mouseenter', ()=>clearInterval(timer));
+    slider.addEventListener('mouseleave', restart);
   </script>
 </body>
 </html>
