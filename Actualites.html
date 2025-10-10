@@ -1,323 +1,282 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Journal — Actualités Estepona</title>
-  <meta name="description" content="Journal / blog pour publier des articles, annonces et nouvelles d’Estepona." />
+  <title>Actualités Estepona — Bons plans</title>
+  <meta name="description" content="Toutes les actualités d’Estepona : événements, infos pratiques, concerts, plages, circulation & travaux, culture." />
+  <meta name="theme-color" content="#0b3c49" />
 
-  <!-- ⚠️ IMPORTANT: Respecter la charte de votre `index.html`
-       - Conservez le même <header>, navigation, couleurs et classes CSS
-       - Gardez le même lien vers votre feuille de style principale (styles.css)
-       - Si vous avez des composants réutilisables, collez-les ici
-  -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- Styles minimaux optionnels (peuvent être supprimés si votre charte couvre tout) -->
   <style>
-    :root { --maxw: 1100px; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; }
-    .container { max-width: var(--maxw); margin: 0 auto; padding: clamp(12px, 2vw, 24px); }
-    .page-title { font-size: clamp(1.8rem, 2.5vw, 2.4rem); margin: 0 0 8px; }
-    .subtle { color: #6b7280; font-size: 0.95rem; }
-    .toolbar { display: grid; gap: 12px; grid-template-columns: 1fr; margin: 16px 0 24px; }
-    .toolbar > * { width: 100%; }
-    .toolbar .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr 1fr; }
-    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
-    .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-    .card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
-    .card img { width: 100%; height: 180px; object-fit: cover; background: #f3f4f6; }
-    .card .content { padding: 14px; display: grid; gap: 8px; }
-    .card .meta { font-size: 0.85rem; color: #6b7280; display: flex; gap: 8px; flex-wrap: wrap; }
-    .badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 999px; background: #eef2ff; color: #3730a3; }
-    .actions { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding: 12px 14px; border-top: 1px solid #f1f5f9; }
-    .btn { display: inline-block; text-decoration: none; padding: 10px 14px; border-radius: 10px; border: 1px solid #e5e7eb; }
-    .btn.primary { border-color: transparent; background: #111827; color: #fff; }
-    .layout { display: grid; gap: 24px; grid-template-columns: 1fr; }
-    aside.sidebar { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; position: sticky; top: 16px; height: max-content; background: #fff; }
-    aside h3 { margin: 0 0 10px; font-size: 1.05rem; }
-    .list-plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-    .pagination { display: flex; gap: 8px; justify-content: center; margin: 28px 0 0; }
-    .hero { background: linear-gradient(180deg, rgba(17,24,39,0.06), transparent); padding: 24px 0; border-bottom: 1px solid #e5e7eb; }
-    .featured { display: grid; grid-template-columns: 1fr; gap: 16px; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; background: #fff; }
-    .featured img { width: 100%; height: 260px; object-fit: cover; }
-    .featured .content { padding: 16px; }
-    @media (min-width: 900px) {
-      .layout { grid-template-columns: 1fr 320px; }
-      .featured { grid-template-columns: 1.2fr 1fr; }
-      .toolbar .row { grid-template-columns: 1fr 1fr 1fr; }
+    :root{
+      /* palette & rayons repris de test.html */
+      --color-bg:#0b1730; --color-surface:#0f1f44; --color-surface-2:#0f1625;
+      --color-primary:#2db4ff; --color-accent:#00d0b6;
+      --color-text:#eaf2ff; --color-muted:#a8b6cf; --color-border:#1a2d5a;
+      --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
     }
+    html,body{margin:0;padding:0;background:var(--color-bg);color:var(--color-text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+
+    /* Header compact aligné sur test.html */
+    header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--color-border)}
+    .header-row{display:flex;align-items:center;gap:22px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:40px;height:40px;border-radius:10px;overflow:hidden;border:1px solid var(--color-border);box-shadow:var(--shadow)}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+
+    /* Hero */
+    .page-hero{padding:26px 0 10px;border-bottom:1px solid var(--color-border);background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%)}
+    .page-hero h1{margin:6px 0 6px;font-size:30px}
+    .page-hero p{margin:0;color:var(--color-muted)}
+
+    /* Barre outils (recherche + filtres) */
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}
+    .search{display:flex;gap:8px;align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:999px;padding:8px 12px}
+    .search svg{opacity:.8}
+    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:220px}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .filters h3{font-size:14px;color:var(--color-muted);margin:0 6px 0 0;font-weight:600}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--color-border);background:rgba(255,255,255,.04);cursor:pointer}
+    .chip input{accent-color:var(--color-primary)}
+
+    /* Grille de cartes (même style que test.html) */
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+    .card{display:grid;grid-template-rows:auto 1fr;gap:10px;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))}
+    /* vignettes uniformes comme sur test.html */
+    .card .thumb{
+      position:relative;height:clamp(200px,22vw,260px);border-radius:16px;overflow:hidden;background:#0b1322;display:block
+    }
+    .card .thumb img{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center
+    }
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .meta{display:flex;flex-wrap:wrap;gap:10px;color:var(--color-muted);font-size:13px}
+    .tag{padding:4px 8px;border:1px solid var(--color-border);border-radius:999px;font-size:12px}
+
+    /* Footer */
+    footer{margin-top:36px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
+    .footer-top{padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .footer-bottom{padding:14px 0;color:var(--color-muted);font-size:14px}
   </style>
 </head>
 <body>
-  <!-- Header du site (copier-coller le même que dans index.html) -->
+  <!-- HEADER -->
   <header>
-    <!-- Exemple : <div class="site-header">... votre logo / menu ...</div> -->
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="index.html#voir">À voir</a>
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="index.html#cartes">Cartes</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+    </div>
   </header>
 
-  <section class="hero">
+  <!-- HERO -->
+  <section class="page-hero">
     <div class="container">
-      <h1 class="page-title">Journal / Actualités</h1>
-      <p class="subtle">Publiez des nouvelles, événements et articles sur Estepona.</p>
+      <h1>Actualités d’Estepona</h1>
+      <p>Événements, infos pratiques, circulation, plages, culture & sport.</p>
 
-      <!-- Outils de recherche / tri -->
       <div class="toolbar">
-        <input id="search" type="search" placeholder="Rechercher un article… (titre, résumé, tag)" aria-label="Rechercher" />
-        <div class="row">
-          <select id="category" aria-label="Filtrer par catégorie">
-            <option value="">Toutes les catégories</option>
-            <option>Événements</option>
-             <option>Ville de Estepona</option>
-            <option>Gastronomie</option>
-            <option>Plages</option>
-            <option>Culture</option>
-            <option>Sport</option>
-            <option>Transports</option>
-          </select>
-          <select id="sort" aria-label="Trier par">
-            <option value="date-desc">Plus récents</option>
-            <option value="date-asc">Plus anciens</option>
-            <option value="title-asc">Titre A→Z</option>
-            <option value="title-desc">Titre Z→A</option>
-          </select>
-          <select id="perPage" aria-label="Articles par page">
-            <option value="6">6 / page</option>
-            <option value="9">9 / page</option>
-            <option value="12" selected>12 / page</option>
-            <option value="24">24 / page</option>
-          </select>
+        <!-- Recherche -->
+        <form class="search" role="search" onsubmit="event.preventDefault()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
+          <input id="q" type="search" placeholder="Rechercher : feria, concert, travaux, plage…" aria-label="Rechercher" />
+        </form>
+
+        <!-- Filtres Catégorie -->
+        <div class="filters" aria-label="Filtres catégorie">
+          <h3>Catégories :</h3>
+          <label class="chip"><input type="checkbox" data-cat="Événements" /> Événements</label>
+          <label class="chip"><input type="checkbox" data-cat="Infos" /> Infos pratiques</label>
+          <label class="chip"><input type="checkbox" data-cat="Travaux" /> Travaux/Circulation</label>
+          <label class="chip"><input type="checkbox" data-cat="Plages" /> Plages</label>
+          <label class="chip"><input type="checkbox" data-cat="Culture" /> Culture</label>
+          <label class="chip"><input type="checkbox" data-cat="Sport" /> Sport</label>
+        </div>
+
+        <!-- Filtres période -->
+        <div class="filters" aria-label="Filtres période">
+          <h3>Période :</h3>
+          <label class="chip"><input type="radio" name="period" value="7"  /> Cette semaine</label>
+          <label class="chip"><input type="radio" name="period" value="30" checked /> Ce mois-ci</label>
+          <label class="chip"><input type="radio" name="period" value="90" /> 3 derniers mois</label>
+          <label class="chip"><input type="radio" name="period" value="all" /> Archives</label>
         </div>
       </div>
-
-      <!-- Mise en avant -->
-      <div id="featured" class="featured" hidden>
-        <img id="featuredImage" src="" alt="" loading="lazy" />
-        <div class="content">
-          <div class="meta"><span class="badge" id="featuredCategory"></span><span id="featuredDate"></span></div>
-          <h2 id="featuredTitle"></h2>
-          <p id="featuredExcerpt" class="subtle"></p>
-          <div class="actions">
-            <a id="featuredLink" class="btn primary" href="#">Lire l’article</a>
-            <span id="featuredReadTime" class="subtle"></span>
-          </div>
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <main class="container layout" id="content">
-    <section aria-label="Liste des articles" class="grid">
-      <div id="cards" class="cards" aria-live="polite"></div>
-      <nav class="pagination" id="pagination" aria-label="Pagination"></nav>
-    </section>
-
-    <aside class="sidebar" aria-label="Filtres & tags">
-      <h3>Catégories</h3>
-      <ul class="list-plain" id="categoryList"><!-- rempli via JS --></ul>
-      <h3 style="margin-top:16px">Tags</h3>
-      <div id="tagCloud" style="display:flex; gap:8px; flex-wrap:wrap"></div>
-    </aside>
+  <!-- LISTE -->
+  <main class="container">
+    <div class="grid" id="grid"></div>
   </main>
 
-  <!-- Footer du site (copier-coller le même que dans index.html) -->
-  <footer class="container" style="padding-top: 24px; padding-bottom: 40px;">
-    <!-- Exemple : <small>© Votre marque</small> -->
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html"><span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span><strong>Estepona — Bons plans</strong></a>
+      <div class="meta">Pages : Actualités · Chiringuitos · Casco Antiguo · Rooftops & Discothèques</div>
+    </div>
+    <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
   </footer>
 
+  <!-- DATASET -->
+  <script id="dataset-actus" type="application/json">
+  [
+    {
+      "titre": "Concert au Mirador del Carmen",
+      "image": "img/actus/concert-mirador.jpg",
+      "categorie": "Culture",
+      "date": "2025-07-03",
+      "tags": ["concert","classique"],
+      "resume": "Récital de piano au Mirador del Carmen. Entrée libre sur réservation.",
+      "lien": "#"
+    },
+    {
+      "titre": "Feria d’Estepona : programme",
+      "image": "img/actus/feria.jpg",
+      "categorie": "Événements",
+      "date": "2025-07-10",
+      "tags": ["feria","feu d’artifice","famille"],
+      "resume": "Calendrier des défilés, concerts et feux d’artifice pour la Feria.",
+      "lien": "#"
+    },
+    {
+      "titre": "Info plages : drapeau jaune sur La Rada",
+      "image": "img/actus/plage-rada.jpg",
+      "categorie": "Plages",
+      "date": "2025-06-28",
+      "tags": ["sécurité","baignade"],
+      "resume": "Houle annoncée en fin d’après-midi : prudence et respectez les consignes.",
+      "lien": "#"
+    },
+    {
+      "titre": "Travaux nocturnes Av. España",
+      "image": "img/actus/travaux-espana.jpg",
+      "categorie": "Travaux",
+      "date": "2025-06-22",
+      "tags": ["circulation","paseo"],
+      "resume": "Reprofilage de chaussée entre 22h et 6h — circulation alternée.",
+      "lien": "#"
+    },
+    {
+      "titre": "Marché artisanal Plaza de las Flores",
+      "image": "img/actus/marche-flores.jpg",
+      "categorie": "Événements",
+      "date": "2025-06-29",
+      "tags": ["artisanal","famille"],
+      "resume": "Stands d’artisans locaux, ateliers enfants et musique live.",
+      "lien": "#"
+    },
+    {
+      "titre": "Tournoi de beach-volley Playa del Cristo",
+      "image": "img/actus/beach-volley.jpg",
+      "categorie": "Sport",
+      "date": "2025-07-06",
+      "tags": ["sport","plage"],
+      "resume": "Inscription gratuite sur place (10h), finales en fin d’après-midi.",
+      "lien": "#"
+    },
+    {
+      "titre": "Nouveau parking souterrain (centre)",
+      "image": "img/actus/parking.jpg",
+      "categorie": "Infos",
+      "date": "2025-06-18",
+      "tags": ["pratique","stationnement"],
+      "resume": "Ouverture du parking municipal près de la Calle Terraza.",
+      "lien": "#"
+    }
+  ]
+  </script>
+
+  <!-- LOGIQUE -->
   <script>
-    // ===============================
-    //  Données d'exemple (remplacez / ajoutez vos articles)
-    //  Vous pouvez aussi générer ce JSON côté build/CMS.
-    //  Champs requis: id, title, date (YYYY-MM-DD), category, excerpt, cover, tags, minutes, url
-    // ===============================
-    const ARTICLES = [
-      {
-        id: 1,
-        title: "El Ayuntamiento instalará medio centenar de equipos de climatización en los centros educativos públicos",
-        date: "2025-08-12",
-        category: "Ville de Estepona",
-        excerpt: "Estos equipos de refrigeración y calefacción...",
-        cover: "img/ayuntamiento.png",
-        tags: ["art", "weekend", "bord de mer"],
-        minutes: 3,
-        url: "https://ayuntamiento.estepona.es/noticia/18926-el-ayuntamiento-instalara-medio-centenar-de-equipos-de-climatizacion-en-los-centros-educativos-publicos",
-        featured: true
-      },
-      {
-        id: 2,
-        title: "Navettes spéciales pour la feria d’Estepona",
-        date: "2025-07-28",
-        category: "Transports",
-        excerpt: "Lignes renforcées et horaires élargis pendant la feria.",
-        cover: "images/actu-navette.jpg",
-        tags: ["bus", "feria", "pratique"],
-        minutes: 2,
-        url: "article-navettes-feria.html"
-      },
-      {
-        id: 3,
-        title: "5 chiringuitos à tester cet été",
-        date: "2025-06-30",
-        category: "Gastronomie",
-        excerpt: "Espetos, paellas et couchers de soleil au menu.",
-        cover: "images/actu-chiringuito.jpg",
-        tags: ["été", "plage", "restaurants"],
-        minutes: 4,
-        url: "article-chiringuitos.html"
-      }
-    ];
+  (function(){
+    const dataEl = document.getElementById('dataset-actus');
+    let items = [];
+    try { items = JSON.parse(dataEl.textContent.trim()); } catch(e){ items = []; }
 
-    // ===============================
-    //  Helpers
-    // ===============================
-    const $ = (q, el=document) => el.querySelector(q);
-    const $$ = (q, el=document) => Array.from(el.querySelectorAll(q));
-    const formatDate = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' });
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    const catChips = Array.from(document.querySelectorAll('[data-cat]'));
+    const periodRadios = Array.from(document.querySelectorAll('input[name="period"]'));
 
-    function renderFeatured(list) {
-      const f = list.find(a => a.featured);
-      const box = $('#featured');
-      if (!f) { box.hidden = true; return; }
-      $('#featuredImage').src = f.cover; $('#featuredImage').alt = f.title;
-      $('#featuredCategory').textContent = f.category;
-      $('#featuredDate').textContent = formatDate(f.date);
-      $('#featuredTitle').textContent = f.title;
-      $('#featuredExcerpt').textContent = f.excerpt;
-      $('#featuredLink').href = f.url;
-      $('#featuredReadTime').textContent = `${f.minutes} min de lecture`;
-      box.hidden = false;
+    // utilitaires dates
+    function parseISO(s){ const d=new Date(s); return isNaN(d)?null:d; }
+    function daysDiff(from, to){ return Math.floor((to - from)/(1000*60*60*24)); }
+
+    function render(list){
+      // tri : plus récent d'abord
+      const sorted = [...list].sort((a,b)=> (parseISO(b.date)||0) - (parseISO(a.date)||0));
+      grid.innerHTML = sorted.map(it => `
+        <article class="card">
+          <a class="thumb" href="${it.lien||'#'}">
+            <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.titre||''}" />
+          </a>
+          <div class="body">
+            <div class="kicker">
+              <span class="tag">${it.categorie||''}</span>
+              <span class="tag">${new Date(it.date).toLocaleDateString('fr-FR')}</span>
+            </div>
+            <h3>${it.titre||''}</h3>
+            <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ')}</p>
+            <p>${it.resume||''}</p>
+          </div>
+        </article>
+      `).join('');
     }
 
-    function buildCard(a) {
-      const li = document.createElement('article');
-      li.className = 'card';
-      li.setAttribute('data-category', a.category);
-      li.setAttribute('data-tags', a.tags.join(','));
-      li.innerHTML = `
-        <img src="${a.cover}" alt="${a.title}" loading="lazy" />
-        <div class="content">
-          <div class="meta"><span class="badge">${a.category}</span><span>· ${formatDate(a.date)}</span><span>· ${a.minutes} min</span></div>
-          <h2 style="margin:0;font-size:1.1rem;">${a.title}</h2>
-          <p class="subtle" style="margin:0;">${a.excerpt}</p>
-        </div>
-        <div class="actions">
-          <a class="btn primary" href="${a.url}">Lire</a>
-          <div class="subtle">${a.tags.map(t => `#${t}`).join(' ')}</div>
-        </div>`;
-      return li;
-    }
+    function applyFilters(){
+      const txt = (q.value||'').toLowerCase();
+      const selectedCats = catChips.filter(c=>c.checked).map(c=>c.dataset.cat.toLowerCase());
+      const p = (periodRadios.find(r=>r.checked)||{}).value || '30';
+      const now = new Date();
 
-    function unique(arr) { return [...new Set(arr)]; }
+      const filtered = items.filter(it=>{
+        const hay = [it.titre, it.categorie, ...(it.tags||[]), it.resume].join(' ').toLowerCase();
+        const matchText = !txt || hay.includes(txt);
+        const matchCat = !selectedCats.length || selectedCats.includes((it.categorie||'').toLowerCase());
 
-    function computeFilters(data) {
-      const cats = unique(data.map(a => a.category)).sort();
-      const tags = unique(data.flatMap(a => a.tags)).sort();
-      // Sidebar
-      const cl = $('#categoryList'); cl.innerHTML = '';
-      const liAll = document.createElement('li');
-      liAll.innerHTML = `<button data-cat="" class="btn" style="width:100%">Toutes</button>`;
-      cl.appendChild(liAll);
-      cats.forEach(c => {
-        const li = document.createElement('li');
-        li.innerHTML = `<button data-cat="${c}" class="btn" style="width:100%">${c}</button>`;
-        cl.appendChild(li);
+        // période
+        let matchPeriod = true;
+        if(p !== 'all'){
+          const d = parseISO(it.date);
+          if(d){
+            const dd = daysDiff(d, now) * -1; // d -> now (négatif si passé)
+            const maxBack = parseInt(p,10);   // jours
+            // on garde les actus dont la date est dans les N derniers jours
+            matchPeriod = (now - d) <= maxBack*24*60*60*1000;
+          }
+        }
+        return matchText && matchCat && matchPeriod;
       });
-      const cloud = $('#tagCloud'); cloud.innerHTML = '';
-      tags.forEach(t => {
-        const b = document.createElement('button');
-        b.className = 'btn';
-        b.textContent = `#${t}`;
-        b.dataset.tag = t;
-        cloud.appendChild(b);
-      });
+
+      render(filtered);
     }
 
-    // Pagination simple côté client
-    function paginate(items, page, perPage) {
-      const total = items.length;
-      const pages = Math.max(1, Math.ceil(total / perPage));
-      const start = (page - 1) * perPage;
-      return { slice: items.slice(start, start + perPage), page, pages, total };
-    }
+    q.addEventListener('input', applyFilters);
+    catChips.forEach(c=>c.addEventListener('change', applyFilters));
+    periodRadios.forEach(r=>r.addEventListener('change', applyFilters));
 
-    function renderPagination(state) {
-      const nav = $('#pagination');
-      nav.innerHTML = '';
-      const { page, pages } = state;
-      const mk = (label, p, disabled=false) => {
-        const a = document.createElement('button');
-        a.className = 'btn';
-        a.textContent = label;
-        a.disabled = disabled;
-        a.addEventListener('click', () => { state.page = p; render(state); });
-        return a;
-      };
-      nav.append(
-        mk('← Précédent', Math.max(1, page - 1), page === 1),
-        document.createTextNode(` Page ${page} / ${pages} `),
-        mk('Suivant →', Math.min(pages, page + 1), page === pages)
-      );
-    }
-
-    function applySearchSortFilter(all, state) {
-      const q = state.q.trim().toLowerCase();
-      const cat = state.cat;
-      const tag = state.tag;
-      let list = all.filter(a => {
-        const inText = (a.title + ' ' + a.excerpt + ' ' + a.tags.join(' ')).toLowerCase().includes(q);
-        const inCat = !cat || a.category === cat;
-        const inTag = !tag || a.tags.includes(tag);
-        return inText && inCat && inTag;
-      });
-      switch (state.sort) {
-        case 'date-asc': list.sort((a,b) => a.date.localeCompare(b.date)); break;
-        case 'title-asc': list.sort((a,b) => a.title.localeCompare(b.title)); break;
-        case 'title-desc': list.sort((a,b) => b.title.localeCompare(a.title)); break;
-        default: list.sort((a,b) => b.date.localeCompare(a.date));
-      }
-      return list;
-    }
-
-    function render(state) {
-      const data = applySearchSortFilter(ARTICLES, state);
-      // Featured
-      renderFeatured(data);
-      // Cards
-      const container = $('#cards'); container.innerHTML = '';
-      const { slice, pages } = paginate(data, state.page, state.perPage);
-      slice.forEach(a => container.appendChild(buildCard(a)));
-      // Pagination
-      state.page = Math.min(state.page, pages);
-      renderPagination({ ...state, pages });
-    }
-
-    // État global
-    const state = { q: '', cat: '', tag: '', sort: 'date-desc', page: 1, perPage: 12 };
-
-    // Interactions UI
-    $('#search').addEventListener('input', e => { state.q = e.target.value; state.page = 1; render(state); });
-    $('#category').addEventListener('change', e => { state.cat = e.target.value; state.page = 1; render(state); });
-    $('#sort').addEventListener('change', e => { state.sort = e.target.value; render(state); });
-    $('#perPage').addEventListener('change', e => { state.perPage = parseInt(e.target.value, 10) || 12; state.page = 1; render(state); });
-    document.addEventListener('click', (e) => {
-      const bCat = e.target.closest('button[data-cat]');
-      if (bCat) { state.cat = bCat.dataset.cat; state.page = 1; render(state); }
-      const bTag = e.target.closest('button[data-tag]');
-      if (bTag) { state.tag = bTag.dataset.tag; state.page = 1; render(state); }
-    });
-
-    // Initialisation
-    computeFilters(ARTICLES);
-    render(state);
-
-    // ===============================
-    //  COMMENT AJOUTER UN ARTICLE ?
-    //  1) Dupliquez un objet dans le tableau ARTICLES avec vos données
-    //  2) Ajoutez la page cible (ex: article-xxx.html) ou changez l'URL
-    //  3) Pour mettre un article en avant, ajoutez featured: true
-    //  4) Les images peuvent pointer vers /images/...
-    // ===============================
+    render(items); // initial
+  })();
   </script>
 </body>
 </html>
