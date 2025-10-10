@@ -6,10 +6,8 @@
   <title>Actualités Estepona — Bons plans</title>
   <meta name="description" content="Toutes les actualités d’Estepona : événements, infos pratiques, concerts, plages, circulation & travaux, culture." />
   <meta name="theme-color" content="#0b3c49" />
-
   <style>
     :root{
-      /* palette & rayons repris de test.html */
       --color-bg:#0b1730; --color-surface:#0f1f44; --color-surface-2:#0f1625;
       --color-primary:#2db4ff; --color-accent:#00d0b6;
       --color-text:#eaf2ff; --color-muted:#a8b6cf; --color-border:#1a2d5a;
@@ -21,7 +19,7 @@
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header compact aligné sur test.html */
+    /* Header */
     header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--color-border)}
     .header-row{display:flex;align-items:center;gap:22px;padding:14px 0}
     .brand{display:flex;align-items:center;gap:12px}
@@ -35,7 +33,7 @@
     .page-hero h1{margin:6px 0 6px;font-size:30px}
     .page-hero p{margin:0;color:var(--color-muted)}
 
-    /* Barre outils (recherche + filtres) */
+    /* Toolbar */
     .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}
     .search{display:flex;gap:8px;align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:999px;padding:8px 12px}
     .search svg{opacity:.8}
@@ -45,18 +43,12 @@
     .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--color-border);background:rgba(255,255,255,.04);cursor:pointer}
     .chip input{accent-color:var(--color-primary)}
 
-    /* Grille de cartes (même style que test.html) */
+    /* Grid / cards */
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
-
     .card{display:grid;grid-template-rows:auto 1fr;gap:10px;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))}
-    /* vignettes uniformes comme sur test.html */
-    .card .thumb{
-      position:relative;height:clamp(200px,22vw,260px);border-radius:16px;overflow:hidden;background:#0b1322;display:block
-    }
-    .card .thumb img{
-      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center
-    }
+    .card .thumb{position:relative;height:clamp(200px,22vw,260px);border-radius:16px;overflow:hidden;background:#0b1322;display:block}
+    .card .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
     .card .body{padding:12px 14px 16px}
     .card .kicker{font-size:12px;color:var(--color-muted)}
     .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
@@ -111,7 +103,7 @@
           <label class="chip"><input type="checkbox" data-cat="Sport" /> Sport</label>
         </div>
 
-        <!-- Filtres période -->
+        <!-- Filtres Période -->
         <div class="filters" aria-label="Filtres période">
           <h3>Période :</h3>
           <label class="chip"><input type="radio" name="period" value="7"  /> Cette semaine</label>
@@ -137,30 +129,21 @@
     <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
   </footer>
 
-  <!-- DATASET (avec 5 actus mairie intégrées) -->
+  <!-- DATASET (actus) -->
   <script id="dataset-actus" type="application/json">
   [
-{
-  "titre": "« Estepona Vive sus Calles » – édition d’automne (10–12 oct.)",
-  "image": "img/oto_estepona.png",
-  "categorie": "Événements",
-  "date": "2025-10-10",
-  "tags": ["musique","gastronomie","famille"],
-  "resume": "Concerts (Los Secretos), DJ El Pulpo, mini-foire gastronomique et animations enfants dans toute la ville.",
-  "lien": "actualite-estepona-vive-otono.html"
-}
     {
       "titre": "« Estepona Vive sus Calles » – édition d’automne (10–12 oct.)",
-      "image": "img/oto_estepona.png",
+      "image": "img/actus/estepona-vive-otono-cover.jpg",
       "categorie": "Événements",
       "date": "2025-10-10",
       "tags": ["musique","gastronomie","famille"],
-      "resume": "Concerts (Los Secretos), DJ El Pulpo, I Feria del Pulpo, concours de pasodobles et animations enfants.",
-      "lien": "https://ayuntamiento.estepona.es/noticia/18980--estepona-vive-sus-calles-celebra-desde-manana-su-edicion-de-otono-con-los-secretos-el-dj-el-pulpo-una-feria-gastronomica"
+      "resume": "Concerts (Los Secretos), DJ El Pulpo, mini-foire gastronomique et animations enfants dans toute la ville.",
+      "lien": "actualite-estepona-vive-otono.html"
     },
     {
       "titre": "Carrera solidaria « Ruta 091 » (9 nov.)",
-      "image": "img/ruta-091.png",
+      "image": "img/actus/ruta-091.jpg",
       "categorie": "Sport",
       "date": "2025-11-09",
       "tags": ["course","solidarité","Police Nacional"],
@@ -209,48 +192,49 @@
     const catChips = Array.from(document.querySelectorAll('[data-cat]'));
     const periodRadios = Array.from(document.querySelectorAll('input[name="period"]'));
 
-    // utilitaires dates
     function parseISO(s){ const d=new Date(s); return isNaN(d)?null:d; }
 
-    function render(list){
-      // tri : plus récent d'abord
-      const sorted = [...list].sort((a,b)=> (parseISO(b.date)||0) - (parseISO(a.date)||0));
-      grid.innerHTML = sorted.map(it => `
+    function card(it){
+      const dateStr = it.date ? new Date(it.date).toLocaleDateString('fr-FR') : '';
+      return `
         <article class="card">
           <a class="thumb" href="${it.lien||'#'}" target="_blank" rel="noopener">
-            <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.titre||''}" />
+            <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.titre||''}" onerror="this.onerror=null;this.src='img/placeholder-1.jpg'"/>
           </a>
           <div class="body">
             <div class="kicker">
               <span class="tag">${it.categorie||''}</span>
-              <span class="tag">${new Date(it.date).toLocaleDateString('fr-FR')}</span>
+              <span class="tag">${dateStr}</span>
             </div>
             <h3><a href="${it.lien||'#'}" target="_blank" rel="noopener">${it.titre||''}</a></h3>
             <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ')}</p>
             <p>${it.resume||''}</p>
           </div>
         </article>
-      `).join('');
+      `;
+    }
+
+    function render(list){
+      const sorted = [...list].sort((a,b)=> (parseISO(b.date)||0) - (parseISO(a.date)||0));
+      grid.innerHTML = sorted.map(card).join('');
     }
 
     function applyFilters(){
       const txt = (q.value||'').toLowerCase();
-      const selectedCats = catChips.filter(c=>c.checked).map(c=>c.dataset.cat.toLowerCase());
+      const cats = catChips.filter(c=>c.checked).map(c=>c.dataset.cat.toLowerCase());
       const p = (periodRadios.find(r=>r.checked)||{}).value || '30';
       const now = new Date();
 
       const filtered = items.filter(it=>{
         const hay = [it.titre, it.categorie, ...(it.tags||[]), it.resume].join(' ').toLowerCase();
-        const matchText = !txt || hay.includes(txt);
-        const matchCat = !selectedCats.length || selectedCats.includes((it.categorie||'').toLowerCase());
-
-        // période (jours glissants)
-        let matchPeriod = true;
-        if(p !== 'all'){
+        const okText = !txt || hay.includes(txt);
+        const okCat  = !cats.length || cats.includes((it.categorie||'').toLowerCase());
+        let okPeriod = true;
+        if(p!=='all'){
           const d = parseISO(it.date);
-          if(d){ matchPeriod = (now - d) <= parseInt(p,10)*86400000; }
+          if(d){ okPeriod = (now - d) <= parseInt(p,10)*86400000; }
         }
-        return matchText && matchCat && matchPeriod;
+        return okText && okCat && okPeriod;
       });
 
       render(filtered);
