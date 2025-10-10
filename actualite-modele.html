@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[TITRE DE L’ACTU] — Actualités Estepona</title>
+  <meta name="description" content="[RÉSUMÉ COURT DE L’ACTU]" />
+  <meta name="theme-color" content="#0b1730" />
+  <style>
+    :root{--bg:#0b1730;--surface:#0f1f44;--border:#1a2d5a;--primary:#2db4ff;--text:#eaf2ff;--muted:#a8b6cf;--shadow:0 10px 30px rgba(0,0,0,.35);--r:16px}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(900px,92vw);margin-inline:auto}
+    header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(11,23,48,.95),rgba(11,23,48,.9));border-bottom:1px solid var(--border)}
+    .row{display:flex;align-items:center;gap:14px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:36px;height:36px;border-radius:10px;border:1px solid var(--border)}
+    .hero{padding:22px 0 10px;border-bottom:1px solid var(--border)}
+    .kicker{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:12px}
+    h1{margin:.3rem 0 0;font-size:30px;line-height:1.2}
+    .cover{margin:16px 0;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .cover img{display:block;width:100%;height:clamp(240px,35vw,380px);object-fit:cover}
+    article{padding:8px 0 24px}
+    article p{line-height:1.65}
+    article h2{margin:22px 0 8px;font-size:20px}
+    .meta-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px}
+    .share{display:flex;gap:10px;flex-wrap:wrap}
+    .share a{border:1px solid var(--border);border-radius:10px;padding:6px 10px;background:rgba(255,255,255,.04)}
+    .pager{display:flex;justify-content:space-between;gap:10px;margin:16px 0}
+    .pager a{flex:1;text-align:center;border:1px solid var(--border);border-radius:12px;padding:10px;background:rgba(255,255,255,.03)}
+  </style>
+  <!-- JSON-LD NewsArticle -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"NewsArticle",
+    "headline":"[TITRE DE L’ACTU]",
+    "datePublished":"2025-06-30",
+    "dateModified":"2025-06-30",
+    "author":{"@type":"Organization","name":"Bons Plans Estepona"},
+    "image":["img/actus/placeholder.jpg"],
+    "articleSection":"[Catégorie]",
+    "description":"[RÉSUMÉ COURT DE L’ACTU]",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://tondomaine/actualite-xxx.html"}
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="container row">
+      <a class="brand" href="actualites.html">
+        <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        <strong>Actualités Estepona</strong>
+      </a>
+      <div style="margin-left:auto"><a href="index.html" style="color:#2db4ff">Accueil</a></div>
+    </div>
+  </header>
+
+  <section class="container hero">
+    <div class="kicker">
+      <span class="tag">[Catégorie]</span>
+      <span class="tag">Publié le <time datetime="2025-06-30">30/06/2025</time></span>
+      <span class="tag">Tags : <span>feria, concert</span></span>
+    </div>
+    <h1>[TITRE DE L’ACTU]</h1>
+    <div class="cover"><img src="img/actus/placeholder.jpg" alt="[TITRE DE L’ACTU]"></div>
+  </section>
+
+  <article class="container">
+    <p>Texte de l’article…</p>
+    <h2>Sous-titre</h2>
+    <p>Paragraphe détaillé…</p>
+
+    <div class="meta-bottom">
+      <div>Source : Mairie d’Estepona</div>
+      <div class="share">
+        <a href="#" onclick="navigator.share && navigator.share({title:document.title,url:location.href});return false;">Partager</a>
+        <a href="https://twitter.com/intent/tweet?text=[TITRE]&url=" target="_blank" rel="noopener">X/Twitter</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+
+    <nav class="pager">
+      <a href="actualite-prev.html">← Précédent</a>
+      <a href="actualites.html">Retour à toutes les actus</a>
+      <a href="actualite-next.html">Suivant →</a>
+    </nav>
+  </article>
+</body>
+</html>
