@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Restaurants du Casco Antiguo — Estepona</title>
-  <meta name="description" content="Tous les restaurants du centre historique d’Estepona (Casco Antiguo) — recherche, filtres par budget et tags, liens Google Maps." />
+  <meta name="description" content="Restaurants du centre historique d’Estepona (Casco Antiguo) — classés par places et rues, avec recherche, filtres et liens Google Maps." />
   <style>
   :root{
     --bg:#0b1730; --surface:#0f1f44; --surface-2:#0f1625;
@@ -32,8 +32,8 @@
   .page-hero{padding:26px 0 6px;border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%)}
   .page-hero h1{margin:6px 0 4px;font-size:30px}
   .page-hero p{margin:0;color:var(--muted)}
-  .filters{margin:18px 0;display:flex;gap:10px;flex-wrap:wrap}
-  .filters h3{font-size:14px;color:var(--muted);margin:0 10px 0 0;font-weight:600}
+  .filters{margin:18px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .filters h3{font-size:14px;color:var(--muted);margin:0 6px 0 0;font-weight:600}
   .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04);cursor:pointer}
   .chip input{accent-color:var(--primary)}
 
@@ -78,8 +78,20 @@
   <section class="page-hero">
     <div class="container">
       <h1>Restaurants du Casco Antiguo</h1>
-      <p>Tous les restaurants du centre historique d’Estepona (Casco Antiguo).</p>
+      <p>Tous les restaurants du centre historique d’Estepona (classés par places/rues).</p>
 
+      <!-- Filtres PLACES -->
+      <div class="filters" id="placeFilters" aria-label="Filtres par place">
+        <h3>Places :</h3>
+        <label class="chip"><input type="checkbox" data-place="Plaza de las Flores" /> Plaza de las Flores</label>
+        <label class="chip"><input type="checkbox" data-place="Plaza Ortiz" /> Plaza Ortiz</label>
+        <label class="chip"><input type="checkbox" data-place="Calle Real" /> Calle Real</label>
+        <label class="chip"><input type="checkbox" data-place="Calle Caridad" /> Calle Caridad</label>
+        <label class="chip"><input type="checkbox" data-place="Calle Santa Ana" /> Calle Santa Ana</label>
+        <label class="chip"><input type="checkbox" data-place="Calle Terraza" /> Calle Terraza</label>
+      </div>
+
+      <!-- Filtres BUDGET/TAGS -->
       <div class="filters" aria-label="Filtres budget/tags">
         <h3>Budget & tags :</h3>
         <label class="chip"><input type="checkbox" data-filter="€" /> €</label>
@@ -87,7 +99,8 @@
         <label class="chip"><input type="checkbox" data-filter="€€€" /> €€€</label>
         <label class="chip"><input type="checkbox" data-filter="tapas" /> Tapas</label>
         <label class="chip"><input type="checkbox" data-filter="italien" /> Italien</label>
-        <label class="chip"><input type="checkbox" data-filter="patio" /> Patio</label>
+        <label class="chip"><input type="checkbox" data-filter="poisson" /> Poisson</label>
+        <label class="chip"><input type="checkbox" data-filter="grill" /> Grill</label>
         <label class="chip"><input type="checkbox" data-filter="vin" /> Vin</label>
         <label class="chip"><input type="checkbox" data-filter="créatif" /> Créatif</label>
       </div>
@@ -109,76 +122,31 @@
   <!-- Données intégrées -->
   <script id="dataset-casco" type="application/json">
   [
-    {
-      "nom": "La Casa del Rey",
-      "image": "img/casco/casadelrey.jpg",
-      "quartier": "Casco Antiguo (Plaza de las Flores)",
-      "categorie": "€€",
-      "tags": ["tapas","vin","patio"],
-      "adresse": "C. Raphael, 7, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=La+Casa+del+Rey+Calle+Raphael+7+Estepona",
-      "note": "Tapas & pinchos + grande carte de vins; terrasse et patio."
-    },
-    {
-      "nom": "El Rincón Toscano",
-      "image": "img/casco/rincontoscano.jpg",
-      "quartier": "Casco Antiguo",
-      "categorie": "€€",
-      "tags": ["italien","pâtes","pizza"],
-      "adresse": "C. Real, 22, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=El+Rincon+Toscano+Calle+Real+22+Estepona",
-      "note": "Institution italienne du centre historique."
-    },
-    {
-      "nom": "Restaurante El Cortijo",
-      "image": "img/casco/cortijo.jpg",
-      "quartier": "Casco Antiguo",
-      "categorie": "€€",
-      "tags": ["andalou","traditionnel"],
-      "adresse": "C. Caridad, 64, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=Restaurante+El+Cortijo+Calle+Caridad+64+Estepona",
-      "note": "Spécialités andalouses, déco traditionnelle."
-    },
-    {
-      "nom": "La Bulla Gastrobar",
-      "image": "img/casco/labulla.jpg",
-      "quartier": "Plaza Ortiz / bord de mer",
-      "categorie": "€€",
-      "tags": ["fusion","vue mer","cocktails"],
-      "adresse": "Av. España, 38, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=La+Bulla+Gastrobar+Avenida+Espa%C3%B1a+38+Estepona",
-      "note": "Vue plage; ouvert du matin au soir."
-    },
-    {
-      "nom": "Galpón 22",
-      "image": "img/casco/galpon22.jpg",
-      "quartier": "Casco Antiguo",
-      "categorie": "€€€",
-      "tags": ["méditerranéen","créatif","intimiste"],
-      "adresse": "C. Caridad, 91, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=Galpon+22+Calle+Caridad+91+Estepona",
-      "note": "Petite salle gastronomique dans la vieille ville."
-    },
-    {
-      "nom": "The Boab Tree",
-      "image": "img/casco/boab.jpg",
-      "quartier": "Casco Antiguo",
-      "categorie": "€€",
-      "tags": ["vin naturel","méditerranéen","art"],
-      "adresse": "C. Caridad, 93, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=The+Boab+Tree+Calle+Caridad+93+Estepona",
-      "note": "Cuisine méditerranéenne & vins naturels, galerie d’art."
-    },
-    {
-      "nom": "La Tarantella",
-      "image": "img/casco/tarantella.jpg",
-      "quartier": "Casco Antiguo",
-      "categorie": "€€",
-      "tags": ["italien","maison"],
-      "adresse": "C. Sta. Ana, 15, 29680 Estepona",
-      "maps": "https://www.google.com/maps/search/?api=1&query=La+Tarantella+Calle+Santa+Ana+15+Estepona",
-      "note": "Maison historique rénovée; pizzas & plats italiens."
-    }
+    { "nom":"La Casa del Rey","image":"img/casco/casadelrey.jpg","quartier":"Casco Antiguo","place":"Plaza de las Flores","categorie":"€€","tags":["tapas","vin","patio"],"adresse":"C. Raphael, 7, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=La+Casa+del+Rey+Calle+Raphael+7+Estepona","note":"Tapas & pinchos + grande carte des vins; terrasse/patio." },
+
+    { "nom":"Casafina","image":"img/casco/casafina.jpg","quartier":"Casco Antiguo","place":"Plaza de las Flores","categorie":"€€","tags":["andalou","créatif"],"adresse":"Plaza de las Flores, 12, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Casafina+Plaza+de+las+Flores+12+Estepona","note":"Cuisine andalouse actuelle sur la place centrale." },
+
+    { "nom":"Casa Doña Jerónima","image":"img/casco/donajeronima.jpg","quartier":"Casco Antiguo","place":"Plaza de las Flores","categorie":"€€€","tags":["créatif","gourmet"],"adresse":"(angle Plaza de las Flores) 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Casa+Do%C3%B1a+Jer%C3%B3nima+Estepona","note":"Adresse élégante donnant sur la Plaza de las Flores." },
+
+    { "nom":"La Martina Gastrobar","image":"img/casco/lamartina.jpg","quartier":"Casco Antiguo","place":"Plaza de las Flores","categorie":"€€","tags":["tapas","créatif","cocktails"],"adresse":"Plaza de las Flores, 5, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=La+Martina+Gastrobar+Plaza+de+las+Flores+Estepona","note":"Gastrobar moderne sur la place emblématique." },
+
+    { "nom":"El Rincón Toscano","image":"img/casco/rincontoscano.jpg","quartier":"Casco Antiguo","place":"Calle Real","categorie":"€€","tags":["italien","pâtes","pizza"],"adresse":"C. Real, 22, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=El+Rincon+Toscano+Calle+Real+22+Estepona","note":"Institution italienne du centre historique." },
+
+    { "nom":"Restaurante Sur (Argentin)","image":"img/casco/sur.jpg","quartier":"Casco Antiguo","place":"Plaza Ortiz","categorie":"€€","tags":["argentin","viandes","grill"],"adresse":"Plaza Ortiz, 10, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Restaurante+Sur+Plaza+Ortiz+10+Estepona","note":"Référence pour les viandes argentines, près du front de mer." },
+
+    { "nom":"Restaurante El Cortijo","image":"img/casco/cortijo.jpg","quartier":"Casco Antiguo","place":"Calle Caridad","categorie":"€€","tags":["andalou","traditionnel"],"adresse":"C. Caridad, 64, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Restaurante+El+Cortijo+Calle+Caridad+64+Estepona","note":"Spécialités andalouses, déco traditionnelle." },
+
+    { "nom":"Taberna Miguel","image":"img/casco/tabernamiguel.jpg","quartier":"Casco Antiguo","place":"Calle Caridad","categorie":"€€","tags":["poisson","traditionnel","tapas"],"adresse":"C. Caridad, 30, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Taberna+Miguel+Calle+Caridad+30+Estepona","note":"Classique pour le poisson et les tapas marins." },
+
+    { "nom":"Galpón 22","image":"img/casco/galpon22.jpg","quartier":"Casco Antiguo","place":"Calle Caridad","categorie":"€€€","tags":["méditerranéen","créatif","intimiste"],"adresse":"C. Caridad, 91, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Galpon+22+Calle+Caridad+91+Estepona","note":"Petite table gastronomique dans la vieille ville." },
+
+    { "nom":"The Boab Tree (Natural Wine)","image":"img/casco/boab.jpg","quartier":"Casco Antiguo","place":"Calle Caridad","categorie":"€€","tags":["vin naturel","méditerranéen","art"],"adresse":"C. Caridad, 93, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=The+Boab+Tree+Calle+Caridad+93+Estepona","note":"Cuisine méditerranéenne & vins naturels, avec art live." },
+
+    { "nom":"La Tarantella","image":"img/casco/tarantella.jpg","quartier":"Casco Antiguo","place":"Calle Santa Ana","categorie":"€€","tags":["italien","maison"],"adresse":"C. Santa Ana, 15, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=La+Tarantella+Calle+Santa+Ana+15+Estepona","note":"Maison historique rénovée; pizzas & plats italiens." },
+
+    { "nom":"La Bulla Gastrobar","image":"img/casco/labulla.jpg","quartier":"Front de mer (centre)","place":"Plaza Ortiz","categorie":"€€","tags":["fusion","vue mer","cocktails"],"adresse":"Av. España, 38, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=La+Bulla+Gastrobar+Avenida+Espa%C3%B1a+38+Estepona","note":"Vue plage; ouvert du matin au soir." },
+
+    { "nom":"La Taberna de Lucía","image":"img/casco/lucia.jpg","quartier":"Casco Antiguo","place":"Calle Terraza","categorie":"€","tags":["tapas","familial"],"adresse":"C. Terraza, 108, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Taberna+Lucia+Calle+Terraza+108+Estepona","note":"Petite taberna conviviale, tapas maison." }
   ]
   </script>
 
@@ -187,18 +155,29 @@
       const dataEl = document.getElementById("dataset-casco");
       let items = [];
       try { items = JSON.parse(dataEl.textContent.trim()); } catch(e) { items = []; }
+
       const grid = document.getElementById("grid");
       const q = document.getElementById("q");
-      const chips = Array.from(document.querySelectorAll('.filters input[type="checkbox"]'));
+      const tagChips = Array.from(document.querySelectorAll('[data-filter]'));
+      const placeChips = Array.from(document.querySelectorAll('[data-place]'));
 
       function render(list) {
-        grid.innerHTML = list.map(it => `
+        // Tri: par place puis nom
+        const sorted = [...list].sort((a,b)=>{
+          const pa=(a.place||'zzz').toLowerCase(), pb=(b.place||'zzz').toLowerCase();
+          if(pa<pb) return -1; if(pa>pb) return 1;
+          return (a.nom||'').localeCompare(b.nom||'');
+        });
+
+        grid.innerHTML = sorted.map(it => `
           <article class="card">
             <a class="thumb" href="${it.maps||'#'}" target="_blank" rel="noopener">
               <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.nom||''}" />
             </a>
             <div class="body">
-              <div class="kicker">${it.quartier||''} · <span class="tag">${it.categorie||''}</span></div>
+              <div class="kicker">
+                <span class="tag">${it.place||'Casco Antiguo'}</span> · <span class="tag">${it.categorie||''}</span>
+              </div>
               <h3>${it.nom||''}</h3>
               <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ')}</p>
               <p class="meta">Adresse : ${it.adresse||''} · <a href="${it.maps||'#'}" target="_blank" rel="noopener">Voir sur Maps</a></p>
@@ -210,23 +189,25 @@
 
       function applyFilters() {
         const txt = (q.value||'').toLowerCase();
-        const actives = chips.filter(c=>c.checked).map(c=>c.dataset.filter.toLowerCase());
+        const tags = tagChips.filter(c=>c.checked).map(c=>c.dataset.filter.toLowerCase());
+        const places = placeChips.filter(c=>c.checked).map(c=>c.dataset.place.toLowerCase());
+
         const filtered = items.filter(it => {
-          const hay = [
-            it.nom, it.quartier, it.categorie, ...(it.tags||[]), it.note
-          ].join(' ').toLowerCase();
+          const hay = [it.nom, it.quartier, it.place, it.categorie, ...(it.tags||[]), it.note].join(' ').toLowerCase();
           const matchText = !txt || hay.includes(txt);
-          const matchChips = !actives.length || actives.every(a => hay.includes(a));
-          return matchText && matchChips;
+          const matchTags = !tags.length || tags.every(t => hay.includes(t));
+          const matchPlaces = !places.length || places.includes((it.place||'').toLowerCase());
+          return matchText && matchTags && matchPlaces;
         });
         render(filtered);
       }
 
       q.addEventListener('input', applyFilters);
-      chips.forEach(c => c.addEventListener('change', applyFilters));
+      tagChips.forEach(c => c.addEventListener('change', applyFilters));
+      placeChips.forEach(c => c.addEventListener('change', applyFilters));
+
       render(items);
     })();
   </script>
 </body>
 </html>
-
