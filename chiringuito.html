@@ -70,19 +70,19 @@
       <h1>Chiringuitos de plage à Estepona</h1>
       <p>Tous les chiringuitos d’Estepona — <b>filtres par zone</b>, budget/quartier, recherche et liens Google Maps.</p>
 
-      <!-- Filtres ZONES -->
-      <div class="filters" id="zoneFilters" aria-label="Filtres par zone">
+      <!-- FILTRES ZONES -->
+      <div class="filters" id="zoneFilters">
         <h3>Zones :</h3>
         <label class="chip"><input type="checkbox" data-zone="Cristo" /> Cristo</label>
         <label class="chip"><input type="checkbox" data-zone="Natura" /> Natura</label>
         <label class="chip"><input type="checkbox" data-zone="Rada" /> Rada</label>
         <label class="chip"><input type="checkbox" data-zone="Port" /> Port</label>
-        <label class="chip"><input type="checkbox" data-zone="Benamara" /> Benamara/Saladillo</label>
+        <label class="chip"><input type="checkbox" data-zone="Benamara" /> Benamara</label>
         <label class="chip"><input type="checkbox" data-zone="Villacana" /> Villacana</label>
       </div>
 
-      <!-- Filtres BUDGET / TAGS -->
-      <div class="filters" aria-label="Filtres budget/tags">
+      <!-- FILTRES TAGS -->
+      <div class="filters">
         <h3>Budget & tags :</h3>
         <label class="chip"><input type="checkbox" data-filter="€" /> €</label>
         <label class="chip"><input type="checkbox" data-filter="€€" /> €€</label>
@@ -94,14 +94,15 @@
         <label class="chip"><input type="checkbox" data-filter="plage" /> Plage</label>
       </div>
 
+      <!-- Recherche -->
       <form class="search container" role="search" onsubmit="event.preventDefault()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
-        <input id="q" type="search" placeholder="Rechercher par nom, quartier, spécialité…" aria-label="Rechercher" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
+        <input id="q" type="search" placeholder="Rechercher..." />
       </form>
     </div>
   </section>
 
-  <main class="container" id="list">
+  <main class="container">
     <div class="grid" id="grid"></div>
   </main>
 
@@ -113,100 +114,124 @@
     <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
   </footer>
 
-  <!-- Données intégrées -->
+  <!-- DATASET -->
   <script id="dataset-chiringuitos" type="application/json">
   [
-{ "nom":"Beso Beach","image":"img/chiringuitos/beso.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Playa El Padron, Km160, N-340, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd556d31884a7:0x1b10ecaefbae4a5a","note":"Plage del Padron" },
-{ "nom":"Laguna Beach","image":"img/chiringuitos/Laguna.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Carr. de Cadiz, Km 159, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd55f05011eeb:0xc48cf339115988df","note":"Plage del Padron" },
-{ "nom":"Trocadera Estepona","image":"img/chiringuitos/Trocadero.png","quartier":"Plage de la Plata","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"C. Terral, 2, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd5acb730bb7f:0xc8f994b6779480f7","note":"Plage de la Plata" },
-{ "nom":"Chiringuito Malva Beach by Besaya","image":"img/chiringuitos/malva.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, 2, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd509d653deff:0x427ec99801196188","note":"Plage de la Rada" },
-{ "nom":"Chiringuito Les Tournesol","image":"img/chiringuitos/tournesol.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd73b2f722d29:0x8d8d4474043cfd0d","note":"Plage de la Rada" },
-    { "nom":"Chiringuito Africa Beach","image":"img/chiringuitos/africa.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41c4e58d413:0xbf31fa53dcaaa17f","note":"Plage de la Rada" },
-    { "nom":"Chiringuito El Madero","image":"img/chiringuitos/madero.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","espeto","vue"],"adresse":"Av. España, 69, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d7601986f:0xf89d021c72ec5804","note":"Plage de la Rada" },
-    { "nom":"Chiringuito La Peseta","image":"img/chiringuitos/lapeseta.png","quartier":"Playa de la Rada (centre)","categorie":"€","tags":["plage","rustique"],"adresse":"Av. España, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a7c455c2cf:0xf35c2b4cbcc445d7" },
-    { "nom":"Chiringuito Bahía Beach","image":"img/chiringuitos/bahia.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","centre"],"adresse":"P.º Marítimo Pedro Manrique, 23, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd7cf4473b205:0xcef7eb6e6c5f3656","note":"Plage de la Rada" },   
-    { "nom":"Chiringuito Central Beach","image":"img/chiringuitos/central.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Glorieta Juan Carlos I, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41ef20a8c85:0x446133daa175d1c2" },
-{ "nom":"Chiringuito Paco","image":"img/chiringuitos/paco.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"P.º Marítimo Pedro Manrique, 30, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a8bb77c9f9:0xd394d3e2ba74c6c7","note":"Plage de la Rada" },
- { "nom":"Chiringuito Paraiso del Mar Beach Bar Beach","image":"img/chiringuitos/paraiso.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Av. España, s/n, 29680 Estepona","maps":"Avenida España, frente al portal 252, 29680 Estepona, Málaga","note":"Plage de la Rada" },
-    { "nom":"Chiringuito Tropical","image":"img/chiringuitos/tropical.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Playa de la rada SN paseo marítimo de, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6ae5797f215:0xd17b8a50894b9dc7" },    
-    { "nom":"Havana Beach Chiringuito","image":"img/chiringuitos/havana.png","quartier":"Playa del Cristo / Port","categorie":"€€","tags":["plage","sunset","familial"],"adresse":"Playa Del Cristo, ESTEPONA, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d78d0a9d1:0xeeda4163282b7302","note":"Plage de Cristo" },
-    { "nom":"Eva","image":"img/chiringuitos/eva.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Havana+Beach+Chiringuito+Playa+del+Cristo+Estepona","note":"Plage de Cristo" },
-{ "nom":"Eva","image":"img/chiringuitos/lolailo.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd703460f43cd:0x8c861afe572b8806","note":"Plage de Cristo" },
-    { "nom":"Nido - Beach Club","image":"img/chiringuitos/nido.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urbanización The Edge Chiringuito Costa Natura, Autovía del Mediterráneo, Km 151, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd1272f31ccef:0x8493b5f8c5ae83c4","note":"Plage de Cristo" },
-    { "nom":"Ancla Sea Bridge Estepona","image":"img/chiringuitos/ancla.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"bahia Doncella Beach, 4, 29693 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd79e7ac3ba85:0xe52f1c239cd4186f","note":"Plage de Cristo" },
-    
+    { "nom":"Beso Beach","image":"img/beso.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Playa El Padron, Km160, N-340, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd556d31884a7:0x1b10ecaefbae4a5a","note":"Plage del Padron" },
+    { "nom":"Laguna Beach","image":"img/Laguna.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Carr. de Cadiz, Km 159, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd55f05011eeb:0xc48cf339115988df","note":"Plage del Padron" },
+    { "nom":"Trocadera Estepona","image":"img/Trocadero.png","quartier":"Plage de la Plata","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"C. Terral, 2, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd5acb730bb7f:0xc8f994b6779480f7","note":"Plage de la Plata" },
+
+    { "nom":"Chiringuito Malva Beach by Besaya","image":"img/malva.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, 2, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd509d653deff:0x427ec99801196188","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito Les Tournesol","image":"img/tournesol.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd73b2f722d29:0x8d8d4474043cfd0d","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito Africa Beach","image":"img/africa.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41c4e58d413:0xbf31fa53dcaaa17f","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito El Madero","image":"img/madero.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","espeto","vue"],"adresse":"Av. España, 69, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d7601986f:0xf89d021c72ec5804","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito La Peseta","image":"img/lapeseta.png","quartier":"Playa de la Rada (centre)","categorie":"€","tags":["plage","rustique"],"adresse":"Av. España, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a7c455c2cf:0xf35c2b4cbcc445d7" },
+
+    { "nom":"Chiringuito Bahía Beach","image":"img/bahia.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","centre"],"adresse":"P.º Marítimo Pedro Manrique, 23, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd7cf4473b205:0xcef7eb6e6c5f3656","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito Central Beach","image":"img/central.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Glorieta Juan Carlos I, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41ef20a8c85:0x446133daa175d1c2" },
+
+    { "nom":"Chiringuito Paco","image":"img/paco.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"P.º Marítimo Pedro Manrique, 30, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a8bb77c9f9:0xd394d3e2ba74c6c7","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito Paraiso del Mar Beach Bar Beach","image":"img/paraiso.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Av. España, s/n, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6abfb7f822b:0x9d4a3d08a8697c1a","note":"Plage de la Rada" },
+
+    { "nom":"Chiringuito Tropical","image":"img/tropical.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Playa de la rada SN paseo marítimo de, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6ae5797f215:0xd17b8a50894b9dc7" },    
+
+    { "nom":"Havana Beach Chiringuito","image":"img/havana.png","quartier":"Playa del Cristo / Port","categorie":"€€","tags":["plage","sunset","familial"],"adresse":"Playa Del Cristo, ESTEPONA, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d78d0a9d1:0xeeda4163282b7302","note":"Plage de Cristo" },
+
+    { "nom":"Eva","image":"img/eva.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Eva+Playa+del+Cristo+Estepona","note":"Plage de Cristo" },
+
+    { "nom":"Lolailo","image":"img/lolailo.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd703460f43cd:0x8c861afe572b8806","note":"Plage de Cristo" },
+
+    { "nom":"Nido - Beach Club","image":"img/nido.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urbanización The Edge Chiringuito Costa Natura, Autovía del Mediterráneo, Km 151, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd1272f31ccef:0x8493b5f8c5ae83c4","note":"Plage de Cristo" },
+
+    { "nom":"Ancla Sea Bridge Estepona","image":"img/ancla.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"bahia Doncella Beach, 4, 29693 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd79e7ac3ba85:0xe52f1c239cd4186f","note":"Plage de Cristo" }
   ]
   </script>
 
+  <!-- SCRIPT PRINCIPAL -->
   <script>
   (function(){
     const dataEl = document.getElementById("dataset-chiringuitos");
-    let items = [];
-    try { items = JSON.parse(dataEl.textContent.trim()); } catch(e) { items = []; }
-
-    // --- Mapping zones à partir du champ "quartier"
-    function detectZone(q){
-      const s = (q||'').toLowerCase();
-      if (s.includes('cristo')) return 'Cristo';
-      if (s.includes('rada')) return 'Rada';
-      if (s.includes('port') || s.includes('puerto')) return 'Port';
-      if (s.includes('benamara') || s.includes('saladillo')) return 'Benamara';
-      if (s.includes('villacana')) return 'Villacana';
-      // fallback : si “centre” sur la Rada
-      if (s.includes('centre') || s.includes('centro')) return 'Rada';
-      return 'Autre';
-    }
-
-    // normalise les données avec une propriété zone
-    items = items.map(it => ({ ...it, zone: it.zone || detectZone(it.quartier) }));
-
     const grid = document.getElementById("grid");
     const q = document.getElementById("q");
-    const chips = Array.from(document.querySelectorAll('[data-filter]'));
-    const zoneChips = Array.from(document.querySelectorAll('[data-zone]'));
 
-    function render(list) {
+    if(!dataEl || !grid){
+      console.error("Erreur : élément manquant");
+      return;
+    }
+
+    let items = [];
+    try { items = JSON.parse(dataEl.textContent.trim()); }
+    catch(e){ console.error("Erreur JSON", e); items = []; }
+
+    function detectZone(q){
+      const s = (q||"").toLowerCase();
+      if(s.includes("cristo")) return "Cristo";
+      if(s.includes("rada")) return "Rada";
+      if(s.includes("port")) return "Port";
+      if(s.includes("benamara")) return "Benamara";
+      if(s.includes("villacana")) return "Villacana";
+      if(s.includes("centre") || s.includes("centro")) return "Rada";
+      return "Autre";
+    }
+
+    items = items.map(it => ({...it, zone: it.zone || detectZone(it.quartier)}));
+
+    const chips = [...document.querySelectorAll("[data-filter]")];
+    const zoneChips = [...document.querySelectorAll("[data-zone]")];
+
+    function render(list){
       grid.innerHTML = list.map(it => `
         <article class="card">
-          <a class="thumb" href="${it.maps||'#'}" target="_blank" rel="noopener">
-            <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.nom||''}" />
+          <a class="thumb" href="${it.maps}" target="_blank" rel="noopener">
+            <img src="${it.image}" alt="${it.nom}">
           </a>
           <div class="body">
             <div class="kicker">
-              <span class="tag">${it.zone}</span> · ${it.quartier||''} · <span class="tag">${it.categorie||''}</span>
+              <span class="tag">${it.zone}</span> · ${it.quartier} · <span class="tag">${it.categorie}</span>
             </div>
-            <h3>${it.nom||''}</h3>
-            <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ')}</p>
-            <p class="meta">Adresse : ${it.adresse||''} · <a href="${it.maps||'#'}" target="_blank" rel="noopener">Voir sur Maps</a></p>
-            <p>${it.note||''}</p>
+            <h3>${it.nom}</h3>
+            <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(" ")}</p>
+            <p class="meta">Adresse : ${it.adresse} · <a href="${it.maps}" target="_blank">Voir sur Maps</a></p>
+            <p>${it.note||""}</p>
           </div>
         </article>
-      `).join('');
+      `).join("");
     }
 
-    function applyFilters() {
-      const txt = (q.value||'').toLowerCase();
+    function applyFilters(){
+      const txt = q.value.toLowerCase();
       const tags = chips.filter(c=>c.checked).map(c=>c.dataset.filter.toLowerCase());
       const zones = zoneChips.filter(c=>c.checked).map(c=>c.dataset.zone.toLowerCase());
 
-      const filtered = items.filter(it => {
-        const hay = [it.nom, it.quartier, it.categorie, it.zone, ...(it.tags||[]), it.note].join(' ').toLowerCase();
+      const filtered = items.filter(it=>{
+        const hay = [
+          it.nom, it.quartier, it.categorie, it.zone,
+          ...(it.tags||[]), it.note
+        ].join(" ").toLowerCase();
 
         const matchText = !txt || hay.includes(txt);
-        const matchTags = !tags.length || tags.every(t => hay.includes(t));
-        const matchZones = !zones.length || zones.includes((it.zone||'').toLowerCase());
+        const matchTags = !tags.length || tags.every(t=>hay.includes(t));
+        const matchZones = !zones.length || zones.includes(it.zone.toLowerCase());
 
         return matchText && matchTags && matchZones;
       });
+
       render(filtered);
     }
 
-    q.addEventListener('input', applyFilters);
-    chips.forEach(c => c.addEventListener('change', applyFilters));
-    zoneChips.forEach(c => c.addEventListener('change', applyFilters));
+    q.addEventListener("input", applyFilters);
+    chips.forEach(c=>c.addEventListener("change", applyFilters));
+    zoneChips.forEach(c=>c.addEventListener("change", applyFilters));
 
-    render(items); // initial
+    render(items);
   })();
   </script>
+
 </body>
 </html>
