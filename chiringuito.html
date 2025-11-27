@@ -22,7 +22,6 @@
   .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .brand-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
-  /* Logo bien contenu dans son cadre */
   .brand-logo img{
     width:100%;
     height:100%;
@@ -43,7 +42,6 @@
   .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
   @media (max-width:980px){.grid{grid-template-columns:1fr}}
   .card{display:grid;grid-template-rows:auto 1fr;gap:10px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))}
-  /* Vignettes chiringuitos : même format pour toutes les images */
   .card .thumb{
     aspect-ratio:16/9;
     width:100%;
@@ -166,18 +164,19 @@
 
     { "nom":"Nido - Beach Club","image":"img/nido.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urbanización The Edge Chiringuito Costa Natura, Autovía del Mediterráneo, Km 151, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd1272f31ccef:0x8493b5f8c5ae83c4","note":"Plage de Cristo" },
 
-    { "nom":"Ancla Sea Bridge Estepona","image":"img/ancla.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"bahia Doncella Beach, 4, 29693 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd79e7ac3ba85:0xe52f1c239cd4186f","note":"Plage de Cristo" }
+    { "nom":"Ancla Sea Bridge Estepona","image":"img/ancla.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"bahia Doncella Beach, 4, 29693 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd79e7ac3ba85:0xe52f1c239cd4186f","note":"Plage de Cristo" },
 
-    { "nom":"Chiringuito Torre Velerín","image":"img/velerin.png","quartier":"Playa del Castor","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"CARRETERA N-340 KM-161.1PLAYA DEL VELERIN, 29680 estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ef8861e697:0x72f955ae66ff05f0","note":"Playa del Castor" }
-    { "nom":"Sonora Beach","image":"img/sonora.png","quartier":"Plage de Guadalmina","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Los Granados Playa, 6, 29680, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ddf5e8801f:0xaacf19bd08ae5e9f","note":"Plage de Guadalmina" }
-    { "nom":"Tikitano by Besaya","image":"img/tikitano.png","quartier":"Punta de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"urb. Guadalmansa, Carr. de Cadiz, KM 164, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4d1755c50e1:0x4d787de66826e11e","note":"Punta de Saladillo" }
-{ "nom":"Heaven Beach Bar","image":"img/heaven.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Rio Guadalmansa, 64, 29688 Playa del Sol Villacana, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732be2009d4e29:0xacb07d38866c7bd1","note":"Plage de Guadalmansa" }
+    { "nom":"Chiringuito Torre Velerín","image":"img/velerin.png","quartier":"Playa del Castor","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"CARRETERA N-340 KM-161.1 PLAYA DEL VELERIN, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ef8861e697:0x72f955ae66ff05f0","note":"Playa del Castor" },
 
-{ "nom":"Barraka Beach","image":"img/barraka.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urb Villacana Ctra Nac 340 KM 165, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732b2f54dfa277:0xf1d230f55c0c4017","note":"Plage de Guadalmansa" }
+    { "nom":"Sonora Beach","image":"img/sonora.png","quartier":"Plage de Guadalmina","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Los Granados Playa, 6, 29680, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ddf5e8801f:0xaacf19bd08ae5e9f","note":"Plage de Guadalmina" },
 
-{ "nom":"PEPE´S BEACH CHIRINGUITO","image":"img/pepe.png","quartier":"Plage de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Sotavento, S/N, 29688 Saladillo Benamara, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732a5084ab29a9:0xe67620ac5d5eaff1","note":"Plage de Saladillo" }
+    { "nom":"Tikitano by Besaya","image":"img/tikitano.png","quartier":"Punta de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"urb. Guadalmansa, Carr. de Cadiz, KM 164, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4d1755c50e1:0x4d787de66826e11e","note":"Punta de Saladillo" },
 
+    { "nom":"Heaven Beach Bar","image":"img/heaven.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Rio Guadalmansa, 64, 29688 Playa del Sol Villacana, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732be2009d4e29:0xacb07d38866c7bd1","note":"Plage de Guadalmansa" },
 
+    { "nom":"Barraka Beach","image":"img/barraka.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urb Villacana Ctra Nac 340 KM 165, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732b2f54dfa277:0xf1d230f55c0c4017","note":"Plage de Guadalmansa" },
+
+    { "nom":"PEPE´S BEACH CHIRINGUITO","image":"img/pepe.png","quartier":"Plage de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Sotavento, S/N, 29688 Saladillo Benamara, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732a5084ab29a9:0xe67620ac5d5eaff1","note":"Plage de Saladillo" }
   ]
   </script>
 
@@ -202,8 +201,9 @@
       if(s.includes("cristo")) return "Cristo";
       if(s.includes("rada")) return "Rada";
       if(s.includes("port")) return "Port";
-      if(s.includes("benamara")) return "Benamara";
+      if(s.includes("benamara") || s.includes("saladillo")) return "Benamara";
       if(s.includes("villacana")) return "Villacana";
+      if(s.includes("guadalmansa") || s.includes("guadalmina") || s.includes("castor")) return "Benamara";
       if(s.includes("centre") || s.includes("centro")) return "Rada";
       return "Autre";
     }
