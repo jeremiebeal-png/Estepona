@@ -13,16 +13,25 @@
     --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
     --shadow:0 10px 30px rgba(0,0,0,.35);
   }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  html,body{
+    margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"
+  }
   a{color:inherit;text-decoration:none}
   img{max-width:100%;display:block}
   .container{width:min(1200px,92vw);margin-inline:auto}
 
-  header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--border)}
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+    backdrop-filter:saturate(140%) blur(6px);
+    border-bottom:1px solid var(--border);
+  }
   .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .brand-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
+  .brand-logo img{width:100%;height:100%;object-fit:contain}
+
   nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
   nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
   nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
@@ -40,10 +49,31 @@
   .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
   @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
-  .card{display:grid;grid-template-rows:auto 1fr;gap:10px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))}
-  /* vignettes uniformes */
-  .card .thumb{position:relative;height:clamp(200px,22vw,260px);border-radius:16px;overflow:hidden;background:#0b1322;display:block}
-  .card .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+  .card{
+    display:grid;grid-template-rows:auto 1fr;gap:10px;
+    border:1px solid var(--border);border-radius:var(--radius-lg);
+    overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+  }
+
+  /* 🟦 Logos des rooftops comme les chiringuitos : bandeau fixe + logo centré */
+  .card .thumb{
+    height:140px;         /* même hauteur que sur la page chiringuitos */
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#0b1322;
+    overflow:hidden;
+  }
+  .card .thumb img{
+    max-width:70%;        /* taille du logo dans le bandeau */
+    max-height:80%;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+  }
+
   .card .body{padding:12px 14px 16px}
   .card .kicker{font-size:12px;color:var(--muted)}
   .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
@@ -152,7 +182,7 @@
       "maps": "https://www.google.com/maps/search/?api=1&query=Hotel+El+Pilar+Estepona+Rooftop",
       "note": "Rooftop chic au cœur du Casco Antiguo, vue sur la vieille ville et la mer."
     },
-      {
+    {
       "nom": "Sala Duende",
       "type": "Club",
       "image": "img/duende.png",
@@ -208,27 +238,27 @@
       "note": "Salle de concert rock/indé avec programmation régulière."
     },
     {
-  "nom": "Milonga",
-  "type": "Club",
-  "image": "img/milonga.png",
-  "zone": "Port",
-  "categorie": "€€",
-  "tags": ["dj","latino","club","tardif"],
-  "adresse": "Av. Virgen del Puerto, local 37 y 38, 29680 Estepona",
-  "maps": "https://www.google.com/maps/search/?api=1&query=MILONGA+Av.+Virgen+del+Puerto+37+Estepona",
-  "note": "Discothèque au port d’Estepona. Ouverture indiquée à 23:00 (peut varier selon jours/événements)."
-},
+      "nom": "Milonga",
+      "type": "Club",
+      "image": "img/milonga.png",
+      "zone": "Port",
+      "categorie": "€€",
+      "tags": ["dj","latino","club","tardif"],
+      "adresse": "Av. Virgen del Puerto, local 37 y 38, 29680 Estepona",
+      "maps": "https://www.google.com/maps/search/?api=1&query=MILONGA+Av.+Virgen+del+Puerto+37+Estepona",
+      "note": "Discothèque au port d’Estepona. Ouverture indiquée à 23:00 (peut varier selon jours/événements)."
+    },
     {
-  "nom": "Coral By OB",
-  "type": "Bar",
-  "image": "img/coralbyob.png",
-  "zone": "Port",
-  "categorie": "€€",
-  "tags": ["cocktails","dj","vue mer"],
-  "adresse": "Puerto Deportivo de Estepona",
-  "maps": "https://www.google.com/maps/search/?api=1&query=Coral+By+OB+Puerto+Deportivo+de+Estepona",
-  "note": "Bar du port avec ambiance soirées/dj et vue sur la marina."
-}
+      "nom": "Coral By OB",
+      "type": "Bar",
+      "image": "img/coralbyob.png",
+      "zone": "Port",
+      "categorie": "€€",
+      "tags": ["cocktails","dj","vue mer"],
+      "adresse": "Puerto Deportivo de Estepona",
+      "maps": "https://www.google.com/maps/search/?api=1&query=Coral+By+OB+Puerto+Deportivo+de+Estepona",
+      "note": "Bar du port avec ambiance soirées/dj et vue sur la marina."
+    }
   ]
   </script>
 
@@ -301,4 +331,3 @@
   </script>
 </body>
 </html>
-
