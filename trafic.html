@@ -14,6 +14,8 @@
     --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
     --shadow:0 10px 30px rgba(0,0,0,.35);
   }
+
+  /* MOBILE FIRST */
   html,body{
     margin:0;padding:0;background:var(--bg);color:var(--text);
     font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
@@ -29,80 +31,116 @@
     backdrop-filter:saturate(140%) blur(6px);
     border-bottom:1px solid var(--border);
   }
-  .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
-  .brand{display:flex;align-items:center;gap:12px}
+  .header-row{display:flex;align-items:center;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-size:15px}
   .brand-logo{
-    width:44px;height:44px;border-radius:12px;overflow:hidden;
+    width:40px;height:40px;border-radius:12px;overflow:hidden;
     border:1px solid var(--border);box-shadow:var(--shadow);
   }
   .brand-logo img{
     width:100%;height:100%;object-fit:contain;
   }
-  nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
-  nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+  nav.primary{
+    margin-left:auto;display:none;gap:10px;flex-wrap:wrap;font-size:14px;
+  }
+  nav.primary a{padding:6px 10px;border-radius:999px;border:1px solid transparent}
   nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
 
   /* HERO */
   .page-hero{
-    padding:26px 0 18px;border-bottom:1px solid var(--border);
+    padding:18px 0 14px;border-bottom:1px solid var(--border);
     background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.25) 100%);
   }
-  .page-hero h1{margin:6px 0 4px;font-size:30px}
-  .page-hero p{margin:0;color:var(--muted);max-width:640px}
+  .page-hero h1{margin:4px 0 6px;font-size:24px}
+  .page-hero p{margin:0;color:var(--muted);max-width:640px;font-size:14px;line-height:1.5}
 
-  /* SECTIONS / CARTES */
-  main{padding:22px 0 40px}
+  /* CONTENU / CARTES */
+  main{padding:18px 0 30px}
   .grid{
-    display:grid;gap:18px;
-    grid-template-columns:repeat(2,1fr);
+    display:grid;gap:16px;
+    grid-template-columns:1fr;   /* mobile : 1 colonne */
   }
-  @media (max-width:980px){
-    .grid{grid-template-columns:1fr}
-  }
-
   .card{
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:var(--radius-lg);
-    padding:16px 16px 18px;
+    padding:12px 12px 14px;
     box-shadow:var(--shadow);
   }
   .card h2{
-    margin:0 0 6px;
-    font-size:20px;
+    margin:0 0 4px;
+    font-size:17px;
   }
   .card p{
-    margin:0 0 10px;
+    margin:0 0 8px;
     color:var(--muted);
-    font-size:14px;
+    font-size:13px;
   }
   .map-wrap{
-    margin-top:8px;
+    margin-top:6px;
     border-radius:var(--radius-md);
     overflow:hidden;
     border:1px solid var(--border);
   }
   .map-wrap iframe{
     width:100%;
-    height:360px;
+    height:260px;   /* plus compact sur mobile */
     border:0;
     display:block;
   }
 
-  /* carte pleine largeur en bas */
+  .map-actions{
+    margin-top:8px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .map-actions a{
+    font-size:13px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--primary);
+    background:rgba(45,180,255,.08);
+    color:var(--primary);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .map-actions a:hover{
+    background:var(--primary);
+    color:#06131e;
+  }
+
   .card-full{
     grid-column:1 / -1;
   }
 
+  /* FOOTER */
   footer{
     margin-top:10px;border-top:1px solid var(--border);
     background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
   }
   .footer-top{
-    padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;
-    align-items:center;justify-content:space-between;
+    padding:18px 0;display:flex;gap:14px;flex-wrap:wrap;
+    align-items:center;justify-content:space-between;font-size:13px;
   }
-  .footer-bottom{padding:14px 0;color:var(--muted);font-size:14px}
+  .footer-bottom{padding:10px 0;color:var(--muted);font-size:12px}
+
+  /* VERSION DESKTOP */
+  @media (min-width: 768px){
+    .header-row{padding:16px 0;gap:22px}
+    nav.primary{display:flex;}
+    .card{padding:16px 16px 18px}
+    .card h2{font-size:20px}
+    .card p{font-size:14px}
+    .map-wrap iframe{height:340px;}
+  }
+  @media (min-width: 980px){
+    .grid{
+      grid-template-columns:repeat(2,1fr);   /* desktop : 2 colonnes */
+      gap:18px;
+    }
+  }
   </style>
 </head>
 <body>
@@ -132,9 +170,8 @@
     <div class="container">
       <h1>Trafic & cartes routières</h1>
       <p>
-        Visualisez en direct le trafic à Estepona et sur l’axe Marbella ↔ Sotogrande,
-        via l’A-7 et l’AP-7, ainsi que les temps de trajet vers Málaga, Séville, Grenade, Cadix
-        et les transports en commun locaux.
+        Visualisez en direct le trafic à Estepona, l’axe Marbella ↔ Sotogrande (A-7 / AP-7),
+        les temps de trajet vers Málaga, Séville, Grenade, Cadix ainsi que les transports en commun.
       </p>
     </div>
   </section>
@@ -148,7 +185,7 @@
         <h2>🟢 Trafic en direct à Estepona</h2>
         <p>
           Centre-ville, avenida España, accès plages et rocade : cette carte affiche le
-          trafic routier en temps réel autour d’Estepona (couche trafic Google Maps).
+          trafic routier en temps réel autour d’Estepona.
         </p>
         <div class="map-wrap">
           <iframe
@@ -157,14 +194,19 @@
             src="https://www.google.com/maps?q=estepona&z=13&output=embed&layer=t">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/search/?api=1&query=Estepona&layer=t" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- CARTE 2 : A7 / AP7 MARBELLA → SOTOGRANDE -->
       <article class="card">
         <h2>🛣️ A-7 & AP-7 : Marbella → Estepona → Sotogrande</h2>
         <p>
-          Vérifiez l’état du trafic sur l’A-7 (gratuite) et l’AP-7 (péage) entre Marbella,
-          Estepona, Manilva et Sotogrande avant de prendre la route.
+          Aperçu du trafic sur l’A-7 (gratuite) et l’AP-7 (péage) entre Marbella,
+          Estepona, Manilva et Sotogrande.
         </p>
         <div class="map-wrap">
           <iframe
@@ -173,14 +215,19 @@
             src="https://www.google.com/maps?q=Marbella+to+Sotogrande+A7+AP7&z=10&output=embed&layer=t">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Marbella&destination=Sotogrande&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- CARTE 3 : VUE GÉNÉRALE ESTEPONA & ENVIRONS -->
       <article class="card card-full">
         <h2>📍 Carte générale : Estepona & environs</h2>
         <p>
-          Une vue plus large pour repérer Estepona sur la Costa del Sol, ainsi que les
-          villes voisines (Marbella, Casares, Manilva, Sotogrande…).
+          Vue d’ensemble d’Estepona sur la Costa del Sol et des villes voisines
+          (Marbella, Casares, Manilva, Sotogrande…).
         </p>
         <div class="map-wrap">
           <iframe
@@ -189,16 +236,21 @@
             src="https://www.google.com/maps?q=Estepona,+Espagne&z=11&output=embed">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/search/?api=1&query=Estepona,+Espagne" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
-      <!-- ====== NOUVELLES CARTES : TEMPS DE TRAJET ====== -->
+      <!-- ====== TEMPS DE TRAJET ====== -->
 
       <!-- MALAGA CENTRE -->
       <article class="card">
         <h2>⏱ Estepona → Málaga centre</h2>
         <p>
-          Itinéraire en temps réel vers le centre de Málaga (A-7) avec durée de trajet mise à jour
-          automatiquement par Google selon le trafic.
+          Itinéraire en temps réel vers le centre de Málaga (A-7), durée de trajet actualisée
+          selon le trafic.
         </p>
         <div class="map-wrap">
           <iframe
@@ -207,14 +259,19 @@
             src="https://www.google.com/maps?output=embed&q=Estepona+to+Malaga+centro&dirflg=d">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Estepona&destination=Malaga+centro&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- MALAGA AÉROPORT -->
       <article class="card">
         <h2>⏱ Estepona → Aéroport de Málaga (AGP)</h2>
         <p>
-          Temps de trajet estimé en voiture vers l’aéroport de Málaga-Costa del Sol, avec prise
-          en compte du trafic en temps réel.
+          Temps estimé en voiture vers l’aéroport de Málaga-Costa del Sol,
+          avec trafic en temps réel.
         </p>
         <div class="map-wrap">
           <iframe
@@ -223,14 +280,19 @@
             src="https://www.google.com/maps?output=embed&q=Estepona+to+Aeropuerto+de+Malaga&dirflg=d">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Estepona&destination=Aeropuerto+de+Malaga&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- SEVILLE -->
       <article class="card">
         <h2>⏱ Estepona → Séville</h2>
         <p>
-          Trajet longue distance en voiture vers Séville (via A-7, AP-7 et A-92 selon
-          l’itinéraire choisi). La durée affichée tient compte de la circulation actuelle.
+          Trajet longue distance vers Séville (A-7 / AP-7 puis A-92 selon l’itinéraire choisi),
+          avec durée estimée en fonction de la circulation.
         </p>
         <div class="map-wrap">
           <iframe
@@ -239,14 +301,19 @@
             src="https://www.google.com/maps?output=embed&q=Estepona+to+Sevilla&dirflg=d">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Estepona&destination=Sevilla&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- GRENADE -->
       <article class="card">
         <h2>⏱ Estepona → Grenade</h2>
         <p>
-          Itinéraire vers Grenade (autoroutes A-7 / A-44) avec estimation de la durée
-          de trajet actualisée par Google Maps.
+          Itinéraire vers Grenade via l’A-7 puis l’A-44, avec estimation de la durée
+          de trajet mise à jour par Google Maps.
         </p>
         <div class="map-wrap">
           <iframe
@@ -255,14 +322,19 @@
             src="https://www.google.com/maps?output=embed&q=Estepona+to+Granada&dirflg=d">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Estepona&destination=Granada&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- CADIX -->
       <article class="card">
         <h2>⏱ Estepona → Cadix</h2>
         <p>
-          Visualisez le temps de trajet vers Cadix en suivant la côte andalouse (A-7, AP-7, A-381…).
-          Le temps affiché évolue automatiquement selon le trafic.
+          Trajet vers Cadix en longeant la côte andalouse (A-7 / AP-7, A-381…),
+          avec temps de trajet dynamique.
         </p>
         <div class="map-wrap">
           <iframe
@@ -271,14 +343,19 @@
             src="https://www.google.com/maps?output=embed&q=Estepona+to+Cadiz&dirflg=d">
           </iframe>
         </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/dir/?api=1&origin=Estepona&destination=Cadiz&travelmode=driving" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
+        </div>
       </article>
 
       <!-- TRANSPORTS EN COMMUN ESTEPONA -->
       <article class="card card-full">
         <h2>🚌 Transports en commun à Estepona</h2>
         <p>
-          Arrêts de bus, gare routière, liaisons vers Málaga, Marbella, La Línea, Algeciras, etc.
-          Utilisez la carte ci-dessous en mode “Transports en commun” pour repérer les lignes.
+          Gare routière, arrêts de bus et liaisons vers Málaga, Marbella, La Línea,
+          Algeciras, etc. Active le mode “Transports en commun” directement dans la carte.
         </p>
         <div class="map-wrap">
           <iframe
@@ -286,6 +363,11 @@
             referrerpolicy="no-referrer-when-downgrade"
             src="https://www.google.com/maps?q=estacion+autobuses+estepona&output=embed&layer=transit">
           </iframe>
+        </div>
+        <div class="map-actions">
+          <a href="https://www.google.com/maps/search/?api=1&query=Estacion+de+autobuses+Estepona&layer=transit" target="_blank" rel="noopener">
+            Ouvrir dans Google Maps
+          </a>
         </div>
       </article>
 
