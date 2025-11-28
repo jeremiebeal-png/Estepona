@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact — Bons Plans Estepona</title>
+  <meta name="description" content="Contactez Bons Plans Estepona pour toute question, recommandation ou partenariat." />
+
+  <style>
+    :root{
+      --bg:#0b1730; --surface:#0f1f44; --surface-2:#0f1625;
+      --primary:#2db4ff; --accent:#00d0b6;
+      --text:#eaf2ff; --muted:#a8b6cf; --border:#1a2d5a;
+      --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    html,body{
+      margin:0;padding:0;background:var(--bg);color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1100px,92vw);margin-inline:auto}
+
+    /* HEADER */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+      backdrop-filter:saturate(140%) blur(6px);
+      border-bottom:1px solid var(--border);
+    }
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+    }
+    .brand-logo img{width:100%;height:100%;object-fit:contain}
+
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
+
+    /* HERO */
+    .page-hero{
+      padding:30px 0 18px;border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.25) 100%);
+    }
+    .page-hero h1{margin:6px 0 4px;font-size:34px}
+    .page-hero p{margin:0;color:var(--muted);max-width:620px;font-size:15px}
+
+    /* FORM / CONTENT */
+    main{padding:30px 0 50px}
+    .grid{
+      display:grid;gap:26px;grid-template-columns:1.4fr 1fr;
+    }
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:22px 24px 28px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{
+      margin:0 0 10px;font-size:22px;
+    }
+    label{display:block;margin-top:14px;font-size:14px;color:var(--text)}
+    input,textarea{
+      width:100%;margin-top:6px;padding:10px 12px;
+      border-radius:var(--radius-md);
+      border:1px solid var(--border);background:var(--surface-2);
+      color:var(--text);font-size:14px;
+      outline:none;
+    }
+    textarea{min-height:120px;resize:vertical}
+
+    .btn-submit{
+      margin-top:18px;padding:12px 22px;
+      background:var(--primary);
+      color:#001829;font-weight:600;
+      border-radius:999px;border:0;font-size:15px;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+    }
+
+    /* Bouton WhatsApp */
+    .btn-whatsapp{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid #25d366;
+      background:#25d366;
+      color:#031b10;
+      font-size:14px;
+      font-weight:600;
+      text-decoration:none;
+      margin-top:8px;
+      box-shadow:var(--shadow);
+    }
+
+    /* MAP */
+    .map-wrap{
+      margin-top:14px;border-radius:var(--radius-md);
+      overflow:hidden;border:1px solid var(--border);
+    }
+    iframe{width:100%;height:300px;border:0}
+
+    footer{
+      margin-top:30px;border-top:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+    }
+    .footer-top{
+      padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between;
+    }
+    .footer-bottom{padding:14px 0;color:var(--muted);font-size:14px}
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+
+      <nav class="primary">
+        <a href="voir.html">À voir</a>
+        <a href="restaurants.html">Restaurants</a>
+        <a href="quefaire.html">Que faire</a>
+        <a href="cartes.html">Cartes</a>
+        <a href="transport-estepona.html">Transports</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Contact</h1>
+      <p>Une question, une suggestion, un partenariat ? Écris-nous, nous te répondrons rapidement.</p>
+    </div>
+  </section>
+
+  <!-- CONTENU -->
+  <main class="container">
+    <div class="grid">
+
+      <!-- FORMULAIRE -->
+      <div class="card">
+        <h2>📩 Envoyer un message</h2>
+
+        <form id="contactForm" action="mailto:jb@gmail.com" method="post" enctype="text/plain">
+
+          <!-- HONEYPOT anti-bots -->
+          <div style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+            <label>Ne pas remplir</label>
+            <input type="text" name="website" tabindex="-1">
+          </div>
+
+          <label>Nom / Prénom</label>
+          <input type="text" name="Nom" required>
+
+          <label>Email</label>
+          <input type="email" name="Email" required>
+
+          <label>Message</label>
+          <textarea name="Message" required></textarea>
+
+          <!-- CAPTCHA -->
+          <label for="captcha">Question anti-spam : <br>
+            <span style="font-size:13px;color:var(--muted)">Combien font <b>2 + 3</b> ?</span>
+          </label>
+          <input type="number" id="captcha" name="Captcha" required>
+
+          <button type="submit" class="btn-submit">Envoyer</button>
+        </form>
+      </div>
+
+      <!-- CONTACT + WHATSAPP -->
+      <div class="card">
+        <h2>📞 Nous contacter</h2>
+
+        <p><strong>Email :</strong><br>
+          <a href="mailto:jb@gmail.com">jb@gmail.com</a>
+        </p>
+
+        <p><strong>WhatsApp :</strong></p>
+        <a class="btn-whatsapp" href="https://wa.me/34600000000" target="_blank">
+          💬 Écrire sur WhatsApp
+        </a>
+
+        <p style="margin-top:22px"><strong>Instagram :</strong><br>
+        <a href="#">@bonsplansestepona</a></p>
+
+        <h2 style="margin-top:24px">📍 Localisation</h2>
+        <p>Estepona — Costa del Sol</p>
+
+        <div class="map-wrap">
+          <iframe loading="lazy" src="https://www.google.com/maps?q=Estepona&z=12&output=embed"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png"></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <div class="meta">© 2025 Bons Plans Estepona</div>
+    </div>
+    <div class="container footer-bottom">
+      Guide local indépendant — Costa del Sol
+    </div>
+  </footer>
+
+  <!-- SCRIPT CAPTCHA -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('contactForm');
+      const captcha = document.getElementById('captcha');
+
+      form.addEventListener('submit', (e) => {
+        if (captcha.value.trim() !== '5') {
+          e.preventDefault();
+          alert("Merci de répondre correctement à la question anti-spam : 2 + 3 = ?");
+          captcha.focus();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
