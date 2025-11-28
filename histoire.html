@@ -47,12 +47,57 @@
 
     .kicker{color:var(--muted);margin-bottom:10px}
 
-    .map-box{
-      width:100%;height:380px;
-      border-radius:18px;overflow:hidden;
+    /* Bloc vidéo en haut de page */
+    .video-box{
+      width:100%;
+      aspect-ratio:16/9;
+      border-radius:18px;
+      overflow:hidden;
       margin:20px 0 30px;
       border:1px solid var(--border);
       box-shadow:var(--shadow);
+      background:#000;
+    }
+    .video-box iframe{
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+    /* Bloc carte au milieu du texte */
+    .map-box{
+      width:100%;height:380px;
+      border-radius:18px;overflow:hidden;
+      margin:26px 0 30px;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+
+    /* Galerie 3 photos */
+    .photo-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin:26px 0 10px;
+    }
+    @media (max-width:800px){
+      .photo-grid{grid-template-columns:1fr}
+    }
+    .photo-grid figure{
+      margin:0;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background:var(--surface-2);
+      box-shadow:var(--shadow);
+    }
+    .photo-grid img{
+      width:100%;height:220px;object-fit:cover;
+    }
+    .photo-grid figcaption{
+      padding:8px 10px 10px;
+      font-size:14px;
+      color:var(--muted);
     }
 
     footer{
@@ -61,7 +106,15 @@
       padding:18px 0;margin-top:10px;
       color:var(--muted);font-size:14px;
     }
-    .footer-inner{width:min(1100px,92vw);margin-inline:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .footer-inner{
+      width:min(1100px,92vw);
+      margin-inline:auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
   </style>
 </head>
 
@@ -86,20 +139,19 @@
     <span class="kicker">Costa del Sol · Histoire & balade en bord de mer</span>
     <h1>Histoire du Paseo Marítimo d’Estepona</h1>
 
-    <div class="map-box">
+    <!-- VIDÉO EN HAUT À LA PLACE DE LA CARTE -->
+    <div class="video-box">
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7067.567779957779!2d-5.149337242621466!3d36.415791302816054!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0cd5402ae8cfe5%3A0x17040f48fcec63e9!2sPaseo%20Mar%C3%ADtimo%20de%20Estepona!5e0!3m2!1sfr!2ses!4v1700000000000"
-        width="100%"
-        height="100%"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
+        src="https://www.bing.com/videos/riverview/relatedvideo?q=drone+estepona&amp;mid=389C67A35B80F9A02190389C67A35B80F9A02190&amp;FORM=VIRE"
+        allowfullscreen
+        loading="lazy">
       </iframe>
     </div>
 
+    <!-- PREMIÈRES SECTIONS DE TEXTE -->
     <p>
-      Le Paseo Marítimo est aujourd’hui l’une des promenades les plus emblématiques de la Costa del Sol, mais son évolution s’est faite en plusieurs étapes.
+      Le Paseo Marítimo est aujourd’hui l’une des promenades les plus emblématiques de la Costa del Sol,
+      mais son évolution s’est faite en plusieurs étapes.
     </p>
 
     <h2>1. Avant les années 1960 : un simple front de mer de pêcheurs</h2>
@@ -112,7 +164,7 @@
       <li>Le littoral était sauvage, sans urbanisation ni restaurants ouverts au public.</li>
     </ul>
     <p>
-      Le bord de mer était surtout utilisé pour sécher les filets, réparer les barques, et conserver sardines et anchois.
+      Le bord de mer était surtout utilisé pour sécher les filets, réparer les barques, garder les sardines et anchois.
     </p>
 
     <h2>2. Années 1960–1980 : naissance du Paseo Marítimo</h2>
@@ -121,44 +173,78 @@
     </p>
     <ul>
       <li>Les premières sections du Paseo Marítimo sont construites pour accueillir les visiteurs.</li>
-      <li>L’objectif est d’ouvrir Estepona sur la mer et de créer un espace agréable pour marcher.</li>
-      <li>Le premier tronçon s’étend autour de la <strong>Playa de la Rada</strong>, le cœur de la ville.</li>
+      <li>L’objectif : ouvrir Estepona sur la mer et créer un espace agréable pour marcher.</li>
+      <li>Le premier tronçon s’étend autour de <strong>Playa de la Rada</strong>, le cœur de la ville.</li>
     </ul>
     <p>Caractéristiques de cette époque :</p>
     <ul>
       <li>bancs et palmiers,</li>
       <li>premiers chiringuitos fixes,</li>
-      <li>urbanisation progressive du front de mer.</li>
+      <li>urbanisation du front de mer.</li>
     </ul>
     <p>
       Le Paseo commence déjà à devenir un symbole de la ville.
     </p>
 
+    <!-- GALERIE 3 PHOTOS (EMPLACEMENTS) -->
+    <div class="photo-grid">
+      <figure>
+        <img src="img/paseo-1.jpg" alt="Vue du Paseo Marítimo d’Estepona">
+        <figcaption>Le Paseo Marítimo au lever du soleil.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/paseo-2.jpg" alt="Palmiers et plage à Estepona">
+        <figcaption>Palmiers, plage et promenade en bord de mer.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/paseo-3.jpg" alt="Ambiance en soirée sur le Paseo">
+        <figcaption>Ambiance en soirée, terrasses et lumière douce.</figcaption>
+      </figure>
+    </div>
+
     <h2>3. Années 1990–2010 : modernisation complète</h2>
     <p>
-      Cette période marque une transformation majeure du paseo :
+      Cette période marque la transformation majeure du paseo :
     </p>
     <ul>
       <li>élargissement du chemin piéton,</li>
       <li>création de zones vertes et de parterres de fleurs,</li>
-      <li>installation de fontaines et de jeux pour enfants,</li>
+      <li>installation de fontaines et jeux pour enfants,</li>
       <li>construction du muret blanc caractéristique,</li>
       <li>nouveaux chiringuitos et restaurants plus modernes,</li>
       <li>piste cyclable improvisée sur certaines sections.</li>
     </ul>
     <p>
-      La promenade devient une zone très familiale, particulièrement fréquentée l’été.
+      La promenade devient une zone familiale, très fréquentée l’été.
     </p>
+
+    <!-- CARTE GOOGLE PLACÉE AU MILIEU DU TEXTE -->
+    <h2>Localisation du Paseo Marítimo</h2>
+    <p>
+      Le Paseo Marítimo longe toute la façade maritime du centre d’Estepona. Vous pouvez facilement le rejoindre
+      depuis le centre historique, la Playa de la Rada ou le port de plaisance.
+    </p>
+    <div class="map-box">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7067.567779957779!2d-5.149337242621466!3d36.415791302816054!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0cd5402ae8cfe5%3A0x17040f48fcec63e9!2sPaseo%20Mar%C3%ADtimo%20de%20Estepona!5e0!3m2!1sfr!2ses!4v1700000000000"
+        width="100%"
+        height="100%"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
 
     <h2>4. Années 2015–2024 : rénovation & “ville jardin”</h2>
     <p>
-      Estepona lance son projet <strong>« Estepona, Jardín de la Costa del Sol »</strong> :
+      Estepona lance son projet <strong>"Estepona, Jardín de la Costa del Sol"</strong> :
     </p>
     <ul>
-      <li>plantations massives de fleurs et d’arbres tropicaux,</li>
+      <li>plantations massives de fleurs et arbres tropicaux,</li>
       <li>rénovation du sol, éclairage LED, bancs et accès plage,</li>
       <li>nouvelle piste cyclable continue,</li>
-      <li>réaménagement des plages et des douches,</li>
+      <li>réaménagement des plages et douches,</li>
       <li>arrivée de chiringuitos plus haut de gamme (Malva, Bahía…).</li>
     </ul>
     <p>
@@ -167,15 +253,23 @@
 
     <h2>5. Aujourd’hui : un paseo long de plus de 3 km</h2>
     <p>
-      Aujourd’hui, le Paseo Marítimo d’Estepona :
+      Le Paseo Marítimo d’Estepona :
     </p>
     <ul>
       <li>s’étend de <strong>La Punta de Plata</strong> jusqu’à <strong>La Punta de Doncella</strong> (Port d’Estepona),</li>
       <li>relie de nombreux quartiers : La Rada, El Centro, Seghers, etc.,</li>
-      <li>accueille chiringuitos, restaurants, aires de jeux, zones sportives et concerts en été.</li>
+      <li>accueille :
+        <ul>
+          <li>chiringuitos,</li>
+          <li>restaurants,</li>
+          <li>aires de jeux,</li>
+          <li>zones sportives,</li>
+          <li>concerts en été.</li>
+        </ul>
+      </li>
     </ul>
     <p>
-      C’est un espace iconique, utilisé chaque jour par les familles, les touristes, les sportifs, les promeneurs et les cyclistes.
+      C’est un espace iconique, utilisé par les familles, les touristes, les sportifs, les promeneurs et les cyclistes.
     </p>
 
     <h2>6. Le futur : connexion totale du littoral</h2>
@@ -185,7 +279,7 @@
     <ul>
       <li>connecter tout le littoral par un paseo continu jusqu’à Casares d’un côté et Marbella de l’autre,</li>
       <li>intégrer davantage d’espaces verts,</li>
-      <li>créer une zone encore plus piétonne entre le centre et la plage.</li>
+      <li>créer une zone entièrement piétonne entre le centre et la plage.</li>
     </ul>
     <p>
       Le Paseo Marítimo d’Estepona n’est pas seulement une promenade : c’est un projet en mouvement, qui continue d’évoluer avec la ville.
