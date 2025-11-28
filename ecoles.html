@@ -1,1 +1,747 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Écoles à Estepona — Estepona Bons Plans</title>
+  <meta name="description" content="Liste des écoles d’Estepona : primaire, institutos, bachillerato, écoles privées, françaises, américaines et internationales, avec types (public/privé) et liens officiels." />
+  <style>
+    :root{
+      --bg:#0b1730; --surface:#0f1f44; --surface-2:#0f1625;
+      --primary:#2db4ff; --accent:#00d0b6;
+      --text:#eaf2ff; --muted:#a8b6cf; --border:#1a2d5a;
+      --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    html,body{
+      margin:0;padding:0;background:var(--bg);color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+
+    /* HEADER */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+      backdrop-filter:saturate(140%) blur(6px);
+      border-bottom:1px solid var(--border);
+    }
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+    }
+    .brand-logo img{width:100%;height:100%;object-fit:contain}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
+
+    /* HERO */
+    .page-hero{
+      padding:26px 0 16px;border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.25) 100%);
+    }
+    .page-hero h1{margin:6px 0 6px;font-size:30px}
+    .page-hero p{margin:0 0 8px;color:var(--muted);max-width:720px}
+    .pill{
+      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);
+      margin-bottom:8px;
+    }
+
+    main{padding:20px 0 40px}
+
+    h2{
+      margin:26px 0 8px;font-size:22px;
+    }
+    .section-intro{
+      margin:0 0 12px;color:var(--muted);max-width:780px;font-size:14px;
+    }
+
+    /* Bloc carte */
+    .map-card{
+      margin-top:18px;margin-bottom:28px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:16px 16px 18px;
+      box-shadow:var(--shadow);
+    }
+    .map-wrap{
+      margin-top:8px;
+      border-radius:var(--radius-md);
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+    .map-wrap iframe{
+      width:100%;
+      height:360px;
+      border:0;
+      display:block;
+    }
+
+    /* Filtres */
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      margin:6px 0 16px;
+      font-size:14px;
+    }
+    .filters label{
+      font-size:13px;color:var(--muted);
+    }
+    .filters select{
+      background:var(--surface-2);
+      color:var(--text);
+      border-radius:999px;
+      border:1px solid var(--border);
+      padding:6px 10px;
+      font-size:13px;
+      min-width:160px;
+    }
+    .filters button{
+      background:transparent;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      padding:6px 12px;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .filters button:hover{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+    }
+
+    /* Tableau écoles */
+    .table-wrap{
+      overflow-x:auto;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      box-shadow:var(--shadow);
+      margin-bottom:24px;
+    }
+    table.school-table{
+      width:100%;border-collapse:collapse;min-width:720px;
+    }
+    .school-table thead{
+      background:rgba(6,14,35,.9);
+    }
+    .school-table th,
+    .school-table td{
+      padding:10px 12px;font-size:14px;border-bottom:1px solid var(--border);
+      text-align:left;
+    }
+    .school-table th{
+      font-size:13px;letter-spacing:.03em;text-transform:uppercase;
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .school-table th.sort-asc::after{
+      content:" ▲";
+      font-size:10px;
+      color:var(--primary);
+    }
+    .school-table th.sort-desc::after{
+      content:" ▼";
+      font-size:10px;
+      color:var(--primary);
+    }
+    .school-table tbody tr:nth-child(even){
+      background:rgba(255,255,255,.02);
+    }
+    .school-table tbody tr[hidden]{
+      display:none;
+    }
+
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:3px 8px;border-radius:999px;border:1px solid var(--border);
+      font-size:11px;
+    }
+    .badge.public{background:rgba(45,180,255,.08);color:var(--primary);}
+    .badge.concertado{background:rgba(255,255,255,.06);color:var(--accent);}
+    .badge.prive{background:rgba(255,255,255,.06);color:#ffd88a;}
+    .badge.international{background:rgba(0,208,182,.08);color:var(--accent);}
+
+    .tag-level{
+      display:inline-block;margin-right:4px;margin-bottom:2px;
+      padding:3px 7px;border-radius:999px;border:1px solid var(--border);
+      font-size:11px;color:var(--muted);
+    }
+    .school-link{
+      color:var(--primary);text-decoration:underline;
+      text-decoration-color:rgba(45,180,255,.55);
+    }
+    .school-link:hover{color:#7fd3ff}
+
+    footer{
+      margin-top:10px;border-top:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+    }
+    .footer-top{
+      padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between;
+    }
+    .footer-bottom{padding:14px 0;color:var(--muted);font-size:14px}
+    .meta{color:var(--muted);font-size:14px}
+
+    @media (max-width:720px){
+      .school-table th,
+      .school-table td{font-size:13px;padding:8px 10px;}
+      .filters{align-items:flex-start;}
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="voir.html">À voir</a>
+        <a href="restaurants.html">Restaurants</a>
+        <a href="quefaire.html">Que faire</a>
+        <a href="cartes.html">Cartes</a>
+        <a href="faq.html">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="pill">Vie pratique · Familles</span>
+      <h1>Écoles à Estepona & alentours</h1>
+      <p>
+        Panorama des principaux établissements scolaires autour d’Estepona : écoles publiques, institutos,
+        collèges/lycées privés, écoles françaises, américaines et britanniques. Pratique pour choisir un quartier
+        ou préparer une installation en famille.
+      </p>
+      <p style="font-size:13px;color:var(--muted);margin:0">
+        ⚠️ Vérifie toujours les infos (inscriptions, options, frais) directement sur le site officiel de chaque école.
+      </p>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <!-- CARTE -->
+    <section class="map-card">
+      <h2>📍 Carte des écoles autour d’Estepona</h2>
+      <p class="section-intro">
+        Vue d’ensemble du secteur scolaire : Estepona, New Golden Mile, Cancelada, Costa Galera, Marbella…
+        La carte te permet de visualiser les zones où se trouvent la plupart des écoles publiques et internationales.
+      </p>
+      <div class="map-wrap">
+        <iframe
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=schools+Estepona&z=11&output=embed">
+        </iframe>
+      </div>
+    </section>
+
+    <!-- FILTRES GLOBAUX -->
+    <section>
+      <h2>Liste des écoles</h2>
+      <p class="section-intro">
+        Utilise les filtres pour afficher uniquement les écoles publiques, les institutos, les écoles internationales
+        (EFIM, Atlas, British schools…), ou un niveau précis (Primaria, ESO, Bachillerato, etc.).
+      </p>
+
+      <div class="filters" id="filters">
+        <label for="filterType">Type :</label>
+        <select id="filterType">
+          <option value="">Tous les types</option>
+          <option value="public">Public</option>
+          <option value="concertado">Concertado</option>
+          <option value="prive">Privé</option>
+          <option value="international">International</option>
+          <option value="french">École française</option>
+          <option value="british">British School</option>
+          <option value="american">American School</option>
+        </select>
+
+        <label for="filterLevel">Niveaux :</label>
+        <select id="filterLevel">
+          <option value="">Tous les niveaux</option>
+          <option value="infantil">Infantil / Maternelle</option>
+          <option value="primaria">Primaria / Élémentaire</option>
+          <option value="eso">ESO / Collège</option>
+          <option value="bachillerato">Bachillerato / Lycée</option>
+          <option value="fp">FP (formation pro)</option>
+          <option value="nursery">Nursery / Early Years</option>
+          <option value="ib">IB / A-Levels</option>
+        </select>
+
+        <button type="button" id="resetFilters">Réinitialiser</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="school-table" id="schoolTable">
+          <thead>
+            <tr>
+              <th data-col="nom">Établissement</th>
+              <th data-col="levels">Niveaux</th>
+              <th data-col="type">Type</th>
+              <th data-col="zone">Quartier / Zone</th>
+              <th data-col="link">Site officiel / Réseaux</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- PRIMARIA / CEIP -->
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Antonio Machado</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Centre-ville (Casco Antiguo)</td>
+              <td>
+                <a class="school-link" href="https://antoniomachadoestepona.wordpress.com" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Federico García Lorca</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Zone Est d’Estepona</td>
+              <td>
+                <a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipfgarcialorcaestepona/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Ramón García</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Quartier nord d’Estepona</td>
+              <td>
+                <a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipramongarciaestepona/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Valeriano López</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Zone de Cancelada / New Golden Mile</td>
+              <td>
+                <a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipvalerianolopez/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Víctor de la Serna</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Proche centre / Av. España</td>
+              <td>
+                <a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipvictordelasernadeestepona/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Isdabe del Mar</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>New Golden Mile (Isdabe / El Paraíso)</td>
+              <td>
+                <a class="school-link" href="https://ceipisdabedelmar.blogspot.com/" target="_blank" rel="noopener">
+                  Blog de l’école
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="infantil,primaria"
+              data-tags="">
+              <td>CEIP Sierra Bermeja</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Quartier Sierra Bermeja / Nord</td>
+              <td>
+                <span style="font-size:12px;color:var(--muted)">Portail éducatif / mairie</span>
+              </td>
+            </tr>
+
+            <!-- INSTITUTOS / IES -->
+            <tr
+              data-type="public"
+              data-levels="eso,bachillerato"
+              data-tags="">
+              <td>IES Mar de Alborán</td>
+              <td>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Zone nord d’Estepona</td>
+              <td>
+                <a class="school-link" href="https://www.iesmardealboran.com/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="eso,bachillerato,fp"
+              data-tags="fp">
+              <td>IES Monterroso</td>
+              <td>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+                <span class="tag-level">FP</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Centre / Av. Juan Carlos I</td>
+              <td>
+                <a class="school-link" href="https://iesmonterroso.org/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="eso,bachillerato"
+              data-tags="">
+              <td>IES Mediterráneo</td>
+              <td>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Zone urbaine d’Estepona</td>
+              <td>
+                <a class="school-link" href="https://www.instagram.com/iesmediterraneo_estepona/" target="_blank" rel="noopener">
+                  Instagram officiel
+                </a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="public"
+              data-levels="eso,bachillerato"
+              data-tags="">
+              <td>IES Puerta del Mar</td>
+              <td>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+              </td>
+              <td><span class="badge public">Public</span></td>
+              <td>Zone centre / Av. Andalucía</td>
+              <td>
+                <a class="school-link" href="https://iespuertadelmar.es/" target="_blank" rel="noopener">
+                  Site officiel
+                </a>
+              </td>
+            </tr>
+
+            <!-- PRIVÉ / CONCERTADO / INTERNATIONAUX -->
+            <tr
+              data-type="concertado"
+              data-levels="infantil,primaria,eso,bachillerato"
+              data-tags="">
+              <td>Colegio Diocesano Juan XXIII</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+              </td>
+              <td><span class="badge concertado">Concertado</span></td>
+              <td>Centre-ville (Calle José Nadal)</td>
+              <td>
+                <a class="school-link" href="https://juanveintitres.fvictoria.es/" target="_blank" rel="noopener">Site officiel</a>
+                &nbsp;·&nbsp;
+                <a class="school-link" href="https://www.instagram.com/colegio_diocesano_juanxxiii/" target="_blank" rel="noopener">Instagram</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="prive"
+              data-levels="infantil,primaria,eso,bachillerato"
+              data-tags="">
+              <td>Colegio San José (Estepona)</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+              </td>
+              <td><span class="badge prive">Privé</span></td>
+              <td>Entrée Est d’Estepona</td>
+              <td>
+                <a class="school-link" href="https://colegiosanjose.net/" target="_blank" rel="noopener">Site officiel</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="international"
+              data-levels="infantil,primaria,eso,bachillerato,ib"
+              data-tags="ib">
+              <td>Colegio Internacional Atalaya</td>
+              <td>
+                <span class="tag-level">Infantil</span>
+                <span class="tag-level">Primaria</span>
+                <span class="tag-level">ESO</span>
+                <span class="tag-level">Bachillerato</span>
+                <span class="tag-level">IB</span>
+              </td>
+              <td><span class="badge international">International</span></td>
+              <td>New Golden Mile (Calle Pico Alcazaba)</td>
+              <td>
+                <a class="school-link" href="https://www.colegioatalaya.es/" target="_blank" rel="noopener">Site officiel</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="international british"
+              data-levels="nursery,primaria"
+              data-tags="">
+              <td>The International School Estepona</td>
+              <td>
+                <span class="tag-level">Nursery</span>
+                <span class="tag-level">Primary</span>
+              </td>
+              <td><span class="badge international">British School</span></td>
+              <td>El Paraíso / New Golden Mile</td>
+              <td>
+                <a class="school-link" href="https://marbellaschool.com/" target="_blank" rel="noopener">Site officiel</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="international british"
+              data-levels="nursery,primaria,eso,ib"
+              data-tags="a-levels,ib">
+              <td>Queens British Grammar School</td>
+              <td>
+                <span class="tag-level">Early Years</span>
+                <span class="tag-level">Primary</span>
+                <span class="tag-level">Secondary (IGCSE)</span>
+                <span class="tag-level">A-Levels</span>
+              </td>
+              <td><span class="badge international">British School</span></td>
+              <td>Ouest d’Estepona (Costa Galera)</td>
+              <td>
+                <a class="school-link" href="https://www.qbgs.education/" target="_blank" rel="noopener">Site officiel</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="international french"
+              data-levels="infantil,primaria,eso,bachillerato"
+              data-tags="cned">
+              <td>EFIM – École Française Internationale de Marbella</td>
+              <td>
+                <span class="tag-level">Maternelle</span>
+                <span class="tag-level">Élémentaire</span>
+                <span class="tag-level">Collège</span>
+                <span class="tag-level">Lycée (CNED)</span>
+              </td>
+              <td><span class="badge international">École française</span></td>
+              <td>Marbella (proche Estepona)</td>
+              <td>
+                <a class="school-link" href="https://www.ecolefrancaisemarbella.com/" target="_blank" rel="noopener">Site officiel</a>
+                &nbsp;·&nbsp;
+                <a class="school-link" href="https://www.instagram.com/ecolefrancaisemarbella/" target="_blank" rel="noopener">Instagram</a>
+              </td>
+            </tr>
+
+            <tr
+              data-type="international american"
+              data-levels="nursery,primaria,eso,bachillerato"
+              data-tags="">
+              <td>Atlas American School of Malaga</td>
+              <td>
+                <span class="tag-level">Kindergarten</span>
+                <span class="tag-level">Elementary</span>
+                <span class="tag-level">Middle School</span>
+                <span class="tag-level">High School</span>
+              </td>
+              <td><span class="badge international">American School</span></td>
+              <td>Estepona (La Gaspara)</td>
+              <td>
+                <a class="school-link" href="https://atlas-asm.es/" target="_blank" rel="noopener">Site officiel</a>
+                &nbsp;·&nbsp;
+                <a class="school-link" href="https://www.instagram.com/atlasamericanschool/" target="_blank" rel="noopener">Instagram</a>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <p class="section-intro" style="margin-top:4px">
+        👉 Liste indicative : tu peux encore la compléter (crèches, centres FP, écoles de langues) selon les besoins
+        de ton audience.
+      </p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <div class="meta">
+        Pages : Vie pratique · Écoles · Cartes · Que faire
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      © 2025 Bons Plans Estepona · Guide local indépendant
+    </div>
+  </footer>
+
+  <script>
+    // --- Filtres & tri du tableau ---
+    (function(){
+      const table = document.getElementById('schoolTable');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.rows);
+
+      const selType  = document.getElementById('filterType');
+      const selLevel = document.getElementById('filterLevel');
+      const resetBtn = document.getElementById('resetFilters');
+
+      function applyFilters(){
+        const type  = (selType.value || '').toLowerCase();
+        const level = (selLevel.value || '').toLowerCase();
+
+        rows.forEach(tr => {
+          const trType   = (tr.getAttribute('data-type') || '').toLowerCase();
+          const trLevels = (tr.getAttribute('data-levels') || '').toLowerCase().split(',');
+          let okType = true, okLevel = true;
+
+          if(type){
+            // type peut contenir plusieurs mots : "international french"
+            okType = trType.split(/\s+/).includes(type) || trType.includes(type);
+          }
+          if(level){
+            okLevel = trLevels.includes(level);
+          }
+
+          tr.hidden = !(okType && okLevel);
+        });
+      }
+
+      selType.addEventListener('change', applyFilters);
+      selLevel.addEventListener('change', applyFilters);
+      resetBtn.addEventListener('click', () => {
+        selType.value = '';
+        selLevel.value = '';
+        rows.forEach(tr => tr.hidden = false);
+        clearSortIndicators();
+      });
+
+      // Tri colonne
+      let currentSortCol = null;
+      let currentSortDir = 1; // 1 = asc, -1 = desc
+
+      function clearSortIndicators(){
+        table.querySelectorAll('th').forEach(th=>{
+          th.classList.remove('sort-asc','sort-desc');
+        });
+      }
+
+      function sortByColumn(colIndex){
+        const th = table.querySelectorAll('th')[colIndex];
+        const colKey = th.getAttribute('data-col') || '';
+
+        if(currentSortCol === colIndex){
+          currentSortDir *= -1; // toggle
+        } else {
+          currentSortCol = colIndex;
+          currentSortDir = 1;
+        }
+
+        const visibleRows = rows.slice().filter(r => !r.hidden);
+
+        visibleRows.sort((a,b)=>{
+          const ta = a.cells[colIndex].innerText.trim().toLowerCase();
+          const tb = b.cells[colIndex].innerText.trim().toLowerCase();
+          if(ta < tb) return -1 * currentSortDir;
+          if(ta > tb) return  1 * currentSortDir;
+          return 0;
+        });
+
+        visibleRows.forEach(r => tbody.appendChild(r));
+
+        clearSortIndicators();
+        th.classList.add(currentSortDir === 1 ? 'sort-asc' : 'sort-desc');
+      }
+
+      table.querySelectorAll('th').forEach((th, idx)=>{
+        th.addEventListener('click',()=> sortByColumn(idx));
+      });
+    })();
+  </script>
+</body>
+</html>
 
