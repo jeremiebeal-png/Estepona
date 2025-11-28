@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Paseo Marítimo d’Estepona — Guide complet</title>
-  <meta name="description" content="Découvrez l’histoire et les points forts du Paseo Marítimo d’Estepona, l’une des plus belles promenades de la Costa del Sol. Informations, conseils, carte et lieux incontournables.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Histoire du Paseo Marítimo d’Estepona — Estepona</title>
+  <meta name="description" content="Découvrez l’histoire du Paseo Marítimo d’Estepona, de ses origines de village de pêcheurs à l’une des promenades les plus emblématiques de la Costa del Sol.">
 
   <style>
     :root{
@@ -17,7 +17,7 @@
     html,body{
       margin:0;padding:0;
       background:var(--bg);color:var(--text);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
@@ -38,39 +38,44 @@
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
 
-    h1{font-size:32px;margin-top:24px}
-    h2{margin-top:32px;font-size:26px;color:var(--primary)}
-    p{line-height:1.6;color:var(--text);margin:14px 0}
+    main{padding:24px 0 40px}
+    h1{font-size:32px;margin:10px 0 6px}
+    h2{margin-top:28px;font-size:24px;color:var(--primary)}
+    p{line-height:1.7;color:var(--text);margin:10px 0}
+    ul{margin:8px 0 12px 1.2rem;color:var(--text);padding-left:1.2rem}
+    li{margin:4px 0}
 
-    footer{
-      margin-top:40px;border-top:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
-      padding:20px; text-align:center;color:var(--muted);
-    }
+    .kicker{color:var(--muted);margin-bottom:10px}
 
     .map-box{
-      width:100%;height:400px;
+      width:100%;height:380px;
       border-radius:18px;overflow:hidden;
-      margin:30px 0;
+      margin:20px 0 30px;
       border:1px solid var(--border);
+      box-shadow:var(--shadow);
     }
+
+    footer{
+      border-top:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+      padding:18px 0;margin-top:10px;
+      color:var(--muted);font-size:14px;
+    }
+    .footer-inner{width:min(1100px,92vw);margin-inline:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   </style>
 </head>
 
 <body>
-
   <header>
     <div class="container header-row">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt=""></span>
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Estepona — Bons plans</strong>
       </a>
-
-      <nav class="primary">
+      <nav class="primary" aria-label="Navigation principale">
         <a href="voir.html">À voir</a>
         <a href="restaurants.html">Restaurants</a>
         <a href="quefaire.html">Que faire</a>
-        <a href="histoire.html">Histoire</a>
         <a href="cartes.html">Cartes</a>
         <a href="faq.html">FAQ</a>
       </nav>
@@ -78,9 +83,8 @@
   </header>
 
   <main class="container">
-
-    <h1>Paseo Marítimo d’Estepona</h1>
-    <p><em>L’une des plus belles promenades de la Costa del Sol.</em></p>
+    <span class="kicker">Costa del Sol · Histoire & balade en bord de mer</span>
+    <h1>Histoire du Paseo Marítimo d’Estepona</h1>
 
     <div class="map-box">
       <iframe
@@ -89,51 +93,111 @@
         height="100%"
         style="border:0;"
         allowfullscreen=""
-        loading="lazy">
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
       </iframe>
     </div>
 
-    <h2>Une promenade emblématique d’Estepona</h2>
-
     <p>
-      Le <strong>Paseo Marítimo d’Estepona</strong> est l’une des attractions les plus emblématiques de la ville.
-      Situé entre la <strong>Playa de la Rada</strong> et le <strong>Port d’Estepona</strong>, ce sentier côtier long
-      d’environ 3 kilomètres est devenu un lieu incontournable pour les familles, les couples et tous ceux qui souhaitent
-      profiter du bord de mer andalou.
+      Le Paseo Marítimo est aujourd’hui l’une des promenades les plus emblématiques de la Costa del Sol, mais son évolution s’est faite en plusieurs étapes.
     </p>
 
+    <h2>1. Avant les années 1960 : un simple front de mer de pêcheurs</h2>
     <p>
-      Entièrement piétonnier, le paseo est reconnu pour ses <strong>palmiers</strong>, ses
-      <strong>jardins tropicaux</strong>, son ambiance douce et sa vue imprenable sur la Méditerranée, Gibraltar
-      et même l’Afrique par temps clair. C’est un lieu idéal pour marcher, courir, faire du vélo ou simplement se
-      détendre face à la mer.
+      Avant l’arrivée du tourisme moderne, Estepona était un petit village de pêcheurs.
+    </p>
+    <ul>
+      <li>Il n’existait pas de promenade structurée.</li>
+      <li>La zone était composée de petites maisons, de barques, d’entrepôts de pêche et d’accès directs à la plage.</li>
+      <li>Le littoral était sauvage, sans urbanisation ni restaurants ouverts au public.</li>
+    </ul>
+    <p>
+      Le bord de mer était surtout utilisé pour sécher les filets, réparer les barques, et conserver sardines et anchois.
     </p>
 
-    <h2>Chiringuitos, terrasses et jardins</h2>
+    <h2>2. Années 1960–1980 : naissance du Paseo Marítimo</h2>
     <p>
-      Tout au long de la promenade, on trouve une grande variété de <strong>chiringuitos</strong>, bars et restaurants
-      où déguster des spécialités locales : <em>espeto</em> de sardines, poisson frais, tapas, cocktails au coucher du soleil…
-      Le front de mer est aussi équipé d’aires de jeux, de zones sportives et de fontaines.
+      Avec le boom touristique de la Costa del Sol :
+    </p>
+    <ul>
+      <li>Les premières sections du Paseo Marítimo sont construites pour accueillir les visiteurs.</li>
+      <li>L’objectif est d’ouvrir Estepona sur la mer et de créer un espace agréable pour marcher.</li>
+      <li>Le premier tronçon s’étend autour de la <strong>Playa de la Rada</strong>, le cœur de la ville.</li>
+    </ul>
+    <p>Caractéristiques de cette époque :</p>
+    <ul>
+      <li>bancs et palmiers,</li>
+      <li>premiers chiringuitos fixes,</li>
+      <li>urbanisation progressive du front de mer.</li>
+    </ul>
+    <p>
+      Le Paseo commence déjà à devenir un symbole de la ville.
     </p>
 
-    <h2>Une transformation récente</h2>
+    <h2>3. Années 1990–2010 : modernisation complète</h2>
     <p>
-      Grâce au projet municipal <strong>“Estepona, Jardín de la Costa del Sol”</strong>, le Paseo Marítimo a été
-      entièrement transformé : éclairage LED, nouveaux sols, parterres fleuris, zones ombragées et mobilier urbain
-      moderne en font aujourd’hui l’un des plus beaux de toute l’Andalousie.
+      Cette période marque une transformation majeure du paseo :
+    </p>
+    <ul>
+      <li>élargissement du chemin piéton,</li>
+      <li>création de zones vertes et de parterres de fleurs,</li>
+      <li>installation de fontaines et de jeux pour enfants,</li>
+      <li>construction du muret blanc caractéristique,</li>
+      <li>nouveaux chiringuitos et restaurants plus modernes,</li>
+      <li>piste cyclable improvisée sur certaines sections.</li>
+    </ul>
+    <p>
+      La promenade devient une zone très familiale, particulièrement fréquentée l’été.
     </p>
 
-    <h2>Le meilleur moment pour en profiter</h2>
+    <h2>4. Années 2015–2024 : rénovation & “ville jardin”</h2>
     <p>
-      Le matin, la promenade est calme, parfaite pour un jogging ou une balade. Le soir, elle s’anime avec les
-      familles, les musiciens et les terrasses. Les couchers de soleil y sont spectaculaires.
+      Estepona lance son projet <strong>« Estepona, Jardín de la Costa del Sol »</strong> :
+    </p>
+    <ul>
+      <li>plantations massives de fleurs et d’arbres tropicaux,</li>
+      <li>rénovation du sol, éclairage LED, bancs et accès plage,</li>
+      <li>nouvelle piste cyclable continue,</li>
+      <li>réaménagement des plages et des douches,</li>
+      <li>arrivée de chiringuitos plus haut de gamme (Malva, Bahía…).</li>
+    </ul>
+    <p>
+      Le paseo gagne en esthétique et devient l’un des plus beaux d’Andalousie.
+    </p>
+
+    <h2>5. Aujourd’hui : un paseo long de plus de 3 km</h2>
+    <p>
+      Aujourd’hui, le Paseo Marítimo d’Estepona :
+    </p>
+    <ul>
+      <li>s’étend de <strong>La Punta de Plata</strong> jusqu’à <strong>La Punta de Doncella</strong> (Port d’Estepona),</li>
+      <li>relie de nombreux quartiers : La Rada, El Centro, Seghers, etc.,</li>
+      <li>accueille chiringuitos, restaurants, aires de jeux, zones sportives et concerts en été.</li>
+    </ul>
+    <p>
+      C’est un espace iconique, utilisé chaque jour par les familles, les touristes, les sportifs, les promeneurs et les cyclistes.
+    </p>
+
+    <h2>6. Le futur : connexion totale du littoral</h2>
+    <p>
+      Estepona travaille encore à :
+    </p>
+    <ul>
+      <li>connecter tout le littoral par un paseo continu jusqu’à Casares d’un côté et Marbella de l’autre,</li>
+      <li>intégrer davantage d’espaces verts,</li>
+      <li>créer une zone encore plus piétonne entre le centre et la plage.</li>
+    </ul>
+    <p>
+      Le Paseo Marítimo d’Estepona n’est pas seulement une promenade : c’est un projet en mouvement, qui continue d’évoluer avec la ville.
     </p>
 
   </main>
 
   <footer>
-    © 2025 Bons Plans Estepona — Guide local indépendant
+    <div class="footer-inner">
+      <span>© 2025 Bons Plans Estepona · Guide local indépendant</span>
+      <span>Estepona — Paseo Marítimo & histoire du front de mer</span>
+    </div>
   </footer>
-
 </body>
 </html>
