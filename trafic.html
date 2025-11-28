@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trafic & cartes routières — Estepona</title>
-  <meta name="description" content="Trafic en temps réel à Estepona et sur l’A-7 / AP-7 entre Marbella et Sotogrande, avec cartes interactives." />
+  <meta name="description" content="Trafic en temps réel à Estepona, temps de trajet vers Málaga, Séville, Grenade, Cadix, et carte des transports en commun." />
 
   <style>
   :root{
@@ -133,7 +133,8 @@
       <h1>Trafic & cartes routières</h1>
       <p>
         Visualisez en direct le trafic à Estepona et sur l’axe Marbella ↔ Sotogrande,
-        via l’A-7 et l’AP-7, pour choisir le meilleur créneau de départ.
+        via l’A-7 et l’AP-7, ainsi que les temps de trajet vers Málaga, Séville, Grenade, Cadix
+        et les transports en commun locaux.
       </p>
     </div>
   </section>
@@ -147,7 +148,7 @@
         <h2>🟢 Trafic en direct à Estepona</h2>
         <p>
           Centre-ville, avenida España, accès plages et rocade : cette carte affiche le
-          trafic routier en temps réel autour d’Estepona.
+          trafic routier en temps réel autour d’Estepona (couche trafic Google Maps).
         </p>
         <div class="map-wrap">
           <iframe
@@ -186,6 +187,104 @@
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             src="https://www.google.com/maps?q=Estepona,+Espagne&z=11&output=embed">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- ====== NOUVELLES CARTES : TEMPS DE TRAJET ====== -->
+
+      <!-- MALAGA CENTRE -->
+      <article class="card">
+        <h2>⏱ Estepona → Málaga centre</h2>
+        <p>
+          Itinéraire en temps réel vers le centre de Málaga (A-7) avec durée de trajet mise à jour
+          automatiquement par Google selon le trafic.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?output=embed&q=Estepona+to+Malaga+centro&dirflg=d">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- MALAGA AÉROPORT -->
+      <article class="card">
+        <h2>⏱ Estepona → Aéroport de Málaga (AGP)</h2>
+        <p>
+          Temps de trajet estimé en voiture vers l’aéroport de Málaga-Costa del Sol, avec prise
+          en compte du trafic en temps réel.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?output=embed&q=Estepona+to+Aeropuerto+de+Malaga&dirflg=d">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- SEVILLE -->
+      <article class="card">
+        <h2>⏱ Estepona → Séville</h2>
+        <p>
+          Trajet longue distance en voiture vers Séville (via A-7, AP-7 et A-92 selon
+          l’itinéraire choisi). La durée affichée tient compte de la circulation actuelle.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?output=embed&q=Estepona+to+Sevilla&dirflg=d">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- GRENADE -->
+      <article class="card">
+        <h2>⏱ Estepona → Grenade</h2>
+        <p>
+          Itinéraire vers Grenade (autoroutes A-7 / A-44) avec estimation de la durée
+          de trajet actualisée par Google Maps.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?output=embed&q=Estepona+to+Granada&dirflg=d">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- CADIX -->
+      <article class="card">
+        <h2>⏱ Estepona → Cadix</h2>
+        <p>
+          Visualisez le temps de trajet vers Cadix en suivant la côte andalouse (A-7, AP-7, A-381…).
+          Le temps affiché évolue automatiquement selon le trafic.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?output=embed&q=Estepona+to+Cadiz&dirflg=d">
+          </iframe>
+        </div>
+      </article>
+
+      <!-- TRANSPORTS EN COMMUN ESTEPONA -->
+      <article class="card card-full">
+        <h2>🚌 Transports en commun à Estepona</h2>
+        <p>
+          Arrêts de bus, gare routière, liaisons vers Málaga, Marbella, La Línea, Algeciras, etc.
+          Utilisez la carte ci-dessous en mode “Transports en commun” pour repérer les lignes.
+        </p>
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=estacion+autobuses+estepona&output=embed&layer=transit">
           </iframe>
         </div>
       </article>
