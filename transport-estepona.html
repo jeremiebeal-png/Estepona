@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transports à Estepona — Bus & Taxis</title>
+  <meta name="description" content="Bus urbains, bus régionaux et taxis à Estepona : infos pratiques, liens officiels Avanza et Radio Taxi Estepona." />
+
+  <style>
+  :root{
+    --bg:#0b1730; --surface:#0f1f44; --surface-2:#0f1625;
+    --primary:#2db4ff; --accent:#00d0b6;
+    --text:#eaf2ff; --muted:#a8b6cf; --border:#1a2d5a;
+    --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  html,body{
+    margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .container{width:min(1200px,92vw);margin-inline:auto}
+
+  /* HEADER */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+    backdrop-filter:saturate(140%) blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-logo{
+    width:44px;height:44px;border-radius:12px;overflow:hidden;
+    border:1px solid var(--border);box-shadow:var(--shadow);
+  }
+  .brand-logo img{
+    width:100%;height:100%;object-fit:contain;
+  }
+  nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+  nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+  nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
+
+  /* HERO */
+  .page-hero{
+    padding:26px 0 18px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.25) 100%);
+  }
+  .page-hero h1{margin:6px 0 4px;font-size:30px}
+  .page-hero p{margin:0;color:var(--muted);max-width:720px;font-size:15px}
+  .chips-row{
+    margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted);
+  }
+  .chip-pill{
+    padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+    background:rgba(255,255,255,.03);
+  }
+
+  /* LAYOUT */
+  main{padding:22px 0 40px}
+  .grid{
+    display:grid;gap:18px;
+    grid-template-columns:2fr 1.3fr;
+  }
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:16px 16px 18px;
+    box-shadow:var(--shadow);
+  }
+  .card h2{
+    margin:0 0 6px;
+    font-size:20px;
+  }
+  .card p{
+    margin:0 0 10px;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .card ul{
+    margin:8px 0 0;
+    padding-left:18px;
+    font-size:14px;
+    color:var(--muted);
+  }
+  .card ul li{margin-bottom:4px}
+
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.04);
+    margin-right:6px;
+    margin-bottom:4px;
+  }
+
+  .btn-row{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 12px;border-radius:999px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.05);
+    font-size:13px;
+  }
+  .btn-primary{
+    background:var(--primary);
+    color:#06131e;
+    border-color:var(--primary);
+    font-weight:600;
+  }
+
+  /* TABLEAU LIAISONS */
+  .card-table{margin-top:18px}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+    color:var(--muted);
+  }
+  thead{background:rgba(255,255,255,.03)}
+  th,td{
+    padding:8px 6px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+  }
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--text)}
+
+  /* MAP */
+  .map-wrap{
+    margin-top:10px;
+    border-radius:var(--radius-md);
+    overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .map-wrap iframe{
+    width:100%;
+    height:260px;
+    border:0;
+    display:block;
+  }
+
+  footer{
+    margin-top:10px;border-top:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+  }
+  .footer-top{
+    padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;
+    align-items:center;justify-content:space-between;
+  }
+  .footer-bottom{padding:14px 0;color:var(--muted);font-size:14px}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="voir.html">À voir</a>
+        <a href="restaurants.html">Restaurants</a>
+        <a href="quefaire.html">Que faire</a>
+        <a href="cartes.html">Cartes</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="transport-estepona.html">Transports</a>
+        <a href="faq.html">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Transports à Estepona</h1>
+      <p>
+        Comment se déplacer à Estepona sans stress : bus urbains, bus régionaux Avanza,
+        taxis et liaisons vers Málaga, l’aéroport, Gibraltar ou Algeciras.
+        Horaires et tarifs sont toujours à vérifier sur les sites officiels.
+      </p>
+      <div class="chips-row" aria-label="Résumé des options de transport">
+        <span class="chip-pill">🚌 Bus urbains Avanza</span>
+        <span class="chip-pill">🚍 Bus régionaux & longue distance</span>
+        <span class="chip-pill">🚕 Radio Taxi Estepona</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENU -->
+  <main class="container">
+    <div class="grid">
+
+      <!-- COLONNE GAUCHE : EXPLICATIONS -->
+      <div>
+
+        <!-- BUS URBAINS -->
+        <article class="card">
+          <h2>🚌 Bus urbains à Estepona</h2>
+          <p>
+            Le réseau urbain d’Estepona est exploité par Avanza. Il relie les principaux
+            quartiers : Avenida Litoral, centre, hôpital, zones résidentielles et plages.
+          </p>
+          <ul>
+            <li><strong>Lignes E-1, E-2…</strong> : liaisons internes Avenida Litoral, Beverly Hills, hôpital, Costa Galera, etc.</li>
+            <li><strong>Achat & rechargement</strong> : à la gare routière d’Estepona ou directement dans les bus.</li>
+            <li><strong>Horaires</strong> : varient selon les jours (semaine / week-end). Toujours vérifier en ligne avant de partir.</li>
+          </ul>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="https://malaga.avanzagrupo.com/es/transporte-urbano-de-estepona" target="_blank" rel="noopener">
+              Consulter le bus urbain
+            </a>
+            <a class="btn" href="https://malaga.avanzagrupo.com/es/itinerarios-y-horarios/lineas/e-1" target="_blank" rel="noopener">
+              Ligne E-1 (Avenida Litoral)
+            </a>
+          </div>
+        </article>
+
+        <!-- BUS INTERURBAINS -->
+        <article class="card card-table">
+          <h2>🚍 Bus régionaux & longue distance</h2>
+          <p>
+            Depuis la gare routière d’Estepona, les bus Avanza (Portillo) desservent Málaga,
+            l’aéroport, Marbella, La Línea/Gibraltar, Algeciras, Cádiz et d’autres villes
+            andalouses.
+          </p>
+
+          <div style="margin-bottom:8px">
+            <span class="badge">Opérateur principal : Avanza</span>
+            <span class="badge">Départ : Gare routière d’Estepona</span>
+          </div>
+
+          <table aria-label="Principales liaisons bus depuis Estepona">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th>Type</th>
+                <th>Remarques</th>
+                <th>Lien</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Málaga centre</td>
+                <td>Bus direct</td>
+                <td>Trajet pour la ville & la gare María Zambrano.</td>
+                <td><a href="https://www.avanzabus.com/rutas/estepona-malaga/" target="_blank" rel="noopener">Voir Avanza</a></td>
+              </tr>
+              <tr>
+                <td>Aéroport de Málaga (AGP)</td>
+                <td>Bus direct</td>
+                <td>Ligne type L-605 Aéroport ⇄ Marbella ⇄ Estepona (horaires variables).</td>
+                <td><a href="https://malaga.avanzagrupo.com/es/destinos/estepona" target="_blank" rel="noopener">Section aéroport</a></td>
+              </tr>
+              <tr>
+                <td>Marbella / San Pedro</td>
+                <td>Bus régulier</td>
+                <td>Nombreux départs via la A-7, pratique pour correspondances.</td>
+                <td><a href="https://malaga.avanzagrupo.com/es/destinos/estepona" target="_blank" rel="noopener">Horaires PDF</a></td>
+              </tr>
+              <tr>
+                <td>La Línea / Gibraltar</td>
+                <td>Bus direct</td>
+                <td>Ligne M-240 jusqu’à La Línea, pour rejoindre Gibraltar à pied.</td>
+                <td><a href="https://malaga.avanzagrupo.com/es/itinerarios-y-horarios/lineas/24o-m240-estepona-la-linea" target="_blank" rel="noopener">Voir ligne M-240</a></td>
+              </tr>
+              <tr>
+                <td>Algeciras / Camp de Gibraltar</td>
+                <td>Bus</td>
+                <td>Trajets via Sabinillas, Sotogrande, San Roque…</td>
+                <td><a href="https://portillo.azurewebsites.net/es/itinerarios-y-horarios/horarios-en-pdf" target="_blank" rel="noopener">Horaires régionaux</a></td>
+              </tr>
+              <tr>
+                <td>Cádiz, Séville, Grenade</td>
+                <td>Bus (avec correspondance)</td>
+                <td>
+                  Souvent via Málaga, Algeciras ou Marbella. Vérifier les itinéraires et temps
+                  de trajet au moment de la réservation.
+                </td>
+                <td><a href="https://malaga.avanzagrupo.com/es/destinos/estepona" target="_blank" rel="noopener">Rechercher un trajet</a></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="btn-row">
+            <a class="btn btn-primary" href="https://malaga.avanzagrupo.com/es/destinos/estepona" target="_blank" rel="noopener">
+              Page “Estepona” sur Avanza
+            </a>
+            <a class="btn" href="https://portillo.azurewebsites.net/es/itinerarios-y-horarios/horarios-en-pdf" target="_blank" rel="noopener">
+              Tous les horaires en PDF
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- COLONNE DROITE : TAXIS + CARTE -->
+      <div>
+
+        <!-- TAXIS -->
+        <article class="card">
+          <h2>🚕 Taxis à Estepona</h2>
+          <p>
+            Le taxi reste la solution la plus simple si tu voyages en famille, la nuit
+            ou avec des valises. Les taxis officiels d’Estepona appliquent un tarif
+            réglementé (compteur) avec suppléments aéroport/nuit.
+          </p>
+
+          <ul>
+            <li><strong>Radio Taxi Estepona</strong> — service 24h/24.</li>
+            <li>Courses en ville, gares et aéroport de Málaga, Marbella, Puerto Banús…</li>
+            <li>Réservation possible par téléphone ou en ligne.</li>
+          </ul>
+
+          <div style="margin-top:10px;margin-bottom:6px">
+            <div class="badge">☎ Radio Taxi Estepona : +34&nbsp;952&nbsp;80&nbsp;29&nbsp;00</div>
+          </div>
+
+          <div class="btn-row">
+            <a class="btn btn-primary" href="https://www.radiotaxi-estepona.com/" target="_blank" rel="noopener">
+              Site Radio Taxi Estepona
+            </a>
+          </div>
+        </article>
+
+        <!-- CONSEILS & CARTE -->
+        <article class="card">
+          <h2>📍 Gare routière d’Estepona</h2>
+          <p>
+            La plupart des bus urbains, régionaux et longue distance partent de la
+            <strong>gare routière d’Estepona</strong> (avenida del Litoral, près du Palais
+            des Congrès).
+          </p>
+          <ul>
+            <li>Pense à arriver 10–15 min avant le départ.</li>
+            <li>Les billets peuvent se prendre en ligne, au guichet ou parfois à bord.</li>
+          </ul>
+
+          <div class="btn-row">
+            <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Estacion+de+autobuses+de+Estepona" target="_blank" rel="noopener">
+              Ouvrir dans Google Maps
+            </a>
+          </div>
+
+          <div class="map-wrap">
+            <iframe
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Estacion+de+autobuses+de+Estepona&z=15&output=embed">
+            </iframe>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <div class="meta">
+        Pages : Chiringuitos · Casco Antiguo · Rooftops & Discothèques · Trafic · Transports
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      © 2025 Bons Plans Estepona · Guide local indépendant
+    </div>
+  </footer>
+
+</body>
+</html>
