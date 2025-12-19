@@ -137,6 +137,39 @@
     border-radius:var(--radius-md);
     overflow:hidden;
   }
+  .map-toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    background:rgba(0,0,0,0.15);
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.03);
+    color:var(--muted);
+    font-size:13px;
+    user-select:none;
+  }
+  .chip input{accent-color:var(--accent)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 12px;border-radius:999px;
+    border:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.04);
+    color:var(--text);
+    font-size:13px;
+    cursor:pointer;
+  }
+  .btn:hover{border-color:var(--border);background:rgba(255,255,255,0.06)}
+
   .map-wrap iframe{
     display:block;
     width:100%;
@@ -215,18 +248,322 @@
   <!-- CONTENU -->
   <main class="container">
 
-    <!-- (… tes sections existantes inchangées …) -->
+    <!-- URGENCES & HÔPITAUX -->
+    <section class="section" id="urgences">
+      <h2>🚑 Urgences & hôpitaux</h2>
+      <p>Les structures principales pour les urgences et l’hospitalisation autour d’Estepona.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospital de Alta Resolución de Estepona (Public)</strong>
+            <span class="badge">Hôpital public</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Irene Villa González, 9, 29680 Estepona<br/>
+            ☎️ +34 951 97 66 17<br/>
+            🔗 <a href="https://www.sanidad.gob.es/en/ciudadanos/centros.do?metodo=realizarDetalle&numero=290528&tipo=hospital" target="_blank" rel="noopener">Fiche officielle (Sanidad)</a><br/>
+            Hôpital public (urgences / activités selon services disponibles).
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospital Vithas Xanit Estepona</strong>
+            <span class="badge">Hôpital privé</span>
+            <span class="badge">Urgences</span>
+          </div>
+          <div class="item-body">
+            📍 Avenue Andalucía, 1, 2, 4 — 29680 Estepona<br/>
+            ☎️ +34 952 80 81 00<br/>
+            🔗 <a href="https://vithas.es/en/center/vithas-hospital-xanit-estepona/" target="_blank" rel="noopener">Site Vithas</a><br/>
+            Hôpital privé au centre-ville (spécialités, diagnostic, urgences).
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospiten Estepona</strong>
+            <span class="badge">Hôpital privé</span>
+            <span class="badge">Urgences</span>
+          </div>
+          <div class="item-body">
+            📍 N-340, Km 1063 — 29680 Estepona (zone Selwo)<br/>
+            ☎️ +34 952 76 06 00 (standard) · +34 952 76 06 06 (consultations)<br/>
+            🔗 <a href="https://hospiten.com/en/hospitals/hospiten-estepona" target="_blank" rel="noopener">Site Hospiten</a><br/>
+            Hôpital privé avec urgences, imagerie, consultations.
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CENTRES DE SANTÉ PUBLICS -->
+    <section class="section" id="centres-sante">
+      <h2>🏥 Centres de santé publics (Centro de Salud)</h2>
+      <p>Pour la médecine générale, le suivi régulier et certaines urgences non vitales.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro de Salud La Lobilla</strong>
+            <span class="badge">Public</span>
+            <span class="badge">Médecine générale</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Miguel de María Luque, 2, 29680 Estepona<br/>
+            ☎️ Info : +34 951 27 04 00 · Urgences : +34 951 03 14 37<br/>
+            🔎 <a href="https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-la-lobilla" target="_blank" rel="noopener">Fiche infos</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro de Salud Estepona</strong>
+            <span class="badge">Public</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Cristóbal Ruiz Méndez, 19, 29680 Estepona<br/>
+            ☎️ Info : +34 951 97 04 45 · Urgences : +34 951 03 14 37<br/>
+            🔎 <a href="https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-estepona" target="_blank" rel="noopener">Fiche infos</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CLINIQUES PRIVÉES & CENTRES MÉDICAUX -->
+    <section class="section" id="cliniques">
+      <h2>⚕️ Cliniques privées & centres médicaux</h2>
+      <p>Consultations de spécialistes, analyses, imagerie et soins non urgents.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro Médico Estepona</strong>
+            <span class="badge">Privé</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Juan Carlos I, 29 – 1ºA, 29680 Estepona<br/>
+            ☎️ +34 952 80 22 08<br/>
+            🕐 Lun–Jeu 08:30–13:30 / 16:00–20:30 · Ven 08:30–13:30 / 15:30–18:00<br/>
+            🔗 <a href="https://www.centromedicoestepona.es/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica del Río (Estepona)</strong>
+            <span class="badge">Privé</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Avda. Litoral, Edificio Playa del Ángel, Local 4, 29680 Estepona<br/>
+            ☎️ +34 952 80 53 29<br/>
+            🔗 <a href="https://www.clinicadelrio.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospiten Estepona — Consultations</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            📍 N-340, Km 1063 — 29680 Estepona<br/>
+            ☎️ Consultations : +34 952 76 06 06<br/>
+            🔗 <a href="https://hospiten.com/en/hospitals/hospiten-estepona" target="_blank" rel="noopener">Détails</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Vithas Xanit Estepona — Consultations</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            📍 Avenue Andalucía, 1,2,4 — 29680 Estepona<br/>
+            ☎️ +34 952 80 81 00<br/>
+            🔗 <a href="https://vithas.es/en/center/vithas-hospital-xanit-estepona/" target="_blank" rel="noopener">Détails</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- DENTISTES -->
+    <section class="section" id="dentistes">
+      <h2>🦷 Dentistes & orthodontistes</h2>
+      <p>Soins dentaires, orthodontie, esthétique, implants (prises de RDV selon centre).</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica Dental Estepona (Calle Real)</strong>
+            <span class="badge">Dentiste</span>
+            <span class="badge">Orthodontie</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Real Nº 99 1ºC, 29680 Estepona<br/>
+            ☎️ +34 952 80 67 15<br/>
+            🔗 <a href="https://clinicadentalestepona.es/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica Dental Futuredent (Estepona)</strong>
+            <span class="badge">Dentiste</span>
+            <span class="badge">Orthodontie</span>
+          </div>
+          <div class="item-body">
+            📍 Av. de Andalucía, Edf. El Cerrito, Local 1 (Esq. San Lorenzo), 29680 Estepona<br/>
+            ☎️ +34 952 80 53 33<br/>
+            🔗 <a href="https://www.futuredent3000.com/clinica-dental-estepona/clinica-dental-estepona.php" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- KINÉ / RÉÉDUCATION -->
+    <section class="section" id="kine">
+      <h2>🦴 Kiné & rééducation (fisioterapia)</h2>
+      <p>Cabinets et centres de physiothérapie / rééducation à Estepona.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Saga Salud (SAGASALUD)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Pilates</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Andalucía nº 235, 29680 Estepona<br/>
+            ☎️ RDV physio : +34 691 31 65 52 · Gym : +34 952 80 87 26<br/>
+            🕐 Lun–Ven : 09:00–14:00 / 15:00–21:00<br/>
+            🔗 <a href="https://sagasalud.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro Fisioterapia El Ángel</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Rééducation</span>
+          </div>
+          <div class="item-body">
+            📍 Avenida Litoral 55, Local 1, 29680 Estepona<br/>
+            ☎️ +34 611 64 26 73<br/>
+            🕐 (indicatif) Lun–Jeu 09:00–14:00 / 16:00–20:00 · Ven selon semaines<br/>
+            🔗 <a href="https://www.elangelfisio.com/contacto-fisio-estepona" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Move Studio (Fisioterapia)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Sport</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Puerta del Mar, 26, 29680 Estepona<br/>
+            ☎️ +34 682 57 93 57<br/>
+            🔗 <a href="https://www.movestudiohealth.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica del Río — (selon spécialités)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Avda. Litoral, Edificio Playa del Ángel, Local 4, 29680 Estepona<br/>
+            ☎️ +34 952 80 53 29<br/>
+            🔗 <a href="https://www.clinicadelrio.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- PÉDIATRIE -->
+    <section class="section" id="pediatrie">
+      <h2>👶 Pédiatres & santé des enfants</h2>
+      <p>Pédiatrie disponible dans le public et le privé (selon jours / RDV).</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Pédiatrie — Centres publics</strong>
+            <span class="badge">Public</span>
+          </div>
+          <div class="item-body">
+            Suivi pédiatrique généralement via les <strong>Centros de Salud</strong> (La Lobilla / Estepona) selon secteur.
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Pédiatrie — Vithas / Hospiten / centres privés</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            Consultations pédiatriques et urgences selon structure (prise de RDV / téléphone).
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- AUTRES SPÉCIALISTES -->
+    <section class="section" id="autres">
+      <h2>👁️‍🗨️ Autres spécialistes (ophtalmo, podologue, etc.)</h2>
+      <p>
+        Beaucoup de spécialités (ophtalmologie, podologie, cardio, gynéco…) sont regroupées en hôpitaux privés et centres médicaux.
+      </p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Accès “multi-spécialités”</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            • Vithas Xanit Estepona<br/>
+            • Hospiten Estepona<br/>
+            • Centro Médico Estepona<br/>
+            • Clínica del Río
+          </div>
+        </li>
+        <li class="item">
+          <div class="item-header">
+            <strong>Podologie (ex. Fisiovenus / centres)</strong>
+            <span class="badge">Podologue</span>
+          </div>
+          <div class="item-body">
+            Certains centres combinent kiné + podologie (selon offre / praticien).
+          </div>
+        </li>
+      </ul>
+    </section>
 
     <!-- CARTE (My Maps) -->
     <section class="section" id="cartes">
       <h2>🗺️ Carte — Centres médicaux à Estepona</h2>
-      <p>Carte interactive (Google My Maps) : clique sur un repère pour voir les détails.</p>
+      <p>
+        Carte interactive (Google My Maps) : clique sur un repère pour voir les détails.
+        Les filtres ci-dessous sont visuels (le filtrage se fait directement dans My Maps via les calques).
+      </p>
 
       <div class="map-wrap">
+        <!-- Toolbar conservée (comme dans ton design) -->
+        <div class="map-toolbar">
+          <label class="chip"><input type="checkbox" checked disabled> Hôpitaux</label>
+          <label class="chip"><input type="checkbox" checked disabled> Public</label>
+          <label class="chip"><input type="checkbox" checked disabled> Cliniques</label>
+          <label class="chip"><input type="checkbox" checked disabled> Dentistes</label>
+          <label class="chip"><input type="checkbox" checked disabled> Kiné</label>
+
+          <button class="btn" type="button" id="btn-open-full">Plein écran</button>
+        </div>
+
+        <!-- ✅ IFRAME My Maps -->
         <iframe
           src="https://www.google.com/maps/d/embed?mid=1hs-cnbJKE_nTAk_ls1u-55RFsR19hk0&ehbc=2E312F"
           loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
+          referrerpolicy="no-referrer-when-downgrade"
+          aria-label="Carte Google My Maps">
         </iframe>
       </div>
 
@@ -254,5 +591,18 @@
     </div>
   </footer>
 
+  <!-- JS minimal (My Maps) -->
+  <script>
+    // Bouton plein écran (ouvre la carte My Maps dans un nouvel onglet)
+    document.getElementById("btn-open-full")?.addEventListener("click", () => {
+      window.open(
+        "https://www.google.com/maps/d/viewer?mid=1hs-cnbJKE_nTAk_ls1u-55RFsR19hk0",
+        "_blank",
+        "noopener"
+      );
+    });
+  </script>
+
 </body>
 </html>
+
