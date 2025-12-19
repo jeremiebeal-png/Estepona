@@ -3,146 +3,802 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estepona — Santé (Carte & Annuaire)</title>
-  <meta name="description" content="Guide Santé à Estepona : dentistes, cliniques, médecins, carte interactive." />
-  <meta name="theme-color" content="#0b3c49" />
-
-  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
-
-  <!-- Leaflet CSS (obligatoire pour l’affichage des tuiles et des markers) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-
-  <!-- ⚠️ Reprend EXACTEMENT le même <style> que index.html :
-       soit tu colles ton <style> ici,
-       soit tu le sors dans un fichier shared.css et tu le link.
-       Pour aller vite, colle le même <style> de index.html. -->
-
+  <title>Centres médicaux & santé — Estepona</title>
+  <meta name="description" content="Hôpitaux, centres de santé publics, cliniques privées, dentistes, kinés, pédiatres et spécialistes à Estepona." />
   <style>
-    /* ✅ Copie ton style de index.html ici (le même que tu m’as envoyé).
-       Pour éviter un pavé énorme, je ne le recolle pas une 2e fois ici.
-       Colle-le tel quel, sans modification. */
+  :root{
+    --bg:#0b1730; --surface:#0f1f44; --surface-2:#0f1625;
+    --primary:#2db4ff; --accent:#00d0b6;
+    --text:#eaf2ff; --muted:#a8b6cf; --border:#1a2d5a;
+    --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  html,body{
+    margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* --- Petit + : zone app React plein écran --- */
-    #react-root{
-      width: min(1400px, 96vw);
-      margin-inline: auto;
-      margin-top: 18px;
-      margin-bottom: 32px;
-      min-height: calc(100vh - 220px);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
-    }
+  /* HEADER */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+    backdrop-filter:saturate(140%) blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-logo{
+    width:44px;height:44px;border-radius:12px;overflow:hidden;
+    border:1px solid var(--border);box-shadow:var(--shadow);
+  }
+  .brand-logo img{width:100%;height:100%;object-fit:contain;}
+  nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+  nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+  nav.primary a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
+
+  /* BLOC NAV OBLIGATOIRE (raccourcis) */
+  .quick-nav-wrap{
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    background:rgba(15,31,68,0.9);
+  }
+  .quick-nav-inner{
+    padding:8px 0;
+    font-size:14px;
+    overflow-x:auto;
+  }
+  .quick-nav-inner > div a{
+    white-space:nowrap;
+    padding:4px 8px;
+    border-radius:999px;
+    border:1px solid transparent;
+  }
+  .quick-nav-inner > div a:hover{
+    border-color:var(--border);
+    background:rgba(255,255,255,0.04);
+  }
+
+  /* HERO */
+  .page-hero{
+    padding:26px 0 18px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.25) 100%);
+  }
+  .page-hero h1{margin:6px 0 4px;font-size:30px}
+  .page-hero p{margin:0;color:var(--muted);max-width:760px}
+  .pill{
+    display:inline-block;margin-bottom:6px;
+    font-size:12px;padding:6px 10px;border-radius:999px;
+    background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);
+  }
+
+  main{padding:22px 0 40px}
+
+  .section{
+    margin-bottom:26px;
+    background:var(--surface);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    padding:16px 18px 18px;
+  }
+  .section h2{margin:0 0 6px;font-size:20px;}
+  .section p{margin:0 0 10px;color:var(--muted);font-size:14px;}
+
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    margin-right:6px;
+    margin-bottom:4px;
+    color:var(--muted);
+  }
+
+  .list{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:grid;
+    gap:10px;
+  }
+  .item{
+    padding:10px 10px 11px;
+    border-radius:var(--radius-md);
+    background:rgba(0,0,0,0.20);
+    border:1px solid rgba(255,255,255,0.04);
+  }
+  .item-header{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .item-header strong{font-size:15px}
+  .item-body{
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .item-body a{color:var(--primary);}
+
+  @media (min-width:900px){
+    .list.two-cols{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* MAP */
+  .map-wrap{
+    background:rgba(0,0,0,0.20);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:var(--radius-md);
+    overflow:hidden;
+  }
+  #map{
+    width:100%;
+    height:430px;
+  }
+  .map-toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    background:rgba(0,0,0,0.15);
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.03);
+    color:var(--muted);
+    font-size:13px;
+    user-select:none;
+  }
+  .chip input{accent-color:var(--accent)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 12px;border-radius:999px;
+    border:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.04);
+    color:var(--text);
+    font-size:13px;
+    cursor:pointer;
+  }
+  .btn:hover{border-color:var(--border);background:rgba(255,255,255,0.06)}
+
+  footer{
+    margin-top:10px;border-top:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+  }
+  .footer-top{
+    padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;
+    align-items:center;justify-content:space-between;
+  }
+  .footer-bottom{padding:14px 0;color:var(--muted);font-size:14px}
   </style>
 </head>
-
 <body>
 
-  <!-- ✅ BLOC NAVIGATION (obligatoire) -->
-  <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:12px 16px;border-bottom:1px solid var(--color-border);background:rgba(11,23,48,.92);position:sticky;top:0;z-index:60">
-    <a href="index.html" style="font-weight:900">Accueil</a>
-    <a href="sante.html" style="font-weight:900;color:var(--color-primary)">Santé</a>
-    <a href="chiringuito.html" style="font-weight:800;opacity:.9">Restaurants</a>
-    <a href="transport-estepona.html" style="font-weight:800;opacity:.9">Transport</a>
-    <a href="ecoles.html" style="font-weight:800;opacity:.9">Écoles</a>
-    <a href="trafic.html" style="font-weight:800;opacity:.9">Trafic</a>
-    <a href="Actualites.html" style="font-weight:800;opacity:.9">Actualités</a>
-  </div>
-
-  <!-- TOP BAR (repris) -->
-  <div class="container topbar" aria-label="Liens utilitaires">
-    <div class="brand-min">
-      <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" style="height:28px;width:auto;border-radius:8px;border:1px solid var(--color-border)"/>
-      <span style="opacity:.9">Estepona — Bons plans</span>
-    </div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
-      <a href="index.html#voir">À voir</a>
-      <a href="index.html#manger">Restaurants</a>
-      <a href="index.html#itin">Que faire</a>
-      <a href="index.html#cartes">Cartes</a>
-      <a href="transport-estepona.html">Transport</a>
-      <a href="ecoles.html">Ecoles</a>
-      <a href="trafic.html">Trafic</a>
-      <a href="index.html#faq">FAQ</a>
-      <a href="index.html#contact">Contact</a>
-    </div>
-  </div>
-
-  <!-- HEADER (repris) -->
+  <!-- HEADER -->
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Guide d’Estepona</strong>
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
+        <strong>Estepona — Bons plans</strong>
       </a>
-
       <nav class="primary" aria-label="Navigation principale">
         <a href="index.html#voir">À voir</a>
         <a href="index.html#manger">Restaurants</a>
         <a href="index.html#itin">Que faire</a>
-        <a href="index.html#cartes">Cartes</a>
+        <a href="cartes.html">Cartes</a>
         <a href="transport-estepona.html">Transport</a>
         <a href="ecoles.html">Ecoles</a>
         <a href="trafic.html">Trafic</a>
         <a href="index.html#faq">FAQ</a>
+        <a href="contact.html">Contact</a>
       </nav>
+    </div>
 
-      <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('#react-root')?.scrollIntoView({behavior:'smooth'});">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
-        <input type="search" placeholder="Rechercher : dentiste, clinique…" aria-label="Aller à l’app Santé" />
-      </form>
-
-      <button class="burger" aria-label="Ouvrir le menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
+    <!-- ✅ Bloc de navigation obligatoire -->
+    <div class="quick-nav-wrap">
+      <div class="container quick-nav-inner">
+        <div style="display:flex;gap:16px">
+          <a href="#urgences">Urgences</a>
+          <a href="#centres-sante">Centres publics</a>
+          <a href="#cliniques">Cliniques</a>
+          <a href="#dentistes">Dentistes</a>
+          <a href="#kine">Kiné</a>
+          <a href="#pediatrie">Pédiatrie</a>
+          <a href="#autres">Spécialistes</a>
+          <a href="#cartes">Carte</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
     </div>
   </header>
 
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="pill">Santé & urgences à Estepona</span>
+      <h1>Centres médicaux, hôpitaux & spécialistes</h1>
+      <p>
+        Hôpitaux, centres publics, cliniques privées, dentistes, kinés & rééducation, pédiatrie et autres spécialistes à Estepona.
+        En cas d’urgence vitale : <strong>112</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTENU -->
   <main class="container">
-    <section class="category">
-      <div class="section-head">
-        <div>
-          <h3>Santé à Estepona</h3>
-          <p>Carte interactive + annuaire (dentistes, médecins, cliniques…)</p>
+
+    <!-- URGENCES & HÔPITAUX -->
+    <section class="section" id="urgences">
+      <h2>🚑 Urgences & hôpitaux</h2>
+      <p>Les structures principales pour les urgences et l’hospitalisation autour d’Estepona.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospital de Alta Resolución de Estepona (Public)</strong>
+            <span class="badge">Hôpital public</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Irene Villa González, 9, 29680 Estepona<br/>
+            ☎️ +34 951 97 66 17<br/>
+            🔗 <a href="https://www.sanidad.gob.es/en/ciudadanos/centros.do?metodo=realizarDetalle&numero=290528&tipo=hospital" target="_blank" rel="noopener">Fiche officielle (Sanidad)</a><br/>
+            Hôpital public (urgences / activités selon services disponibles).
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospital Vithas Xanit Estepona</strong>
+            <span class="badge">Hôpital privé</span>
+            <span class="badge">Urgences</span>
+          </div>
+          <div class="item-body">
+            📍 Avenue Andalucía, 1, 2, 4 — 29680 Estepona<br/>
+            ☎️ +34 952 80 81 00<br/>
+            🔗 <a href="https://vithas.es/en/center/vithas-hospital-xanit-estepona/" target="_blank" rel="noopener">Site Vithas</a><br/>
+            Hôpital privé au centre-ville (spécialités, diagnostic, urgences).
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospiten Estepona</strong>
+            <span class="badge">Hôpital privé</span>
+            <span class="badge">Urgences</span>
+          </div>
+          <div class="item-body">
+            📍 N-340, Km 1063 — 29680 Estepona (zone Selwo)<br/>
+            ☎️ +34 952 76 06 00 (standard) · +34 952 76 06 06 (consultations)<br/>
+            🔗 <a href="https://hospiten.com/en/hospitals/hospiten-estepona" target="_blank" rel="noopener">Site Hospiten</a><br/>
+            Hôpital privé avec urgences, imagerie, consultations.
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CENTRES DE SANTÉ PUBLICS -->
+    <section class="section" id="centres-sante">
+      <h2>🏥 Centres de santé publics (Centro de Salud)</h2>
+      <p>Pour la médecine générale, le suivi régulier et certaines urgences non vitales.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro de Salud La Lobilla</strong>
+            <span class="badge">Public</span>
+            <span class="badge">Médecine générale</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Miguel de María Luque, 2, 29680 Estepona<br/>
+            ☎️ Info : +34 951 27 04 00 · Urgences : +34 951 03 14 37<br/>
+            🔎 <a href="https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-la-lobilla" target="_blank" rel="noopener">Fiche infos</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro de Salud Estepona</strong>
+            <span class="badge">Public</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Cristóbal Ruiz Méndez, 19, 29680 Estepona<br/>
+            ☎️ Info : +34 951 97 04 45 · Urgences : +34 951 03 14 37<br/>
+            🔎 <a href="https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-estepona" target="_blank" rel="noopener">Fiche infos</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CLINIQUES PRIVÉES & CENTRES MÉDICAUX -->
+    <section class="section" id="cliniques">
+      <h2>⚕️ Cliniques privées & centres médicaux</h2>
+      <p>Consultations de spécialistes, analyses, imagerie et soins non urgents.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro Médico Estepona</strong>
+            <span class="badge">Privé</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Juan Carlos I, 29 – 1ºA, 29680 Estepona<br/>
+            ☎️ +34 952 80 22 08<br/>
+            🕐 Lun–Jeu 08:30–13:30 / 16:00–20:30 · Ven 08:30–13:30 / 15:30–18:00<br/>
+            🔗 <a href="https://www.centromedicoestepona.es/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica del Río (Estepona)</strong>
+            <span class="badge">Privé</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Avda. Litoral, Edificio Playa del Ángel, Local 4, 29680 Estepona<br/>
+            ☎️ +34 952 80 53 29<br/>
+            🔗 <a href="https://www.clinicadelrio.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Hospiten Estepona — Consultations</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            📍 N-340, Km 1063 — 29680 Estepona<br/>
+            ☎️ Consultations : +34 952 76 06 06<br/>
+            🔗 <a href="https://hospiten.com/en/hospitals/hospiten-estepona" target="_blank" rel="noopener">Détails</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Vithas Xanit Estepona — Consultations</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            📍 Avenue Andalucía, 1,2,4 — 29680 Estepona<br/>
+            ☎️ +34 952 80 81 00<br/>
+            🔗 <a href="https://vithas.es/en/center/vithas-hospital-xanit-estepona/" target="_blank" rel="noopener">Détails</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- DENTISTES -->
+    <section class="section" id="dentistes">
+      <h2>🦷 Dentistes & orthodontistes</h2>
+      <p>Soins dentaires, orthodontie, esthétique, implants (prises de RDV selon centre).</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica Dental Estepona (Calle Real)</strong>
+            <span class="badge">Dentiste</span>
+            <span class="badge">Orthodontie</span>
+          </div>
+          <div class="item-body">
+            📍 Calle Real Nº 99 1ºC, 29680 Estepona<br/>
+            ☎️ +34 952 80 67 15<br/>
+            🔗 <a href="https://clinicadentalestepona.es/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica Dental Futuredent (Estepona)</strong>
+            <span class="badge">Dentiste</span>
+            <span class="badge">Orthodontie</span>
+          </div>
+          <div class="item-body">
+            📍 Av. de Andalucía, Edf. El Cerrito, Local 1 (Esq. San Lorenzo), 29680 Estepona<br/>
+            ☎️ +34 952 80 53 33<br/>
+            🔗 <a href="https://www.futuredent3000.com/clinica-dental-estepona/clinica-dental-estepona.php" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- KINÉ / RÉÉDUCATION -->
+    <section class="section" id="kine">
+      <h2>🦴 Kiné & rééducation (fisioterapia)</h2>
+      <p>Cabinets et centres de physiothérapie / rééducation à Estepona.</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Saga Salud (SAGASALUD)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Pilates</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Andalucía nº 235, 29680 Estepona<br/>
+            ☎️ RDV physio : +34 691 31 65 52 · Gym : +34 952 80 87 26<br/>
+            🕐 Lun–Ven : 09:00–14:00 / 15:00–21:00<br/>
+            🔗 <a href="https://sagasalud.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Centro Fisioterapia El Ángel</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Rééducation</span>
+          </div>
+          <div class="item-body">
+            📍 Avenida Litoral 55, Local 1, 29680 Estepona<br/>
+            ☎️ +34 611 64 26 73<br/>
+            🕐 (indicatif) Lun–Jeu 09:00–14:00 / 16:00–20:00 · Ven selon semaines<br/>
+            🔗 <a href="https://www.elangelfisio.com/contacto-fisio-estepona" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Move Studio (Fisioterapia)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Sport</span>
+          </div>
+          <div class="item-body">
+            📍 Av. Puerta del Mar, 26, 29680 Estepona<br/>
+            ☎️ +34 682 57 93 57<br/>
+            🔗 <a href="https://www.movestudiohealth.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Clínica del Río — (selon spécialités)</strong>
+            <span class="badge">Kiné</span>
+            <span class="badge">Multi-spécialités</span>
+          </div>
+          <div class="item-body">
+            📍 Avda. Litoral, Edificio Playa del Ángel, Local 4, 29680 Estepona<br/>
+            ☎️ +34 952 80 53 29<br/>
+            🔗 <a href="https://www.clinicadelrio.com/" target="_blank" rel="noopener">Site</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- PÉDIATRIE -->
+    <section class="section" id="pediatrie">
+      <h2>👶 Pédiatres & santé des enfants</h2>
+      <p>Pédiatrie disponible dans le public et le privé (selon jours / RDV).</p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Pédiatrie — Centres publics</strong>
+            <span class="badge">Public</span>
+          </div>
+          <div class="item-body">
+            Suivi pédiatrique généralement via les <strong>Centros de Salud</strong> (La Lobilla / Estepona) selon secteur.
+          </div>
+        </li>
+
+        <li class="item">
+          <div class="item-header">
+            <strong>Pédiatrie — Vithas / Hospiten / centres privés</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            Consultations pédiatriques et urgences selon structure (prise de RDV / téléphone).
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- AUTRES SPÉCIALISTES -->
+    <section class="section" id="autres">
+      <h2>👁️‍🗨️ Autres spécialistes (ophtalmo, podologue, etc.)</h2>
+      <p>
+        Beaucoup de spécialités (ophtalmologie, podologie, cardio, gynéco…) sont regroupées en hôpitaux privés et centres médicaux.
+      </p>
+      <ul class="list two-cols">
+        <li class="item">
+          <div class="item-header">
+            <strong>Accès “multi-spécialités”</strong>
+            <span class="badge">Privé</span>
+          </div>
+          <div class="item-body">
+            • Vithas Xanit Estepona<br/>
+            • Hospiten Estepona<br/>
+            • Centro Médico Estepona<br/>
+            • Clínica del Río
+          </div>
+        </li>
+        <li class="item">
+          <div class="item-header">
+            <strong>Podologie (ex. Fisiovenus / centres)</strong>
+            <span class="badge">Podologue</span>
+          </div>
+          <div class="item-body">
+            Certains centres combinent kiné + podologie (selon offre / praticien).
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CARTE GOOGLE MAPS -->
+    <section class="section" id="cartes">
+      <h2>🗺️ Carte — Centres médicaux à Estepona</h2>
+      <p>Filtre par catégorie et clique sur un marqueur pour voir les infos (et ouvrir dans Google Maps).</p>
+
+      <div class="map-wrap">
+        <div class="map-toolbar">
+          <label class="chip"><input type="checkbox" checked data-filter="hospital"> Hôpitaux</label>
+          <label class="chip"><input type="checkbox" checked data-filter="public"> Public</label>
+          <label class="chip"><input type="checkbox" checked data-filter="clinic"> Cliniques</label>
+          <label class="chip"><input type="checkbox" checked data-filter="dentist"> Dentistes</label>
+          <label class="chip"><input type="checkbox" checked data-filter="physio"> Kiné</label>
+          <button class="btn" type="button" id="btn-fit">Ajuster la carte</button>
+          <button class="btn" type="button" id="btn-open-list">Ouvrir la liste dans Google Maps</button>
         </div>
-        <a class="more" href="index.html">Retour au guide</a>
+        <div id="map" aria-label="Carte Google Maps"></div>
       </div>
 
-      <!-- ✅ Monture React -->
-      <div id="react-root"></div>
+      <p style="margin-top:10px">
+        Astuce : pour ajouter d’autres cabinets, tu peux les ajouter dans le tableau <code>PLACES</code> plus bas.
+      </p>
     </section>
+
   </main>
 
-  <!-- FOOTER (repris) -->
+  <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
       <a class="brand" href="index.html">
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Estepona — Bons plans</strong>
       </a>
-      <nav class="footer-nav" aria-label="Navigation de pied de page">
-        <a href="index.html#voir">À voir</a>
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="index.html#cartes">Cartes</a>
-        <a href="index.html#faq">FAQ</a>
-      </nav>
-      <div class="social" aria-label="Réseaux sociaux">
-        <a href="#" aria-label="Instagram">Instagram</a>
-        <a href="#" aria-label="YouTube">YouTube</a>
-        <a href="#" aria-label="TikTok">TikTok</a>
-      </div>
+      <div class="meta"></div>
     </div>
-    <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
+    <div class="container footer-bottom">
+      © 2025 Bons Plans Estepona · Guide local indépendant
+    </div>
   </footer>
 
-  <!-- ✅ Script build React (tu vas générer ces fichiers à l’étape 2) -->
-  <script type="module" src="/sante-app/assets/index.js"></script>
+  <!-- GOOGLE MAPS -->
+  <script>
+    // ✅ Liste des lieux : ajoute/retire facilement
+    const PLACES = [
+      // Hospitals / Urgences
+      {
+        name: "Hospital de Alta Resolución de Estepona (Public)",
+        category: "hospital public",
+        address: "Calle Irene Villa González 9, 29680 Estepona, Málaga",
+        phone: "+34 951 97 66 17",
+        url: "https://www.sanidad.gob.es/en/ciudadanos/centros.do?metodo=realizarDetalle&numero=290528&tipo=hospital"
+      },
+      {
+        name: "Hospital Vithas Xanit Estepona",
+        category: "hospital clinic",
+        address: "Avenue Andalucía 1,2,4, 29680 Estepona, Málaga",
+        phone: "+34 952 80 81 00",
+        url: "https://vithas.es/en/center/vithas-hospital-xanit-estepona/"
+      },
+      {
+        name: "Hospiten Estepona",
+        category: "hospital clinic",
+        address: "N-340, Km 1063, 29680 Estepona, Málaga",
+        phone: "+34 952 76 06 00",
+        url: "https://hospiten.com/en/hospitals/hospiten-estepona"
+      },
+
+      // Public health centers
+      {
+        name: "Centro de Salud La Lobilla",
+        category: "public",
+        address: "Calle Miguel de María Luque 2, 29680 Estepona, Málaga",
+        phone: "+34 951 27 04 00",
+        url: "https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-la-lobilla"
+      },
+      {
+        name: "Centro de Salud Estepona",
+        category: "public",
+        address: "Calle Cristóbal Ruiz Méndez 19, 29680 Estepona, Málaga",
+        phone: "+34 951 97 04 45",
+        url: "https://www.redaccionmedica.com/recursos-salud/centros-de-salud-espana/centro-salud-estepona"
+      },
+
+      // Clinics
+      {
+        name: "Centro Médico Estepona",
+        category: "clinic",
+        address: "Av. Juan Carlos I 29, 1ºA, 29680 Estepona, Málaga",
+        phone: "+34 952 80 22 08",
+        url: "https://www.centromedicoestepona.es/"
+      },
+      {
+        name: "Clínica del Río (Estepona)",
+        category: "clinic",
+        address: "Avda. Litoral, Edificio Playa del Ángel, Local 4, 29680 Estepona, Málaga",
+        phone: "+34 952 80 53 29",
+        url: "https://www.clinicadelrio.com/"
+      },
+
+      // Dentists
+      {
+        name: "Clínica Dental Estepona (Calle Real)",
+        category: "dentist",
+        address: "Calle Real 99 1ºC, 29680 Estepona, Málaga",
+        phone: "+34 952 80 67 15",
+        url: "https://clinicadentalestepona.es/"
+      },
+      {
+        name: "Clínica Dental Futuredent (Estepona)",
+        category: "dentist",
+        address: "Av. de Andalucía, Edf. El Cerrito, Local 1 (Esq. San Lorenzo), 29680 Estepona, Málaga",
+        phone: "+34 952 80 53 33",
+        url: "https://www.futuredent3000.com/clinica-dental-estepona/clinica-dental-estepona.php"
+      },
+
+      // Physio
+      {
+        name: "Saga Salud (SAGASALUD)",
+        category: "physio",
+        address: "Avenida Andalucía 235, 29680 Estepona, Málaga",
+        phone: "+34 691 31 65 52",
+        url: "https://sagasalud.com/"
+      },
+      {
+        name: "Centro Fisioterapia El Ángel",
+        category: "physio",
+        address: "Avenida Litoral 55, Local 1, 29680 Estepona, Málaga",
+        phone: "+34 611 64 26 73",
+        url: "https://www.elangelfisio.com/contacto-fisio-estepona"
+      },
+      {
+        name: "Move Studio (Fisioterapia)",
+        category: "physio",
+        address: "Avenida Puerta del Mar 26, 29680 Estepona, Málaga",
+        phone: "+34 682 57 93 57",
+        url: "https://www.movestudiohealth.com/"
+      }
+    ];
+
+    let map;
+    let geocoder;
+    let infoWindow;
+    let markers = [];
+
+    function makeGmapsSearchUrl(address){
+      const q = encodeURIComponent(address);
+      return `https://www.google.com/maps/search/?api=1&query=${q}`;
+    }
+
+    function hasToken(cat, token){
+      return (cat || "").split(/\s+/).includes(token);
+    }
+
+    function buildInfoHtml(place){
+      const safeName = place.name || "Lieu";
+      const safeAddr = place.address || "";
+      const safePhone = place.phone || "";
+      const links = [];
+      if(place.url) links.push(`<a href="${place.url}" target="_blank" rel="noopener">Site</a>`);
+      links.push(`<a href="${makeGmapsSearchUrl(safeAddr)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>`);
+      return `
+        <div style="max-width:260px;line-height:1.35">
+          <div style="font-weight:700;margin-bottom:4px">${safeName}</div>
+          <div style="color:#5f6c86;margin-bottom:6px">${safeAddr}</div>
+          ${safePhone ? `<div style="margin-bottom:6px">☎️ ${safePhone}</div>` : ``}
+          <div style="display:flex;gap:10px;flex-wrap:wrap">${links.join("")}</div>
+        </div>
+      `;
+    }
+
+    function initMap(){
+      // Centre approximatif d’Estepona
+      const center = { lat: 36.4276, lng: -5.1459 };
+
+      map = new google.maps.Map(document.getElementById("map"), {
+        center,
+        zoom: 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true
+      });
+
+      geocoder = new google.maps.Geocoder();
+      infoWindow = new google.maps.InfoWindow();
+
+      // Géocodage des adresses -> marqueurs
+      const bounds = new google.maps.LatLngBounds();
+      let pending = 0;
+
+      PLACES.forEach((place) => {
+        if(!place.address) return;
+
+        pending++;
+        geocoder.geocode({ address: place.address }, (results, status) => {
+          pending--;
+
+          if(status === "OK" && results && results[0]){
+            const loc = results[0].geometry.location;
+            const marker = new google.maps.Marker({
+              map,
+              position: loc,
+              title: place.name
+            });
+
+            marker.__place = place;
+            markers.push(marker);
+            bounds.extend(loc);
+
+            marker.addListener("click", () => {
+              infoWindow.setContent(buildInfoHtml(place));
+              infoWindow.open(map, marker);
+            });
+          }
+
+          if(pending === 0 && !bounds.isEmpty()){
+            map.fitBounds(bounds);
+          }
+        });
+      });
+
+      // UI: filtres
+      const filterBoxes = document.querySelectorAll("[data-filter]");
+      const applyFilters = () => {
+        const enabled = new Set(
+          Array.from(filterBoxes).filter(b => b.checked).map(b => b.dataset.filter)
+        );
+
+        markers.forEach((m) => {
+          const cat = (m.__place && m.__place.category) ? m.__place.category : "";
+          const show =
+            (enabled.has("hospital") && hasToken(cat, "hospital")) ||
+            (enabled.has("public") && hasToken(cat, "public")) ||
+            (enabled.has("clinic") && hasToken(cat, "clinic")) ||
+            (enabled.has("dentist") && hasToken(cat, "dentist")) ||
+            (enabled.has("physio") && hasToken(cat, "physio"));
+
+          m.setVisible(!!show);
+        });
+      };
+
+      filterBoxes.forEach(b => b.addEventListener("change", applyFilters));
+      applyFilters();
+
+      // Bouton Fit Bounds
+      document.getElementById("btn-fit").addEventListener("click", () => {
+        const bounds2 = new google.maps.LatLngBounds();
+        let any = false;
+        markers.forEach((m) => {
+          if(m.getVisible()){
+            bounds2.extend(m.getPosition());
+            any = true;
+          }
+        });
+        if(any) map.fitBounds(bounds2);
+      });
+
+      // Bouton “liste” : ouvre une recherche Google Maps (pratique sans My Maps)
+      document.getElementById("btn-open-list").addEventListener("click", () => {
+        // Ouvre une recherche globale autour d’Estepona
+        window.open("https://www.google.com/maps/search/?api=1&query=medical+clinic+Estepona", "_blank", "noopener");
+      });
+    }
+  </script>
+
+  <!-- ⚠️ Remplacer YOUR_GOOGLE_MAPS_API_KEY -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+  </script>
+
 </body>
 </html>
