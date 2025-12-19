@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estepona — Santé (Carte & Annuaire)</title>
+  <meta name="description" content="Guide Santé à Estepona : dentistes, cliniques, médecins, carte interactive." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Leaflet CSS (obligatoire pour l’affichage des tuiles et des markers) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <!-- ⚠️ Reprend EXACTEMENT le même <style> que index.html :
+       soit tu colles ton <style> ici,
+       soit tu le sors dans un fichier shared.css et tu le link.
+       Pour aller vite, colle le même <style> de index.html. -->
+
+  <style>
+    /* ✅ Copie ton style de index.html ici (le même que tu m’as envoyé).
+       Pour éviter un pavé énorme, je ne le recolle pas une 2e fois ici.
+       Colle-le tel quel, sans modification. */
+
+    /* --- Petit + : zone app React plein écran --- */
+    #react-root{
+      width: min(1400px, 96vw);
+      margin-inline: auto;
+      margin-top: 18px;
+      margin-bottom: 32px;
+      min-height: calc(100vh - 220px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ BLOC NAVIGATION (obligatoire) -->
+  <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:12px 16px;border-bottom:1px solid var(--color-border);background:rgba(11,23,48,.92);position:sticky;top:0;z-index:60">
+    <a href="index.html" style="font-weight:900">Accueil</a>
+    <a href="sante.html" style="font-weight:900;color:var(--color-primary)">Santé</a>
+    <a href="chiringuito.html" style="font-weight:800;opacity:.9">Restaurants</a>
+    <a href="transport-estepona.html" style="font-weight:800;opacity:.9">Transport</a>
+    <a href="ecoles.html" style="font-weight:800;opacity:.9">Écoles</a>
+    <a href="trafic.html" style="font-weight:800;opacity:.9">Trafic</a>
+    <a href="Actualites.html" style="font-weight:800;opacity:.9">Actualités</a>
+  </div>
+
+  <!-- TOP BAR (repris) -->
+  <div class="container topbar" aria-label="Liens utilitaires">
+    <div class="brand-min">
+      <img src="img/logo_bon_plan_estepona.png" alt="Bons Plans Estepona" style="height:28px;width:auto;border-radius:8px;border:1px solid var(--color-border)"/>
+      <span style="opacity:.9">Estepona — Bons plans</span>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="index.html#voir">À voir</a>
+      <a href="index.html#manger">Restaurants</a>
+      <a href="index.html#itin">Que faire</a>
+      <a href="index.html#cartes">Cartes</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Ecoles</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+
+  <!-- HEADER (repris) -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Guide d’Estepona</strong>
+      </a>
+
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="index.html#voir">À voir</a>
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="index.html#cartes">Cartes</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Ecoles</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+
+      <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('#react-root')?.scrollIntoView({behavior:'smooth'});">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
+        <input type="search" placeholder="Rechercher : dentiste, clinique…" aria-label="Aller à l’app Santé" />
+      </form>
+
+      <button class="burger" aria-label="Ouvrir le menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="category">
+      <div class="section-head">
+        <div>
+          <h3>Santé à Estepona</h3>
+          <p>Carte interactive + annuaire (dentistes, médecins, cliniques…)</p>
+        </div>
+        <a class="more" href="index.html">Retour au guide</a>
+      </div>
+
+      <!-- ✅ Monture React -->
+      <div id="react-root"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER (repris) -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Estepona — Bons plans</strong>
+      </a>
+      <nav class="footer-nav" aria-label="Navigation de pied de page">
+        <a href="index.html#voir">À voir</a>
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="index.html#cartes">Cartes</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="YouTube">YouTube</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
+  </footer>
+
+  <!-- ✅ Script build React (tu vas générer ces fichiers à l’étape 2) -->
+  <script type="module" src="/sante-app/assets/index.js"></script>
+</body>
+</html>
