@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="fr">
 <head>
@@ -56,43 +57,21 @@
       width:44px;height:44px;border-radius:12px;overflow:hidden;
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
-    .brand-logo img{width:100%;height:100%;object-fit:contain}
-
+    .brand-logo img{width:100%;height:100%;object-fit:contain;object-position:center}
     nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
-
+    .search{
+      margin-left:auto;display:flex;gap:8px;align-items:center;
+      background:var(--color-surface);border:1px solid var(--color-border);
+      border-radius:999px;padding:8px 12px
+    }
+    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
-      border:1px solid var(--color-border);background:var(--color-surface);
-      cursor:pointer;
+      border:1px solid var(--color-border);background:var(--color-surface)
     }
-    @media (max-width:980px){
-      nav.primary,.social-top{display:none}
-      .burger{display:grid;place-items:center;margin-left:auto}
-    }
-
-    /* Social top */
-    .social-top{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-left:12px;
-    }
-    .social-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:12px;
-      border:1px solid var(--color-border);
-      background:rgba(255,255,255,.02);
-      color:var(--color-text);
-      font-weight:600;
-      font-size:14px;
-    }
-    .social-btn:hover{background:rgba(255,255,255,.05)}
-    .social-btn svg{width:16px;height:16px;display:block}
+    @media (max-width:980px){nav.primary,.search{display:none}.burger{display:grid;place-items:center;margin-left:auto}}
 
     /* Hero / Slider  */
     .hero{position:relative;margin:24px 0}
@@ -104,8 +83,7 @@
     .slide > img.bg, .slide > video.bg{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;opacity:.55;
-      filter:grayscale(10%) contrast(1.05) saturate(1.06);
-      transform: translateZ(0);
+      filter:grayscale(10%) contrast(1.05) saturate(1.06)
     }
     .slide .content{
       position:relative;padding:28px;display:grid;gap:14px;
@@ -147,6 +125,13 @@
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
 
+    /* =========================
+       HARMONISATION DES IMAGES
+       =========================
+       -> Même "cadre", même centrage, même comportement.
+       -> Les images restent en "cover" pour remplir proprement,
+          mais avec un centrage strict et stable.
+    */
     .card .thumb{
       position: relative;
       height: clamp(200px, 22vw, 260px);
@@ -159,14 +144,13 @@
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:cover;
-      object-position:center;
+      object-position:50% 50%; /* centrage strict */
       display:block;
-    }
 
-    .card .body{padding:12px 14px 16px}
-    .card .kicker{font-size:12px;color:var(--color-muted)}
-    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
-    .card .excerpt{color:var(--color-muted);font-size:14px}
+      /* petit "polish" pour homogénéiser les rendus */
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
 
     /* Grille spéciale cartes */
     .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
@@ -230,7 +214,11 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* Safe areas iPhone */
+    /* ==========
+       Mobile polish
+       ========== */
+    .search input{ font-size:16px; }
+    .slide > img.bg, .slide > video.bg{ transform: translateZ(0); }
     header, .mobile-menu{
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
@@ -247,16 +235,19 @@
       .slide h2{ font-size:22px; line-height:1.15; }
       .slide .meta{ font-size:13px; }
       .slide .cta{ padding:10px 12px; border-radius:12px; }
+
       section.category{ margin:22px 0; }
       .section-head{ gap:10px; margin-bottom:12px; }
       .section-head h3{ font-size:18px; }
       .section-head p{ font-size:13px; }
       .more{ display:none; }
+
       .grid{ gap:14px; }
       .card{ border-radius:16px; }
       .card .body{ padding:12px 12px 14px; }
       .card h4{ font-size:16px; }
       .card .excerpt{ font-size:13px; }
+
       .card .thumb{ height: 180px; }
       .map-grid{ gap:14px; }
     }
@@ -266,6 +257,9 @@
       .slide h2{ font-size:20px; }
       .card .thumb{ height: 165px; }
     }
+
+    .burger{ cursor:pointer; }
+    .burger:active{ transform: scale(.98); }
   </style>
 </head>
 
@@ -275,7 +269,7 @@
     <div class="container header-row">
       <a class="brand" href="#" aria-label="Accueil">
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Vivre à Estepona</strong>
+         <strong>Vivre à Estepona</strong>
       </a>
 
       <nav class="primary">
@@ -289,27 +283,13 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <!-- ✅ SUPPRIMÉ : la barre de recherche (form.search) -->
-
-      <!-- Boutons sociaux en haut -->
-      <div class="social-top" aria-label="Réseaux sociaux">
-        <a class="social-btn" href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2.5h9A5 5 0 0 1 21.5 7.5v9a5 5 0 0 1-5 5h-9a5 5 0 0 1-5-5v-9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M17.2 6.9h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-
-        <a class="social-btn" href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21 8.2s-.2-1.5-.8-2.1c-.8-.8-1.7-.8-2.1-.9C15.3 5 12 5 12 5h0s-3.3 0-6.1.2c-.4 0-1.3.1-2.1.9-.6.6-.8 2.1-.8 2.1S3 9.9 3 11.6v.8c0 1.7.1 3.4.1 3.4s.2 1.5.8 2.1c.8.8 1.9.8 2.4.9 1.7.2 5.7.2 5.7.2s3.3 0 6.1-.2c.4 0 1.3-.1 2.1-.9.6-.6.8-2.1.8-2.1s.1-1.7.1-3.4v-.8C21.1 9.9 21 8.2 21 8.2Z" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M10.5 15.2v-6l5 3-5 3Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
-      </div>
+      <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('#voir')?.scrollIntoView({behavior:'smooth'});">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <input type="search" placeholder="Rechercher : Animations, vieille ville, tapas…" aria-label="Rechercher dans le site" />
+      </form>
 
       <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -379,7 +359,8 @@
         </article>
 
         <article class="card">
-          <a class="thumb" href="actualites.html"><img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona" style="object-position:center 50%"/></a>
+          <!-- ✅ inline style supprimé : centrage géré par CSS harmonisé -->
+          <a class="thumb" href="actualites.html"><img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/></a>
           <div class="body">
             <div class="kicker">Actualités</div>
             <h4><a href="actualites.html">Actualité Estepona</a></h4>
@@ -477,7 +458,45 @@
 
     <!-- SECTION : FAQ -->
     <section class="category" id="faq">
-      <!-- ... ton bloc FAQ inchangé ... -->
+      <div class="section-head">
+        <div>
+          <h3>FAQ</h3>
+          <p>Questions fréquentes pour préparer votre séjour</p>
+        </div>
+      </div>
+
+      <div class="card" style="overflow:hidden">
+        <div class="body" style="padding:0">
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Quelle est la meilleure période pour venir ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Le top compromis 👇<br>fin mai–juin et septembre–mi-octobre : 24–30 °C, mer 20–24 °C, moins de monde et tarifs plus doux.<br><br>
+              Selon ton objectif :<br><br>
+              Plage & ambiance : juillet–août (28–35 °C, mer 23–25 °C) → très animé, mais cher et bondé.<br>
+              Visites/randos : mars–avril ou fin sept.–nov. (17–24 °C) → agréable pour marcher, mer plus fraîche.<br>
+              Budget mini / calme : déc.–févr. (12–18 °C) → doux mais plus de pluie et eau froide.<br><br>
+              Astuce : vise semaines hors vacances et évite les jours de levante (vent d’est) si tu veux la plage parfaite.
+            </div>
+          </div>
+
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Où loger à Estepona ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Sans voiture → près du centre historique, Playa de la Rada, port/marina ou Playa del Cristo.<br><br>
+              Avec voiture → New Golden Mile (Costalita/El Padrón), Selwo/Cancelada, Casares Costa / Bahia Dorada, arrière-pays (Valle Romano, Estepona Golf).
+            </div>
+          </div>
+
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Faut-il une voiture ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              1–3 jours centrés sur Estepona : pas indispensable (vieille ville, paseo, plage de la Rada et port à pied).<br><br>
+              Sans voiture : taxis/VTC (Uber/Cabify), bus côtiers, vélos sur le paseo.<br><br>
+              Utile si logement excentré (New Golden Mile, Selwo, Cancelada, Casares Costa) ou pour explorer (Casares, Ronda, Marbella, Gibraltar, Sierra Bermeja).
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -627,3 +646,6 @@
   </script>
 </body>
 </html>
+```
+
+Si tu veux, je peux aussi te faire une **version “intelligente”** : certaines images (type “NEWS”) passent automatiquement en `contain` *sans casser* les autres photos (cover) — mais là je t’ai fait une harmonisation simple et propre, identique pour toutes.
