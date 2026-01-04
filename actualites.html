@@ -1,147 +1,449 @@
-<script>
-  // ==========
-  // Actus : dataset + filtres (même style que index.html)
-  // ==========
+```html
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Infos pratiques — Vivre à Estepona</title>
+  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + inscription à la newsletter." />
+  <meta name="theme-color" content="#0b3c49" />
 
-  const dataEl = document.getElementById('dataset-actus');
-  const grid = document.getElementById('grid');
-  const q = document.getElementById('q');
-  const catChips = Array.from(document.querySelectorAll('[data-cat]'));
-  const periodRadios = Array.from(document.querySelectorAll('input[name="period"]'));
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
-  const PLACEHOLDER_IMG = 'img/placeholder-1.jpg';
-  let items = [];
+  <style>
+    :root{
+      --color-bg: #0b1730;
+      --color-surface: #0f1f44;
+      --color-surface-2: #0f1625;
+      --color-primary: #2db4ff;
+      --color-accent: #00d0b6;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
 
-  function parseJSON(el){
-    if(!el) return [];
-    try { return JSON.parse(el.textContent.trim()); }
-    catch(e){ return []; }
-  }
+    html,body{
+      margin:0;padding:0;
+      background:var(--color-bg);
+      color:var(--color-text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
 
-  function parseISO(s){
-    const d = new Date(s);
-    return isNaN(d) ? null : d;
-  }
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+      backdrop-filter:saturate(140%) blur(6px);
+      border-bottom:1px solid var(--color-border)
+    }
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
+    }
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-  function fmtDateFR(iso){
-    const d = parseISO(iso);
-    return d ? d.toLocaleDateString('fr-FR') : '';
-  }
+    /* Boutons sociaux (header) */
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02);
+      color:var(--color-text);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{background:rgba(255,255,255,.05)}
+    .social-top svg{width:16px;height:16px;opacity:.95}
 
-  function esc(str){
-    return String(str ?? '')
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'","&#039;");
-  }
+    .burger{
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface);
+      cursor:pointer;
+    }
+    .burger:active{ transform: scale(.98); }
 
-  function getSelectedCats(){
-    return catChips
-      .filter(c => c.checked)
-      .map(c => (c.dataset.cat || '').toLowerCase())
-      .filter(Boolean);
-  }
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
 
-  function getPeriod(){
-    return (periodRadios.find(r => r.checked) || {}).value || '30';
-  }
+    /* ✅ Bloc navigation demandé (toutes nouvelles pages) */
+    .nav-block{
+      display:flex;gap:16px;flex-wrap:wrap;
+      margin:16px 0 6px;
+    }
+    .nav-block a{
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02);
+      font-size:14px;
+    }
+    .nav-block a:hover{background:rgba(255,255,255,.05)}
 
-  function withinPeriod(iso, periodValue, now){
-    if(periodValue === 'all') return true;
-    const d = parseISO(iso);
-    if(!d) return true; // si date manquante, on n’exclut pas
-    const days = parseInt(periodValue, 10);
-    if(!Number.isFinite(days)) return true;
-    return (now - d) <= days * 86400000;
-  }
+    /* Hero */
+    .page-hero{
+      padding:26px 0 10px;
+      border-bottom:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%)
+    }
+    .page-hero h1{margin:6px 0 6px;font-size:30px}
+    .page-hero p{margin:0;color:var(--color-muted)}
 
-  function cardHTML(it){
-    const title = esc(it.titre);
-    const link  = esc(it.lien || '#');
-    const cat   = esc(it.categorie || '');
-    const date  = esc(fmtDateFR(it.date));
-    const img   = esc(it.image || PLACEHOLDER_IMG);
-    const resume= esc(it.resume || '');
-    const tags  = Array.isArray(it.tags) ? it.tags : [];
+    /* Sections */
+    section.category{margin:26px 0}
+    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head h2{margin:0;font-size:22px}
+    .section-head p{margin:0;color:var(--color-muted)}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
-    // Si lien externe, on ouvre dans un nouvel onglet ; sinon, navigation normale
-    const isExternal = /^https?:\/\//i.test(it.lien || '');
-    const aAttrs = isExternal ? ' target="_blank" rel="noopener"' : '';
+    .card{
+      display:grid;grid-template-rows:auto 1fr;gap:10px;
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
+    }
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card p{margin:0;color:var(--color-muted);font-size:14px;line-height:1.55}
+    .pill{
+      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted)
+    }
 
-    return `
-      <article class="card">
-        <a class="thumb" href="${link}"${aAttrs}>
-          <img src="${img}" alt="${title}" loading="lazy" decoding="async" data-fallback="${PLACEHOLDER_IMG}">
+    .cta{
+      display:inline-block;margin-top:10px;font-weight:700;color:#06131e;
+      background:var(--color-primary);padding:10px 14px;border-radius:12px
+    }
+    .cta.secondary{
+      background:rgba(255,255,255,.06);
+      color:var(--color-text);
+      border:1px solid var(--color-border);
+      font-weight:600;
+    }
+
+    /* Newsletter */
+    .newsletter{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+    .nl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .nl-input{
+      flex:1 1 240px;
+      display:flex;align-items:center;gap:8px;
+      background:var(--color-surface);border:1px solid var(--color-border);
+      border-radius:999px;padding:10px 12px;
+    }
+    .nl-input input{
+      width:100%;
+      background:transparent;border:0;outline:0;color:var(--color-text);
+      font-size:16px;
+    }
+    .nl-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+    /* Footer */
+    footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
+    .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
+    .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
+
+    /* Menu mobile */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+    .mobile-menu{
+      position:fixed;top:0;right:0;height:100vh;
+      width:min(360px, 86vw);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+      border-left:1px solid var(--color-border);
+      z-index:150;
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .mobile-menu-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
+    }
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
+    }
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="index.html#voir">À voir</a>
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
         </a>
-        <div class="body">
-          <div class="kicker">
-            <span class="tag">${cat}</span>
-            <span class="tag">${date}</span>
-          </div>
-          <h3><a href="${link}"${aAttrs}>${title}</a></h3>
-          <p class="meta">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>
-          <p>${resume}</p>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU MOBILE (drawer) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#voir" onclick="document.querySelector('.burger')?.click()">À voir</a>
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="index.html#faq" onclick="document.querySelector('.burger')?.click()">FAQ</a>
+      <a href="contact.html">Contact</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="pill">Infos utiles</span>
+      <h1>Infos pratiques à Estepona</h1>
+      <p>Tout ce qu’il faut pour organiser votre séjour (ou votre installation) + newsletter.</p>
+
+      <!-- ✅ Bloc navigation demandé -->
+      <div style="display:flex;gap:16px" class="nav-block">
+        <a href="index.html">Accueil</a>
+        <a href="actualites.html">Actualités</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- INFOS -->
+    <section class="category" id="infos">
+      <div class="section-head">
+        <div>
+          <h2>Informations</h2>
+          <p>Des repères rapides + liens vers les pages détaillées.</p>
         </div>
-      </article>
-    `;
-  }
+      </div>
 
-  function attachImageFallback(){
-    grid?.querySelectorAll('img[data-fallback]').forEach(img => {
-      img.addEventListener('error', () => {
-        const fb = img.getAttribute('data-fallback') || PLACEHOLDER_IMG;
-        if(img.src.endsWith(fb)) return;
-        img.src = fb;
-      }, { once:false });
+      <div class="grid">
+        <article class="card">
+          <div class="body">
+            <div class="kicker">Transport</div>
+            <h3>Se déplacer</h3>
+            <p>Bus, taxis/VTC, parkings, astuces sans voiture, liaisons Marbella / Malaga.</p>
+            <a class="cta" href="transport-estepona.html">Voir Transport →</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="body">
+            <div class="kicker">Vie quotidienne</div>
+            <h3>Écoles & familles</h3>
+            <p>Établissements, zones de résidence, conseils pour une installation simple.</p>
+            <a class="cta" href="ecoles.html">Voir Écoles →</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="body">
+            <div class="kicker">Santé</div>
+            <h3>Urgences & médecins</h3>
+            <p>Centres de santé, hôpitaux proches, pharmacies et numéros utiles.</p>
+            <a class="cta" href="sante.html">Voir Santé →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="category" id="newsletter">
+      <div class="section-head">
+        <div>
+          <h2>Newsletter</h2>
+          <p>Recevez les bons plans et actus (1–2 fois / mois).</p>
+        </div>
+      </div>
+
+      <div class="newsletter">
+        <div class="meta" style="color:var(--color-muted);font-size:14px;line-height:1.55">
+          Option 1 : un lien vers votre service (Mailchimp / Brevo / Substack…).<br>
+          Option 2 : un formulaire “mailto” simple (sans base de données).
+        </div>
+
+        <div class="nl-row">
+          <!-- Formulaire simple (mailto) -->
+          <form class="nl-input" id="nlForm" action="mailto:newsletter@votredomaine.com" method="post" enctype="text/plain">
+            <input type="email" name="email" placeholder="Votre e-mail" aria-label="Votre e-mail" required />
+          </form>
+
+          <div class="nl-actions">
+            <button class="cta" type="submit" form="nlForm">Je m’inscris</button>
+            <!-- ✅ Remplace le lien ci-dessous par ton URL newsletter réelle -->
+            <a class="cta secondary" href="https://exemple.com/newsletter" target="_blank" rel="noopener">
+              Lien d’inscription →
+            </a>
+          </div>
+        </div>
+
+        <div style="color:var(--color-muted);font-size:13px">
+          En vous inscrivant, vous acceptez de recevoir des e-mails. Désinscription en 1 clic.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
+  </footer>
+
+  <script>
+    // ==========
+    // Menu mobile (drawer) — même script que index.html
+    // ==========
+
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
+
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
+    }
+
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
+    }
+
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
     });
-  }
+  </script>
+</body>
+</html>
+```
 
-  function render(list){
-    if(!grid) return;
+### À personnaliser (2 lignes)
 
-    const sorted = [...list].sort((a,b) => {
-      const da = parseISO(a.date)?.getTime() ?? 0;
-      const db = parseISO(b.date)?.getTime() ?? 0;
-      return db - da;
-    });
+* Remplace `newsletter@votredomaine.com` par ton e-mail (si tu veux la version “mailto”).
+* Remplace `https://exemple.com/newsletter` par **ton vrai lien** (Mailchimp/Brevo/Substack/etc.).
 
-    grid.innerHTML = sorted.map(cardHTML).join('');
-    attachImageFallback();
-  }
-
-  function applyFilters(){
-    const now = new Date();
-
-    const txt = (q?.value || '').toLowerCase().trim();
-    const cats = getSelectedCats();
-    const periodValue = getPeriod();
-
-    const filtered = items.filter(it => {
-      const hay = [
-        it.titre,
-        it.categorie,
-        ...(Array.isArray(it.tags) ? it.tags : []),
-        it.resume
-      ].join(' ').toLowerCase();
-
-      const okText = !txt || hay.includes(txt);
-      const okCat  = !cats.length || cats.includes((it.categorie || '').toLowerCase());
-      const okPeriod = withinPeriod(it.date, periodValue, now);
-
-      return okText && okCat && okPeriod;
-    });
-
-    render(filtered);
-  }
-
-  // Init
-  items = parseJSON(dataEl);
-  render(items);
-
-  // Events
-  q?.addEventListener('input', applyFilters);
-  catChips.forEach(c => c.addEventListener('change', applyFilters));
-  periodRadios.forEach(r => r.addEventListener('change', applyFilters));
-</script>
+Si tu me donnes le lien exact de ta newsletter, je te le mets directement au bon endroit + je peux supprimer l’option “mailto” si tu préfères une inscription 100% via lien.
