@@ -1,11 +1,10 @@
-```html
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Infos pratiques — Vivre à Estepona</title>
-  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + inscription à la newsletter." />
+  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + inscription à la newsletter + météo." />
   <meta name="theme-color" content="#0b3c49" />
 
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -79,7 +78,7 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* ✅ Bloc navigation demandé (toutes nouvelles pages) */
+    /* ✅ Bloc navigation demandé */
     .nav-block{
       display:flex;gap:16px;flex-wrap:wrap;
       margin:16px 0 6px;
@@ -159,6 +158,42 @@
     }
     .nl-actions{display:flex;gap:10px;flex-wrap:wrap}
 
+    /* Météo */
+    .weather-wrap{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      padding:16px;
+      display:grid;
+      gap:14px;
+    }
+    .weather-top{
+      display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+    }
+    .weather-big{
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .weather-big strong{font-size:22px}
+    .weather-big .muted{color:var(--color-muted);font-size:14px}
+    .weather-status{
+      color:var(--color-muted);
+      font-size:14px;
+    }
+    .weather-grid{
+      display:grid;gap:12px;grid-template-columns:repeat(5,1fr);
+    }
+    @media (max-width:980px){.weather-grid{grid-template-columns:repeat(2,1fr)}}
+    .w-day{
+      border:1px solid var(--color-border);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+      padding:10px 12px;
+      display:grid;gap:6px;
+    }
+    .w-day .d{color:var(--color-muted);font-size:12px}
+    .w-day .t{font-size:16px;font-weight:700}
+    .w-day .s{color:var(--color-muted);font-size:13px}
+
     /* Footer */
     footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
     .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
@@ -223,6 +258,7 @@
         <a href="ecoles.html">Écoles</a>
         <a href="sante.html">Santé</a>
         <a href="trafic.html">Trafic</a>
+        <a href="#meteo">Météo</a>
         <a href="index.html#faq">FAQ</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -268,7 +304,7 @@
       <a href="ecoles.html">Écoles</a>
       <a href="sante.html">Santé</a>
       <a href="trafic.html">Trafic</a>
-      <a href="index.html#faq" onclick="document.querySelector('.burger')?.click()">FAQ</a>
+      <a href="#meteo" onclick="document.querySelector('.burger')?.click()">Météo</a>
       <a href="contact.html">Contact</a>
 
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
@@ -281,7 +317,7 @@
     <div class="container">
       <span class="pill">Infos utiles</span>
       <h1>Infos pratiques à Estepona</h1>
-      <p>Tout ce qu’il faut pour organiser votre séjour (ou votre installation) + newsletter.</p>
+      <p>Tout ce qu’il faut pour organiser votre séjour (ou votre installation) + newsletter + météo.</p>
 
       <!-- ✅ Bloc navigation demandé -->
       <div style="display:flex;gap:16px" class="nav-block">
@@ -291,6 +327,7 @@
         <a href="ecoles.html">Écoles</a>
         <a href="sante.html">Santé</a>
         <a href="trafic.html">Trafic</a>
+        <a href="#meteo">Météo</a>
         <a href="contact.html">Contact</a>
       </div>
     </div>
@@ -333,6 +370,32 @@
             <a class="cta" href="sante.html">Voir Santé →</a>
           </div>
         </article>
+      </div>
+    </section>
+
+    <!-- MÉTÉO -->
+    <section class="category" id="meteo">
+      <div class="section-head">
+        <div>
+          <h2>Météo à Estepona</h2>
+          <p>Mise à jour automatique (source Open-Meteo).</p>
+        </div>
+      </div>
+
+      <div class="weather-wrap" aria-live="polite">
+        <div class="weather-top">
+          <div class="weather-big">
+            <strong id="wNow">Chargement…</strong>
+            <div class="muted" id="wMeta">—</div>
+          </div>
+          <div class="weather-status" id="wStatus">Connexion…</div>
+        </div>
+
+        <div class="weather-grid" id="wDays"></div>
+
+        <div style="color:var(--color-muted);font-size:13px">
+          Astuce : si tu veux une autre ville, change juste les coordonnées dans le script (latitude/longitude).
+        </div>
       </div>
     </section>
 
@@ -384,7 +447,7 @@
       <div class="social" aria-label="Réseaux sociaux">
         <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           </svg>
@@ -436,14 +499,93 @@
       const open = burger.getAttribute('aria-expanded')==='true';
       open ? closeMenu() : openMenu();
     });
+
+    // ==========
+    // Météo Estepona (Open-Meteo) — simple & sans clé
+    // ==========
+
+    const wNow = document.getElementById('wNow');
+    const wMeta = document.getElementById('wMeta');
+    const wStatus = document.getElementById('wStatus');
+    const wDays = document.getElementById('wDays');
+
+    // Coordonnées Estepona (modifiable si besoin)
+    const LAT = 36.4276;
+    const LON = -5.1459;
+
+    function wdFR(dateStr){
+      const d = new Date(dateStr);
+      return isNaN(d) ? '' : d.toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'short' });
+    }
+
+    function wCodeLabel(code){
+      const map = {
+        0:'Ciel dégagé',
+        1:'Plutôt dégagé', 2:'Partiellement nuageux', 3:'Couvert',
+        45:'Brouillard', 48:'Brouillard givrant',
+        51:'Bruine légère', 53:'Bruine', 55:'Bruine forte',
+        61:'Pluie faible', 63:'Pluie', 65:'Pluie forte',
+        71:'Neige faible', 73:'Neige', 75:'Neige forte',
+        80:'Averses faibles', 81:'Averses', 82:'Averses fortes',
+        95:'Orage', 96:'Orage + grêle', 99:'Orage violent + grêle'
+      };
+      return map[code] || 'Météo';
+    }
+
+    async function loadWeather(){
+      if(!wStatus || !wNow || !wMeta || !wDays) return;
+
+      try{
+        wStatus.textContent = 'Chargement…';
+
+        const url =
+          `https://api.open-meteo.com/v1/forecast` +
+          `?latitude=${LAT}&longitude=${LON}` +
+          `&current=temperature_2m,wind_speed_10m,weather_code` +
+          `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
+          `&timezone=Europe%2FMadrid`;
+
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        const c = data.current || {};
+        const t = Math.round(c.temperature_2m ?? 0);
+        const wind = Math.round(c.wind_speed_10m ?? 0);
+        const label = wCodeLabel(c.weather_code);
+
+        wNow.textContent = `${t}°C — ${label}`;
+        wMeta.textContent = `Vent : ${wind} km/h · Fuseau : Europe/Madrid`;
+        wStatus.textContent = 'À jour';
+
+        const days = data.daily || {};
+        const times = days.time || [];
+        const tmax = days.temperature_2m_max || [];
+        const tmin = days.temperature_2m_min || [];
+        const codes = days.weather_code || [];
+
+        wDays.innerHTML = times.slice(0,5).map((d,i)=>{
+          const max = Math.round(tmax[i] ?? 0);
+          const min = Math.round(tmin[i] ?? 0);
+          const lab = wCodeLabel(codes[i]);
+          return `
+            <div class="w-day">
+              <div class="d">${wdFR(d)}</div>
+              <div class="t">${min}° / ${max}°</div>
+              <div class="s">${lab}</div>
+            </div>
+          `;
+        }).join('');
+
+      }catch(e){
+        wStatus.textContent = 'Impossible de charger la météo';
+        wNow.textContent = '—';
+        wMeta.textContent = 'Vérifie ta connexion ou réessaye plus tard.';
+        wDays.innerHTML = '';
+      }
+    }
+
+    loadWeather();
   </script>
 </body>
 </html>
-```
-
-### À personnaliser (2 lignes)
-
-* Remplace `newsletter@votredomaine.com` par ton e-mail (si tu veux la version “mailto”).
-* Remplace `https://exemple.com/newsletter` par **ton vrai lien** (Mailchimp/Brevo/Substack/etc.).
-
-Si tu me donnes le lien exact de ta newsletter, je te le mets directement au bon endroit + je peux supprimer l’option “mailto” si tu préfères une inscription 100% via lien.
