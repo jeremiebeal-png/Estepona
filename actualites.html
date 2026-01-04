@@ -1,261 +1,147 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Actualités Estepona — Bons plans</title>
-  <meta name="description" content="Toutes les actualités d’Estepona : événements, infos pratiques, concerts, plages, circulation & travaux, culture." />
-  <meta name="theme-color" content="#0b3c49" />
-  <style>
-    :root{
-      --color-bg:#0b1730; --color-surface:#0f1f44; --color-surface-2:#0f1625;
-      --color-primary:#2db4ff; --color-accent:#00d0b6;
-      --color-text:#eaf2ff; --color-muted:#a8b6cf; --color-border:#1a2d5a;
-      --radius-xl:18px; --radius-lg:14px; --radius-md:10px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    html,body{margin:0;padding:0;background:var(--color-bg);color:var(--color-text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
-    .container{width:min(1200px,92vw);margin-inline:auto}
+<script>
+  // ==========
+  // Actus : dataset + filtres (même style que index.html)
+  // ==========
 
-    /* Header */
-    header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--color-border)}
-    .header-row{display:flex;align-items:center;gap:22px;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand-logo{width:40px;height:40px;border-radius:10px;overflow:hidden;border:1px solid var(--color-border);box-shadow:var(--shadow)}
-    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
-    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
-    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+  const dataEl = document.getElementById('dataset-actus');
+  const grid = document.getElementById('grid');
+  const q = document.getElementById('q');
+  const catChips = Array.from(document.querySelectorAll('[data-cat]'));
+  const periodRadios = Array.from(document.querySelectorAll('input[name="period"]'));
 
-    /* Hero */
-    .page-hero{padding:26px 0 10px;border-bottom:1px solid var(--color-border);background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%)}
-    .page-hero h1{margin:6px 0 6px;font-size:30px}
-    .page-hero p{margin:0;color:var(--color-muted)}
+  const PLACEHOLDER_IMG = 'img/placeholder-1.jpg';
+  let items = [];
 
-    /* Toolbar */
-    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}
-    .search{display:flex;gap:8px;align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:999px;padding:8px 12px}
-    .search svg{opacity:.8}
-    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:220px}
-    .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .filters h3{font-size:14px;color:var(--color-muted);margin:0 6px 0 0;font-weight:600}
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--color-border);background:rgba(255,255,255,.04);cursor:pointer}
-    .chip input{accent-color:var(--color-primary)}
+  function parseJSON(el){
+    if(!el) return [];
+    try { return JSON.parse(el.textContent.trim()); }
+    catch(e){ return []; }
+  }
 
-    /* Grid / cards */
-    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
-    @media (max-width:980px){.grid{grid-template-columns:1fr}}
-    .card{display:grid;grid-template-rows:auto 1fr;gap:10px;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))}
-    .card .thumb{position:relative;height:clamp(200px,22vw,260px);border-radius:16px;overflow:hidden;background:#0b1322;display:block}
-    .card .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-    .card .body{padding:12px 14px 16px}
-    .card .kicker{font-size:12px;color:var(--color-muted)}
-    .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
-    .meta{display:flex;flex-wrap:wrap;gap:10px;color:var(--color-muted);font-size:13px}
-    .tag{padding:4px 8px;border:1px solid var(--color-border);border-radius:999px;font-size:12px}
+  function parseISO(s){
+    const d = new Date(s);
+    return isNaN(d) ? null : d;
+  }
 
-    /* Footer */
-    footer{margin-top:36px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
-    .footer-top{padding:20px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .footer-bottom{padding:14px 0;color:var(--color-muted);font-size:14px}
-  </style>
-</head>
-<body>
-  <!-- HEADER -->
-  <header>
-    <div class="container header-row">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Estepona — Bons plans</strong>
-      </a>
-      <nav class="primary" aria-label="Navigation principale">
-        <a href="index.html#voir">À voir</a>
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="index.html#cartes">Cartes</a>
-        <a href="index.html#faq">FAQ</a>
-      </nav>
-    </div>
-  </header>
+  function fmtDateFR(iso){
+    const d = parseISO(iso);
+    return d ? d.toLocaleDateString('fr-FR') : '';
+  }
 
-  <!-- HERO -->
-  <section class="page-hero">
-    <div class="container">
-      <h1>Actualités d’Estepona</h1>
-      <p>Événements, infos pratiques, circulation, plages, culture & sport.</p>
+  function esc(str){
+    return String(str ?? '')
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#039;");
+  }
 
-      <div class="toolbar">
-        <!-- Recherche -->
-        <form class="search" role="search" onsubmit="event.preventDefault()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/></svg>
-          <input id="q" type="search" placeholder="Rechercher : feria, concert, travaux, plage…" aria-label="Rechercher" />
-        </form>
+  function getSelectedCats(){
+    return catChips
+      .filter(c => c.checked)
+      .map(c => (c.dataset.cat || '').toLowerCase())
+      .filter(Boolean);
+  }
 
-        <!-- Filtres Catégorie -->
-        <div class="filters" aria-label="Filtres catégorie">
-          <h3>Catégories :</h3>
-          <label class="chip"><input type="checkbox" data-cat="Événements" /> Événements</label>
-          <label class="chip"><input type="checkbox" data-cat="Infos" /> Infos pratiques</label>
-          <label class="chip"><input type="checkbox" data-cat="Travaux" /> Travaux/Circulation</label>
-          <label class="chip"><input type="checkbox" data-cat="Plages" /> Plages</label>
-          <label class="chip"><input type="checkbox" data-cat="Culture" /> Culture</label>
-          <label class="chip"><input type="checkbox" data-cat="Sport" /> Sport</label>
-        </div>
+  function getPeriod(){
+    return (periodRadios.find(r => r.checked) || {}).value || '30';
+  }
 
-        <!-- Filtres Période -->
-        <div class="filters" aria-label="Filtres période">
-          <h3>Période :</h3>
-          <label class="chip"><input type="radio" name="period" value="7"  /> Cette semaine</label>
-          <label class="chip"><input type="radio" name="period" value="30" checked /> Ce mois-ci</label>
-          <label class="chip"><input type="radio" name="period" value="90" /> 3 derniers mois</label>
-          <label class="chip"><input type="radio" name="period" value="all" /> Archives</label>
-        </div>
-      </div>
-    </div>
-  </section>
+  function withinPeriod(iso, periodValue, now){
+    if(periodValue === 'all') return true;
+    const d = parseISO(iso);
+    if(!d) return true; // si date manquante, on n’exclut pas
+    const days = parseInt(periodValue, 10);
+    if(!Number.isFinite(days)) return true;
+    return (now - d) <= days * 86400000;
+  }
 
-  <!-- LISTE -->
-  <main class="container">
-    <div class="grid" id="grid"></div>
-  </main>
+  function cardHTML(it){
+    const title = esc(it.titre);
+    const link  = esc(it.lien || '#');
+    const cat   = esc(it.categorie || '');
+    const date  = esc(fmtDateFR(it.date));
+    const img   = esc(it.image || PLACEHOLDER_IMG);
+    const resume= esc(it.resume || '');
+    const tags  = Array.isArray(it.tags) ? it.tags : [];
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container footer-top">
-      <a class="brand" href="index.html"><span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span><strong>Estepona — Bons plans</strong></a>
-      <div class="meta">Pages : Actualités · Chiringuitos · Casco Antiguo · Rooftops & Discothèques</div>
-    </div>
-    <div class="container footer-bottom">© 2025 Bons Plans Estepona · Guide local indépendant</div>
-  </footer>
+    // Si lien externe, on ouvre dans un nouvel onglet ; sinon, navigation normale
+    const isExternal = /^https?:\/\//i.test(it.lien || '');
+    const aAttrs = isExternal ? ' target="_blank" rel="noopener"' : '';
 
-  <!-- DATASET (actus) -->
-  <script id="dataset-actus" type="application/json">
-  [
-   {
-  "titre": "Course solidaire « Ruta 091 » (9 nov.)",
-  "image": "img/ruta-091.png",
-  "categorie": "Sport",
-  "date": "2025-11-09",
-  "tags": ["course","solidarité"],
-  "resume": "Parcours urbain, catégories adultes & enfants, objectif solidaire.",
-  "lien": "actualite-ruta-091.html"
-},
-    {
-      "titre": "Carrera solidaria « Ruta 091 » (9 nov.)",
-      "image": "img/ruta-091.png",
-      "categorie": "Sport",
-      "date": "2025-11-09",
-      "tags": ["course","solidarité","Police Nacional"],
-      "resume": "Seconde édition au profit de « Paula y la fábrica de médula ». Inscriptions ouvertes.",
-      "lien": "https://ayuntamiento.estepona.es/noticia/18987-el-ayuntamiento-colabora-con-la-policia-nacional-en-la-ii-carrera-solidaria-ruta-091-a-beneficio-de-la-asociacion-paula-y-la-fabrica-de-medula-"
-    },
-    {
-      "titre": "« Estepona Vive sus Calles » – édition d’automne (10–12 oct.)",
-      "image": "img/oto_estepona.png",
-      "categorie": "Événements",
-      "date": "2025-10-10",
-      "tags": ["musique","gastronomie","famille"],
-      "resume": "Concerts (Los Secretos), DJ El Pulpo, mini-foire gastronomique et animations enfants dans toute la ville.",
-      "lien": "actualite-estepona-vive-otono.html"
-    },
-  
-    {
-      "titre": "Programme « vieillissement actif » pour les seniors",
-      "image": "img/actus/mayores-activo.jpg",
-      "categorie": "Infos",
-      "date": "2025-10-09",
-      "tags": ["santé","seniors","atelier"],
-      "resume": "Exercice hebdo, ateliers d’alimentation, randonnées et sorties nature.",
-      "lien": "https://ayuntamiento.estepona.es/noticia/18981-el-ayuntamiento-pone-en-marcha-un-programa-de-atencion-a-los-mayores-para-promover-el-envejecimiento-activo-mediante-actividades-fisicas-cognitiva"
-    },
-    {
-      "titre": "Stabilisation du terrain – Au Parc de la Hermandad",
-      "image": "img/actus/parque-hermandad.jpg",
-      "categorie": "Travaux",
-      "date": "2025-10-07",
-      "tags": ["travaux","parc","sécurité"],
-      "resume": "Murs d’enrochement et remise en état des zones affectées.",
-      "lien": "https://ayuntamiento.estepona.es/noticia/18976-el-ayuntamiento-adjudica-las-obras-para-estabilizar-el-terreno-del-parque-la-hermandad.html"
-    },
-    {
-      "titre": "École des familles : éducation émotionnelle (14 oct.–16 déc.)",
-      "image": "img/actus/escuela-familias.jpg",
-      "categorie": "Culture",
-      "date": "2025-10-14",
-      "tags": ["familles","éducation","atelier"],
-      "resume": "10 séances gratuites au Centre Culturel Padre Manuel.",
-      "lien": "https://ayuntamiento.estepona.es/noticia/18982-el-ayuntamiento-y-horizonte-proyecto-hombre-organizan-una-nueva-edicion-de-la-escuela-de-familias-para-abordar-la-educacion-emocional-de-los-jovenes"
-    }
-  ]
-  </script>
-
-  <!-- LOGIQUE -->
-  <script>
-  (function(){
-    const dataEl = document.getElementById('dataset-actus');
-    let items = [];
-    try { items = JSON.parse(dataEl.textContent.trim()); } catch(e){ items = []; }
-
-    const grid = document.getElementById('grid');
-    const q = document.getElementById('q');
-    const catChips = Array.from(document.querySelectorAll('[data-cat]'));
-    const periodRadios = Array.from(document.querySelectorAll('input[name="period"]'));
-
-    function parseISO(s){ const d=new Date(s); return isNaN(d)?null:d; }
-
-    function card(it){
-      const dateStr = it.date ? new Date(it.date).toLocaleDateString('fr-FR') : '';
-      return `
-        <article class="card">
-          <a class="thumb" href="${it.lien||'#'}" target="_blank" rel="noopener">
-            <img src="${it.image||'img/placeholder-1.jpg'}" alt="${it.titre||''}" onerror="this.onerror=null;this.src='img/placeholder-1.jpg'"/>
-          </a>
-          <div class="body">
-            <div class="kicker">
-              <span class="tag">${it.categorie||''}</span>
-              <span class="tag">${dateStr}</span>
-            </div>
-            <h3><a href="${it.lien||'#'}" target="_blank" rel="noopener">${it.titre||''}</a></h3>
-            <p class="meta">${(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ')}</p>
-            <p>${it.resume||''}</p>
+    return `
+      <article class="card">
+        <a class="thumb" href="${link}"${aAttrs}>
+          <img src="${img}" alt="${title}" loading="lazy" decoding="async" data-fallback="${PLACEHOLDER_IMG}">
+        </a>
+        <div class="body">
+          <div class="kicker">
+            <span class="tag">${cat}</span>
+            <span class="tag">${date}</span>
           </div>
-        </article>
-      `;
-    }
+          <h3><a href="${link}"${aAttrs}>${title}</a></h3>
+          <p class="meta">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>
+          <p>${resume}</p>
+        </div>
+      </article>
+    `;
+  }
 
-    function render(list){
-      const sorted = [...list].sort((a,b)=> (parseISO(b.date)||0) - (parseISO(a.date)||0));
-      grid.innerHTML = sorted.map(card).join('');
-    }
+  function attachImageFallback(){
+    grid?.querySelectorAll('img[data-fallback]').forEach(img => {
+      img.addEventListener('error', () => {
+        const fb = img.getAttribute('data-fallback') || PLACEHOLDER_IMG;
+        if(img.src.endsWith(fb)) return;
+        img.src = fb;
+      }, { once:false });
+    });
+  }
 
-    function applyFilters(){
-      const txt = (q.value||'').toLowerCase();
-      const cats = catChips.filter(c=>c.checked).map(c=>c.dataset.cat.toLowerCase());
-      const p = (periodRadios.find(r=>r.checked)||{}).value || '30';
-      const now = new Date();
+  function render(list){
+    if(!grid) return;
 
-      const filtered = items.filter(it=>{
-        const hay = [it.titre, it.categorie, ...(it.tags||[]), it.resume].join(' ').toLowerCase();
-        const okText = !txt || hay.includes(txt);
-        const okCat  = !cats.length || cats.includes((it.categorie||'').toLowerCase());
-        let okPeriod = true;
-        if(p!=='all'){
-          const d = parseISO(it.date);
-          if(d){ okPeriod = (now - d) <= parseInt(p,10)*86400000; }
-        }
-        return okText && okCat && okPeriod;
-      });
+    const sorted = [...list].sort((a,b) => {
+      const da = parseISO(a.date)?.getTime() ?? 0;
+      const db = parseISO(b.date)?.getTime() ?? 0;
+      return db - da;
+    });
 
-      render(filtered);
-    }
+    grid.innerHTML = sorted.map(cardHTML).join('');
+    attachImageFallback();
+  }
 
-    q.addEventListener('input', applyFilters);
-    catChips.forEach(c=>c.addEventListener('change', applyFilters));
-    periodRadios.forEach(r=>r.addEventListener('change', applyFilters));
+  function applyFilters(){
+    const now = new Date();
 
-    render(items); // initial
-  })();
-  </script>
-</body>
-</html>
+    const txt = (q?.value || '').toLowerCase().trim();
+    const cats = getSelectedCats();
+    const periodValue = getPeriod();
+
+    const filtered = items.filter(it => {
+      const hay = [
+        it.titre,
+        it.categorie,
+        ...(Array.isArray(it.tags) ? it.tags : []),
+        it.resume
+      ].join(' ').toLowerCase();
+
+      const okText = !txt || hay.includes(txt);
+      const okCat  = !cats.length || cats.includes((it.categorie || '').toLowerCase());
+      const okPeriod = withinPeriod(it.date, periodValue, now);
+
+      return okText && okCat && okPeriod;
+    });
+
+    render(filtered);
+  }
+
+  // Init
+  items = parseJSON(dataEl);
+  render(items);
+
+  // Events
+  q?.addEventListener('input', applyFilters);
+  catChips.forEach(c => c.addEventListener('change', applyFilters));
+  periodRadios.forEach(r => r.addEventListener('change', applyFilters));
+</script>
