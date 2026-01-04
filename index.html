@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="fr">
 <head>
@@ -57,21 +56,40 @@
       width:44px;height:44px;border-radius:12px;overflow:hidden;
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
-    .brand-logo img{width:100%;height:100%;object-fit:contain;object-position:center}
+
     nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+
+    /* Boutons sociaux (header) */
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02);
+      color:var(--color-text);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{background:rgba(255,255,255,.05)}
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
     .search{
-      margin-left:auto;display:flex;gap:8px;align-items:center;
+      display:flex;gap:8px;align-items:center;
       background:var(--color-surface);border:1px solid var(--color-border);
       border-radius:999px;padding:8px 12px
     }
     .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
+
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
       border:1px solid var(--color-border);background:var(--color-surface)
     }
-    @media (max-width:980px){nav.primary,.search{display:none}.burger{display:grid;place-items:center;margin-left:auto}}
+    @media (max-width:980px){
+      nav.primary,.search,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
 
     /* Hero / Slider  */
     .hero{position:relative;margin:24px 0}
@@ -125,13 +143,7 @@
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
 
-    /* =========================
-       HARMONISATION DES IMAGES
-       =========================
-       -> Même "cadre", même centrage, même comportement.
-       -> Les images restent en "cover" pour remplir proprement,
-          mais avec un centrage strict et stable.
-    */
+    /* Vignettes uniformes */
     .card .thumb{
       position: relative;
       height: clamp(200px, 22vw, 260px);
@@ -144,13 +156,20 @@
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:cover;
-      object-position:50% 50%; /* centrage strict */
+      object-position:center;
       display:block;
-
-      /* petit "polish" pour homogénéiser les rendus */
-      transform: translateZ(0);
-      backface-visibility: hidden;
     }
+
+    /* ✅ Fix image "Actualités" mal cadrée : on affiche l'image en entier */
+    .card .thumb.contain img{
+      object-fit:contain;
+      object-position:center;
+    }
+
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card .excerpt{color:var(--color-muted);font-size:14px}
 
     /* Grille spéciale cartes */
     .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
@@ -177,9 +196,14 @@
     /* Footer */
     footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
     .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .footer-nav{display:flex;gap:16px;flex-wrap:wrap;color:var(--color-muted)}
     .social{display:flex;gap:12px}
-    .social a{padding:8px 12px;border-radius:10px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
     /* Menu mobile */
@@ -229,6 +253,7 @@
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
+
       .hero{ margin:16px 0; }
       .slide{ min-height: 250px; }
       .slide .content{ min-height: 250px; padding:18px; gap:10px; }
@@ -247,7 +272,6 @@
       .card .body{ padding:12px 12px 14px; }
       .card h4{ font-size:16px; }
       .card .excerpt{ font-size:13px; }
-
       .card .thumb{ height: 180px; }
       .map-grid{ gap:14px; }
     }
@@ -269,7 +293,7 @@
     <div class="container header-row">
       <a class="brand" href="#" aria-label="Accueil">
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-         <strong>Vivre à Estepona</strong>
+        <strong>Vivre à Estepona</strong>
       </a>
 
       <nav class="primary">
@@ -282,6 +306,25 @@
         <a href="#faq">FAQ</a>
         <a href="contact.html">Contact</a>
       </nav>
+
+      <!-- ✅ Boutons en haut + logos -->
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
 
       <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('#voir')?.scrollIntoView({behavior:'smooth'});">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -315,6 +358,10 @@
       <a href="trafic.html">Trafic</a>
       <a href="#faq" onclick="document.querySelector('.burger')?.click()">FAQ</a>
       <a href="contact.html">Contact</a>
+
+      <!-- Bonus : liens sociaux dans le menu mobile -->
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
   </div>
 
@@ -359,8 +406,10 @@
         </article>
 
         <article class="card">
-          <!-- ✅ inline style supprimé : centrage géré par CSS harmonisé -->
-          <a class="thumb" href="actualites.html"><img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/></a>
+          <!-- ✅ thumb en mode "contain" pour éviter le recadrage -->
+          <a class="thumb contain" href="actualites.html">
+            <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/>
+          </a>
           <div class="body">
             <div class="kicker">Actualités</div>
             <h4><a href="actualites.html">Actualité Estepona</a></h4>
@@ -513,16 +562,25 @@
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Vivre à Estepona</strong>
       </a>
-      <nav class="footer-nav" aria-label="Navigation de pied de page">
-        <a href="#voir">À voir</a>
-        <a href="#manger">Restaurants</a>
-        <a href="#itin">Que faire</a>
-        <a href="#cartes">Cartes</a>
-        <a href="#faq">FAQ</a>
-      </nav>
+
+      <!-- ✅ On enlève le bloc du cadre vert (footer-nav) : SUPPRIMÉ -->
+
       <div class="social" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" aria-label="Instagram">Instagram</a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" aria-label="YouTube">YouTube</a>
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
       </div>
     </div>
     <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
@@ -646,6 +704,3 @@
   </script>
 </body>
 </html>
-```
-
-Si tu veux, je peux aussi te faire une **version “intelligente”** : certaines images (type “NEWS”) passent automatiquement en `contain` *sans casser* les autres photos (cover) — mais là je t’ai fait une harmonisation simple et propre, identique pour toutes.
