@@ -126,6 +126,35 @@
     .card .excerpt{color:var(--color-muted);font-size:14px;line-height:1.65}
     .card .meta{color:var(--color-muted);font-size:13px}
 
+    /* ✅ Emplacements photos (comme index.html) */
+    .card .thumb{
+      position:relative;
+      height: clamp(200px, 22vw, 260px);
+      border-radius:16px;
+      overflow:hidden;
+      background:#0b1322;
+      display:block;
+      margin:12px 12px 0;
+      border:1px solid var(--color-border);
+    }
+    .card .thumb img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .card .thumb.contain img{
+      object-fit:contain;
+      object-position:center;
+    }
+    .photo-caption{
+      color:var(--color-muted);
+      font-size:13px;
+      padding:10px 14px 14px;
+      line-height:1.5;
+    }
+
     /* Sommaire “bloc nav” (mémoire) */
     .quick-nav-wrap{
       border-top:1px solid var(--color-border);
@@ -168,19 +197,6 @@
       color:var(--color-muted);
       font-size:14px;
       line-height:1.6;
-    }
-
-    /* Form mailto */
-    .field label{display:block;font-size:14px;color:var(--color-text);margin:10px 0 6px}
-    .field input{
-      width:100%;
-      background:var(--color-surface-2);
-      border:1px solid var(--color-border);
-      border-radius:12px;
-      padding:10px 12px;
-      color:var(--color-text);
-      outline:0;
-      font-size:16px;
     }
 
     /* Footer */
@@ -246,6 +262,7 @@
       .more{ display:none; }
 
       .prose p{font-size:14px}
+      .card .thumb{ height: 180px; }
     }
     .burger{ cursor:pointer; }
     .burger:active{ transform: scale(.98); }
@@ -298,11 +315,19 @@
       </button>
     </div>
 
-    <!-- Bloc navigation (sommaire rapide) -->
+    <!-- ✅ Bloc nav obligatoire + sommaire -->
     <div class="quick-nav-wrap">
       <div class="container quick-nav-inner">
         <div style="display:flex;gap:16px">
-         
+          <a href="#intro">Intro</a>
+          <a href="#romains">Romains</a>
+          <a href="#andalou">Andalous</a>
+          <a href="#reconquete">Reconquête</a>
+          <a href="#casco">Casco Antiguo</a>
+          <a href="#murales">Fresques</a>
+          <a href="#poesie">Poésie</a>
+          <a href="#itineraire">Itinéraire</a>
+          <a href="#photos">Photos</a>
         </div>
       </div>
     </div>
@@ -328,11 +353,12 @@
       <a href="#intro" onclick="document.querySelector('.burger')?.click()">Intro</a>
       <a href="#romains" onclick="document.querySelector('.burger')?.click()">Romains</a>
       <a href="#andalou" onclick="document.querySelector('.burger')?.click()">Andalous</a>
+      <a href="#reconquete" onclick="document.querySelector('.burger')?.click()">Reconquête</a>
       <a href="#casco" onclick="document.querySelector('.burger')?.click()">Casco Antiguo</a>
       <a href="#murales" onclick="document.querySelector('.burger')?.click()">Fresques</a>
       <a href="#poesie" onclick="document.querySelector('.burger')?.click()">Poésie</a>
       <a href="#itineraire" onclick="document.querySelector('.burger')?.click()">Itinéraire</a>
-      <a href="#newsletter" onclick="document.querySelector('.burger')?.click()">Newsletter</a>
+      <a href="#photos" onclick="document.querySelector('.burger')?.click()">Photos</a>
 
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
@@ -346,10 +372,10 @@
         <article class="slide">
           <img class="bg" src="img/estepona-aquarelle.png" alt="Estepona" />
           <div class="content">
-            
+            <span class="pill">Histoire · Casco Antiguo · Fresques · Poésie</span>
             <h1>Estepona : de l’Antiquité à la ville-jardin</h1>
-            <div class="meta">Une lecture simple et complète : Romains, période andalouse, reconquête, art urbain et Ruta de la Poesía.</div>
-          
+            <div class="meta">Romains, période andalouse, reconquête, art urbain et Ruta de la Poesía.</div>
+            <a class="cta" href="#photos">Voir les photos »</a>
           </div>
         </article>
       </div>
@@ -379,8 +405,6 @@
       </div>
     </section>
 
-
-
     <!-- ROMAINS -->
     <section class="category" id="romains">
       <div class="section-head">
@@ -391,6 +415,12 @@
       </div>
 
       <div class="card">
+        <!-- ✅ Emplacements photo (remplace les src par tes images) -->
+        <a class="thumb" href="#" aria-label="Photo : vestiges / côte romaine">
+          <img src="img/placeholder-1.jpg" alt="Photo à ajouter : vestiges / côte romaine (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : vestiges / côte romaine (remplace <code>img/placeholder-1.jpg</code>).</div>
+
         <div class="prose">
           <p>
             Avant la ville moderne, le littoral autour d’Estepona était déjà un espace stratégique. À l’époque romaine,
@@ -399,8 +429,8 @@
           </p>
           <ul>
             <li><strong>Pêche</strong> et transformation du poisson (salaisons).</li>
-            <li>Production de condiments de type <strong>garum</strong> (très prisés dans l’Empire romain).</li>
-            <li><strong>Échanges</strong> côtiers avec les ports de la région (Málaga / Carteia et autres points du littoral).</li>
+            <li>Production de condiments de type <strong>garum</strong>.</li>
+            <li><strong>Échanges</strong> côtiers avec les ports de la région.</li>
           </ul>
           <p>
             Même si l’urbanisation a recouvert une partie des vestiges, la logique romaine reste claire :
@@ -420,21 +450,24 @@
       </div>
 
       <div class="card">
+        <a class="thumb" href="#" aria-label="Photo : ruelles anciennes / Barrio de la Villa">
+          <img src="img/placeholder-2.jpg" alt="Photo à ajouter : ruelles anciennes / Barrio de la Villa (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : ruelles anciennes / Barrio de la Villa.</div>
+
         <div class="prose">
           <p>
             Après l’Antiquité, la côte passe progressivement sous influence musulmane. Estepona est alors connue sous des formes
             comme <strong>Astabbuna</strong> (selon les traditions historiques et sources locales).
           </p>
-          <p>
-            Cette période structure durablement la manière de vivre la ville :
-          </p>
+          <p>Cette période structure durablement la manière de vivre la ville :</p>
           <ul>
             <li><strong>Ruelles étroites</strong> pour préserver la fraîcheur et créer de l’ombre.</li>
             <li>Organisation en quartiers, avec un noyau ancien proche de l’actuel <strong>Barrio de la Villa</strong>.</li>
             <li>Logique défensive face aux risques côtiers.</li>
           </ul>
           <p>
-            Beaucoup de ce “plan” se ressent encore aujourd’hui dans le Casco Antiguo : on y marche lentement,
+            Beaucoup de ce “plan” se ressent encore aujourd’hui : on y marche lentement,
             on tourne, on s’abrite, et on découvre des petites places inattendues.
           </p>
         </div>
@@ -451,16 +484,20 @@
       </div>
 
       <div class="card">
+        <a class="thumb" href="#" aria-label="Photo : patrimoine / centre ancien">
+          <img src="img/placeholder-3.jpg" alt="Photo à ajouter : patrimoine / centre ancien (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : patrimoine / centre ancien.</div>
+
         <div class="prose">
           <p>
             Au cours du XV<sup>e</sup> siècle, la zone passe sous contrôle castillan (dans le contexte large de la Reconquête),
-            et la ville se transforme progressivement : organisation religieuse, administration, défense côtière,
+            et la ville se transforme : organisation religieuse, administration, défense côtière,
             et développement d’une économie locale plus stable.
           </p>
           <p>
             Pendant longtemps, Estepona reste modeste : pêche, agriculture, échanges régionaux… avec une exposition
-            périodique aux menaces venues de la mer. C’est surtout à l’époque contemporaine que la ville accélère son développement,
-            jusqu’à devenir un équilibre rare entre <strong>ville vivante</strong> et <strong>destination</strong>.
+            périodique aux menaces venues de la mer. C’est surtout à l’époque contemporaine que la ville accélère son développement.
           </p>
         </div>
       </div>
@@ -476,9 +513,14 @@
       </div>
 
       <div class="card">
+        <a class="thumb" href="#" aria-label="Photo : ruelles fleuries du Casco Antiguo">
+          <img src="img/placeholder-4.jpg" alt="Photo à ajouter : ruelles fleuries du Casco Antiguo (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : ruelles fleuries (bougainvilliers, pots, façades blanches).</div>
+
         <div class="prose">
           <p>
-            Le <strong>Casco Antiguo</strong> est aujourd’hui l’une des signatures d’Estepona : maisons blanches, ruelles soignées,
+            Le <strong>Casco Antiguo</strong> est l’une des signatures d’Estepona : maisons blanches, ruelles soignées,
             pots de fleurs à perte de vue, et une atmosphère paisible.
           </p>
           <p>
@@ -502,6 +544,11 @@
       </div>
 
       <div class="card">
+        <a class="thumb contain" href="#" aria-label="Photo : fresque murale (format vertical / entier)">
+          <img src="img/placeholder-5.jpg" alt="Photo à ajouter : fresque murale (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : une fresque monumentale (si l’image est très “verticale”, garde <code>contain</code>).</div>
+
         <div class="prose">
           <p>
             Depuis les années 2010, Estepona a développé une identité culturelle forte grâce à ses <strong>fresques murales monumentales</strong>.
@@ -530,6 +577,11 @@
       </div>
 
       <div class="card">
+        <a class="thumb" href="#" aria-label="Photo : plaques/citations dans les ruelles">
+          <img src="img/placeholder-6.jpg" alt="Photo à ajouter : plaques/citations dans les ruelles (remplacer cette image)" />
+        </a>
+        <div class="photo-caption">📷 Photo à ajouter : plaques de poésie / détail dans une ruelle du centre.</div>
+
         <div class="prose">
           <p>
             Estepona ne se contente pas d’être belle : elle se <strong>lit</strong>. Dans le centre, on croise des plaques et citations
@@ -537,7 +589,7 @@
           </p>
           <p>
             La ville met aussi en avant des auteurs contemporains liés à Estepona, comme <strong>Alejandro Simón Partal</strong>,
-            poète né à Estepona (1983), figure culturelle reconnue, associé à l’animation poétique locale.
+            poète né à Estepona (1983), associé à l’animation poétique locale.
           </p>
           <div class="callout">
             Idée : fais la Ruta de la Poesía au coucher du soleil : ambiance calme + lumière dorée dans la vieille ville.
@@ -583,7 +635,46 @@
       </div>
     </section>
 
-    
+    <!-- ✅ SECTION : PHOTOS (emplacements prêts) -->
+    <section class="category" id="photos">
+      <div class="section-head">
+        <div>
+          <h2>Emplacements photos</h2>
+          <p>Ajoute ici tes meilleures images (Casco / Murales / Détails)</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="#"><img src="img/placeholder-1.jpg" alt="Photo à remplacer : Casco Antiguo" /></a>
+          <div class="body">
+            <div class="kicker">Casco Antiguo</div>
+            <h3>Ruelle fleurie</h3>
+            <p class="excerpt">Remplace l’image par ta photo (format paysage ou portrait).</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb contain" href="#"><img src="img/placeholder-2.jpg" alt="Photo à remplacer : Fresque murale" /></a>
+          <div class="body">
+            <div class="kicker">Murales</div>
+            <h3>Fresque monumentale</h3>
+            <p class="excerpt">Si l’image est très verticale, garde le mode <strong>contain</strong>.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="#"><img src="img/placeholder-3.jpg" alt="Photo à remplacer : Détail / poésie" /></a>
+          <div class="body">
+            <div class="kicker">Poésie</div>
+            <h3>Détail dans le centre</h3>
+            <p class="excerpt">Plaque, citation, porte, balcon, ambiance.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </main>
 
   <!-- FOOTER -->
   <footer>
@@ -651,6 +742,7 @@
         const el = document.querySelector(id);
         if(el){
           e.preventDefault();
+          closeMenu();
           el.scrollIntoView({behavior:'smooth', block:'start'});
         }
       });
