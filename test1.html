@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H5DN0R14FF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H5DN0R14FF');
+  </script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estepona — Vieille ville & fresques</title>
+  <meta name="description" content="Découvrez la vieille ville d’Estepona : ruelles blanches, pots fleuris et grandes fresques murales. Itinéraire à pied, spots photo, conseils et carte." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Estepona — Vieille ville & fresques" />
+  <meta property="og:description" content="Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue. Un itinéraire simple à pied + spots photo." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
+
+  <link rel="preload" href="/fonts/Inter-Variable.woff2 reminding as="font" type="font/woff2" crossorigin>
+
+  <style>
+    :root{
+      --color-bg: #0b1730;
+      --color-surface: #0f1f44;
+      --color-surface-2: #0f1625;
+      --color-primary: #2db4ff;
+      --color-accent: #00d0b6;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    html,body{
+      margin:0;padding:0;
+      background:var(--color-bg);
+      color:var(--color-text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1100px,92vw);margin-inline:auto}
+
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
+      backdrop-filter:saturate(140%) blur(6px);
+      border-bottom:1px solid var(--color-border)
+    }
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
+    }
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+
+    /* Boutons sociaux (header) */
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02);
+      color:var(--color-text);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{background:rgba(255,255,255,.05)}
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .burger{
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface);
+      cursor:pointer;
+    }
+    .burger:active{ transform: scale(.98); }
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    /* Navigation block (obligatoire) */
+    .nav-standard{
+      padding:12px 0 6px;
+      border-bottom:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.12) 100%);
+    }
+
+    /* ✅ bloc demandé systématiquement */
+    .nav-standard .wrap{
+      display:flex;gap:16px;flex-wrap:wrap;align-items:center;
+    }
+    .nav-standard .wrap a{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02);
+      font-size:14px;
+    }
+    .nav-standard .wrap a:hover{background:rgba(255,255,255,.05)}
+    @media (max-width:980px){ .nav-standard{display:none} }
+
+    /* Hero */
+    .hero{
+      padding:26px 0 18px;
+      border-bottom:1px solid var(--color-border);
+      background:
+        radial-gradient(900px 340px at 10% 0%, rgba(45,180,255,.18), rgba(0,0,0,0) 60%),
+        radial-gradient(800px 320px at 90% 10%, rgba(0,208,182,.14), rgba(0,0,0,0) 58%),
+        linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%);
+    }
+    .pill{
+      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted)
+    }
+    .hero h1{margin:10px 0 8px;font-size:32px;line-height:1.18}
+    .hero p{margin:0;color:var(--color-muted);max-width:70ch;line-height:1.6}
+
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .cta{
+      display:inline-block;font-weight:800;color:#06131e;
+      background:var(--color-primary);padding:10px 14px;border-radius:12px
+    }
+    .cta.secondary{
+      background:rgba(255,255,255,.06);
+      color:var(--color-text);
+      border:1px solid var(--color-border);
+      font-weight:700;
+    }
+
+    /* Layout */
+    main{padding:22px 0 10px}
+    section.block{margin:22px 0}
+    .block-head{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+    .block-head h2{margin:0;font-size:22px}
+    .muted{color:var(--color-muted)}
+
+    .grid-2{
+      display:grid;gap:16px;grid-template-columns:1.2fr .8fr;
+      align-items:start;
+    }
+    @media (max-width:980px){ .grid-2{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      overflow:hidden;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+    .card .body{padding:14px 16px 16px}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:var(--color-muted);line-height:1.65}
+    .card ul{margin:10px 0 0;padding-left:18px;color:var(--color-muted);line-height:1.7}
+
+    .thumb{
+      height: clamp(210px, 30vw, 340px);
+      background:#0b1322;
+      position:relative;
+    }
+    .thumb img{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;
+      filter:saturate(1.08) contrast(1.04);
+      opacity:.92;
+    }
+    .thumb .tag{
+      position:absolute;left:14px;bottom:14px;
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--color-border);
+      background:rgba(11,23,48,.75);
+      color:var(--color-text);
+      font-size:13px;
+      backdrop-filter: blur(6px);
+    }
+
+    .facts{
+      display:grid;gap:10px;
+    }
+    .fact{
+      border:1px solid var(--color-border);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+      padding:12px 12px;
+      display:grid;gap:6px;
+    }
+    .fact strong{font-size:14px}
+    .fact span{color:var(--color-muted);font-size:13px;line-height:1.55}
+
+    .steps{
+      display:grid;gap:12px;
+    }
+    .step{
+      display:flex;gap:12px;align-items:flex-start;
+      border:1px solid var(--color-border);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+      padding:12px 12px;
+    }
+    .n{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.04);
+      font-weight:800;
+      color:var(--color-text);
+      flex:0 0 auto;
+    }
+    .step p{margin:0;color:var(--color-muted);line-height:1.6}
+
+    .divider{height:1px;background:var(--color-border);margin:18px 0}
+
+    /* Footer */
+    footer{
+      margin-top:48px;
+      border-top:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
+    }
+    .footer-top{
+      padding:24px 0;
+      display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between
+    }
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
+    .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
+
+    /* Menu mobile */
+    .mobile-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:140;}
+    .mobile-menu{
+      position:fixed;top:0;right:0;height:100vh;
+      width:min(360px, 86vw);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
+      border-left:1px solid var(--color-border);
+      z-index:150;
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .mobile-menu-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
+    }
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
+    }
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary" aria-label="Navigation principale">
+        <a href="index.html#voir">À voir</a>
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation secondaire (bloc obligatoire) -->
+  <div class="nav-standard" aria-label="Navigation secondaire">
+    <div class="container">
+      <div style="display:flex;gap:16px" class="wrap">
+        <a href="index.html">Accueil</a>
+        <a href="#itineraire">Itinéraire</a>
+        <a href="#spots">Spots photo</a>
+        <a href="#conseils">Conseils</a>
+        <a href="#carte">Carte</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU MOBILE -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#voir" onclick="document.querySelector('.burger')?.click()">À voir</a>
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="contact.html">Contact</a>
+
+      <a href="#itineraire" onclick="document.querySelector('.burger')?.click()">Itinéraire</a>
+      <a href="#spots" onclick="document.querySelector('.burger')?.click()">Spots photo</a>
+      <a href="#conseils" onclick="document.querySelector('.burger')?.click()">Conseils</a>
+      <a href="#carte" onclick="document.querySelector('.burger')?.click()">Carte</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <span class="pill">Balade</span>
+      <h1>Vieille ville & fresques — Estepona</h1>
+      <p>
+        Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
+        Voici une balade simple à pied, avec des idées de spots photo et quelques conseils pour profiter au mieux.
+      </p>
+
+      <div class="hero-actions">
+        <a class="cta" href="#itineraire">Voir l’itinéraire</a>
+        <a class="cta secondary" href="index.html#voir">Retour aux bons plans</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Intro + Infos pratiques -->
+    <section class="block" id="itineraire">
+      <div class="block-head">
+        <h2>Balade à pied (2–3 h)</h2>
+        <div class="muted">Gratuit · Centre historique · Facile</div>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="thumb">
+            <!-- Remplace l’image si tu veux : -->
+            <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona, ruelles blanches et fleurs" />
+            <div class="tag">📍 Centro histórico · fresques & ruelles</div>
+          </div>
+          <div class="body">
+            <h3>Le principe</h3>
+            <p>
+              L’idée est de flâner dans le <strong>centre historique</strong> : un labyrinthe de ruelles blanches
+              décorées de <strong>pots de fleurs</strong>, avec des <strong>fresques murales</strong> géantes
+              (street-art) sur les façades.
+            </p>
+            <div class="divider"></div>
+            <p>
+              Astuce : ne cherche pas à tout “faire” — le charme, c’est de se perdre un peu, de tomber sur une place,
+              un café, une fresque inattendue.
+            </p>
+          </div>
+        </article>
+
+        <aside class="facts">
+          <div class="fact">
+            <strong>⏱️ Durée</strong>
+            <span>2 à 3 heures (plus si tu t’arrêtes souvent pour des photos / pauses café).</span>
+          </div>
+          <div class="fact">
+            <strong>👟 Niveau</strong>
+            <span>Facile. Quelques petites pentes, mais rien de sportif.</span>
+          </div>
+          <div class="fact">
+            <strong>🅿️ Stationnement</strong>
+            <span>Pratique : se garer vers la marina/port puis remonter à pied, ou utiliser un parking du centre.</span>
+          </div>
+          <div class="fact">
+            <strong>🕓 Meilleur moment</strong>
+            <span>Matin (lumière douce) ou fin d’après-midi (golden hour). Évite midi en plein été.</span>
+          </div>
+          <div class="fact">
+            <strong>📸 Pour les photos</strong>
+            <span>Les ruelles fleuries sont plus calmes tôt le matin — parfait pour cadrer sans foule.</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Itinéraire simple -->
+    <section class="block">
+      <div class="block-head">
+        <h2>Itinéraire simple (sans prise de tête)</h2>
+        <p class="muted">5 étapes — à adapter selon ton rythme</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <p><strong>Départ :</strong> entre la vieille ville et le paseo. Entre dans le centre et commence à remonter doucement dans les ruelles.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <p><strong>Ruelles fleuries :</strong> explore les petites rues blanches avec les pots suspendus et les façades décorées.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <p><strong>Fresques :</strong> fais un “chasse aux fresques”. Certaines sont immenses et se voient de loin : parfait pour un détour.</p>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <p><strong>Pause :</strong> choisis une petite place (café / glace). Le centre est idéal pour une pause à l’ombre.</p>
+        </div>
+        <div class="step">
+          <div class="n">5</div>
+          <p><strong>Retour :</strong> redescends tranquillement vers le paseo ou le port, en profitant des derniers spots photo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spots photo -->
+    <section class="block" id="spots">
+      <div class="block-head">
+        <h2>Spots photo à ne pas rater</h2>
+        <p class="muted">Idées de cadrages simples</p>
+      </div>
+
+      <div class="grid" style="display:grid;gap:16px;grid-template-columns:repeat(3,1fr)">
+        <article class="card">
+          <div class="body">
+            <div class="pill">📷 Ruelles</div>
+            <h3>Perspectives</h3>
+            <p>Ruelles étroites, murs blancs, pots fleuris : place-toi au milieu de la rue pour un effet “tunnel”.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="body">
+            <div class="pill">🎨 Fresques</div>
+            <h3>Plan large + détail</h3>
+            <p>Fais une photo “façade entière”, puis un gros plan sur un détail (regard, texture, signature).</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="body">
+            <div class="pill">🌿 Fleurs</div>
+            <h3>Couleurs</h3>
+            <p>Utilise les fleurs comme premier plan : rapproche-toi d’un pot et fais la mise au point sur la façade derrière.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Conseils -->
+    <section class="block" id="conseils">
+      <div class="block-head">
+        <h2>Conseils pratiques</h2>
+        <p class="muted">Pour une balade agréable</p>
+      </div>
+
+      <article class="card">
+        <div class="body">
+          <h3>À prendre avec toi</h3>
+          <ul>
+            <li><strong>Eau</strong> (surtout d’avril à octobre).</li>
+            <li><strong>Chapeau + crème</strong> : les ruelles sont parfois ombragées, mais ça tape vite au soleil.</li>
+            <li><strong>Chaussures confort</strong> : pavés, petites pentes.</li>
+            <li><strong>Smartphone / appareil</strong> : mode grand-angle utile pour les fresques.</li>
+          </ul>
+          <div class="divider"></div>
+          <h3>Quand y aller ?</h3>
+          <p>
+            Pour une ambiance “carte postale”, vise <strong>le matin</strong> (moins de monde, lumière douce).
+            Pour une lumière chaude, la <strong>fin d’après-midi</strong> est parfaite.
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <!-- Carte -->
+    <section class="block" id="carte">
+      <div class="block-head">
+        <h2>Carte</h2>
+        <p class="muted">Centre historique (à adapter)</p>
+      </div>
+
+      <article class="card">
+        <div class="body">
+          <p>
+            Astuce : ouvre Google Maps et recherche “<strong>Centro Histórico Estepona</strong>” puis lance la balade.
+            Si tu veux, je peux aussi te préparer un lien “itinéraire” avec un départ précis (port, paseo, parking…).
+          </p>
+          <a class="cta secondary" href="https://www.google.com/maps/search/?api=1&query=Centro+Historico+Estepona" target="_blank" rel="noopener">
+            Ouvrir la carte →
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
+  </footer>
+
+  <!-- Script menu mobile -->
+  <script>
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
+
+    function openMenu(){
+      if (!mobile || !burger) return;
+
+      mobile.hidden = false;
+      burger.setAttribute('aria-expanded', 'true');
+
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+
+      document.body.appendChild(backdrop);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu(){
+      if (!mobile || !burger) return;
+
+      mobile.hidden = true;
+      burger.setAttribute('aria-expanded', 'false');
+
+      backdrop?.remove();
+      document.body.style.overflow = '';
+    }
+
+    burger?.addEventListener('click', () => {
+      const isOpen = burger.getAttribute('aria-expanded') === 'true';
+      isOpen ? closeMenu() : openMenu();
+    });
+  </script>
+</body>
+</html>
