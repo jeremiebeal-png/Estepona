@@ -9,27 +9,46 @@
 
   <style>
     :root{
+      /* Page */
+      --page:#ffffff;
+
+      /* Encadrés / cartes (comme ta capture) */
+      --panel:#071a22;           /* bleu nuit */
+      --panel2:#06161d;          /* variante légère */
+      --panelLine: rgba(234,246,248,.10);
+      --panelSoft: rgba(234,246,248,.06);
+
+      /* Texte sur cartes */
+      --textOn:#eaf6f8;
+      --mutedOn: rgba(234,246,248,.74);
+
+      /* Texte global (hors cartes) */
       --text:#0b3c49;
       --muted:rgba(11,60,73,.70);
       --line:rgba(11,60,73,.14);
       --soft:rgba(11,60,73,.06);
-      --brand:#0b3c49;
 
-      /* Couleurs “ancien thème” pour les bulles */
+      /* Bulles “ancien thème” */
       --bubble-bg: rgba(45,212,191,.12);
       --bubble-br: rgba(45,212,191,.24);
-      --bubble-tx: rgba(11,60,73,.95);
+      --bubble-tx: rgba(234,246,248,.95);
 
       --bubble2-bg: rgba(14,165,233,.10);
       --bubble2-br: rgba(14,165,233,.22);
 
       --radius:18px;
-      --shadow:0 14px 40px rgba(10, 30, 35, .10);
+      --shadow:0 14px 40px rgba(10, 30, 35, .18);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
+
     *{box-sizing:border-box}
-    body{margin:0;font-family:var(--sans);color:var(--text);background:#fff}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:var(--page);
+    }
     a{color:inherit}
 
     .container{max-width:1200px;margin:0 auto;padding:24px}
@@ -52,43 +71,45 @@
     }
     .brand h1{font-size:15px;letter-spacing:.2px;margin:0}
     .brand p{margin:0;font-size:12px;color:var(--muted)}
-
-    /* BULLE (chip header) -> ancien style */
     .chip{
       display:inline-flex;align-items:center;gap:8px;
       padding:8px 10px;border-radius:999px;
       background: var(--bubble-bg);
       border: 1px solid var(--bubble-br);
-      color: var(--bubble-tx);
+      color: var(--text);
       font-size:12px;
       white-space:nowrap;
     }
 
     .hero{padding:22px 0 8px}
     .hero-grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:18px;align-items:stretch}
+
+    /* Cartes principales en bleu nuit */
     .card{
-      background: #fff;
-      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
+      border: 1px solid var(--panelLine);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      color: var(--textOn);
     }
     .card .pad{padding:18px}
-    .title{font-size:28px;line-height:1.15;margin:0 0 8px;letter-spacing:.2px}
+
+    .title{font-size:28px;line-height:1.15;margin:0 0 8px;letter-spacing:.2px;color:var(--textOn)}
 
     .quick{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
       padding:10px 12px;border-radius:14px;
-      background: #fff;
-      border: 1px solid var(--line);
-      color: var(--text);
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: var(--textOn);
       text-decoration:none;
       font-size:13px;
       transition:transform .08s ease, background .08s ease, border-color .08s ease;
       cursor:pointer;
       user-select:none;
     }
-    .btn:hover{transform:translateY(-1px);background:var(--soft);border-color:rgba(11,60,73,.22)}
+    .btn:hover{transform:translateY(-1px);background:rgba(234,246,248,.12);border-color:rgba(234,246,248,.20)}
     .btn.primary{
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.88));
       border: none;
@@ -99,13 +120,13 @@
     .stat{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .stat .box{
       border-radius: 16px;
-      background: var(--soft);
-      border: 1px solid var(--line);
+      background: rgba(234,246,248,.06);
+      border: 1px solid rgba(234,246,248,.10);
       padding:14px;
     }
-    .stat .k{font-size:12px;color:var(--muted);margin:0 0 6px}
-    .stat .v{margin:0;font-size:20px;font-weight:800}
-    .stat .s{margin:6px 0 0;color:var(--muted);font-size:12px}
+    .stat .k{font-size:12px;color:var(--mutedOn);margin:0 0 6px}
+    .stat .v{margin:0;font-size:20px;font-weight:800;color:var(--textOn)}
+    .stat .s{margin:6px 0 0;color:var(--mutedOn);font-size:12px}
 
     .controls{
       margin-top:14px;
@@ -115,25 +136,26 @@
     }
     .field{
       border-radius: 16px;
-      background: #fff;
-      border: 1px solid var(--line);
+      background: rgba(234,246,248,.06);
+      border: 1px solid rgba(234,246,248,.12);
       padding:10px 12px;
       display:flex;flex-direction:column;gap:6px;
       min-height:62px;
+      color: var(--textOn);
     }
-    .field label{font-size:11px;color:var(--muted)}
+    .field label{font-size:11px;color:var(--mutedOn)}
     input[type="text"], select{
       background: transparent;border: none;outline: none;
-      color: var(--text);font-size:14px;padding:2px 0;
+      color: var(--textOn);font-size:14px;padding:2px 0;
     }
-    select option{color:#0b3c49}
+    select option{color:#061e25}
     .divider{height:1px;background:var(--line);margin:18px 0}
 
     .results-head{
       margin-top:18px;
       display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
     }
-    .results-head h2{margin:0;font-size:16px}
+    .results-head h2{margin:0;font-size:16px;color:var(--text)}
     .results-head .meta{color:var(--muted);font-size:12px}
 
     .grid{
@@ -142,18 +164,20 @@
       grid-template-columns: repeat(3, 1fr);
       gap:12px;
     }
+
+    /* Cartes murales en bleu nuit */
     .mural{
       border-radius: 18px;
-      background: #fff;
-      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
+      border: 1px solid var(--panelLine);
       padding:14px;
       display:flex;flex-direction:column;gap:10px;
       min-height: 210px;
-      box-shadow: 0 10px 24px rgba(10,30,35,.06);
+      box-shadow: 0 10px 24px rgba(10,30,35,.16);
+      color: var(--textOn);
     }
     .mural .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 
-    /* BULLE (badge #) -> ancien style */
     .badge{
       font-family:var(--mono);
       font-size:12px;
@@ -164,14 +188,12 @@
       flex:0 0 auto;
     }
 
-    .mural h3{margin:0;font-size:14px;line-height:1.25}
-    .mural .who{margin:0;color:var(--muted);font-size:12px}
+    .mural h3{margin:0;font-size:14px;line-height:1.25;color:var(--textOn)}
+    .mural .who{margin:0;color:var(--mutedOn);font-size:12px}
     .row{
       display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-      color: var(--muted);font-size:12px;
+      color: var(--mutedOn);font-size:12px;
     }
-
-    /* BULLES (pills) -> ancien style */
     .pill{
       padding:6px 8px;border-radius:999px;
       background: var(--bubble2-bg);
@@ -179,23 +201,28 @@
       color: var(--bubble-tx);
     }
 
-    .desc{margin:0;color:rgba(11,60,73,.92);font-size:13px;line-height:1.45}
+    .desc{margin:0;color:rgba(234,246,248,.90);font-size:13px;line-height:1.45}
     .mural .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
 
     .link{
       text-decoration:none;
       padding:8px 10px;border-radius:12px;
-      background: #fff;
-      border: 1px solid var(--line);
-      font-size:12px;color:var(--text);
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      font-size:12px;color:var(--textOn);
     }
-    .link:hover{background:var(--soft)}
-    .link.map{border-color:rgba(45,212,191,.35)}
-    .link.copy{border-color:rgba(14,165,233,.35)}
-    .link.site{border-color:rgba(14,165,233,.35)}
-    .link.ig{border-color:rgba(251,191,36,.45)}
+    .link:hover{background:rgba(234,246,248,.12)}
+    .link.map{border-color:rgba(45,212,191,.22)}
+    .link.copy{border-color:rgba(14,165,233,.22)}
+    .link.site{border-color:rgba(14,165,233,.25)}
+    .link.ig{border-color:rgba(251,191,36,.25)}
 
-    .foot{margin:26px 0 10px;color: var(--muted);font-size:12px;line-height:1.5}
+    .foot{
+      margin:26px 0 10px;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
 
     @media (max-width: 980px){
       .hero-grid{grid-template-columns:1fr}
@@ -343,7 +370,7 @@
       {n:12, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón)", date:"2014", year:"2014", meaning:"Hommage aux pêcheurs et à la tradition maritime.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:13, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes)", date:"—", year:"", meaning:"Palette bleu/argent : abstraction / atmosphère.", artistSite:"", artistInstagram:""},
       {n:14, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra)", date:"—", year:"", meaning:"Mouvement, trajectoire, “poursuivre la piste”.", artistSite:"", artistInstagram:"nano4814"},
-      {n:15, title:"Ángel, el buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas)", date:"2014", year:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste, très photographié.", artistSite:"https://www.stoagallery.com/en/eric-aman/", artistInstagram:""},
+      {n:15, title:"Ángel, le buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas)", date:"2014", year:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste, très photographié.", artistSite:"https://www.stoagallery.com/en/eric-aman/", artistInstagram:""},
       {n:16, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12", date:"—", year:"", meaning:"Œuvre urbaine / jeu graphique (titre stylisé).", artistSite:"", artistInstagram:""},
       {n:17, title:"Regando el Jardín", artist:"José Fernández Ríos", location:"Avda. Andalucía", date:"—", year:"", meaning:"Hyperréalisme : fillette arrosant… un arbre réel (illusion).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:18, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando", date:"—", year:"", meaning:"Hommage à la musique : ambiance, rythme, instruments suggérés.", artistSite:"", artistInstagram:"larrauriblanca"},
