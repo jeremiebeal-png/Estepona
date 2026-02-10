@@ -188,6 +188,7 @@
     .link.map{border-color:rgba(45,212,191,.22)}
     .link.copy{border-color:rgba(14,165,233,.22)}
     .link.site{border-color:rgba(14,165,233,.25)}
+    .link.ig{border-color:rgba(251,191,36,.25)}
 
     .foot{
       margin:26px 0 10px;
@@ -332,7 +333,7 @@
      * - date: string (ex "2013", "février 2013", "avril 2015")
      * - year: string (juste l’année pour filtrer)
      * - meaning: string (description courte)
-     * - artistSite: site/portfolio si connu
+     * - artistSite: site/portfolio si connu (si vide => on affiche Instagram)
      */
     const murals = [
       {n:1,  title:"¡ESTEPONA BERMEJA!", artist:"Ana Cecilia Salinas", location:"C/ Formentera (Bda. Los Televisores)", date:"2013", year:"2013", meaning:"Mural monumental évoquant Estepona et son paysage (Sierra Bermeja).", artistSite:""},
@@ -360,6 +361,7 @@
       {n:23, title:"San Isidro Labrador", artist:"Blanca Larrauri", location:"C/ María Magdalena (Bda. Fuerzas Armadas)", date:"2015", year:"2015", meaning:"Saint patron : tradition agricole et identité populaire.", artistSite:""},
       {n:24, title:"Reflejos del Jardín", artist:"José Fernández Ríos", location:"Parque Botánico y Orquidario", date:"—", year:"", meaning:"Nature et reflets : profondeur végétale (hyperréalisme).", artistSite:"https://www.jfrios.com/"},
       {n:25, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar)", date:"2016", year:"2016", meaning:"Don Quichotte revisité : hommage à Cervantès en version moderne.", artistSite:"https://curroleyton.com/es"},
+
       {n:26, title:"In Memoriam", artist:"Pilar Castañón y María Romero", location:"Avda. Juan Carlos I (Bda. San Isidro)", date:"—", year:"", meaning:"Souvenir/hommage : mémoire et reconnaissance.", artistSite:""},
       {n:27, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África)", date:"—", year:"", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:""},
       {n:28, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia", date:"—", year:"", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:""},
@@ -435,6 +437,13 @@
       return `https://www.google.com/maps/search/?api=1&query=${query}`;
     }
 
+    // Instagram (sans inventer un @)
+    // Ouvre une recherche Google ciblée sur Instagram + nom de l’artiste.
+    function instagramSearchLink(artistName){
+      const q = encodeURIComponent(`site:instagram.com "${artistName}"`);
+      return `https://www.google.com/search?q=${q}`;
+    }
+
     function copyToClipboard(text){
       if (!navigator.clipboard) return;
       navigator.clipboard.writeText(text);
@@ -484,9 +493,14 @@
 
         const links = [];
         links.push(`<a class="link map" target="_blank" rel="noopener" href="${mapLink}">🗺️ Maps</a>`);
+
         if (m.artistSite){
           links.push(`<a class="link site" target="_blank" rel="noopener" href="${m.artistSite}">🌐 Site artiste</a>`);
+        } else {
+          const ig = instagramSearchLink(m.artist);
+          links.push(`<a class="link ig" target="_blank" rel="noopener" href="${ig}">📷 Instagram</a>`);
         }
+
         links.push(`<a class="link copy" href="javascript:void(0)" data-copy="${escapeAttr(copyLine)}">📋 Copier</a>`);
 
         const el = document.createElement("article");
