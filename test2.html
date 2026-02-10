@@ -4,21 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Route des fresques d’Estepona — Murales, artistes & emplacements</title>
-  <meta name="description" content="La route des fresques d’Estepona : liste des œuvres, artistes, lieux, dates, recherche et filtres." />
+  <meta name="description" content="Route des fresques d’Estepona : liste des œuvres, artistes, lieux, dates, recherche et filtres." />
   <meta name="theme-color" content="#0b3c49" />
 
   <style>
     :root{
-      --bg:#071f26;
-      --panel:#0b2f38;
-      --panel2:#0d3640;
       --text:#eaf6f8;
       --muted:rgba(234,246,248,.75);
-      --soft:rgba(234,246,248,.10);
-      --soft2:rgba(234,246,248,.16);
-      --brand:#0b3c49;
-      --accent:#2dd4bf;
-      --warn:#fbbf24;
       --radius:18px;
       --shadow:0 14px 40px rgba(0,0,0,.35);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -35,14 +27,19 @@
         linear-gradient(180deg, #04171c 0%, #061e25 45%, #04171c 100%);
     }
     a{color:inherit}
+
     .container{max-width:1200px;margin:0 auto;padding:24px}
+
     header{
       position:sticky;top:0;z-index:50;
       backdrop-filter: blur(10px);
       background: rgba(4,23,28,.72);
       border-bottom: 1px solid rgba(234,246,248,.08);
     }
-    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;max-width:1200px;margin:0 auto}
+    .header-inner{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:14px 24px;max-width:1200px;margin:0 auto
+    }
     .brand{display:flex;align-items:center;gap:12px}
     .logo{
       width:38px;height:38px;border-radius:12px;
@@ -61,8 +58,8 @@
       white-space:nowrap;
     }
 
-    .hero{padding:22px 0 8px;}
-    .hero-grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:18px;align-items:stretch;}
+    .hero{padding:22px 0 8px}
+    .hero-grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:18px;align-items:stretch}
     .card{
       background: linear-gradient(180deg, rgba(11,47,56,.78), rgba(11,47,56,.55));
       border: 1px solid rgba(234,246,248,.10);
@@ -70,21 +67,12 @@
       box-shadow: var(--shadow);
     }
     .card .pad{padding:18px}
+
     .title{
       font-size:28px;line-height:1.15;margin:0 0 8px;
       letter-spacing:.2px;
     }
-    .subtitle{margin:0;color:var(--muted);line-height:1.5;font-size:14px}
-    .note{
-      margin-top:12px;
-      padding:12px 12px;
-      border-radius: 14px;
-      background: rgba(251,191,36,.10);
-      border: 1px solid rgba(251,191,36,.22);
-      color: rgba(255,245,214,.95);
-      font-size:13px;
-    }
-    .note strong{color:#fff}
+
     .quick{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
@@ -106,6 +94,7 @@
       font-weight:700;
     }
     .btn.primary:hover{filter:brightness(1.04)}
+
     .stat{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .stat .box{
       border-radius: 16px;
@@ -116,7 +105,6 @@
     .stat .k{font-size:12px;color:var(--muted);margin:0 0 6px}
     .stat .v{margin:0;font-size:20px;font-weight:800}
     .stat .s{margin:6px 0 0;color:var(--muted);font-size:12px}
-    .tools{display:grid;grid-template-columns: 1fr;gap:12px;margin-top:12px}
 
     .controls{
       margin-top:14px;
@@ -142,28 +130,9 @@
       padding:2px 0;
     }
     select option{color:#061e25}
-    .toggle{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      padding:12px 12px;
-      border-radius:16px;
-      background: rgba(234,246,248,.06);
-      border: 1px solid rgba(234,246,248,.12);
-    }
-    .toggle .lbl{font-size:12px;color:var(--muted);line-height:1.2}
-    .switch{
-      width:46px;height:28px;border-radius:999px;
-      border:1px solid rgba(234,246,248,.18);
-      background: rgba(234,246,248,.08);
-      position:relative;cursor:pointer;flex:0 0 auto;
-    }
-    .switch::after{
-      content:"";position:absolute;top:3px;left:3px;
-      width:22px;height:22px;border-radius:999px;
-      background: rgba(234,246,248,.90);
-      transition:left .12s ease;
-    }
-    .switch.on{background:rgba(45,212,191,.22);border-color:rgba(45,212,191,.35)}
-    .switch.on::after{left:21px;background:rgba(45,212,191,.95)}
+
+    .divider{height:1px;background:rgba(234,246,248,.10);margin:18px 0}
+
     .results-head{
       margin-top:18px;
       display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
@@ -220,34 +189,21 @@
     .link.copy{border-color:rgba(14,165,233,.22)}
     .link.site{border-color:rgba(14,165,233,.25)}
 
-    .tablewrap{
-      margin-top:12px;
-      border-radius: 18px;
-      background: rgba(234,246,248,.05);
-      border: 1px solid rgba(234,246,248,.10);
-      overflow:hidden;
-    }
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:12px 12px;border-bottom:1px solid rgba(234,246,248,.08);vertical-align:top}
-    th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;background:rgba(234,246,248,.04)}
-    td{font-size:13px;color:rgba(234,246,248,.90)}
-    tr:hover td{background:rgba(234,246,248,.03)}
     .foot{
       margin:26px 0 10px;
       color: var(--muted);
       font-size:12px;
       line-height:1.5;
     }
-    .divider{height:1px;background:rgba(234,246,248,.10);margin:18px 0}
 
     @media (max-width: 980px){
       .hero-grid{grid-template-columns:1fr}
       .grid{grid-template-columns: repeat(2, 1fr)}
-      .controls{grid-template-columns: 1fr 1fr; }
+      .controls{grid-template-columns: 1fr 1fr}
     }
     @media (max-width: 620px){
       .grid{grid-template-columns: 1fr}
-      .controls{grid-template-columns: 1fr; }
+      .controls{grid-template-columns: 1fr}
       .header-inner{padding:12px 16px}
       .container{padding:18px}
       .title{font-size:24px}
@@ -262,7 +218,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Vivre à Estepona — Route des fresques</h1>
-          <p>Murales · artistes · dates · lieux · recherche</p>
+          <p>Murales · artistes · dates · lieux</p>
         </div>
       </div>
 
@@ -287,15 +243,6 @@
         <div class="card">
           <div class="pad">
             <h2 class="title">Route des fresques d’Estepona</h2>
-            <p class="subtitle">
-              Page mise à jour (sans liens vers l’EOI) : liste des fresques, artistes, dates, lieux et descriptions.
-              Les “sites artistes” restent affichés quand disponibles.
-            </p>
-
-            <div class="note">
-              <strong>À propos des descriptions :</strong> quand une description n’a pas encore été confirmée,
-              elle est indiquée comme <em>“à compléter”</em>.
-            </div>
 
             <div class="quick">
               <a class="btn primary" href="#liste">🔎 Rechercher une fresque</a>
@@ -311,35 +258,13 @@
               <div class="box">
                 <p class="k">Œuvres listées</p>
                 <p class="v" id="totalCount">62</p>
-                <p class="s">Base : liste 62 œuvres</p>
+                <p class="s">Route des fresques</p>
               </div>
               <div class="box">
                 <p class="k">Affichées</p>
                 <p class="v" id="shownCount">62</p>
                 <p class="s">selon tes filtres</p>
               </div>
-            </div>
-
-            <div class="tools">
-              <div class="toggle">
-                <div>
-                  <div class="lbl">Affichage</div>
-                  <div class="lbl" style="margin-top:4px;color:rgba(234,246,248,.9)">Cartes / Tableau</div>
-                </div>
-                <div class="switch" id="viewSwitch" role="switch" aria-checked="false" tabindex="0"></div>
-              </div>
-
-              <div class="toggle">
-                <div>
-                  <div class="lbl">Masquer les “à compléter”</div>
-                  <div class="lbl" style="margin-top:4px;color:rgba(234,246,248,.9)">Ne garder que les fiches documentées</div>
-                </div>
-                <div class="switch" id="completeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
-              </div>
-
-              <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Estepona%20murales%20ruta" target="_blank" rel="noopener">
-                🗺️ Rechercher “murales” sur Google Maps
-              </a>
             </div>
           </div>
         </div>
@@ -349,8 +274,8 @@
 
       <div class="controls">
         <div class="field">
-          <label for="q">Recherche (titre, artiste, lieu, description)</label>
-          <input id="q" type="text" placeholder="ex: buceador, buganvilla, Tres Banderas, Leyton…" autocomplete="off" />
+          <label for="q">Recherche (titre, artiste, lieu)</label>
+          <input id="q" type="text" placeholder="ex: Quijote, Leyton, Avda. Andalucía…" autocomplete="off" />
         </div>
 
         <div class="field">
@@ -395,25 +320,8 @@
 
       <div id="cards" class="grid" aria-live="polite"></div>
 
-      <div id="table" class="tablewrap" style="display:none" aria-live="polite">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:70px">#</th>
-              <th>Titre</th>
-              <th>Artiste</th>
-              <th>Lieu</th>
-              <th style="width:110px">Date</th>
-              <th>Ce que ça représente</th>
-              <th style="width:140px">Site artiste</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-
       <p class="foot">
-        Certaines œuvres peuvent être restaurées, remplacées ou déplacées : une vérification sur place reste la meilleure option.
+        Astuce : certaines œuvres peuvent être restaurées ou remplacées. Sur place, les plaques et infos locales restent la référence.
       </p>
     </section>
   </main>
@@ -423,91 +331,72 @@
      * Champs :
      * - date: string (ex "2013", "février 2013", "avril 2015")
      * - year: string (juste l’année pour filtrer)
-     * - meaning: string (description)
+     * - meaning: string (description courte)
      * - artistSite: site/portfolio si connu
      */
     const murals = [
-      {
-        n: 1,
-        title: "¡ESTEPONA BERMEJA!",
-        artist: "Ana Cecilia Salinas",
-        location: "C/ Formentera (Bda. Los Televisores)",
-        date: "2013",
-        year: "2013",
-        meaning: "Mural monumental (env. 30 m) évoquant Estepona et son paysage, avec une présence forte de la Sierra Bermeja et de l’identité locale.",
-        artistSite: ""
-      },
-      {
-        n: 2,
-        title: "La Casa de la Buena Gente",
-        artist: "Conchi Álvarez",
-        location: "C/ Tres Banderas",
-        date: "2013 (à confirmer)",
-        year: "2013",
-        meaning: "Trompe-l’œil “maison habitée” : personnages, balcons, scènes de voisinage — l’œuvre joue avec l’architecture réelle et donne une impression de vie dans l’immeuble.",
-        artistSite: "https://www.conchialvarez.com/"
-      },
-      {
-        n: 7,
-        title: "Pasen y Vean",
-        artist: "Elena Aguilera",
-        location: "C/ Goya (Bda. El Cid) / Plaza María Bravo (selon panneaux)",
-        date: "février 2013",
-        year: "2013",
-        meaning: "Invitation au spectacle : un message d’accueil et de curiosité (“Entrez et regardez”), dans un style très “affiche / cirque”.",
-        artistSite: ""
-      },
-      {
-        n: 15,
-        title: "Ángel, el buceador",
-        artist: "Eric Aman",
-        location: "C/ Gravina (Bda. Tres Banderas)",
-        date: "2014",
-        year: "2014",
-        meaning: "Plongeur en trompe-l’œil : effet 3D réaliste, comme s’il sortait de la façade. Œuvre très photographiée du parcours.",
-        artistSite: "https://www.stoagallery.com/en/eric-aman/"
-      },
-      {
-        n: 17,
-        title: "Regando el jardín",
-        artist: "José Fernández Ríos",
-        location: "Avda. Andalucía",
-        date: "—",
-        year: "",
-        meaning: "Scène hyperréaliste : une fillette arrose… un arbre réel (placé à côté du mur). À distance, l’illusion donne l’impression qu’elle arrose l’arbre du trottoir.",
-        artistSite: "https://www.jfrios.com/"
-      },
-      {
-        n: 19,
-        title: "La poda de la buganvilla",
-        artist: "José Fernández Ríos",
-        location: "Avda. San Lorenzo (Colegio Víctor de la Serna)",
-        date: "avril 2015",
-        year: "2015",
-        meaning: "Hyperréalisme : un jardinier sur une échelle taille une bougainvillée. L’ombre, les détails et l’échelle donnent une illusion très “réelle”.",
-        artistSite: "https://www.jfrios.com/"
-      },
-
-      // —— BASE (à compléter progressivement) ——
-      {n:3,  title:"Almas del Mar", artist:"Blanca Larrauri", location:"Prolongación Avda. San Lorenzo", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:4,  title:"Tiempos de Claridad", artist:"Ana Cecilia Salinas", location:"Avda. Andalucía (Bda. San Isidro)", date:"2013 (à confirmer)", year:"2013", meaning:"À compléter.", artistSite:""},
-      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:8,  title:"Siglo XXI", artist:"Néstor Prada", location:"Plaza ABC", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:9,  title:"Obra Artística", artist:"Juanjo San Pedro", location:"Auditorio Felipe VI (horaires d’ouverture)", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:10, title:"Fundación Antonia Guerrero", artist:"Joaquín Aguilera", location:"C/ Pilar de Farinós", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:11, title:"Una Flor de Futuro", artist:"José Fernández Ríos", location:"C/ Ntra. Sra. de Los Remedios", date:"—", year:"", meaning:"À compléter.", artistSite:"https://www.jfrios.com/"},
-      {n:12, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón)", date:"2014 (à confirmer)", year:"2014", meaning:"À compléter.", artistSite:"https://www.jfrios.com/"},
-      {n:13, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes)", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:14, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra)", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-
-      // ⚠️ Colle ici la suite 16→62 de ta liste précédente si tu veux les 62 entrées complètes.
-      // (Je laisse quelques entrées finales pour l’exemple)
-      {n:16, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:18, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando", date:"—", year:"", meaning:"À compléter.", artistSite:""},
-      {n:25, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar)", date:"2016 (à confirmer)", year:"2016", meaning:"À compléter.", artistSite:"https://curroleyton.com/es"},
-      {n:61, title:"Fémina", artist:"Curro Leyton", location:"Polideportivo La Lobilla", date:"—", year:"", meaning:"À compléter.", artistSite:"https://curroleyton.com/es"},
-      {n:62, title:"El Pescador Moderno", artist:"Juan Pineda", location:"Plaza San Fernando", date:"—", year:"", meaning:"À compléter.", artistSite:""}
+      {n:1,  title:"¡ESTEPONA BERMEJA!", artist:"Ana Cecilia Salinas", location:"C/ Formentera (Bda. Los Televisores)", date:"2013", year:"2013", meaning:"Mural monumental évoquant Estepona et son paysage (Sierra Bermeja).", artistSite:""},
+      {n:2,  title:"La Casa de la Buena Gente", artist:"Conchi Álvarez", location:"C/ Tres Banderas", date:"2013", year:"2013", meaning:"Trompe-l’œil “maison habitée” : scènes de voisinage, balcons et personnages.", artistSite:"https://www.conchialvarez.com/"},
+      {n:3,  title:"Almas del Mar", artist:"Blanca Larrauri", location:"Prolongación Avda. San Lorenzo", date:"—", year:"", meaning:"Évocation poétique de l’univers marin.", artistSite:""},
+      {n:4,  title:"Tiempos de Claridad", artist:"Ana Cecilia Salinas", location:"Avda. Andalucía (Bda. San Isidro)", date:"2013", year:"2013", meaning:"Jeu de lumière et de paysage (œuvre liée à la nature et à la clarté).", artistSite:""},
+      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Portrait / regard d’enfance, émotion et innocence.", artistSite:""},
+      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Figure maternelle : tendresse et protection.", artistSite:""},
+      {n:7,  title:"Pasen y Vean", artist:"Elena Aguilera", location:"Plaza María Bravo / C/ Goya (Bda. El Cid)", date:"février 2013", year:"2013", meaning:"Invitation au spectacle : esprit affiche / cirque (“Entrez et regardez”).", artistSite:""},
+      {n:8,  title:"Siglo XXI", artist:"Néstor Prada", location:"Plaza ABC", date:"2013", year:"2013", meaning:"Collage d’icônes/scènes urbaines : mémoire locale et modernité.", artistSite:""},
+      {n:9,  title:"Obra Artística", artist:"Juanjo San Pedro", location:"Auditorio Felipe VI (horaires d’ouverture)", date:"—", year:"", meaning:"Œuvre liée à la culture / aux arts (pièce exposée).", artistSite:""},
+      {n:10, title:"Fundación Antonia Guerrero", artist:"Joaquín Aguilera", location:"C/ Pilar de Farinós", date:"2013", year:"2013", meaning:"Hommage à Antonia Guerrero : éducation, liberté, transmission.", artistSite:""},
+      {n:11, title:"Una Flor de Futuro", artist:"José Fernández Ríos", location:"C/ Ntra. Sra. de Los Remedios", date:"—", year:"", meaning:"Espoir, croissance, futur.", artistSite:"https://www.jfrios.com/"},
+      {n:12, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón)", date:"2014", year:"2014", meaning:"Hommage aux pêcheurs et à la tradition maritime.", artistSite:"https://www.jfrios.com/"},
+      {n:13, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes)", date:"—", year:"", meaning:"Palette bleu/argent : abstraction / atmosphère.", artistSite:""},
+      {n:14, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra)", date:"—", year:"", meaning:"Mouvement, trajectoire, “poursuivre la piste”.", artistSite:""},
+      {n:15, title:"Ángel, el buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas)", date:"2014", year:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste, très photographié.", artistSite:"https://www.stoagallery.com/en/eric-aman/"},
+      {n:16, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12", date:"—", year:"", meaning:"Œuvre urbaine / jeu graphique (titre stylisé).", artistSite:""},
+      {n:17, title:"Regando el Jardín", artist:"José Fernández Ríos", location:"Avda. Andalucía", date:"—", year:"", meaning:"Hyperréalisme : fillette arrosant… un arbre réel (illusion).", artistSite:"https://www.jfrios.com/"},
+      {n:18, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando", date:"—", year:"", meaning:"Hommage à la musique : ambiance, rythme, instruments suggérés.", artistSite:""},
+      {n:19, title:"La Poda de la Buganvilla", artist:"José Fernández Ríos", location:"Avda. San Lorenzo (Colegio Víctor de la Serna)", date:"avril 2015", year:"2015", meaning:"Hyperréalisme : jardinier taillant une bougainvillée sur une échelle.", artistSite:"https://www.jfrios.com/"},
+      {n:20, title:"La Huerta de Irene", artist:"Encarnación de Hoyos", location:"Avda. Andalucía (Guardería Los Pitufos)", date:"—", year:"", meaning:"Potager / nature : thème enfance et croissance.", artistSite:""},
+      {n:21, title:"4M", artist:"Miguel González", location:"C/ Cristo del Amor (Edf. Los Claveles)", date:"2015", year:"2015", meaning:"Portrait monumental (style contemporain).", artistSite:""},
+      {n:22, title:"Sin Memoria No Hay Historia", artist:"Joaquín Aguilera", location:"Parque Botánico y Orquidario", date:"—", year:"", meaning:"Mémoire collective : sans mémoire, pas d’histoire.", artistSite:""},
+      {n:23, title:"San Isidro Labrador", artist:"Blanca Larrauri", location:"C/ María Magdalena (Bda. Fuerzas Armadas)", date:"2015", year:"2015", meaning:"Saint patron : tradition agricole et identité populaire.", artistSite:""},
+      {n:24, title:"Reflejos del Jardín", artist:"José Fernández Ríos", location:"Parque Botánico y Orquidario", date:"—", year:"", meaning:"Nature et reflets : profondeur végétale (hyperréalisme).", artistSite:"https://www.jfrios.com/"},
+      {n:25, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar)", date:"2016", year:"2016", meaning:"Don Quichotte revisité : hommage à Cervantès en version moderne.", artistSite:"https://curroleyton.com/es"},
+      {n:26, title:"In Memoriam", artist:"Pilar Castañón y María Romero", location:"Avda. Juan Carlos I (Bda. San Isidro)", date:"—", year:"", meaning:"Souvenir/hommage : mémoire et reconnaissance.", artistSite:""},
+      {n:27, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África)", date:"—", year:"", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:""},
+      {n:28, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia", date:"—", year:"", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:""},
+      {n:29, title:"Desde el Mar", artist:"José Fernández Ríos", location:"Plaza de las Flores", date:"—", year:"", meaning:"Point de vue marin : lien ville/mer.", artistSite:"https://www.jfrios.com/"},
+      {n:30, title:"Quijote en el Guernica", artist:"Curro Leyton", location:"C/ Ricardo Ortega (Instituto Monterroso)", date:"—", year:"", meaning:"Dialogue Quichotte/Guernica : culture espagnole et mémoire.", artistSite:"https://curroleyton.com/es"},
+      {n:31, title:"Simbiosis", artist:"José Fernández Ríos", location:"C/ Ciudad Real (Pabellón La Lobilla)", date:"—", year:"", meaning:"Symbiose : coexistence humain/nature.", artistSite:"https://www.jfrios.com/"},
+      {n:32, title:"Sin Título", artist:"Efrén Calderón", location:"Plaza Juanito Valderrama", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:""},
+      {n:33, title:"Hola", artist:"Edmon", location:"Avda. Juan Carlos I (Colegio Ramón García)", date:"—", year:"", meaning:"Salut/accueil : style pop urbain.", artistSite:""},
+      {n:34, title:"La Imagen Vuelta", artist:"Fernando Clemente", location:"Avda. Andalucía, 57", date:"—", year:"", meaning:"Jeu sur la perception : image inversée / retournée.", artistSite:""},
+      {n:35, title:"La Luna", artist:"Dadi Dreucol", location:"Avda. Andalucía, 67", date:"—", year:"", meaning:"Lune / nuit : poésie et atmosphère.", artistSite:""},
+      {n:36, title:"Llegando a tu Destino", artist:"Dourone", location:"Prolongación Avda. San Lorenzo, 17", date:"—", year:"", meaning:"Voyage : arrivée, cheminement, destination.", artistSite:""},
+      {n:37, title:"Paraíso Golf", artist:"Manuel León", location:"C/ Terraza, 168", date:"—", year:"", meaning:"Univers golf : “paradis” sportif.", artistSite:""},
+      {n:38, title:"Musas", artist:"Lalone", location:"C/ Dos de Mayo (Bda. Solís)", date:"—", year:"", meaning:"Muses : inspiration artistique, figures allégoriques.", artistSite:""},
+      {n:39, title:"Jump Into Blue", artist:"CAZL", location:"Pasaje Poetas Andaluces", date:"—", year:"", meaning:"Plonger dans le bleu : mer/ciel et énergie.", artistSite:""},
+      {n:40, title:"Freaks", artist:"Rebelzer", location:"C/ Granada, 16", date:"—", year:"", meaning:"Personnages décalés : culture urbaine.", artistSite:""},
+      {n:41, title:"Agua (en sistema Braille)", artist:"Fran Redondo", location:"C/ Málaga (Edf. Saymar)", date:"—", year:"", meaning:"Thème de l’eau + accessibilité (braille).", artistSite:""},
+      {n:42, title:"Recuerdos Orientales", artist:"José Fernández Ríos", location:"Plaza Antonia Guerrero", date:"—", year:"", meaning:"Ambiance orientale : motifs et souvenirs.", artistSite:"https://www.jfrios.com/"},
+      {n:43, title:"Pórticos del Cielo", artist:"José Fernández Ríos", location:"Avda. Andalucía, 3", date:"—", year:"", meaning:"Portiques vers le ciel : architecture et verticalité.", artistSite:"https://www.jfrios.com/"},
+      {n:44, title:"La Última Cena", artist:"Curro Leyton", location:"C/ Madrid (Iglesia San José)", date:"—", year:"", meaning:"Référence à la Cène : iconographie religieuse revisité.", artistSite:"https://curroleyton.com/es"},
+      {n:45, title:"Mural Histórico (S. XIX)", artist:"Anónimo", location:"Jardín de la Costa del Sol", date:"XIXe siècle", year:"", meaning:"Fresque patrimoniale historique (XIXe).", artistSite:""},
+      {n:46, title:"Espíritu de Equipo", artist:"Francisco Alarcón", location:"Pabellón J.A. Pineda (C/ Cristóbal Ruiz Méndez)", date:"—", year:"", meaning:"Sport collectif : esprit d’équipe et cohésion.", artistSite:""},
+      {n:47, title:"Leyton", artist:"Curro Leyton", location:"C/ Virgen de la Cabeza (Colegio María Espinosa)", date:"—", year:"", meaning:"Signature/identité visuelle de l’artiste (style “Leyton”).", artistSite:"https://curroleyton.com/es"},
+      {n:48, title:"Frescos de la Casa Mondéjar (S. XVIII)", artist:"Anónimo", location:"C/ Mondéjar", date:"XVIIIe siècle", year:"", meaning:"Fresques patrimoniales historiques (XVIIIe).", artistSite:""},
+      {n:49, title:"Atlantas", artist:"José Fernández Ríos", location:"Avda. Andalucía, 115", date:"—", year:"", meaning:"Atlantes : figures porteuses / mythologie architecturale.", artistSite:"https://www.jfrios.com/"},
+      {n:50, title:"Deporte para Todos", artist:"Félix García Álvarez", location:"Centro Deportivo José Ramón de la Morena", date:"—", year:"", meaning:"Sport pour tous : inclusion, santé, accessibilité.", artistSite:""},
+      {n:51, title:"Estepona se Viste de Flores", artist:"Susana Velasco", location:"C/ Félix Rodríguez de la Fuente", date:"—", year:"", meaning:"Hommage à la ville fleurie : identité d’Estepona.", artistSite:""},
+      {n:52, title:"Nutrir", artist:"Samantha Jordaan", location:"C/ Terraza (Conjunto Andalucía)", date:"—", year:"", meaning:"Nourrir : soin, croissance, lien au vivant.", artistSite:""},
+      {n:53, title:"Sin Nombre", artist:"El Chorro Arts", location:"C/ Terraza (Bda. Isabel Simón) nº 1", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:""},
+      {n:54, title:"La Caída", artist:"Vyacheslav Gunin", location:"C/ Peineta (Bda. Isabel Simón) nº 6", date:"2020", year:"2020", meaning:"Composition onirique : chute / rêve / nature.", artistSite:""},
+      {n:55, title:"Sin Nombre", artist:"Alejandro Gambín Vicente", location:"C/ Santo Domingo de Guzmán, nº 7", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:""},
+      {n:56, title:"Momento Pasajero", artist:"Ángel Caballero Rioja", location:"C/ Melilla (Edf. Royber)", date:"—", year:"", meaning:"Instant fugace : temps qui passe.", artistSite:""},
+      {n:57, title:"Ilusión", artist:"José Antonio Barrientos", location:"C/ San Roque (Edf. Bustamante)", date:"—", year:"", meaning:"Rêve/illusion : imaginaire.", artistSite:""},
+      {n:58, title:"Sin Nombre", artist:"Alex Senna", location:"C/ Cristóbal Ruiz Méndez (Edf. Soto)", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:""},
+      {n:59, title:"La Fase Azul de Pajarito Curioso", artist:"André Farkos", location:"C/ San Juan Bosco", date:"—", year:"", meaning:"Oiseau curieux : “phase bleue”, poésie chromatique.", artistSite:""},
+      {n:60, title:"Fragmentación de un Entorno Concreto", artist:"Alberto Montes Sánchez", location:"Prolongación Avda. San Lorenzo, nº 25", date:"—", year:"", meaning:"Fragmentation urbaine : abstraction / architecture.", artistSite:""},
+      {n:61, title:"Fémina", artist:"Curro Leyton", location:"Polideportivo La Lobilla", date:"—", year:"", meaning:"Figure féminine : force et présence.", artistSite:"https://curroleyton.com/es"},
+      {n:62, title:"El Pescador Moderno", artist:"Juan Pineda", location:"C/ San Juan Bosco", date:"—", year:"", meaning:"Pêcheur contemporain : tradition et modernité.", artistSite:""}
     ];
 
     // UI elements
@@ -516,13 +405,9 @@
     const zone = document.getElementById("zone");
     const year = document.getElementById("year");
     const cards = document.getElementById("cards");
-    const tbody = document.getElementById("tbody");
     const totalCount = document.getElementById("totalCount");
     const shownCount = document.getElementById("shownCount");
     const metaLine = document.getElementById("metaLine");
-    const viewSwitch = document.getElementById("viewSwitch");
-    const completeSwitch = document.getElementById("completeSwitch");
-    const tableWrap = document.getElementById("table");
     const copyAllBtn = document.getElementById("copyAllBtn");
     const resetBtn = document.getElementById("resetBtn");
 
@@ -555,18 +440,12 @@
       navigator.clipboard.writeText(text);
     }
 
-    function isComplete(m){
-      // “complète” si meaning n'est pas "à compléter"
-      return (m.meaning || "").trim() && !/à compléter/i.test(m.meaning);
-    }
-
     function currentFilters(){
       return {
         q: norm(q.value),
         artist: artist.value,
         zone: zone.value,
-        year: year.value,
-        onlyComplete: completeSwitch.classList.contains("on")
+        year: year.value
       };
     }
 
@@ -585,12 +464,9 @@
       }
       if (f.q){
         list = list.filter(m => {
-          const blob = norm([m.title,m.artist,m.location,m.meaning,m.date,m.year].join(" "));
+          const blob = norm([m.title,m.artist,m.location,m.date,m.year].join(" "));
           return blob.includes(f.q);
         });
-      }
-      if (f.onlyComplete){
-        list = list.filter(isComplete);
       }
 
       render(list);
@@ -601,7 +477,6 @@
       shownCount.textContent = list.length;
       metaLine.textContent = `${list.length} œuvre(s) — tri par numéro`;
 
-      // Cards
       cards.innerHTML = "";
       for (const m of list){
         const mapLink = buildMapLink(`${m.title} ${m.location}`);
@@ -639,27 +514,6 @@
         cards.appendChild(el);
       }
 
-      // Table
-      tbody.innerHTML = "";
-      for (const m of list){
-        const site = m.artistSite
-          ? `<a href="${m.artistSite}" target="_blank" rel="noopener">Site</a>`
-          : "—";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><span style="font-family:var(--mono)">#${m.n}</span></td>
-          <td>${escapeHtml(m.title)}</td>
-          <td>${escapeHtml(m.artist)}</td>
-          <td>${escapeHtml(m.location)}</td>
-          <td>${escapeHtml(m.date || "—")}</td>
-          <td>${escapeHtml(m.meaning || "—")}</td>
-          <td>${site}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-
-      // Bind copy buttons
       cards.querySelectorAll("[data-copy]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           copyToClipboard(btn.getAttribute("data-copy"));
@@ -679,31 +533,10 @@
     }
     function escapeAttr(str){ return escapeHtml(str); }
 
-    function toggleSwitch(el){
-      const on = !el.classList.contains("on");
-      el.classList.toggle("on", on);
-      el.setAttribute("aria-checked", on ? "true" : "false");
-      return on;
-    }
-
-    // Switch: view
-    function syncView(){
-      const tableOn = viewSwitch.classList.contains("on");
-      tableWrap.style.display = tableOn ? "block" : "none";
-      cards.style.display = tableOn ? "none" : "grid";
-    }
-    viewSwitch.addEventListener("click", ()=>{ toggleSwitch(viewSwitch); syncView(); });
-    viewSwitch.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleSwitch(viewSwitch); syncView(); }});
-
-    // Switch: only complete
-    completeSwitch.addEventListener("click", ()=>{ toggleSwitch(completeSwitch); apply(); });
-    completeSwitch.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleSwitch(completeSwitch); apply(); }});
-
-    // Filters
+    // Events
     [q, artist, zone, year].forEach(el => el.addEventListener("input", apply));
     [artist, zone, year].forEach(el => el.addEventListener("change", apply));
 
-    // Copy filtered list
     copyAllBtn.addEventListener("click", ()=>{
       const list = apply();
       const txt = list
@@ -714,20 +547,16 @@
       setTimeout(()=>copyAllBtn.textContent="📋 Copier la liste filtrée", 1100);
     });
 
-    // Reset
     resetBtn.addEventListener("click", ()=>{
       q.value = "";
       artist.value = "";
       zone.value = "";
       year.value = "";
-      completeSwitch.classList.remove("on");
-      completeSwitch.setAttribute("aria-checked","false");
       apply();
     });
 
     // Init
     apply();
-    syncView();
   </script>
 </body>
 </html>
