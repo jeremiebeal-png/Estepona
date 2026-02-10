@@ -13,22 +13,14 @@
       --muted:rgba(11,60,73,.70);
       --line:rgba(11,60,73,.14);
       --soft:rgba(11,60,73,.06);
-      --soft2:rgba(11,60,73,.09);
       --brand:#0b3c49;
-      --accent:#0ea5e9;
-      --accent2:#2dd4bf;
       --radius:18px;
       --shadow:0 14px 40px rgba(10, 30, 35, .10);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:#fff;
-    }
+    body{margin:0;font-family:var(--sans);color:var(--text);background:#fff}
     a{color:inherit}
 
     .container{max-width:1200px;margin:0 auto;padding:24px}
@@ -70,11 +62,7 @@
       box-shadow: var(--shadow);
     }
     .card .pad{padding:18px}
-
-    .title{
-      font-size:28px;line-height:1.15;margin:0 0 8px;
-      letter-spacing:.2px;
-    }
+    .title{font-size:28px;line-height:1.15;margin:0 0 8px;letter-spacing:.2px}
 
     .quick{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
     .btn{
@@ -96,7 +84,6 @@
       color:#05262e;
       font-weight:700;
     }
-    .btn.primary:hover{filter:brightness(1.02)}
 
     .stat{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .stat .box{
@@ -125,15 +112,10 @@
     }
     .field label{font-size:11px;color:var(--muted)}
     input[type="text"], select{
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-size:14px;
-      padding:2px 0;
+      background: transparent;border: none;outline: none;
+      color: var(--text);font-size:14px;padding:2px 0;
     }
     select option{color:#0b3c49}
-
     .divider{height:1px;background:var(--line);margin:18px 0}
 
     .results-head{
@@ -181,6 +163,7 @@
     }
     .desc{margin:0;color:rgba(11,60,73,.92);font-size:13px;line-height:1.45}
     .mural .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+
     .link{
       text-decoration:none;
       padding:8px 10px;border-radius:12px;
@@ -194,12 +177,7 @@
     .link.site{border-color:rgba(14,165,233,.35)}
     .link.ig{border-color:rgba(251,191,36,.45)}
 
-    .foot{
-      margin:26px 0 10px;
-      color: var(--muted);
-      font-size:12px;
-      line-height:1.5;
-    }
+    .foot{margin:26px 0 10px;color: var(--muted);font-size:12px;line-height:1.5}
 
     @media (max-width: 980px){
       .hero-grid{grid-template-columns:1fr}
@@ -342,22 +320,29 @@
       {n:2,  title:"La Casa de la Buena Gente", artist:"Conchi Álvarez", location:"C/ Tres Banderas", date:"2013", year:"2013", meaning:"Trompe-l’œil “maison habitée” : scènes de voisinage, balcons et personnages.", artistSite:"https://www.conchialvarez.com/", artistInstagram:"conchialvarezalvarez"},
       {n:3,  title:"Almas del Mar", artist:"Blanca Larrauri", location:"Prolongación Avda. San Lorenzo", date:"—", year:"", meaning:"Évocation poétique de l’univers marin.", artistSite:"", artistInstagram:"larrauriblanca"},
       {n:4,  title:"Tiempos de Claridad", artist:"Ana Cecilia Salinas", location:"Avda. Andalucía (Bda. San Isidro)", date:"2013", year:"2013", meaning:"Jeu de lumière et de paysage (œuvre liée à la nature et à la clarté).", artistSite:"", artistInstagram:"anasalinasmata"},
-      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Portrait / regard d’enfance, émotion et innocence.", artistSite:"", artistInstagram:""},
-      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Figure maternelle : tendresse et protection.", artistSite:"", artistInstagram:""},
-      {n:7,  title:"Pasen y Vean", artist:"Elena Aguilera", location:"Plaza María Bravo / C/ Goya (Bda. El Cid)", date:"février 2013", year:"2013", meaning:"Invitation au spectacle : esprit affiche / cirque (“Entrez et regardez”).", artistSite:"", artistInstagram:""},
+
+      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Portrait / regard d’enfance, émotion et innocence.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", year:"", meaning:"Figure maternelle : tendresse et protection.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+
+      {n:7,  title:"Pasen y Vean", artist:"Elena Aguilera", location:"Plaza María Bravo / C/ Goya (Bda. El Cid)", date:"février 2013", year:"2013", meaning:"Invitation au spectacle : esprit affiche / cirque (“Entrez et regardez”).", artistSite:"", artistInstagram:"elenaaguileracirugeda"},
+
       {n:8,  title:"Siglo XXI", artist:"Néstor Prada", location:"Plaza ABC", date:"2013", year:"2013", meaning:"Collage d’icônes/scènes urbaines : mémoire locale et modernité.", artistSite:"", artistInstagram:""},
       {n:9,  title:"Obra Artística", artist:"Juanjo San Pedro", location:"Auditorio Felipe VI (horaires d’ouverture)", date:"—", year:"", meaning:"Œuvre liée à la culture / aux arts (pièce exposée).", artistSite:"", artistInstagram:""},
       {n:10, title:"Fundación Antonia Guerrero", artist:"Joaquín Aguilera", location:"C/ Pilar de Farinós", date:"2013", year:"2013", meaning:"Hommage à Antonia Guerrero : éducation, liberté, transmission.", artistSite:"", artistInstagram:""},
+
       {n:11, title:"Una Flor de Futuro", artist:"José Fernández Ríos", location:"C/ Ntra. Sra. de Los Remedios", date:"—", year:"", meaning:"Espoir, croissance, futur.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:12, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón)", date:"2014", year:"2014", meaning:"Hommage aux pêcheurs et à la tradition maritime.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+
       {n:13, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes)", date:"—", year:"", meaning:"Palette bleu/argent : abstraction / atmosphère.", artistSite:"", artistInstagram:""},
       {n:14, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra)", date:"—", year:"", meaning:"Mouvement, trajectoire, “poursuivre la piste”.", artistSite:"", artistInstagram:"nano4814"},
       {n:15, title:"Ángel, el buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas)", date:"2014", year:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste, très photographié.", artistSite:"https://www.stoagallery.com/en/eric-aman/", artistInstagram:""},
       {n:16, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12", date:"—", year:"", meaning:"Œuvre urbaine / jeu graphique (titre stylisé).", artistSite:"", artistInstagram:""},
+
       {n:17, title:"Regando el Jardín", artist:"José Fernández Ríos", location:"Avda. Andalucía", date:"—", year:"", meaning:"Hyperréalisme : fillette arrosant… un arbre réel (illusion).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:18, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando", date:"—", year:"", meaning:"Hommage à la musique : ambiance, rythme, instruments suggérés.", artistSite:"", artistInstagram:"larrauriblanca"},
       {n:19, title:"La Poda de la Buganvilla", artist:"José Fernández Ríos", location:"Avda. San Lorenzo (Colegio Víctor de la Serna)", date:"avril 2015", year:"2015", meaning:"Hyperréalisme : jardinier taillant une bougainvillée sur une échelle.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:20, title:"La Huerta de Irene", artist:"Encarnación de Hoyos", location:"Avda. Andalucía (Guardería Los Pitufos)", date:"—", year:"", meaning:"Potager / nature : thème enfance et croissance.", artistSite:"", artistInstagram:""},
+
       {n:21, title:"4M", artist:"Miguel González", location:"C/ Cristo del Amor (Edf. Los Claveles)", date:"2015", year:"2015", meaning:"Portrait monumental (style contemporain).", artistSite:"", artistInstagram:""},
       {n:22, title:"Sin Memoria No Hay Historia", artist:"Joaquín Aguilera", location:"Parque Botánico y Orquidario", date:"—", year:"", meaning:"Mémoire collective : sans mémoire, pas d’histoire.", artistSite:"", artistInstagram:""},
       {n:23, title:"San Isidro Labrador", artist:"Blanca Larrauri", location:"C/ María Magdalena (Bda. Fuerzas Armadas)", date:"2015", year:"2015", meaning:"Saint patron : tradition agricole et identité populaire.", artistSite:"", artistInstagram:"larrauriblanca"},
@@ -365,32 +350,38 @@
       {n:25, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar)", date:"2016", year:"2016", meaning:"Don Quichotte revisité : hommage à Cervantès en version moderne.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
 
       {n:26, title:"In Memoriam", artist:"Pilar Castañón y María Romero", location:"Avda. Juan Carlos I (Bda. San Isidro)", date:"—", year:"", meaning:"Souvenir/hommage : mémoire et reconnaissance.", artistSite:"", artistInstagram:""},
-      {n:27, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África)", date:"—", year:"", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:"", artistInstagram:""},
-      {n:28, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia", date:"—", year:"", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:"", artistInstagram:""},
+      {n:27, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África)", date:"—", year:"", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:"", artistInstagram:"anulamixtura"},
+      {n:28, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia", date:"—", year:"", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
       {n:29, title:"Desde el Mar", artist:"José Fernández Ríos", location:"Plaza de las Flores", date:"—", year:"", meaning:"Point de vue marin : lien ville/mer.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:30, title:"Quijote en el Guernica", artist:"Curro Leyton", location:"C/ Ricardo Ortega (Instituto Monterroso)", date:"—", year:"", meaning:"Dialogue Quichotte/Guernica : culture espagnole et mémoire.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+
       {n:31, title:"Simbiosis", artist:"José Fernández Ríos", location:"C/ Ciudad Real (Pabellón La Lobilla)", date:"—", year:"", meaning:"Symbiose : coexistence humain/nature.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:32, title:"Sin Título", artist:"Efrén Calderón", location:"Plaza Juanito Valderrama", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:""},
       {n:33, title:"Hola", artist:"Edmon", location:"Avda. Juan Carlos I (Colegio Ramón García)", date:"—", year:"", meaning:"Salut/accueil : style pop urbain.", artistSite:"", artistInstagram:""},
-      {n:34, title:"La Imagen Vuelta", artist:"Fernando Clemente", location:"Avda. Andalucía, 57", date:"—", year:"", meaning:"Jeu sur la perception : image inversée / retournée.", artistSite:"", artistInstagram:""},
-      {n:35, title:"La Luna", artist:"Dadi Dreucol", location:"Avda. Andalucía, 67", date:"—", year:"", meaning:"Lune / nuit : poésie et atmosphère.", artistSite:"", artistInstagram:""},
+      {n:34, title:"La Imagen Vuelta", artist:"Fernando Clemente", location:"Avda. Andalucía, 57", date:"—", year:"", meaning:"Jeu sur la perception : image inversée / retournée.", artistSite:"", artistInstagram:"fernando.clemente"},
+      {n:35, title:"La Luna", artist:"Dadi Dreucol", location:"Avda. Andalucía, 67", date:"—", year:"", meaning:"Lune / nuit : poésie et atmosphère.", artistSite:"", artistInstagram:"dadi_dreucol"},
+
       {n:36, title:"Llegando a tu Destino", artist:"Dourone", location:"Prolongación Avda. San Lorenzo, 17", date:"—", year:"", meaning:"Voyage : arrivée, cheminement, destination.", artistSite:"", artistInstagram:"dourone"},
-      {n:37, title:"Paraíso Golf", artist:"Manuel León", location:"C/ Terraza, 168", date:"—", year:"", meaning:"Univers golf : “paradis” sportif.", artistSite:"", artistInstagram:""},
-      {n:38, title:"Musas", artist:"Lalone", location:"C/ Dos de Mayo (Bda. Solís)", date:"—", year:"", meaning:"Muses : inspiration artistique, figures allégoriques.", artistSite:"", artistInstagram:""},
+      {n:37, title:"Paraíso Golf", artist:"Manuel León", location:"C/ Terraza, 168", date:"—", year:"", meaning:"Univers golf : “paradis” sportif.", artistSite:"", artistInstagram:"manuelleonmoreno"},
+      {n:38, title:"Musas", artist:"Lalone", location:"C/ Dos de Mayo (Bda. Solís)", date:"—", year:"", meaning:"Muses : inspiration artistique, figures allégoriques.", artistSite:"", artistInstagram:"lalone_graff"},
       {n:39, title:"Jump Into Blue", artist:"CAZL", location:"Pasaje Poetas Andaluces", date:"—", year:"", meaning:"Plonger dans le bleu : mer/ciel et énergie.", artistSite:"https://www.caz-l.com/streetart", artistInstagram:"caz.l"},
       {n:40, title:"Freaks", artist:"Rebelzer", location:"C/ Granada, 16", date:"—", year:"", meaning:"Personnages décalés : culture urbaine.", artistSite:"", artistInstagram:"rebelzer_freaks"},
+
       {n:41, title:"Agua (en sistema Braille)", artist:"Fran Redondo", location:"C/ Málaga (Edf. Saymar)", date:"—", year:"", meaning:"Thème de l’eau + accessibilité (braille).", artistSite:"", artistInstagram:""},
       {n:42, title:"Recuerdos Orientales", artist:"José Fernández Ríos", location:"Plaza Antonia Guerrero", date:"—", year:"", meaning:"Ambiance orientale : motifs et souvenirs.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:43, title:"Pórticos del Cielo", artist:"José Fernández Ríos", location:"Avda. Andalucía, 3", date:"—", year:"", meaning:"Portiques vers le ciel : architecture et verticalité.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:44, title:"La Última Cena", artist:"Curro Leyton", location:"C/ Madrid (Iglesia San José)", date:"—", year:"", meaning:"Référence à la Cène : iconographie religieuse revisité.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+
       {n:45, title:"Mural Histórico (S. XIX)", artist:"Anónimo", location:"Jardín de la Costa del Sol", date:"XIXe siècle", year:"", meaning:"Fresque patrimoniale historique (XIXe).", artistSite:"", artistInstagram:""},
-      {n:46, title:"Espíritu de Equipo", artist:"Francisco Alarcón", location:"Pabellón J.A. Pineda (C/ Cristóbal Ruiz Méndez)", date:"—", year:"", meaning:"Sport collectif : esprit d’équipe et cohésion.", artistSite:"", artistInstagram:""},
+      {n:46, title:"Espíritu de Equipo", artist:"Francisco Alarcón", location:"Pabellón J.A. Pineda (C/ Cristóbal Ruiz Méndez)", date:"—", year:"", meaning:"Sport collectif : esprit d’équipe et cohésion.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
       {n:47, title:"Leyton", artist:"Curro Leyton", location:"C/ Virgen de la Cabeza (Colegio María Espinosa)", date:"—", year:"", meaning:"Signature/identité visuelle de l’artiste.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
       {n:48, title:"Frescos de la Casa Mondéjar (S. XVIII)", artist:"Anónimo", location:"C/ Mondéjar", date:"XVIIIe siècle", year:"", meaning:"Fresques patrimoniales historiques (XVIIIe).", artistSite:"", artistInstagram:""},
+
       {n:49, title:"Atlantas", artist:"José Fernández Ríos", location:"Avda. Andalucía, 115", date:"—", year:"", meaning:"Atlantes : figures porteuses / mythologie architecturale.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
       {n:50, title:"Deporte para Todos", artist:"Félix García Álvarez", location:"Centro Deportivo José Ramón de la Morena", date:"—", year:"", meaning:"Sport pour tous : inclusion, santé, accessibilité.", artistSite:"", artistInstagram:""},
-      {n:51, title:"Estepona se Viste de Flores", artist:"Susana Velasco", location:"C/ Félix Rodríguez de la Fuente", date:"—", year:"", meaning:"Hommage à la ville fleurie : identité d’Estepona.", artistSite:"", artistInstagram:""},
+      {n:51, title:"Estepona se Viste de Flores", artist:"Susana Velasco", location:"C/ Félix Rodríguez de la Fuente", date:"—", year:"", meaning:"Hommage à la ville fleurie : identité d’Estepona.", artistSite:"https://www.demuchoscoloressusana.com/", artistInstagram:"demuchoscoloressusana"},
       {n:52, title:"Nutrir", artist:"Samantha Jordaan", location:"C/ Terraza (Conjunto Andalucía)", date:"—", year:"", meaning:"Nourrir : soin, croissance, lien au vivant.", artistSite:"", artistInstagram:"samanthajordaan"},
+
       {n:53, title:"Sin Nombre", artist:"El Chorro Arts", location:"C/ Terraza (Bda. Isabel Simón) nº 1", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"elchorroarts"},
       {n:54, title:"La Caída", artist:"Vyacheslav Gunin", location:"C/ Peineta (Bda. Isabel Simón) nº 6", date:"2020", year:"2020", meaning:"Composition onirique : chute / rêve / nature.", artistSite:"", artistInstagram:"sav45"},
       {n:55, title:"Sin Nombre", artist:"Alejandro Gambín Vicente", location:"C/ Santo Domingo de Guzmán, nº 7", date:"—", year:"", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:""},
