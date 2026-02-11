@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Route des fresques d’Estepona — Murales, artistes & emplacements</title>
   <meta name="description" content="Route des fresques d’Estepona : liste des œuvres, artistes, lieux, dates, recherche et filtres." />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#0b3c49" />
 
   <style>
     :root{
-      /* Page */
-      --page:#ffffff;
+      /* Fond “bleu méditerranéen” */
+      --sea1:#0b3c49;     /* bleu profond */
+      --sea2:#0ea5e9;     /* azur */
+      --sea3:#2dd4bf;     /* turquoise */
+      --sand:#f6f1e7;     /* sable clair (léger) */
 
       /* Encadrés / cartes (comme ta capture) */
       --panel:#071a22;           /* bleu nuit */
@@ -47,7 +50,14 @@
       margin:0;
       font-family:var(--sans);
       color:var(--text);
-      background:var(--page);
+
+      /* ✅ Fond bleu méditerranéen */
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      min-height:100vh;
     }
     a{color:inherit}
 
@@ -55,9 +65,9 @@
 
     header{
       position:sticky;top:0;z-index:50;
-      background: rgba(255,255,255,.90);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--line);
+      background: rgba(7,26,34,.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(234,246,248,.12);
     }
     .header-inner{
       display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -67,16 +77,16 @@
     .logo{
       width:38px;height:38px;border-radius:12px;
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.85));
-      box-shadow: 0 10px 22px rgba(10,30,35,.10);
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
     }
-    .brand h1{font-size:15px;letter-spacing:.2px;margin:0}
-    .brand p{margin:0;font-size:12px;color:var(--muted)}
+    .brand h1{font-size:15px;letter-spacing:.2px;margin:0;color:rgba(234,246,248,.95)}
+    .brand p{margin:0;font-size:12px;color:rgba(234,246,248,.72)}
     .chip{
       display:inline-flex;align-items:center;gap:8px;
       padding:8px 10px;border-radius:999px;
       background: var(--bubble-bg);
       border: 1px solid var(--bubble-br);
-      color: var(--text);
+      color: rgba(234,246,248,.95);
       font-size:12px;
       white-space:nowrap;
     }
@@ -149,14 +159,14 @@
       color: var(--textOn);font-size:14px;padding:2px 0;
     }
     select option{color:#061e25}
-    .divider{height:1px;background:var(--line);margin:18px 0}
+    .divider{height:1px;background:rgba(234,246,248,.14);margin:18px 0}
 
     .results-head{
       margin-top:18px;
       display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
     }
-    .results-head h2{margin:0;font-size:16px;color:var(--text)}
-    .results-head .meta{color:var(--muted);font-size:12px}
+    .results-head h2{margin:0;font-size:16px;color:rgba(234,246,248,.95)}
+    .results-head .meta{color:rgba(234,246,248,.70);font-size:12px}
 
     .grid{
       margin-top:12px;
@@ -219,7 +229,7 @@
 
     .foot{
       margin:26px 0 10px;
-      color: var(--muted);
+      color: rgba(234,246,248,.70);
       font-size:12px;
       line-height:1.5;
     }
