@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Carte — Fresques d’Estepona</title>
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root{
+      /* Fond “bleu méditerranéen” */
+      --sea1:#0b3c49;     /* bleu profond */
+      --sea2:#0ea5e9;     /* azur */
+      --sea3:#2dd4bf;     /* turquoise */
+      --sand:#f6f1e7;     /* sable clair (très léger) */
+
+      /* Encadrés / cartes (bleu nuit) */
+      --panel:#071a22;
+      --panel2:#06161d;
+      --panelLine: rgba(234,246,248,.10);
+      --panelSoft: rgba(234,246,248,.06);
+
+      --textOn:#eaf6f8;
+      --mutedOn: rgba(234,246,248,.72);
+
+      --text:#eaf6f8;
+      --muted:rgba(234,246,248,.72);
+      --line:rgba(234,246,248,.14);
+
+      --radius:18px;
+      --shadow:0 14px 40px rgba(10, 30, 35, .22);
+
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      /* Pastille numéro */
+      --pin: #e84b7a;
+      --pinBorder: rgba(255,255,255,.95);
+      --pinShadow: rgba(0,0,0,.25);
+
+      /* Mini-photo */
+      --thumbBorder: rgba(255,255,255,.9);
+      --thumbShadow: rgba(0,0,0,.25);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+
+      /* ✅ Fond bleu méditerranéen */
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit}
+
+    header{
+      position:sticky;top:0;z-index:50;
+      background: rgba(7,26,34,.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(234,246,248,.12);
+    }
+    .header-inner{
+      max-width:1200px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px 18px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.85));
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
+    }
+    .brand h1{margin:0;font-size:15px;color:var(--textOn)}
+    .brand p{margin:0;font-size:12px;color:var(--mutedOn)}
+
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      background: rgba(45,212,191,.14);
+      border: 1px solid rgba(45,212,191,.26);
+      color: rgba(234,246,248,.95);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .layout{
+      max-width:1200px;margin:0 auto;padding:14px 18px 22px;
+      display:grid;grid-template-columns: 420px 1fr;
+      gap:12px;
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
+      border:1px solid var(--panelLine);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      color: var(--textOn);
+      overflow:hidden;
+    }
+    .panel .pad{padding:14px}
+
+    .controls{
+      display:flex;flex-wrap:wrap;gap:10px;
+      align-items:center;
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:9px 11px;border-radius:14px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: var(--textOn);
+      text-decoration:none;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(234,246,248,.12);border-color:rgba(234,246,248,.20)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.88));
+      border:none;
+      color:#05262e;
+      font-weight:800;
+    }
+
+    .row{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+      margin-top:10px;
+      color: var(--mutedOn);font-size:12px;
+    }
+    .pill{
+      padding:6px 8px;border-radius:999px;
+      background: rgba(14,165,233,.10);
+      border: 1px solid rgba(14,165,233,.22);
+      color: rgba(234,246,248,.92);
+    }
+
+    .search{margin-top:12px;display:flex;gap:10px}
+    input[type="text"]{
+      width:100%;
+      padding:10px 12px;border-radius:14px;
+      background: rgba(234,246,248,.06);
+      border:1px solid rgba(234,246,248,.12);
+      color: var(--textOn);
+      outline:none;
+    }
+    input::placeholder{color: rgba(234,246,248,.55)}
+
+    .list{
+      border-top:1px solid rgba(234,246,248,.10);
+      max-height: calc(100vh - 260px);
+      overflow:auto;
+    }
+    .item{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(234,246,248,.08);
+      cursor:pointer;
+    }
+    .item:hover{background: rgba(234,246,248,.05)}
+    .num{
+      width:26px;height:26px;border-radius:999px;
+      background: var(--pin);
+      border:2px solid var(--pinBorder);
+      box-shadow: 0 8px 18px var(--pinShadow);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-weight:900;font-size:12px;
+      flex: 0 0 auto;
+      font-family: var(--mono);
+    }
+    .item h3{margin:0;font-size:13px;color:var(--textOn);line-height:1.25}
+    .item p{margin:6px 0 0;color:var(--mutedOn);font-size:12px;line-height:1.35}
+
+    #map{
+      width:100%;
+      height: calc(100vh - 140px);
+      border-radius: var(--radius);
+      border: 1px solid rgba(234,246,248,.14);
+      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+      overflow:hidden;
+      background: rgba(7,26,34,.35);
+    }
+
+    .pin{
+      width:28px;height:28px;border-radius:999px;
+      background: var(--pin);
+      border:2px solid var(--pinBorder);
+      box-shadow: 0 8px 18px var(--pinShadow);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-weight:900;font-size:12px;
+      font-family: var(--mono);
+    }
+
+    .thumb{
+      width:110px;height:78px;
+      border-radius:10px;
+      border:2px solid var(--thumbBorder);
+      box-shadow: 0 10px 22px var(--thumbShadow);
+      object-fit:cover;
+      background:#fff;
+      display:block;
+    }
+
+    .leaflet-popup-content-wrapper{
+      background: rgba(7,26,34,.98);
+      color: var(--textOn);
+      border: 1px solid rgba(234,246,248,.10);
+      border-radius: 14px;
+    }
+    .leaflet-popup-tip{
+      background: rgba(7,26,34,.98);
+      border: 1px solid rgba(234,246,248,.10);
+    }
+    .popupTitle{margin:0;font-size:14px;font-weight:900}
+    .popupMeta{margin:6px 0 0;color:var(--mutedOn);font-size:12px;line-height:1.35}
+    .popupLinks{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .plink{
+      padding:7px 9px;border-radius:12px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: var(--textOn);
+      text-decoration:none;
+      font-size:12px;
+      display:inline-flex;align-items:center;gap:8px;
+    }
+    .plink:hover{background:rgba(234,246,248,.12)}
+    .plink.map{border-color:rgba(45,212,191,.22)}
+    .plink.ig{border-color:rgba(251,191,36,.25)}
+
+    @media (max-width: 980px){
+      .layout{grid-template-columns:1fr}
+      #map{height: 62vh}
+      .list{max-height: 40vh}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Carte — Fresques d’Estepona</h1>
+          <p>Marqueurs numérotés + mini-photos (optionnel)</p>
+        </div>
+      </div>
+      <span class="chip">🗺️ OpenStreetMap</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="pad">
+        <div class="controls">
+          <button class="btn primary" id="fitBtn">🔎 Tout voir</button>
+          <button class="btn" id="toggleThumbsBtn">🖼️ Mini-photos: ON</button>
+          <button class="btn" id="geocodeBtn">📍 Placer via adresses</button>
+        </div>
+
+        <div class="row">
+          <span class="pill" id="countPill">0 fresques</span>
+          <span class="pill" id="geoPill">Géocodage: prêt</span>
+        </div>
+
+        <div class="search">
+          <input id="q" type="text" placeholder="Rechercher (titre, artiste, lieu)..." autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="list" id="list"></div>
+    </section>
+
+    <div id="map" aria-label="Carte des fresques"></div>
+  </main>
+
+  <script>
+    // Mets :
+    // - soit lat/lng
+    // - soit address (la page peut géocoder)
+    // - imageUrl : optionnel (mini-photo)
+    const murals = [
+      { n: 1,  title: "Quijote del Siglo XXI", artist: "Curro Leyton", location: "Instituto Puerta del Mar", address: "IES Puerta del Mar, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:"curroleyton"},
+      { n: 2,  title: "Regando el Jardín", artist: "José Fernández Ríos", location: "Avda. Andalucía", address: "Avenida Andalucía, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:"la_riostia"},
+      { n: 3,  title: "Ángel, el buceador", artist: "Eric Aman", location: "C/ Gravina", address: "Calle Gravina, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:""}
+      // 👉 colle ici la liste complète des 62 fresques
+    ];
+
+    const $ = (id) => document.getElementById(id);
+
+    function buildMapLink(text){
+      const q = encodeURIComponent(text + " Estepona");
+      return `https://www.google.com/maps/search/?api=1&query=${q}`;
+    }
+    function instagramLink(handle){ return `https://www.instagram.com/${handle}/`; }
+    function instagramSearchLink(name){
+      const q = encodeURIComponent(`site:instagram.com "${name}"`);
+      return `https://www.google.com/search?q=${q}`;
+    }
+    function norm(s){
+      return (s || "")
+        .toString()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .toLowerCase()
+        .trim();
+    }
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    let map;
+    let markers = new Map();
+    let thumbMarkers = new Map();
+    let thumbsEnabled = true;
+
+    function pinIcon(n){
+      return L.divIcon({
+        className: "",
+        html: `<div class="pin">${n}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+    }
+    function thumbIcon(url){
+      return L.divIcon({
+        className: "",
+        html: `<img class="thumb" src="${escapeHtml(url)}" alt="">`,
+        iconSize: [110, 78],
+        iconAnchor: [55, 78]
+      });
+    }
+
+    function popupHtml(m){
+      const where = [m.location, m.address].filter(Boolean).join(" — ");
+      const mapHref = buildMapLink(`${m.title} ${m.location || m.address || ""}`);
+      const igHref = m.instagram ? instagramLink(m.instagram) : instagramSearchLink(m.artist || "");
+      const igLabel = m.instagram ? `📷 Instagram @${escapeHtml(m.instagram)}` : "📷 Instagram";
+      return `
+        <div>
+          <p class="popupTitle">#${m.n} — ${escapeHtml(m.title)}</p>
+          <p class="popupMeta">
+            <b>${escapeHtml(m.artist || "—")}</b><br>
+            ${escapeHtml(where || "—")}
+          </p>
+          <div class="popupLinks">
+            <a class="plink map" target="_blank" rel="noopener" href="${mapHref}">🗺️ Maps</a>
+            <a class="plink ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function hasLatLng(m){
+      return typeof m.lat === "number" && typeof m.lng === "number";
+    }
+
+    function addOrUpdateMarker(m){
+      if (!hasLatLng(m)) return;
+
+      let mk = markers.get(m.n);
+      if (!mk){
+        mk = L.marker([m.lat, m.lng], { icon: pinIcon(m.n) }).addTo(map);
+        mk.bindPopup(popupHtml(m), { maxWidth: 340 });
+        markers.set(m.n, mk);
+      } else {
+        mk.setLatLng([m.lat, m.lng]);
+        mk.setIcon(pinIcon(m.n));
+        mk.setPopupContent(popupHtml(m));
+      }
+
+      const hasThumb = thumbsEnabled && m.imageUrl;
+      const existingThumb = thumbMarkers.get(m.n);
+
+      if (hasThumb){
+        if (!existingThumb){
+          const tmk = L.marker([m.lat, m.lng], {
+            icon: thumbIcon(m.imageUrl),
+            interactive: false,
+            keyboard: false
+          }).addTo(map);
+          thumbMarkers.set(m.n, tmk);
+        } else {
+          existingThumb.setLatLng([m.lat, m.lng]);
+          existingThumb.setIcon(thumbIcon(m.imageUrl));
+        }
+      } else {
+        if (existingThumb){
+          map.removeLayer(existingThumb);
+          thumbMarkers.delete(m.n);
+        }
+      }
+    }
+
+    function clearMarkers(){
+      for (const mk of markers.values()) map.removeLayer(mk);
+      for (const tmk of thumbMarkers.values()) map.removeLayer(tmk);
+      markers.clear();
+      thumbMarkers.clear();
+    }
+
+    function renderAll(filterText=""){
+      clearMarkers();
+
+      const q = norm(filterText);
+      const list = $("list");
+      list.innerHTML = "";
+
+      const filtered = murals
+        .slice()
+        .sort((a,b)=>a.n-b.n)
+        .filter(m => {
+          if (!q) return true;
+          const blob = norm([m.title,m.artist,m.location,m.address].join(" "));
+          return blob.includes(q);
+        });
+
+      $("countPill").textContent = `${filtered.length} fresques`;
+
+      for (const m of filtered){
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="num">${m.n}</div>
+          <div>
+            <h3>${escapeHtml(m.title || "—")}</h3>
+            <p>${escapeHtml(m.artist || "—")}<br>${escapeHtml(m.location || m.address || "—")}</p>
+          </div>
+        `;
+        div.addEventListener("click", ()=>{
+          if (hasLatLng(m)){
+            map.setView([m.lat, m.lng], Math.max(map.getZoom(), 16), { animate:true });
+            const mk = markers.get(m.n);
+            if (mk) mk.openPopup();
+          } else {
+            alert("Pas encore de coordonnées pour cette fresque.\nClique sur “📍 Placer via adresses” ou ajoute lat/lng dans la liste.");
+          }
+        });
+        list.appendChild(div);
+
+        addOrUpdateMarker(m);
+      }
+    }
+
+    function fitAll(){
+      const pts = [];
+      for (const m of murals){
+        if (hasLatLng(m)) pts.push([m.lat, m.lng]);
+      }
+      if (pts.length >= 2){
+        map.fitBounds(pts, { padding:[40,40] });
+      } else if (pts.length === 1){
+        map.setView(pts[0], 16);
+      } else {
+        map.setView([36.4276, -5.1459], 14);
+      }
+    }
+
+    async function geocodeOne(address){
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+      const res = await fetch(url, { headers: { "Accept": "application/json" } });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !data[0]) return null;
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+
+    async function geocodeMissing(){
+      const toDo = murals.filter(m => !hasLatLng(m) && m.address);
+      if (!toDo.length){
+        $("geoPill").textContent = "Géocodage: rien à faire";
+        return;
+      }
+
+      $("geoPill").textContent = `Géocodage: 0 / ${toDo.length}`;
+      let done = 0;
+
+      for (const m of toDo){
+        try{
+          const p = await geocodeOne(m.address);
+          if (p){
+            m.lat = p.lat;
+            m.lng = p.lng;
+          }
+        }catch(e){}
+        done++;
+        $("geoPill").textContent = `Géocodage: ${done} / ${toDo.length}`;
+        renderAll($("q").value);
+        await new Promise(r => setTimeout(r, 1100));
+      }
+
+      $("geoPill").textContent = "Géocodage: terminé";
+      fitAll();
+    }
+
+    window.addEventListener("DOMContentLoaded", ()=>{
+      map = L.map("map", { zoomControl:true }).setView([36.4276, -5.1459], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
+
+      renderAll();
+      fitAll();
+
+      $("q").addEventListener("input", (e)=> renderAll(e.target.value));
+      $("fitBtn").addEventListener("click", fitAll);
+
+      $("toggleThumbsBtn").addEventListener("click", ()=>{
+        thumbsEnabled = !thumbsEnabled;
+        $("toggleThumbsBtn").textContent = `🖼️ Mini-photos: ${thumbsEnabled ? "ON" : "OFF"}`;
+        renderAll($("q").value);
+      });
+
+      $("geocodeBtn").addEventListener("click", geocodeMissing);
+    });
+  </script>
+</body>
+</html>
