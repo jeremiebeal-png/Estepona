@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Route des fresques — Carte & GPS (Estepona)</title>
+  <meta name="description" content="Carte interactive des fresques d’Estepona : géocodage des adresses, points GPS, liste & recherche." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    :root{
+      --panel:#071a22;
+      --panel2:#06161d;
+      --panelLine: rgba(234,246,248,.10);
+      --textOn:#eaf6f8;
+      --mutedOn: rgba(234,246,248,.74);
+      --radius:18px;
+      --shadow:0 14px 40px rgba(10, 30, 35, .18);
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --chipBg: rgba(234,246,248,.08);
+      --chipBr: rgba(234,246,248,.14);
+
+      --btnBg: rgba(234,246,248,.08);
+      --btnBr: rgba(234,246,248,.14);
+
+      --primaryA: rgba(45,212,191,.95);
+      --primaryB: rgba(14,165,233,.88);
+
+      --danger:#fb7185;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--textOn);
+
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+
+    /* ===== HEADER (comme ta capture) ===== */
+    header{
+      position:sticky; top:0; z-index:80;
+      background: rgba(6,18,30,.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(234,246,248,.10);
+    }
+    .topbar{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 220px;
+    }
+    .brand .mark{
+      width:38px;height:38px;border-radius:12px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow: 0 10px 20px rgba(0,0,0,.22);
+      flex:0 0 auto;
+    }
+    .brand .mark img{width:38px;height:38px;object-fit:cover;display:block}
+    .brand .name{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.2px;
+      color: rgba(234,246,248,.95);
+      white-space:nowrap;
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .navlink{
+      color: rgba(234,246,248,.88);
+      font-size:15px;
+      padding:10px 10px;
+      border-radius:12px;
+      transition: background .12s ease, color .12s ease, transform .12s ease;
+    }
+    .navlink:hover{
+      background: rgba(234,246,248,.08);
+      color: rgba(234,246,248,.98);
+      transform: translateY(-1px);
+    }
+    .navlink.active{
+      background: rgba(234,246,248,.10);
+      color: rgba(234,246,248,.98);
+      border: 1px solid rgba(234,246,248,.14);
+    }
+
+    .social{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      min-width: 210px;
+    }
+    .sbtn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      transition: background .12s ease, transform .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .sbtn:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+      transform: translateY(-1px);
+    }
+    .icon{width:18px;height:18px;display:inline-block;flex:0 0 auto}
+
+    /* ===== LAYOUT MAP ===== */
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+
+    .panel{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.90));
+      border: 1px solid var(--panelLine);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .side{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height: 72vh;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:10px 12px;border-radius:14px;
+      background: var(--btnBg);
+      border: 1px solid var(--btnBr);
+      color: var(--textOn);
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .10s ease, background .10s ease, border-color .10s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(234,246,248,.12); border-color:rgba(234,246,248,.22)}
+    .btn.primary{
+      background: linear-gradient(135deg, var(--primaryA), var(--primaryB));
+      border: none;
+      color:#05262e;
+      font-weight:800;
+    }
+
+    .chip{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:8px 10px;border-radius:999px;
+      background: var(--chipBg);
+      border: 1px solid var(--chipBr);
+      font-size:12px;
+      color: rgba(234,246,248,.92);
+      white-space:nowrap;
+    }
+    .chip strong{font-family:var(--mono);font-weight:800}
+
+    .search{
+      border-radius: 14px;
+      background: rgba(234,246,248,.06);
+      border: 1px solid rgba(234,246,248,.12);
+      padding:10px 12px;
+      color: var(--textOn);
+      outline:none;
+      width:100%;
+      font-size:14px;
+    }
+    .search::placeholder{color: rgba(234,246,248,.55)}
+
+    .list{
+      margin-top:2px;
+      border-top: 1px solid rgba(234,246,248,.10);
+      padding-top:10px;
+      overflow:auto;
+      max-height: calc(72vh - 180px);
+    }
+
+    .item{
+      padding:12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(234,246,248,.10);
+      background: rgba(0,0,0,.12);
+      margin-bottom:10px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      cursor:pointer;
+      transition: transform .10s ease, background .10s ease, border-color .10s ease;
+    }
+    .item:hover{transform:translateY(-1px); background: rgba(234,246,248,.06); border-color: rgba(234,246,248,.18)}
+    .num{
+      width:28px;height:28px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      background: rgba(251,113,133,.88);
+      color:#06161d;
+      font-weight:900;
+      flex: 0 0 auto;
+      box-shadow: 0 10px 18px rgba(0,0,0,.22);
+    }
+    .meta h4{margin:0;font-size:14px;line-height:1.25;color:rgba(234,246,248,.96)}
+    .meta p{margin:3px 0 0; font-size:12px; color:rgba(234,246,248,.70); line-height:1.35}
+    .meta .loc{color:rgba(45,212,191,.92)}
+
+    .thumb{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(45,212,191,.35), rgba(14,165,233,.32));
+      border: 1px solid rgba(234,246,248,.10);
+      flex:0 0 auto;
+      display:none;
+      overflow:hidden;
+    }
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .mini-on .thumb{display:block}
+
+    .mapwrap{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 72vh;
+    }
+
+    #map{
+      height: 100%;
+      min-height: 72vh;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(234,246,248,.10);
+    }
+
+    .hint{
+      font-size:12px;
+      color: rgba(234,246,248,.70);
+      line-height:1.5;
+      margin:0;
+    }
+
+    /* Leaflet popup dark */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip{
+      background: rgba(7,26,34,.96) !important;
+      color: rgba(234,246,248,.95) !important;
+      border: 1px solid rgba(234,246,248,.10);
+      box-shadow: 0 14px 40px rgba(0,0,0,.30);
+    }
+    .leaflet-control-zoom a{
+      background: rgba(234,246,248,.92) !important;
+      color:#071a22 !important;
+      border:none !important;
+    }
+
+    @media (max-width: 980px){
+      .layout{grid-template-columns:1fr}
+      .list{max-height: 42vh}
+      #map{min-height: 52vh}
+      nav{justify-content:flex-start}
+      .brand{min-width:unset}
+      .social{min-width:unset}
+    }
+    @media (max-width: 680px){
+      .topbar{flex-direction:column;align-items:flex-start}
+      nav{gap:8px}
+      .navlink{padding:8px 10px;font-size:14px}
+      .social{justify-content:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <!-- Remplace par ton logo :
+          <img src="assets/logo.png" alt="Vivre à Estepona"> -->
+          <span style="font-weight:900;color:#0b3c49;font-size:12px;">LOGO</span>
+        </div>
+        <div class="name">Vivre à Estepona</div>
+      </div>
+
+      <nav aria-label="Menu principal">
+        <a class="navlink" href="restaurants.html">Restaurants</a>
+        <a class="navlink" href="que-faire.html">Que faire</a>
+        <a class="navlink" href="transport.html">Transport</a>
+        <a class="navlink" href="ecoles.html">Écoles</a>
+        <a class="navlink" href="sante.html">Santé</a>
+        <a class="navlink" href="trafic.html">Trafic</a>
+        <a class="navlink" href="faq.html">FAQ</a>
+        <a class="navlink" href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social">
+        <a class="sbtn" href="#" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M18 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a class="sbtn" href="#" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22 12s0-3.3-.4-4.8a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 15V9l6 3-6 3Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="layout">
+      <!-- LEFT -->
+      <section class="panel side" id="sidePanel">
+        <div class="toolbar">
+          <button class="btn primary" id="showAllBtn">🔎 Tout voir</button>
+
+          <button class="btn" id="miniBtn">🖼️ Mini-photos: <span id="miniState">OFF</span></button>
+
+          <button class="btn" id="geoBtn">📍 Placer via adresses</button>
+        </div>
+
+        <div class="toolbar">
+          <span class="chip"><strong id="countShown">0</strong> fresques</span>
+          <span class="chip" id="geoStatus">Géocodage: <strong id="geoState">non fait</strong></span>
+        </div>
+
+        <input class="search" id="q" type="text" placeholder="Rechercher (titre, artiste, lieu)..." autocomplete="off" />
+
+        <div class="list" id="list"></div>
+
+        <p class="hint">
+          Le bouton <b>“Placer via adresses”</b> récupère automatiquement les coordonnées GPS via OpenStreetMap (Nominatim)
+          et les enregistre en cache (localStorage) pour les prochaines visites.
+        </p>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="panel mapwrap">
+        <div id="map" aria-label="Carte des fresques"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // =========================
+    // Données fresques (62)
+    // Ajoute imageUrl si tu veux des mini-photos.
+    // lat/lng seront remplis automatiquement par géocodage si absents.
+    // =========================
+    const murals = [
+      {n:1,  title:"¡ESTEPONA BERMEJA!", artist:"Ana Cecilia Salinas", location:"C/ Formentera (Bda. Los Televisores), Estepona", date:"2013", meaning:"Mural monumental évoquant Estepona et son paysage (Sierra Bermeja).", artistSite:"", artistInstagram:"anasalinasmata", lat:null, lng:null, imageUrl:""},
+      {n:2,  title:"La Casa de la Buena Gente", artist:"Conchi Álvarez", location:"C/ Tres Banderas, Estepona", date:"2013", meaning:"Trompe-l’œil “maison habitée” : scènes de voisinage, balcons et personnages.", artistSite:"https://www.conchialvarez.com/", artistInstagram:"conchialvarezalvarez", lat:null, lng:null, imageUrl:""},
+      {n:3,  title:"Almas del Mar", artist:"Blanca Larrauri", location:"Prolongación Avda. San Lorenzo, Estepona", date:"—", meaning:"Évocation poétique de l’univers marin.", artistSite:"", artistInstagram:"larrauriblanca", lat:null, lng:null, imageUrl:""},
+      {n:4,  title:"Tiempos de Claridad", artist:"Ana Cecilia Salinas", location:"Avda. Andalucía (Bda. San Isidro), Estepona", date:"2013", meaning:"Jeu de lumière et de paysage (œuvre liée à la nature et à la clarté).", artistSite:"", artistInstagram:"anasalinasmata", lat:null, lng:null, imageUrl:""},
+      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera), Estepona", date:"—", meaning:"Portrait / regard d’enfance, émotion et innocence.", artistSite:"", artistInstagram:"francisco_alarcon_perez", lat:null, lng:null, imageUrl:""},
+      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera), Estepona", date:"—", meaning:"Figure maternelle : tendresse et protection.", artistSite:"", artistInstagram:"francisco_alarcon_perez", lat:null, lng:null, imageUrl:""},
+      {n:7,  title:"Pasen y Vean", artist:"Elena Aguilera", location:"Plaza María Bravo / C/ Goya, Estepona", date:"février 2013", meaning:"Invitation au spectacle : esprit affiche / cirque (“Entrez et regardez”).", artistSite:"", artistInstagram:"elenaaguileracirugeda", lat:null, lng:null, imageUrl:""},
+      {n:8,  title:"Siglo XXI", artist:"Néstor Prada", location:"Plaza ABC, Estepona", date:"2013", meaning:"Collage d’icônes/scènes urbaines : mémoire locale et modernité.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:9,  title:"Fundación Antonia Guerrero", artist:"Joaquín Aguilera", location:"C/ Pilar de Farinós, Estepona", date:"2013", meaning:"Hommage à Antonia Guerrero : éducation, liberté, transmission.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:10, title:"Una Flor de Futuro", artist:"José Fernández Ríos", location:"C/ Ntra. Sra. de Los Remedios, Estepona", date:"—", meaning:"Espoir, croissance, futur.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:11, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón), Estepona", date:"2014", meaning:"Hommage aux pêcheurs et à la tradition maritime.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:12, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes), Estepona", date:"—", meaning:"Palette bleu/argent : abstraction / atmosphère.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:13, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra), Estepona", date:"—", meaning:"Mouvement, trajectoire, “poursuivre la piste”.", artistSite:"", artistInstagram:"nano4814", lat:null, lng:null, imageUrl:""},
+      {n:14, title:"Ángel, el buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas), Estepona", date:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste.", artistSite:"https://www.stoagallery.com/en/eric-aman/", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:15, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12, Estepona", date:"—", meaning:"Œuvre urbaine / jeu graphique (titre stylisé).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:16, title:"Regando el Jardín", artist:"José Fernández Ríos", location:"Avda. Andalucía, Estepona", date:"—", meaning:"Hyperréalisme : fillette arrosant… un arbre réel (illusion).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:17, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando, Estepona", date:"—", meaning:"Hommage à la musique : ambiance, rythme, instruments suggérés.", artistSite:"", artistInstagram:"larrauriblanca", lat:null, lng:null, imageUrl:""},
+      {n:18, title:"La Poda de la Buganvilla", artist:"José Fernández Ríos", location:"Avda. San Lorenzo (Colegio Víctor de la Serna), Estepona", date:"avril 2015", meaning:"Hyperréalisme : jardinier taillant une bougainvillée.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:19, title:"La Huerta de Irene", artist:"Encarnación de Hoyos", location:"Avda. Andalucía (Guardería Los Pitufos), Estepona", date:"—", meaning:"Potager / nature : thème enfance et croissance.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:20, title:"4M", artist:"Miguel González", location:"C/ Cristo del Amor (Edf. Los Claveles), Estepona", date:"2015", meaning:"Portrait monumental (style contemporain).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:21, title:"Sin Memoria No Hay Historia", artist:"Joaquín Aguilera", location:"C/ Dos de Mayo (Bda. Solís), Estepona", date:"—", meaning:"Mémoire collective : sans mémoire, pas d’histoire.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:22, title:"San Isidro Labrador", artist:"Blanca Larrauri", location:"C/ María Magdalena (Bda. Fuerzas Armadas), Estepona", date:"2015", meaning:"Saint patron : tradition agricole et identité populaire.", artistSite:"", artistInstagram:"larrauriblanca", lat:null, lng:null, imageUrl:""},
+      {n:23, title:"Reflejos del Jardín", artist:"José Fernández Ríos", location:"Parque Botánico y Orquidario, Estepona", date:"—", meaning:"Nature et reflets : profondeur végétale (hyperréalisme).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:24, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar), Estepona", date:"2016", meaning:"Don Quichotte revisité : hommage à Cervantès en version moderne.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:25, title:"In Memoriam", artist:"Pilar Castañón y María Romero", location:"Avda. Juan Carlos I (Bda. San Isidro), Estepona", date:"—", meaning:"Souvenir/hommage : mémoire et reconnaissance.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:26, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África), Estepona", date:"—", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:"", artistInstagram:"anulamixtura", lat:null, lng:null, imageUrl:""},
+      {n:27, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia, Estepona", date:"—", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:"", artistInstagram:"francisco_alarcon_perez", lat:null, lng:null, imageUrl:""},
+      {n:28, title:"Desde el Mar", artist:"José Fernández Ríos", location:"Plaza de las Flores, Estepona", date:"—", meaning:"Point de vue marin : lien ville/mer.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:29, title:"Quijote en el Guernica", artist:"Curro Leyton", location:"C/ Ricardo Ortega (Instituto Monterroso), Estepona", date:"—", meaning:"Dialogue Quichotte/Guernica : culture espagnole et mémoire.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:30, title:"Leyton", artist:"Curro Leyton", location:"C/ Virgen de la Cabeza (Colegio María Espinosa), Estepona", date:"—", meaning:"Signature/identité visuelle de l’artiste.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:31, title:"El Bosque de las Maravillas", artist:"Zosen & Mina Hamada", location:"C/ Terraza, 152, Estepona", date:"—", meaning:"Univers onirique/coloré (titre issu des guides touristiques).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:32, title:"Sin Título", artist:"Efrén Calderón", location:"Plaza Juanito Valderrama, Estepona", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:33, title:"Hola", artist:"Edmon", location:"Avda. Juan Carlos I (Colegio Ramón García), Estepona", date:"—", meaning:"Salut/accueil : style pop urbain.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:34, title:"La Imagen Vuelta", artist:"Fernando Clemente", location:"Avda. Andalucía, 57, Estepona", date:"—", meaning:"Jeu sur la perception : image inversée / retournée.", artistSite:"", artistInstagram:"fernando.clemente", lat:null, lng:null, imageUrl:""},
+      {n:35, title:"La Luna", artist:"Dadi Dreucol", location:"Avda. Andalucía, 67, Estepona", date:"—", meaning:"Lune / nuit : poésie et atmosphère.", artistSite:"", artistInstagram:"dadi_dreucol", lat:null, lng:null, imageUrl:""},
+      {n:36, title:"Llegando a tu Destino", artist:"Dourone", location:"Prolongación Avda. San Lorenzo, 17, Estepona", date:"—", meaning:"Voyage : arrivée, cheminement, destination.", artistSite:"", artistInstagram:"dourone", lat:null, lng:null, imageUrl:""},
+      {n:37, title:"Paraíso Golf", artist:"Manuel León", location:"C/ Terraza, 168, Estepona", date:"—", meaning:"Univers golf : “paradis” sportif.", artistSite:"", artistInstagram:"manuelleonmoreno", lat:null, lng:null, imageUrl:""},
+      {n:38, title:"Musas", artist:"Lalone", location:"Avda. Puerta del Mar, Estepona", date:"—", meaning:"Muses : inspiration artistique, figures allégoriques.", artistSite:"", artistInstagram:"lalone_graff", lat:null, lng:null, imageUrl:""},
+      {n:39, title:"Jump Into Blue", artist:"CAZL", location:"Pasaje Poetas Andaluces, Estepona", date:"—", meaning:"Plonger dans le bleu : mer/ciel et énergie.", artistSite:"https://www.caz-l.com/streetart", artistInstagram:"caz.l", lat:null, lng:null, imageUrl:""},
+      {n:40, title:"Freaks", artist:"Rebelzer", location:"C/ Granada, 16, Estepona", date:"—", meaning:"Personnages décalés : culture urbaine.", artistSite:"", artistInstagram:"rebelzer_freaks", lat:null, lng:null, imageUrl:""},
+      {n:41, title:"Agua (en sistema Braille)", artist:"Fran Redondo", location:"C/ Málaga (Edf. Saymar), Estepona", date:"—", meaning:"Thème de l’eau + accessibilité (braille).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:42, title:"Recuerdos Orientales", artist:"José Fernández Ríos", location:"Plaza Antonia Guerrero, Estepona", date:"—", meaning:"Ambiance orientale : motifs et souvenirs.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:43, title:"Pórticos del Cielo", artist:"José Fernández Ríos", location:"Avda. Andalucía, 3, Estepona", date:"—", meaning:"Portiques vers le ciel : architecture et verticalité.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:44, title:"La Última Cena", artist:"Curro Leyton", location:"C/ Madrid (Iglesia San José), Estepona", date:"—", meaning:"Référence à la Cène : iconographie religieuse revisité.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:45, title:"Mural Histórico (S. XIX)", artist:"Anónimo", location:"Plaza de las Flores, Estepona", date:"XIXe siècle", meaning:"Fresque patrimoniale historique (XIXe).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:46, title:"Espíritu de Equipo", artist:"Francisco Alarcón", location:"C/ Cristóbal Ruiz Méndez (Pabellón Ramos-Cazorla), Estepona", date:"—", meaning:"Sport collectif : esprit d’équipe et cohésion.", artistSite:"", artistInstagram:"francisco_alarcon_perez", lat:null, lng:null, imageUrl:""},
+      {n:47, title:"(Murale) Leyton", artist:"Curro Leyton", location:"C/ Ciudad Real (Pabellón La Lobilla), Estepona", date:"—", meaning:"Signature/identité visuelle de l’artiste.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:48, title:"Frescos de la Casa Mondéjar (S. XVIII)", artist:"Anónimo", location:"C/ Mondéjar, Estepona", date:"XVIIIe siècle", meaning:"Fresques patrimoniales historiques (XVIIIe).", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:49, title:"Atlantas", artist:"José Fernández Ríos", location:"Avda. Andalucía, 115, Estepona", date:"—", meaning:"Atlantes : figures porteuses / mythologie architecturale.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia", lat:null, lng:null, imageUrl:""},
+      {n:50, title:"Deporte para Todos", artist:"Félix García Álvarez", location:"Centro Deportivo José Ramón de la Morena, Estepona", date:"—", meaning:"Sport pour tous : inclusion, santé, accessibilité.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:51, title:"Estepona se Viste de Flores", artist:"Susana Velasco", location:"C/ Félix Rodríguez de la Fuente, Estepona", date:"—", meaning:"Hommage à la ville fleurie : identité d’Estepona.", artistSite:"https://www.demuchoscoloressusana.com/", artistInstagram:"demuchoscoloressusana", lat:null, lng:null, imageUrl:""},
+      {n:52, title:"Nutrir", artist:"Samantha Jordaan", location:"C/ Terraza (Conjunto Andalucía), Estepona", date:"—", meaning:"Nourrir : soin, croissance, lien au vivant.", artistSite:"", artistInstagram:"samanthajordaan", lat:null, lng:null, imageUrl:""},
+      {n:53, title:"Sin Nombre", artist:"El Chorro Arts", location:"C/ Terraza (Bda. Isabel Simón) 1, Estepona", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"elchorroarts", lat:null, lng:null, imageUrl:""},
+      {n:54, title:"La Caída", artist:"Vyacheslav Gunin", location:"C/ Peineta (Bda. Isabel Simón) 6, Estepona", date:"2020", meaning:"Composition onirique : chute / rêve / nature.", artistSite:"", artistInstagram:"sav45", lat:null, lng:null, imageUrl:""},
+      {n:55, title:"Sin Nombre", artist:"Alejandro Gambín Vicente", location:"C/ Santo Domingo de Guzmán, 7, Estepona", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:56, title:"Momento Pasajero", artist:"Ángel Caballero Rioja", location:"C/ Melilla (Edf. Royber), Estepona", date:"—", meaning:"Instant fugace : temps qui passe.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:57, title:"Ilusión", artist:"José Antonio Barrientos", location:"C/ San Roque (Edf. Bustamante), Estepona", date:"—", meaning:"Rêve/illusion : imaginaire.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:58, title:"Sin Nombre", artist:"Alex Senna", location:"C/ Cristóbal Ruiz Méndez (Edf. Soto), Estepona", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"alexsenna", lat:null, lng:null, imageUrl:""},
+      {n:59, title:"La Fase Azul de Pajarito Curioso", artist:"André Farkos", location:"C/ San Juan Bosco, Estepona", date:"—", meaning:"Oiseau curieux : “phase bleue”, poésie chromatique.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:60, title:"Fragmentación de un Entorno Concreto", artist:"Alberto Montes Sánchez", location:"Prolongación Avda. San Lorenzo, 25, Estepona", date:"—", meaning:"Fragmentation urbaine : abstraction / architecture.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""},
+      {n:61, title:"Fémina", artist:"Curro Leyton", location:"Polideportivo La Lobilla, Estepona", date:"—", meaning:"Figure féminine : force et présence.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton", lat:null, lng:null, imageUrl:""},
+      {n:62, title:"El Pescador Moderno", artist:"Juan Pineda", location:"C/ San Juan Bosco, Estepona", date:"—", meaning:"Pêcheur contemporain : tradition et modernité.", artistSite:"", artistInstagram:"", lat:null, lng:null, imageUrl:""}
+    ];
+
+    // =========================
+    // Utilitaires
+    // =========================
+    function esc(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function instagramLink(handle){ return `https://www.instagram.com/${handle}/`; }
+    function instagramSearchLink(name){
+      const q = encodeURIComponent(`site:instagram.com "${name}"`);
+      return `https://www.google.com/search?q=${q}`;
+    }
+
+    function storageKey(){ return "estepona_murals_coords_v1"; }
+
+    function loadCache(){
+      try{
+        const raw = localStorage.getItem(storageKey());
+        if(!raw) return null;
+        return JSON.parse(raw);
+      }catch{ return null; }
+    }
+
+    function saveCache(obj){
+      try{ localStorage.setItem(storageKey(), JSON.stringify(obj)); }catch{}
+    }
+
+    function applyCache(){
+      const cached = loadCache();
+      if(!cached) return 0;
+      let count = 0;
+      for(const m of murals){
+        const k = String(m.n);
+        if(cached[k] && typeof cached[k].lat === "number" && typeof cached[k].lng === "number"){
+          m.lat = cached[k].lat;
+          m.lng = cached[k].lng;
+          count++;
+        }
+      }
+      return count;
+    }
+
+    function updateGeoStatus(){
+      const done = murals.filter(m => typeof m.lat === "number" && typeof m.lng === "number").length;
+      const total = murals.length;
+      const state = document.getElementById("geoState");
+      state.textContent = done === total ? "prêt" : `${done}/${total}`;
+      state.style.color = done === total ? "rgba(45,212,191,.95)" : "rgba(251,113,133,.92)";
+    }
+
+    // =========================
+    // Carte
+    // =========================
+    const map = L.map("map", { zoomControl:true }).setView([36.4276, -5.1459], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const markersLayer = L.layerGroup().addTo(map);
+    const markersByN = new Map();
+
+    function popupHtml(m){
+      const actions = [];
+      actions.push(`<a class="link map" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((m.lat&&m.lng)?(m.lat+","+m.lng):(m.location))}">🗺️ Maps</a>`);
+      if(m.artistSite){
+        actions.push(`<a class="link site" target="_blank" rel="noopener" href="${esc(m.artistSite)}">🌐 Site artiste</a>`);
+      }else{
+        const igHref = m.artistInstagram ? instagramLink(m.artistInstagram) : instagramSearchLink(m.artist);
+        const igLabel = m.artistInstagram ? `📷 Instagram @${esc(m.artistInstagram)}` : `📷 Instagram`;
+        actions.push(`<a class="link ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>`);
+      }
+
+      return `
+        <div style="min-width:240px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-weight:900;font-size:14px">${esc(m.title)}</div>
+              <div style="color:rgba(234,246,248,.75);font-size:12px;margin-top:2px">${esc(m.artist)}</div>
+            </div>
+            <div style="font-family:var(--mono);font-weight:900;background:rgba(45,212,191,.14);border:1px solid rgba(45,212,191,.25);color:rgba(234,246,248,.95);border-radius:999px;padding:4px 8px">#${m.n}</div>
+          </div>
+
+          <div style="margin-top:8px;color:rgba(234,246,248,.85);font-size:12px;line-height:1.45">
+            📍 ${esc(m.location)}<br/>
+            🗓️ ${esc(m.date || "—")}
+            ${m.lat && m.lng ? `<br/><span style="color:rgba(45,212,191,.92)">GPS:</span> ${m.lat.toFixed(6)}, ${m.lng.toFixed(6)}` : ""}
+          </div>
+
+          <div style="margin-top:8px;color:rgba(234,246,248,.85);font-size:12px;line-height:1.45">
+            ${esc(m.meaning || "—")}
+          </div>
+
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            ${actions.join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function rebuildMarkers(list){
+      markersLayer.clearLayers();
+      markersByN.clear();
+
+      for(const m of list){
+        if(typeof m.lat === "number" && typeof m.lng === "number"){
+          const marker = L.marker([m.lat, m.lng]).addTo(markersLayer);
+          marker.bindPopup(popupHtml(m));
+          markersByN.set(m.n, marker);
+        }
+      }
+    }
+
+    // =========================
+    // Liste + recherche
+    // =========================
+    const listEl = document.getElementById("list");
+    const qEl = document.getElementById("q");
+    const countShownEl = document.getElementById("countShown");
+
+    function norm(s){
+      return (s || "")
+        .toString()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .toLowerCase()
+        .trim();
+    }
+
+    function filtered(){
+      const q = norm(qEl.value);
+      let list = murals.slice().sort((a,b)=>a.n-b.n);
+
+      if(q){
+        list = list.filter(m => {
+          const blob = norm([m.title,m.artist,m.location,m.date].join(" "));
+          return blob.includes(q);
+        });
+      }
+      return list;
+    }
+
+    function renderList(list){
+      countShownEl.textContent = list.length;
+      listEl.innerHTML = "";
+
+      for(const m of list){
+        const item = document.createElement("div");
+        item.className = "item";
+
+        const thumb = document.createElement("div");
+        thumb.className = "thumb";
+        if(m.imageUrl){
+          const img = document.createElement("img");
+          img.src = m.imageUrl;
+          img.alt = m.title;
+          thumb.appendChild(img);
+        }
+        item.appendChild(thumb);
+
+        const num = document.createElement("div");
+        num.className = "num";
+        num.textContent = m.n;
+        item.appendChild(num);
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerHTML = `
+          <h4>${esc(m.title)}</h4>
+          <p>${esc(m.artist)}<br><span class="loc">${esc(m.location)}</span></p>
+        `;
+        item.appendChild(meta);
+
+        item.addEventListener("click", ()=>{
+          if(typeof m.lat === "number" && typeof m.lng === "number"){
+            map.setView([m.lat, m.lng], 16, { animate:true });
+            const mk = markersByN.get(m.n);
+            if(mk) mk.openPopup();
+          }else{
+            // pas encore géocodé : zoom sur Estepona
+            map.setView([36.4276, -5.1459], 13, { animate:true });
+          }
+        });
+
+        listEl.appendChild(item);
+      }
+    }
+
+    function refresh(){
+      const list = filtered();
+      renderList(list);
+      rebuildMarkers(list);
+
+      // si on a des points, cadrer la carte
+      const pts = list.filter(m => typeof m.lat === "number" && typeof m.lng === "number");
+      if(pts.length >= 2){
+        const bounds = L.latLngBounds(pts.map(m => [m.lat, m.lng]));
+        map.fitBounds(bounds.pad(0.12));
+      }
+    }
+
+    // =========================
+    // Géocodage (Nominatim)
+    // =========================
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function geocodeOne(address){
+      const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(address);
+      const res = await fetch(url, {
+        headers: { "Accept":"application/json" }
+      });
+      if(!res.ok) return null;
+      const data = await res.json();
+      if(!data || !data[0]) return null;
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+
+    async function geocodeAllMissing(){
+      const cache = loadCache() || {};
+      const missing = murals.filter(m => !(typeof m.lat === "number" && typeof m.lng === "number"));
+
+      if(missing.length === 0){
+        updateGeoStatus();
+        refresh();
+        return;
+      }
+
+      // Géocode progressivement (1 req/sec)
+      for(let i=0;i<missing.length;i++){
+        const m = missing[i];
+        updateGeoStatus();
+
+        // Adresse plus “riche” = meilleure précision
+        const query = `${m.title}, ${m.location}, Estepona, Málaga, Spain`;
+
+        try{
+          const pos = await geocodeOne(query);
+          if(pos && isFinite(pos.lat) && isFinite(pos.lng)){
+            m.lat = pos.lat;
+            m.lng = pos.lng;
+            cache[String(m.n)] = { lat: m.lat, lng: m.lng };
+            saveCache(cache);
+            refresh();
+          }
+        }catch(e){
+          // ignore et continue
+        }
+
+        // Respect Nominatim
+        await sleep(1100);
+      }
+
+      updateGeoStatus();
+      refresh();
+    }
+
+    // =========================
+    // UI buttons
+    // =========================
+    const sidePanel = document.getElementById("sidePanel");
+    const miniBtn = document.getElementById("miniBtn");
+    const miniState = document.getElementById("miniState");
+    const showAllBtn = document.getElementById("showAllBtn");
+    const geoBtn = document.getElementById("geoBtn");
+
+    let miniOn = false;
+
+    miniBtn.addEventListener("click", ()=>{
+      miniOn = !miniOn;
+      miniState.textContent = miniOn ? "ON" : "OFF";
+      sidePanel.classList.toggle("mini-on", miniOn);
+    });
+
+    showAllBtn.addEventListener("click", ()=>{
+      qEl.value = "";
+      refresh();
+    });
+
+    geoBtn.addEventListener("click", async ()=>{
+      geoBtn.textContent = "⏳ Géocodage…";
+      geoBtn.disabled = true;
+      await geocodeAllMissing();
+      geoBtn.textContent = "📍 Placer via adresses";
+      geoBtn.disabled = false;
+    });
+
+    qEl.addEventListener("input", refresh);
+
+    // =========================
+    // Init
+    // =========================
+    const cachedCount = applyCache();
+    updateGeoStatus();
+    refresh();
+
+    // Si tu veux : auto-géocoder au 1er chargement
+    // Décommente la ligne ci-dessous
+    // geocodeAllMissing();
+
+  </script>
+</body>
+</html>
