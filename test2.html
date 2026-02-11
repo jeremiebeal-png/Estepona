@@ -3,55 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Route des fresques d’Estepona — Murales, artistes & emplacements</title>
-  <meta name="description" content="Route des fresques d’Estepona : liste des œuvres, artistes, lieux, dates, recherche et filtres." />
+  <title>Route des fresques d’Estepona</title>
+  <meta name="description" content="Route des fresques d’Estepona : liste des œuvres, artistes, lieux, dates et descriptions." />
   <meta name="theme-color" content="#0b3c49" />
 
   <style>
     :root{
       /* Fond “bleu méditerranéen” */
-      --sea1:#0b3c49;     /* bleu profond */
-      --sea2:#0ea5e9;     /* azur */
-      --sea3:#2dd4bf;     /* turquoise */
-      --sand:#f6f1e7;     /* sable clair (léger) */
+      --sea1:#0b3c49;
+      --sea2:#0ea5e9;
+      --sea3:#2dd4bf;
+      --sand:#f6f1e7;
 
-      /* Encadrés / cartes (comme ta capture) */
-      --panel:#071a22;           /* bleu nuit */
-      --panel2:#06161d;          /* variante légère */
+      /* Cartes */
+      --panel:#071a22;
+      --panel2:#06161d;
       --panelLine: rgba(234,246,248,.10);
-      --panelSoft: rgba(234,246,248,.06);
 
-      /* Texte sur cartes */
+      /* Texte */
       --textOn:#eaf6f8;
       --mutedOn: rgba(234,246,248,.74);
 
-      /* Texte global (hors cartes) */
-      --text:#0b3c49;
-      --muted:rgba(11,60,73,.70);
-      --line:rgba(11,60,73,.14);
-      --soft:rgba(11,60,73,.06);
-
-      /* Bulles “ancien thème” */
-      --bubble-bg: rgba(45,212,191,.12);
-      --bubble-br: rgba(45,212,191,.24);
-      --bubble-tx: rgba(234,246,248,.95);
-
+      /* Pills */
       --bubble2-bg: rgba(14,165,233,.10);
       --bubble2-br: rgba(14,165,233,.22);
 
       --radius:18px;
       --shadow:0 14px 40px rgba(10, 30, 35, .18);
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:var(--sans);
-      color:var(--text);
+      color:var(--textOn);
 
-      /* ✅ Fond bleu méditerranéen */
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
@@ -59,147 +49,122 @@
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
       min-height:100vh;
     }
-    a{color:inherit}
 
-    .container{max-width:1200px;margin:0 auto;padding:24px}
+    a{color:inherit;text-decoration:none}
 
     header{
       position:sticky;top:0;z-index:50;
-      background: rgba(7,26,34,.72);
+      background: rgba(7,26,34,.78);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(234,246,248,.12);
     }
+
     .header-inner{
-      display:flex;align-items:center;justify-content:space-between;gap:16px;
-      padding:14px 24px;max-width:1200px;margin:0 auto
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
     }
-    .brand{display:flex;align-items:center;gap:12px}
+
+    .brand{display:flex;align-items:center;gap:12px;min-width:240px}
     .logo{
       width:38px;height:38px;border-radius:12px;
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.85));
       box-shadow: 0 10px 22px rgba(0,0,0,.18);
+      flex:0 0 auto;
     }
-    .brand h1{font-size:15px;letter-spacing:.2px;margin:0;color:rgba(234,246,248,.95)}
+    .brand h1{margin:0;font-size:15px;letter-spacing:.2px;color:rgba(234,246,248,.95)}
     .brand p{margin:0;font-size:12px;color:rgba(234,246,248,.72)}
-    .chip{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      background: var(--bubble-bg);
-      border: 1px solid var(--bubble-br);
-      color: rgba(234,246,248,.95);
-      font-size:12px;
-      white-space:nowrap;
-    }
 
-    .hero{padding:22px 0 8px}
-    .hero-grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:18px;align-items:stretch}
-
-    /* Cartes principales en bleu nuit */
-    .card{
-      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
-      border: 1px solid var(--panelLine);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      color: var(--textOn);
-    }
-    .card .pad{padding:18px}
-
-    .title{font-size:28px;line-height:1.15;margin:0 0 8px;letter-spacing:.2px;color:var(--textOn)}
-
-    .quick{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .menu{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      display:inline-flex;align-items:center;justify-content:center;
       padding:10px 12px;border-radius:14px;
       background: rgba(234,246,248,.08);
       border: 1px solid rgba(234,246,248,.14);
-      color: var(--textOn);
-      text-decoration:none;
+      color: rgba(234,246,248,.95);
       font-size:13px;
-      transition:transform .08s ease, background .08s ease, border-color .08s ease;
-      cursor:pointer;
+      transition: transform .08s ease, background .08s ease, border-color .08s ease;
       user-select:none;
     }
     .btn:hover{transform:translateY(-1px);background:rgba(234,246,248,.12);border-color:rgba(234,246,248,.20)}
     .btn.primary{
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.88));
-      border: none;
+      border:none;
       color:#05262e;
-      font-weight:700;
+      font-weight:800;
     }
 
-    .stat{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .stat .box{
-      border-radius: 16px;
-      background: rgba(234,246,248,.06);
-      border: 1px solid rgba(234,246,248,.10);
-      padding:14px;
-    }
-    .stat .k{font-size:12px;color:var(--mutedOn);margin:0 0 6px}
-    .stat .v{margin:0;font-size:20px;font-weight:800;color:var(--textOn)}
-    .stat .s{margin:6px 0 0;color:var(--mutedOn);font-size:12px}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
 
-    .controls{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 1.1fr .6fr .6fr .45fr;
-      gap:10px;
+    .hero{
+      margin:10px 0 16px;
+      padding:20px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.88));
+      border: 1px solid var(--panelLine);
+      box-shadow: var(--shadow);
     }
-    .field{
-      border-radius: 16px;
-      background: rgba(234,246,248,.06);
-      border: 1px solid rgba(234,246,248,.12);
-      padding:10px 12px;
-      display:flex;flex-direction:column;gap:6px;
-      min-height:62px;
+    .title{
+      margin:0;
+      font-size:32px;
+      line-height:1.12;
+      letter-spacing:.2px;
       color: var(--textOn);
     }
-    .field label{font-size:11px;color:var(--mutedOn)}
-    input[type="text"], select{
-      background: transparent;border: none;outline: none;
-      color: var(--textOn);font-size:14px;padding:2px 0;
+    .sub{
+      margin:8px 0 0;
+      color: var(--mutedOn);
+      font-size:13px;
+      line-height:1.45;
     }
-    select option{color:#061e25}
-    .divider{height:1px;background:rgba(234,246,248,.14);margin:18px 0}
 
     .results-head{
-      margin-top:18px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;flex-wrap:wrap;
+      margin:14px 0 8px;
     }
-    .results-head h2{margin:0;font-size:16px;color:rgba(234,246,248,.95)}
-    .results-head .meta{color:rgba(234,246,248,.70);font-size:12px}
+    .results-head h2{
+      margin:0;
+      font-size:16px;
+      color: rgba(234,246,248,.95);
+    }
 
     .grid{
-      margin-top:12px;
+      margin-top:10px;
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap:12px;
     }
 
-    /* Cartes murales en bleu nuit */
     .mural{
       border-radius: 18px;
       background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
       border: 1px solid var(--panelLine);
       padding:14px;
       display:flex;flex-direction:column;gap:10px;
-      min-height: 210px;
+      min-height: 220px;
       box-shadow: 0 10px 24px rgba(10,30,35,.16);
       color: var(--textOn);
     }
-    .mural .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 
+    .mural .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .badge{
       font-family:var(--mono);
       font-size:12px;
       padding:6px 8px;border-radius:999px;
-      background: var(--bubble-bg);
-      border: 1px solid var(--bubble-br);
-      color: var(--bubble-tx);
+      background: rgba(45,212,191,.12);
+      border: 1px solid rgba(45,212,191,.24);
+      color: rgba(234,246,248,.95);
       flex:0 0 auto;
     }
 
     .mural h3{margin:0;font-size:14px;line-height:1.25;color:var(--textOn)}
     .mural .who{margin:0;color:var(--mutedOn);font-size:12px}
+
     .row{
       display:flex;gap:10px;flex-wrap:wrap;align-items:center;
       color: var(--mutedOn);font-size:12px;
@@ -208,11 +173,12 @@
       padding:6px 8px;border-radius:999px;
       background: var(--bubble2-bg);
       border: 1px solid var(--bubble2-br);
-      color: var(--bubble-tx);
+      color: rgba(234,246,248,.95);
     }
 
     .desc{margin:0;color:rgba(234,246,248,.90);font-size:13px;line-height:1.45}
-    .mural .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+
+    .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
 
     .link{
       text-decoration:none;
@@ -223,28 +189,24 @@
     }
     .link:hover{background:rgba(234,246,248,.12)}
     .link.map{border-color:rgba(45,212,191,.22)}
-    .link.copy{border-color:rgba(14,165,233,.22)}
     .link.site{border-color:rgba(14,165,233,.25)}
     .link.ig{border-color:rgba(251,191,36,.25)}
 
     .foot{
-      margin:26px 0 10px;
+      margin:22px 0 10px;
       color: rgba(234,246,248,.70);
       font-size:12px;
       line-height:1.5;
     }
 
     @media (max-width: 980px){
-      .hero-grid{grid-template-columns:1fr}
       .grid{grid-template-columns: repeat(2, 1fr)}
-      .controls{grid-template-columns: 1fr 1fr}
     }
     @media (max-width: 620px){
       .grid{grid-template-columns: 1fr}
-      .controls{grid-template-columns: 1fr}
       .header-inner{padding:12px 16px}
       .container{padding:18px}
-      .title{font-size:24px}
+      .title{font-size:26px}
     }
   </style>
 </head>
@@ -260,100 +222,24 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <span class="chip">📍 Estepona</span>
-        <a class="btn" href="#liste">Aller à la liste</a>
-      </div>
+      <nav class="menu" aria-label="Menu principal">
+        <a class="btn" href="index.html">Accueil</a>
+        <a class="btn" href="infos-pratiques.html">Infos pratiques</a>
+        <a class="btn" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
+        <a class="btn primary" href="route-fresques-estepona.html" aria-current="page">Route des fresques</a>
+      </nav>
     </div>
   </header>
 
   <main class="container">
-    <!-- Bloc de navigation (demandé) -->
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 16px">
-      <a class="btn" href="index.html">Accueil</a>
-      <a class="btn" href="infos-pratiques.html">Infos pratiques</a>
-      <a class="btn" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
-      <a class="btn primary" href="route-fresques-estepona.html" aria-current="page">Route des fresques</a>
-    </div>
-
     <section class="hero">
-      <div class="hero-grid">
-        <div class="card">
-          <div class="pad">
-            <h2 class="title">Route des fresques d’Estepona</h2>
-
-            <div class="quick">
-              <a class="btn primary" href="#liste">🔎 Rechercher une fresque</a>
-              <a class="btn" id="copyAllBtn" href="javascript:void(0)">📋 Copier la liste filtrée</a>
-              <a class="btn" id="resetBtn" href="javascript:void(0)">↩︎ Réinitialiser</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="pad">
-            <div class="stat">
-              <div class="box">
-                <p class="k">Œuvres listées</p>
-                <p class="v" id="totalCount">62</p>
-                <p class="s">Route des fresques</p>
-              </div>
-              <div class="box">
-                <p class="k">Affichées</p>
-                <p class="v" id="shownCount">62</p>
-                <p class="s">selon tes filtres</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="liste" class="divider"></div>
-
-      <div class="controls">
-        <div class="field">
-          <label for="q">Recherche (titre, artiste, lieu)</label>
-          <input id="q" type="text" placeholder="ex: Quijote, Leyton, Avda. Andalucía…" autocomplete="off" />
-        </div>
-
-        <div class="field">
-          <label for="artist">Artiste</label>
-          <select id="artist">
-            <option value="">Tous</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="zone">Zone / rue (contient)</label>
-          <select id="zone">
-            <option value="">Toutes</option>
-            <option value="Avda. Andalucía">Avda. Andalucía</option>
-            <option value="C/ Terraza">C/ Terraza</option>
-            <option value="Plaza">Plaza</option>
-            <option value="Bda.">Barriada (Bda.)</option>
-            <option value="Polideportivo">Polideportivo</option>
-            <option value="Colegio">Colegio / Instituto</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="year">Année</label>
-          <select id="year">
-            <option value="">Toutes</option>
-            <option value="2013">2013</option>
-            <option value="2014">2014</option>
-            <option value="2015">2015</option>
-            <option value="2016">2016</option>
-            <option value="2020">2020</option>
-          </select>
-        </div>
-      </div>
+      <h2 class="title">Route des fresques d’Estepona</h2>
+      <p class="sub">Toutes les œuvres listées en cartes (Maps + site artiste ou Instagram). Aucun bouton “copier”, aucun filtre.</p>
     </section>
 
     <section class="results">
       <div class="results-head">
         <h2>Résultats</h2>
-        <div class="meta" id="metaLine">62 œuvres — tri par numéro</div>
       </div>
 
       <div id="cards" class="grid" aria-live="polite"></div>
@@ -430,33 +316,13 @@
       {n:62, title:"El Pescador Moderno", artist:"Juan Pineda", location:"C/ San Juan Bosco", date:"—", year:"", meaning:"Pêcheur contemporain : tradition et modernité.", artistSite:"", artistInstagram:""}
     ];
 
-    const q = document.getElementById("q");
-    const artist = document.getElementById("artist");
-    const zone = document.getElementById("zone");
-    const year = document.getElementById("year");
-    const cards = document.getElementById("cards");
-    const totalCount = document.getElementById("totalCount");
-    const shownCount = document.getElementById("shownCount");
-    const metaLine = document.getElementById("metaLine");
-    const copyAllBtn = document.getElementById("copyAllBtn");
-    const resetBtn = document.getElementById("resetBtn");
-
-    totalCount.textContent = murals.length;
-
-    const artists = [...new Set(murals.map(m => m.artist))].sort((a,b)=>a.localeCompare(b,"fr"));
-    for (const a of artists){
-      const opt = document.createElement("option");
-      opt.value = a;
-      opt.textContent = a;
-      artist.appendChild(opt);
-    }
-
-    function norm(s){
-      return (s || "")
-        .toString()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .toLowerCase()
-        .trim();
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
 
     function buildMapLink(text){
@@ -473,126 +339,49 @@
       return `https://www.google.com/search?q=${q}`;
     }
 
-    function copyToClipboard(text){
-      if (!navigator.clipboard) return;
-      navigator.clipboard.writeText(text);
-    }
+    const cards = document.getElementById("cards");
 
-    function currentFilters(){
-      return {
-        q: norm(q.value),
-        artist: artist.value,
-        zone: zone.value,
-        year: year.value
-      };
-    }
+    const list = murals.slice().sort((a,b)=>a.n-b.n);
 
-    function apply(){
-      const f = currentFilters();
-      let list = murals.slice().sort((a,b)=>a.n-b.n);
+    for (const m of list){
+      const mapLink = buildMapLink(`${m.title} ${m.location}`);
 
-      if (f.artist) list = list.filter(m => m.artist === f.artist);
-      if (f.year)   list = list.filter(m => (m.year || "") === f.year);
-      if (f.zone)   list = list.filter(m => (m.location || "").includes(f.zone));
-      if (f.q){
-        list = list.filter(m => {
-          const blob = norm([m.title,m.artist,m.location,m.date,m.year].join(" "));
-          return blob.includes(f.q);
-        });
+      const actions = [];
+      actions.push(`<a class="link map" target="_blank" rel="noopener" href="${mapLink}">🗺️ Maps</a>`);
+
+      if (m.artistSite){
+        actions.push(`<a class="link site" target="_blank" rel="noopener" href="${escapeHtml(m.artistSite)}">🌐 Site artiste</a>`);
+      } else {
+        const igHref = m.artistInstagram ? instagramLink(m.artistInstagram) : instagramSearchLink(m.artist);
+        const igLabel = m.artistInstagram ? `📷 Instagram @${escapeHtml(m.artistInstagram)}` : `📷 Instagram`;
+        actions.push(`<a class="link ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>`);
       }
 
-      render(list);
-      return list;
-    }
-
-    function render(list){
-      shownCount.textContent = list.length;
-      metaLine.textContent = `${list.length} œuvre(s) — tri par numéro`;
-
-      cards.innerHTML = "";
-      for (const m of list){
-        const mapLink = buildMapLink(`${m.title} ${m.location}`);
-        const copyLine = `#${m.n} — ${m.title} — ${m.artist} — ${m.location}${m.date && m.date !== "—" ? " — " + m.date : ""}`;
-
-        const links = [];
-        links.push(`<a class="link map" target="_blank" rel="noopener" href="${mapLink}">🗺️ Maps</a>`);
-
-        if (m.artistSite){
-          links.push(`<a class="link site" target="_blank" rel="noopener" href="${m.artistSite}">🌐 Site artiste</a>`);
-        } else {
-          const igHref = m.artistInstagram ? instagramLink(m.artistInstagram) : instagramSearchLink(m.artist);
-          const igLabel = m.artistInstagram ? `📷 Instagram @${escapeHtml(m.artistInstagram)}` : `📷 Instagram`;
-          links.push(`<a class="link ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>`);
-        }
-
-        links.push(`<a class="link copy" href="javascript:void(0)" data-copy="${escapeAttr(copyLine)}">📋 Copier</a>`);
-
-        const el = document.createElement("article");
-        el.className = "mural";
-        el.innerHTML = `
-          <div class="top">
-            <div>
-              <h3>${escapeHtml(m.title)}</h3>
-              <p class="who">${escapeHtml(m.artist)}</p>
-            </div>
-            <div class="badge">#${m.n}</div>
+      const el = document.createElement("article");
+      el.className = "mural";
+      el.innerHTML = `
+        <div class="top">
+          <div>
+            <h3>${escapeHtml(m.title)}</h3>
+            <p class="who">${escapeHtml(m.artist)}</p>
           </div>
+          <div class="badge">#${m.n}</div>
+        </div>
 
-          <div class="row">
-            <span class="pill">📍 ${escapeHtml(m.location)}</span>
-            <span class="pill">🗓️ ${escapeHtml(m.date || "—")}</span>
-          </div>
+        <div class="row">
+          <span class="pill">📍 ${escapeHtml(m.location)}</span>
+          <span class="pill">🗓️ ${escapeHtml(m.date || "—")}</span>
+        </div>
 
-          <p class="desc">${escapeHtml(m.meaning || "—")}</p>
+        <p class="desc">${escapeHtml(m.meaning || "—")}</p>
 
-          <div class="actions">
-            ${links.join("")}
-          </div>
-        `;
-        cards.appendChild(el);
-      }
+        <div class="actions">
+          ${actions.join("")}
+        </div>
+      `;
 
-      cards.querySelectorAll("[data-copy]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          copyToClipboard(btn.getAttribute("data-copy"));
-          btn.textContent = "✅ Copié";
-          setTimeout(()=>btn.textContent="📋 Copier", 900);
-        });
-      });
+      cards.appendChild(el);
     }
-
-    function escapeHtml(str){
-      return (str ?? "").toString()
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-    function escapeAttr(str){ return escapeHtml(str); }
-
-    [q, artist, zone, year].forEach(el => el.addEventListener("input", apply));
-    [artist, zone, year].forEach(el => el.addEventListener("change", apply));
-
-    copyAllBtn.addEventListener("click", ()=>{
-      const list = apply();
-      const txt = list
-        .map(m => `#${m.n}\t${m.title}\t${m.artist}\t${m.location}\t${m.date || ""}\t${m.artistSite || ""}\t${m.artistInstagram ? ("@" + m.artistInstagram) : ""}`)
-        .join("\n");
-      copyToClipboard(txt);
-      copyAllBtn.textContent = "✅ Liste copiée";
-      setTimeout(()=>copyAllBtn.textContent="📋 Copier la liste filtrée", 1100);
-    });
-
-    resetBtn.addEventListener("click", ()=>{
-      q.value = "";
-      artist.value = "";
-      zone.value = "";
-      year.value = "";
-      apply();
-    });
-
-    apply();
   </script>
 </body>
 </html>
