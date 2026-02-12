@@ -50,11 +50,13 @@
     }
     a{color:inherit;text-decoration:none}
 
-    /* ===== HEADER (comme ta capture) ===== */
+    /* =========================
+       HEADER (comme la capture)
+       ========================= */
     header{
       position:sticky; top:0; z-index:80;
-      background: rgba(6,18,30,.72);
-      backdrop-filter: blur(12px);
+      background: rgba(6,18,30,.78);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(234,246,248,.10);
     }
     .topbar{
@@ -71,11 +73,11 @@
       display:flex;
       align-items:center;
       gap:12px;
-      min-width: 220px;
+      min-width: 240px;
     }
     .brand .mark{
       width:38px;height:38px;border-radius:12px;
-      background: #ffffff;
+      background:#ffffff;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -92,19 +94,22 @@
       white-space:nowrap;
     }
 
-    nav{
+    /* Desktop nav (centre) */
+    .nav-desktop{
       display:flex;
       align-items:center;
+      justify-content:center;
       gap:18px;
       flex-wrap:wrap;
-      justify-content:center;
+      flex: 1 1 auto;
     }
     .navlink{
       color: rgba(234,246,248,.88);
-      font-size:15px;
-      padding:10px 10px;
+      font-size:16px;
+      padding:10px 12px;
       border-radius:12px;
       transition: background .12s ease, color .12s ease, transform .12s ease;
+      white-space:nowrap;
     }
     .navlink:hover{
       background: rgba(234,246,248,.08);
@@ -117,19 +122,20 @@
       border: 1px solid rgba(234,246,248,.14);
     }
 
+    /* Social pills (droite) */
     .social{
       display:flex;
       align-items:center;
       gap:10px;
-      flex-wrap:wrap;
+      flex-wrap:nowrap;
       justify-content:flex-end;
-      min-width: 210px;
+      min-width: 260px;
     }
     .sbtn{
       display:inline-flex;
       align-items:center;
       gap:10px;
-      padding:10px 12px;
+      padding:10px 14px;
       border-radius:999px;
       background: rgba(234,246,248,.08);
       border: 1px solid rgba(234,246,248,.14);
@@ -137,6 +143,7 @@
       font-size:14px;
       transition: background .12s ease, transform .12s ease, border-color .12s ease;
       user-select:none;
+      white-space:nowrap;
     }
     .sbtn:hover{
       background: rgba(234,246,248,.12);
@@ -145,7 +152,110 @@
     }
     .icon{width:18px;height:18px;display:inline-block;flex:0 0 auto}
 
-    /* ===== PAGE ===== */
+    /* Burger (mobile) */
+    .burger{
+      display:none;
+      margin-left:auto;
+      align-items:center;
+      justify-content:center;
+      width:44px;height:44px;
+      border-radius:14px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      cursor:pointer;
+      user-select:none;
+    }
+    .burger:hover{ background: rgba(234,246,248,.12); border-color: rgba(234,246,248,.22); }
+    .burger span{
+      width:18px;height:2px;
+      background: rgba(234,246,248,.92);
+      position:relative;
+      display:block;
+      border-radius:99px;
+    }
+    .burger span:before,
+    .burger span:after{
+      content:"";
+      position:absolute;
+      left:0;
+      width:18px;height:2px;
+      background: rgba(234,246,248,.92);
+      border-radius:99px;
+    }
+    .burger span:before{ top:-6px; }
+    .burger span:after{ top:6px; }
+
+    /* Mobile drawer */
+    .drawer{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.60);
+      display:none;
+      z-index:9999;
+      padding:18px;
+    }
+    .drawer.open{ display:block; }
+    .drawer-panel{
+      width:min(520px, 100%);
+      margin-left:auto;
+      background: rgba(7,26,34,.96);
+      border: 1px solid rgba(234,246,248,.12);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.40);
+      overflow:hidden;
+    }
+    .drawer-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 14px;
+      border-bottom: 1px solid rgba(234,246,248,.10);
+    }
+    .drawer-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      color: rgba(234,246,248,.95);
+    }
+    .drawer-close{
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.95);
+      user-select:none;
+    }
+    .drawer-close:hover{ background: rgba(234,246,248,.12); border-color: rgba(234,246,248,.22); }
+    .drawer-body{ padding:10px 12px 12px; }
+    .drawer-nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:8px 0 12px;
+    }
+    .drawer-nav a{
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(234,246,248,.06);
+      border: 1px solid rgba(234,246,248,.10);
+      color: rgba(234,246,248,.92);
+      font-size:15px;
+    }
+    .drawer-nav a:hover{ background: rgba(234,246,248,.10); border-color: rgba(234,246,248,.18); }
+    .drawer-social{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      padding-top:10px;
+      border-top: 1px solid rgba(234,246,248,.10);
+    }
+
+    /* =========================
+       PAGE
+       ========================= */
     .container{max-width:1200px;margin:0 auto;padding:22px 18px 28px}
 
     .hero{
@@ -205,7 +315,7 @@
       overflow:hidden;
     }
 
-    /* ===== Mini-photo (haut de carte) ===== */
+    /* Mini-photo */
     .thumb{
       width:100%;
       aspect-ratio: 16 / 9;
@@ -227,7 +337,7 @@
     }
     .thumb:hover img{ transform: scale(1.06); }
 
-    /* Placeholder si photo absente */
+    /* Placeholder */
     .thumb.placeholder{
       cursor: default;
       display:flex;
@@ -329,7 +439,7 @@
     }
     .foot a{ text-decoration: underline; }
 
-    /* ===== Lightbox plein écran ===== */
+    /* Lightbox */
     .lightbox{
       position:fixed;
       inset:0;
@@ -381,19 +491,22 @@
       border-top: 1px solid rgba(234,246,248,.10);
     }
 
-    @media (max-width: 980px){
-      .grid{grid-template-columns: repeat(2, 1fr)}
-      nav{justify-content:flex-start}
-      .brand{min-width:unset}
-      .social{min-width:unset}
+    /* Responsive */
+    @media (max-width: 1040px){
+      .social{ min-width: unset; }
+      .brand{ min-width: unset; }
+      .nav-desktop{ gap:10px; }
+      .navlink{ font-size:15px; padding:10px 10px; }
+    }
+    @media (max-width: 860px){
+      .nav-desktop{ display:none; }
+      .social{ display:none; }
+      .burger{ display:flex; }
+      .grid{ grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 680px){
-      .topbar{flex-direction:column;align-items:flex-start}
-      nav{gap:8px}
-      .navlink{padding:8px 10px;font-size:14px}
-      .social{justify-content:flex-start}
-      .grid{grid-template-columns: 1fr}
-      .title{font-size:24px}
+      .grid{ grid-template-columns: 1fr; }
+      .title{ font-size:24px; }
     }
   </style>
 </head>
@@ -402,15 +515,15 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <div class="mark" aria-hidden="true">
-          <!-- Remplace par ton logo si tu veux :
-               <img src="img/logo_bon_plan_estepona.png" alt="Vivre à Estepona"> -->
-          <span style="font-weight:900;color:#0b3c49;font-size:12px;">img/logo_bon_plan_estepona.png</span>
-        </div>
+        <a class="mark" href="index.html" aria-label="Retour à l’accueil">
+          <!-- ✅ Mets ton logo ici -->
+          <img src="img/logo_bon_plan_estepona.png" alt="Vivre à Estepona">
+        </a>
         <div class="name">Vivre à Estepona</div>
       </div>
 
-      <nav aria-label="Menu principal">
+      <!-- Menu desktop (centre) -->
+      <nav class="nav-desktop" aria-label="Menu principal">
         <a class="navlink" href="restaurants.html">Restaurants</a>
         <a class="navlink" href="que-faire.html">Que faire</a>
         <a class="navlink" href="transport.html">Transport</a>
@@ -421,7 +534,9 @@
         <a class="navlink" href="contact.html">Contact</a>
       </nav>
 
+      <!-- Social desktop (droite) -->
       <div class="social">
+        <!-- Mets tes vrais liens -->
         <a class="sbtn" href="#" target="_blank" rel="noopener">
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
@@ -439,8 +554,60 @@
           YouTube
         </a>
       </div>
+
+      <!-- Burger mobile -->
+      <button class="burger" id="burgerBtn" type="button" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false">
+        <span aria-hidden="true"></span>
+      </button>
     </div>
   </header>
+
+  <!-- Drawer mobile -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="drawer-head">
+        <div class="drawer-title">
+          <span style="display:inline-flex;align-items:center;gap:10px">
+            <img src="img/logo_bon_plan_estepona.png" alt="" style="width:28px;height:28px;border-radius:10px;background:#fff;object-fit:cover">
+            Vivre à Estepona
+          </span>
+        </div>
+        <button class="drawer-close" id="drawerClose" type="button">✕</button>
+      </div>
+
+      <div class="drawer-body">
+        <nav class="drawer-nav" aria-label="Menu mobile">
+          <a href="restaurants.html">Restaurants</a>
+          <a href="que-faire.html">Que faire</a>
+          <a href="transport.html">Transport</a>
+          <a href="ecoles.html">Écoles</a>
+          <a href="sante.html">Santé</a>
+          <a href="trafic.html">Trafic</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+
+        <div class="drawer-social">
+          <a class="sbtn" href="#" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M18 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            Instagram
+          </a>
+
+          <a class="sbtn" href="#" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M22 12s0-3.3-.4-4.8a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M10 15V9l6 3-6 3Z" fill="currentColor"/>
+            </svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <main class="container">
     <section class="hero">
@@ -472,6 +639,30 @@
   </div>
 
   <script>
+    // ====== MENU MOBILE (drawer) ======
+    const drawer = document.getElementById("drawer");
+    const burgerBtn = document.getElementById("burgerBtn");
+    const drawerClose = document.getElementById("drawerClose");
+
+    function openDrawer(){
+      drawer.classList.add("open");
+      drawer.setAttribute("aria-hidden","false");
+      burgerBtn.setAttribute("aria-expanded","true");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDrawer(){
+      drawer.classList.remove("open");
+      drawer.setAttribute("aria-hidden","true");
+      burgerBtn.setAttribute("aria-expanded","false");
+      document.body.style.overflow = "";
+    }
+
+    burgerBtn.addEventListener("click", openDrawer);
+    drawerClose.addEventListener("click", closeDrawer);
+    drawer.addEventListener("click", (e)=>{ if(e.target === drawer) closeDrawer(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") { closeDrawer(); closeLightbox(); } });
+
+    // ====== FRESQUES ======
     // Images automatiques : images/fresques/001.jpg ... 062.jpg
     const IMAGE_BASE = "images/fresques/";
     const IMAGE_EXT = ".jpg";
@@ -561,7 +752,6 @@
     function instagramLink(handle){
       return `https://www.instagram.com/${handle}/`;
     }
-
     function instagramSearchLink(artistName){
       const q = encodeURIComponent(`site:instagram.com "${artistName}"`);
       return `https://www.google.com/search?q=${q}`;
@@ -588,7 +778,6 @@
 
     lbClose.addEventListener("click", closeLightbox);
     lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeLightbox(); });
 
     const cards = document.getElementById("cards");
     const list = murals.slice().sort((a,b)=>a.n-b.n);
@@ -634,7 +823,7 @@
       `;
       cards.appendChild(el);
 
-      // Gestion image manquante -> placeholder (pas de carré vide)
+      // Image manquante -> placeholder (pas de carré vide)
       const thumb = el.querySelector(".thumb");
       const img = el.querySelector(".thumb img");
       img.addEventListener("error", ()=>{
@@ -651,11 +840,11 @@
       });
     }
 
-    // Clic image -> lightbox (seulement si data-img existe)
+    // Clic image -> lightbox (si data-img existe)
     document.querySelectorAll(".thumb").forEach(t=>{
       t.addEventListener("click", ()=>{
         const src = t.getAttribute("data-img");
-        if(!src) return; // placeholder
+        if(!src) return;
         const alt = t.getAttribute("data-alt") || "";
         const cap = t.getAttribute("data-cap") || "";
         openLightbox(src, alt, cap);
@@ -664,3 +853,4 @@
   </script>
 </body>
 </html>
+
