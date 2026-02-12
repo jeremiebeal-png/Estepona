@@ -64,12 +64,17 @@
     .container{width:min(1200px,92vw);margin-inline:auto}
 
     /* Header */
-    header{
-      position:sticky;top:0;z-index:50;
-      background:linear-gradient(180deg, rgba(11,23,48,.95), rgba(11,23,48,.9));
-      backdrop-filter:saturate(140%) blur(6px);
-      border-bottom:1px solid var(--color-border)
-    }
+   header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  background: var(--glass);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+  border-bottom: 1px solid var(--glassLine);
+}
     .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
     .brand{display:flex;align-items:center;gap:12px}
     .brand-logo{
@@ -84,14 +89,24 @@
     /* Boutons sociaux (header) */
     .social-top{display:flex;gap:10px;align-items:center}
     .social-top a{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      border:1px solid var(--color-border);
-      background:rgba(255,255,255,.02);
-      color:var(--color-text);
-      font-size:14px;
-      line-height:1;
-    }
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+
+  background: rgba(234,246,248,.08);
+  border: 1px solid rgba(234,246,248,.14);
+
+  color: rgba(234,246,248,.92);
+  font-size:14px;
+  line-height:1;
+}
+.social-top a:hover{
+  background: rgba(234,246,248,.12);
+  border-color: rgba(234,246,248,.22);
+}
+
     .social-top a:hover{background:rgba(255,255,255,.05)}
     .social-top svg{width:16px;height:16px;opacity:.95}
 
@@ -233,14 +248,21 @@
       z-index:140;
     }
     .mobile-menu{
-      position:fixed;top:0;right:0;height:100vh;
-      width:min(360px, 86vw);
-      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
-      border-left:1px solid var(--color-border);
-      z-index:150;
-      box-shadow:var(--shadow);
-      padding:16px;
-    }
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(360px, 86vw);
+
+  background: var(--glass-strong);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+  border-left: 1px solid var(--glassLine);
+  z-index: 150;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
     .mobile-menu-head{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       padding:6px 0 12px;border-bottom:1px solid var(--color-border);
