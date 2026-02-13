@@ -42,6 +42,11 @@
       --radius-lg: 14px;
       --radius-md: 10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
+
+      /* ✅ manquants (utilisés par header / menu mobile) */
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
     }
 
     html,body{
@@ -64,17 +69,18 @@
     .container{width:min(1200px,92vw);margin-inline:auto}
 
     /* Header */
-   header{
-  position: sticky;
-  top: 0;
-  z-index: 50;
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
 
-  background: var(--glass);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
 
-  border-bottom: 1px solid var(--glassLine);
-}
+      border-bottom: 1px solid var(--glassLine);
+    }
+
     .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
     .brand{display:flex;align-items:center;gap:12px}
     .brand-logo{
@@ -89,25 +95,24 @@
     /* Boutons sociaux (header) */
     .social-top{display:flex;gap:10px;align-items:center}
     .social-top a{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
 
-  background: rgba(234,246,248,.08);
-  border: 1px solid rgba(234,246,248,.14);
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
 
-  color: rgba(234,246,248,.92);
-  font-size:14px;
-  line-height:1;
-}
-.social-top a:hover{
-  background: rgba(234,246,248,.12);
-  border-color: rgba(234,246,248,.22);
-}
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
 
-    .social-top a:hover{background:rgba(255,255,255,.05)}
     .social-top svg{width:16px;height:16px;opacity:.95}
 
     .search{
@@ -125,40 +130,6 @@
       nav.primary,.search,.social-top{display:none}
       .burger{display:grid;place-items:center;margin-left:auto}
     }
-
-    /* Hero / Slider  */
-    .hero{position:relative;margin:24px 0}
-    .slider{
-      display:grid;grid-auto-flow:column;grid-auto-columns:100%;
-      overflow:hidden;border-radius:var(--radius-xl);border:1px solid var(--color-border)
-    }
-    .slide{position:relative;min-height:360px;background:linear-gradient(180deg,#12224b,#0f1f44)}
-    .slide > img.bg, .slide > video.bg{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;opacity:.55;
-      filter:grayscale(10%) contrast(1.05) saturate(1.06)
-    }
-    .slide .content{
-      position:relative;padding:28px;display:grid;gap:14px;
-      min-height:360px;align-content:end;
-      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.15) 45%, rgba(11,23,48,.88) 100%)
-    }
-    .pill{
-      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
-      background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted)
-    }
-    .slide h2{margin:0;font-size:30px;line-height:1.2}
-    .slide .meta{font-size:14px;color:var(--color-muted)}
-    .slide .cta{
-      display:inline-block;margin-top:6px;font-weight:600;color:#06131e;
-      background:var(--color-primary);padding:10px 14px;border-radius:12px
-    }
-    .slider-nav{display:flex;gap:8px;position:absolute;bottom:14px;right:14px}
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:rgba(255,255,255,.3);border:1px solid var(--color-border);cursor:pointer
-    }
-    .dot.active{background:var(--color-primary)}
 
     /* Sections (cartes) */
     section.category{margin:30px 0}
@@ -229,8 +200,14 @@
     .lb-close:hover{background:#eef6f4}
 
     /* Footer */
-    footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
-    .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    footer{
+      margin-top:48px;border-top:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
+    }
+    .footer-top{
+      padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between
+    }
     .social{display:flex;gap:12px}
     .social a{
       display:inline-flex;align-items:center;gap:8px;
@@ -248,21 +225,21 @@
       z-index:140;
     }
     .mobile-menu{
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: min(360px, 86vw);
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
 
-  background: var(--glass-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
 
-  border-left: 1px solid var(--glassLine);
-  z-index: 150;
-  box-shadow: var(--shadow);
-  padding: 16px;
-}
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
     .mobile-menu-head{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       padding:6px 0 12px;border-bottom:1px solid var(--color-border);
@@ -284,7 +261,6 @@
        Mobile polish
        ========== */
     .search input{ font-size:16px; }
-    .slide > img.bg, .slide > video.bg{ transform: translateZ(0); }
     header, .mobile-menu{
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
@@ -295,13 +271,6 @@
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
-
-      .hero{ margin:16px 0; }
-      .slide{ min-height: 250px; }
-      .slide .content{ min-height: 250px; padding:18px; gap:10px; }
-      .slide h2{ font-size:22px; line-height:1.15; }
-      .slide .meta{ font-size:13px; }
-      .slide .cta{ padding:10px 12px; border-radius:12px; }
 
       section.category{ margin:22px 0; }
       .section-head{ gap:10px; margin-bottom:12px; }
@@ -320,7 +289,6 @@
 
     @media (max-width: 380px){
       .brand strong{ font-size:15px; }
-      .slide h2{ font-size:20px; }
       .card .thumb{ height: 165px; }
     }
 
@@ -333,7 +301,7 @@
   <!-- HEADER -->
   <header>
     <div class="container header-row">
-      <a class="brand" href="#" aria-label="Accueil">
+      <a class="brand" href="index.html" aria-label="Accueil">
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Vivre à Estepona</strong>
       </a>
@@ -348,7 +316,6 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <!-- ✅ Boutons en haut + logos -->
       <div class="social-top" aria-label="Réseaux sociaux">
         <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -392,33 +359,16 @@
       <a href="index.html">Aux Alentours</a>
       <a href="contact.html">Contact</a>
 
-      <!-- Bonus : liens sociaux dans le menu mobile -->
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
   </div>
 
   <main class="container">
-    <!-- HERO / SLIDER -->
-    <section class="hero" aria-label="Mises en avant">
-      <div class="slider" id="slider">
-        <article class="slide">
-          <video class="bg" autoplay playsinline muted loop>
-            <source src="video/Video-estepona.mp4" type="video/mp4" />
-          </video>
-          <div class="content">
-            <span class="pill"></span>
-            <h2>Venez profiter d’Estepona</h2>
-            <div class="meta">Quartiers, plages, ruelles fleuries, restos, rooftops, activités nautiques.</div>
-            <a class="cta" href="#voir">Découvrir »</a>
-          </div>
-        </article>
-      </div>
-      <div class="slider-nav" id="sliderNav" aria-label="Navigation du slider"></div>
-    </section>
+    <!-- ✅ HERO / SLIDER SUPPRIMÉ -->
 
     <!-- SECTION : À voir / À faire -->
-    <section class="category" id="voir">
+    <section class="category" id="voir" style="margin-top:22px">
       <div class="section-head">
         <div>
           <h3>À voir / À faire</h3>
@@ -432,14 +382,12 @@
           <a class="thumb" href="estepona1.html"><img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona"/></a>
           <div class="body">
             <div class="kicker">Balade</div>
-            <h4><a href="#">Vieille ville & fresques</a></h4>
+            <h4><a href="estepona1.html">Vieille ville &amp; fresques</a></h4>
             <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.</p>
-            <div class="meta" style="color:var(--color-muted)"></div>
           </div>
         </article>
 
         <article class="card">
-          <!-- ✅ thumb en mode "contain" pour éviter le recadrage -->
           <a class="thumb contain" href="actualites.html">
             <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/>
           </a>
@@ -467,7 +415,7 @@
     <section class="category" id="manger">
       <div class="section-head">
         <div>
-          <h3>Restaurants & Chiringuitos</h3>
+          <h3>Restaurants &amp; Chiringuitos</h3>
           <p>Nos bonnes adresses triées par budget et quartier</p>
         </div>
         <a class="more" href="chiringuito.html">Tous les restos</a>
@@ -498,7 +446,7 @@
           <a class="thumb" href="Sortie_disco.html"><img src="img/ciel.png" alt="Rooftop"/></a>
           <div class="body">
             <div class="kicker">Port</div>
-            <h4><a href="Sortie_disco.html">Rooftops & cocktails</a></h4>
+            <h4><a href="Sortie_disco.html">Rooftops &amp; cocktails</a></h4>
             <p class="excerpt">Admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
             <div class="meta" style="color:var(--color-muted)">Port</div>
           </div>
@@ -591,7 +539,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
-      <a class="brand" href="#">
+      <a class="brand" href="index.html">
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Vivre à Estepona</strong>
       </a>
@@ -618,40 +566,6 @@
   </footer>
 
   <script>
-    // Slider minimaliste (auto + points)
-    const slider = document.getElementById('slider');
-    const slides = Array.from(slider.children);
-    const nav = document.getElementById('sliderNav');
-    let index = 0, timer;
-
-    function renderDots(){
-      nav.innerHTML = '';
-      slides.forEach((_, i)=>{
-        const d = document.createElement('button');
-        d.className = 'dot' + (i===index ? ' active' : '');
-        d.setAttribute('aria-label', 'Aller à la diapositive ' + (i+1));
-        d.addEventListener('click', ()=>{ go(i,true); });
-        nav.appendChild(d);
-      });
-    }
-
-    function go(i, user=false){
-      index = (i + slides.length) % slides.length;
-      slider.style.transform = `translateX(-${index*100}%)`;
-      slider.style.transition = 'transform .6s ease';
-      renderDots();
-      if(user) restart();
-    }
-
-    function next(){ go(index+1); }
-    function restart(){ clearInterval(timer); timer = setInterval(next, 6000); }
-
-    renderDots();
-    restart();
-
-    slider.addEventListener('mouseenter', ()=>clearInterval(timer));
-    slider.addEventListener('mouseleave', restart);
-
     // Accordéon FAQ
     const accBtns = document.querySelectorAll('.acc-btn');
     accBtns.forEach(btn=>{
