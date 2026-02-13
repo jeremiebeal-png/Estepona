@@ -27,7 +27,6 @@
 
   <style>
     :root{
-      /* ✅ EXACTEMENT les mêmes variables que ton index.html */
       --color-bg: #0b3c49;
       --color-surface: #0f1f44;
       --color-surface-2: #0f1625;
@@ -41,7 +40,6 @@
       --radius-md: 10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
 
-      /* ✅ Tes variables “glass” sont utilisées dans le header/menu : on les définit ici pour éviter tout bug */
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
@@ -63,7 +61,7 @@
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header (copié de ton index) */
+    /* Header */
     header{
       position: sticky;
       top: 0;
@@ -113,12 +111,11 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Sections (identiques à index) */
+    /* Sections */
     section.category{margin:30px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .section-head h3{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
-    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
 
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
@@ -157,60 +154,7 @@
     .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
 
-    /* Hero (même style que slider) */
-    .article-hero{
-      margin:22px 0 14px;
-      border:1px solid var(--color-border);
-      border-radius:var(--radius-xl);
-      overflow:hidden;
-      background:linear-gradient(180deg,#12224b,#0f1f44);
-      box-shadow:var(--shadow);
-      position:relative;
-      min-height:320px;
-    }
-    .article-hero img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-      opacity:.55;
-      filter:grayscale(10%) contrast(1.05) saturate(1.06);
-    }
-    .article-hero .content{
-      position:relative;
-      padding:26px;
-      display:grid;
-      gap:12px;
-      min-height:320px;
-      align-content:end;
-      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.15) 45%, rgba(11,23,48,.88) 100%);
-    }
-    .pill{
-      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
-      background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted);
-      width:max-content;
-    }
-    .article-hero h1{
-      margin:0;
-      font-size:34px;
-      line-height:1.15;
-    }
-    .article-hero .meta{
-      color:var(--color-muted);
-      font-size:14px;
-      max-width:70ch;
-    }
-    .cta{
-      display:inline-block;
-      margin-top:10px;
-      font-weight:600;
-      color:#06131e;
-      background:var(--color-primary);
-      padding:10px 14px;
-      border-radius:12px;
-      width:max-content;
-    }
-
-    /* Liste itinéraire */
+    /* ✅ Itinéraire */
     .list{display:grid;gap:12px}
     .item{
       border:1px solid var(--color-border);
@@ -221,7 +165,7 @@
     .item strong{display:block;margin-bottom:4px}
     .item p{margin:0;color:var(--color-muted);font-size:14px;line-height:1.45}
 
-    /* Footer (copié) */
+    /* Footer */
     footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
     .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .social{display:flex;gap:12px}
@@ -234,7 +178,7 @@
     .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
-    /* Menu mobile (copié) */
+    /* Menu mobile */
     .mobile-backdrop{
       position:fixed; inset:0;
       background:rgba(0,0,0,.55);
@@ -276,15 +220,10 @@
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
-
-      .article-hero{ margin:16px 0 12px; min-height:250px; }
-      .article-hero .content{ min-height:250px; padding:18px; gap:10px; }
-      .article-hero h1{ font-size:24px; }
       section.category{ margin:22px 0; }
       .section-head{ gap:10px; margin-bottom:12px; }
       .section-head h3{ font-size:18px; }
       .section-head p{ font-size:13px; }
-      .more{ display:none; }
       .grid{ gap:14px; }
       .card{ border-radius:16px; }
       .card .body{ padding:12px 12px 14px; }
@@ -295,7 +234,6 @@
 
     @media (max-width: 380px){
       .brand strong{ font-size:15px; }
-      .article-hero h1{ font-size:22px; }
       .card .thumb{ height: 165px; }
     }
   </style>
@@ -370,22 +308,10 @@
   </div>
 
   <main class="container">
-    <!-- HERO (statique, même style que slider) -->
-    <section class="article-hero" aria-label="Vieille ville & fresques">
-      <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" onerror="this.style.display='none';" />
-      <div class="content">
-        <span class="pill">Balade · Centro histórico</span>
-        <h1>Vieille ville &amp; fresques</h1>
-        <div class="meta">
-          Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
-          Une balade parfaite pour découvrir l’âme d’Estepona, à faire à pied (2–3h) avec des stops photo.
-        </div>
-        <a class="cta" href="#spots">Voir l’itinéraire »</a>
-      </div>
-    </section>
+    <!-- ✅ SUPPRIMÉ : le gros HERO (image + titre + bouton) -->
 
-    <!-- SECTION : Les incontournables -->
-    <section class="category" id="spots">
+    <!-- Les incontournables -->
+    <section class="category" id="spots" style="margin-top:22px">
       <div class="section-head">
         <div>
           <h3>Les incontournables</h3>
@@ -429,7 +355,7 @@
       </div>
     </section>
 
-    <!-- SECTION : Itinéraire -->
+    <!-- Itinéraire -->
     <section class="category" id="itineraire">
       <div class="section-head">
         <div>
@@ -487,7 +413,7 @@
   </footer>
 
   <script>
-    // Menu mobile (exactement comme ton index)
+    // Menu mobile
     const burger = document.querySelector('.burger');
     const mobile = document.getElementById('mobileMenu');
     let backdrop;
