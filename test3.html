@@ -113,29 +113,7 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* ✅ Bloc de navigation demandé (systématique) */
-    .navblock{
-      width:min(1200px,92vw);
-      margin:0 auto;
-      padding:0 0 12px 0;
-    }
-    .navblock > div{
-      display:flex;
-      gap:16px;
-      flex-wrap:wrap;
-    }
-    .navblock a{
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid transparent;
-      color:rgba(234,246,248,.92);
-    }
-    .navblock a:hover{
-      border-color:var(--color-border);
-      background:rgba(255,255,255,.04);
-    }
-
-    /* Sections (identiques) */
+    /* Sections (identiques à index) */
     section.category{margin:30px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .section-head h3{margin:0;font-size:22px}
@@ -160,7 +138,7 @@
       overflow: hidden;
       background:#0b1322;
       display:block;
-      margin:12px 12px 0 12px; /* ✅ comme visuel carte */
+      margin:12px 12px 0 12px;
     }
     .card .thumb img{
       position:absolute; inset:0;
@@ -179,17 +157,7 @@
     .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
 
-    .cta{
-      display:inline-block;
-      margin-top:10px;
-      font-weight:600;
-      color:#06131e;
-      background:var(--color-primary);
-      padding:10px 14px;
-      border-radius:12px;
-    }
-
-    /* ✅ Contenu “article” (même style, mêmes cartes) */
+    /* Hero (même style que slider) */
     .article-hero{
       margin:22px 0 14px;
       border:1px solid var(--color-border);
@@ -231,12 +199,19 @@
       font-size:14px;
       max-width:70ch;
     }
-
-    /* ✅ Liste “itinéraire / spots” */
-    .list{
-      display:grid;
-      gap:12px;
+    .cta{
+      display:inline-block;
+      margin-top:10px;
+      font-weight:600;
+      color:#06131e;
+      background:var(--color-primary);
+      padding:10px 14px;
+      border-radius:12px;
+      width:max-content;
     }
+
+    /* Liste itinéraire */
+    .list{display:grid;gap:12px}
     .item{
       border:1px solid var(--color-border);
       border-radius:var(--radius-lg);
@@ -323,12 +298,6 @@
       .article-hero h1{ font-size:22px; }
       .card .thumb{ height: 165px; }
     }
-
-    /* ✅ Petit highlight dans le menu (page active) */
-    .is-active{
-      border-color:var(--color-border) !important;
-      background:rgba(255,255,255,.06) !important;
-    }
   </style>
 </head>
 
@@ -376,16 +345,6 @@
         </svg>
       </button>
     </div>
-
-    <!-- ✅ Bloc navigation demandé (systématique) -->
-    <div class="navblock">
-      <div style="display:flex;gap:16px">
-        <a href="index.html">Accueil</a>
-        <a href="bons-plans.html">Bons plans</a>
-        <a class="is-active" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
-        <a href="actualites.html">Actus</a>
-      </div>
-    </div>
   </header>
 
   <!-- MENU MOBILE (drawer) -->
@@ -411,7 +370,7 @@
   </div>
 
   <main class="container">
-    <!-- HERO (même style que slider, mais statique) -->
+    <!-- HERO (statique, même style que slider) -->
     <section class="article-hero" aria-label="Vieille ville & fresques">
       <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" onerror="this.style.display='none';" />
       <div class="content">
@@ -419,62 +378,58 @@
         <h1>Vieille ville &amp; fresques</h1>
         <div class="meta">
           Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
-          Une balade parfaite pour découvrir l’âme d’Estepona, à faire à pied (2–3h) avec des stops “photo”.
+          Une balade parfaite pour découvrir l’âme d’Estepona, à faire à pied (2–3h) avec des stops photo.
         </div>
         <a class="cta" href="#spots">Voir l’itinéraire »</a>
       </div>
     </section>
 
-    <!-- SECTION : À ne pas manquer (cartes comme index) -->
+    <!-- SECTION : Les incontournables -->
     <section class="category" id="spots">
       <div class="section-head">
         <div>
           <h3>Les incontournables</h3>
           <p>Spots photo, ruelles fleuries et grandes fresques</p>
         </div>
-        <a class="more" href="index.html#voir">Retour aux activités</a>
       </div>
 
       <div class="grid">
         <article class="card">
           <a class="thumb" href="#ruelles">
-            <img src="img/fresques_ruelles.jpg" alt="Ruelles fleuries" onerror="this.src='img/estepona-aquarelle.png';"/>
+            <img src="img/fresques_ruelles.jpg" alt="Ruelles fleuries" onerror="this.src='img/estepona-aquarelle.png';" />
           </a>
           <div class="body">
             <div class="kicker">Centre historique</div>
-            <h4><a href="#ruelles">Ruelles blanches & pots fleuris</a></h4>
+            <h4><a href="#ruelles">Ruelles blanches &amp; pots fleuris</a></h4>
             <p class="excerpt">Les rues piétonnes les plus jolies, avec les façades blanches et les géraniums suspendus.</p>
-            <div class="meta" style="color:var(--color-muted)">📍 Autour de la Plaza de las Flores</div>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb contain" href="#fresques">
-            <img src="img/mural_estepona.jpg" alt="Fresque murale à Estepona" onerror="this.src='img/News_Actualite_Estepona.png';"/>
+            <img src="img/mural_estepona.jpg" alt="Fresque murale à Estepona" onerror="this.src='img/News_Actualite_Estepona.png';" />
           </a>
           <div class="body">
             <div class="kicker">Street art</div>
             <h4><a href="#fresques">Les fresques géantes</a></h4>
             <p class="excerpt">Des œuvres monumentales dans tout le centre. Parfait pour une chasse aux fresques.</p>
-            <div class="meta" style="color:var(--color-muted)">🎨 10+ fresques accessibles à pied</div>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="#pause">
-            <img src="img/plaza_flores.jpg" alt="Plaza de las Flores" onerror="this.src='img/aquerelle_paseo.png';"/>
+            <img src="img/plaza_flores.jpg" alt="Plaza de las Flores" onerror="this.src='img/aquerelle_paseo.png';" />
           </a>
           <div class="body">
             <div class="kicker">Pause</div>
             <h4><a href="#pause">Plaza de las Flores</a></h4>
             <p class="excerpt">Le spot idéal pour faire une pause, prendre un café et profiter de l’ambiance.</p>
-            <div class="meta" style="color:var(--color-muted)">☕ À faire en matinée</div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- SECTION : Itinéraire (liste stylée, même charte) -->
+    <!-- SECTION : Itinéraire -->
     <section class="category" id="itineraire">
       <div class="section-head">
         <div>
@@ -499,13 +454,6 @@
           <p>Reviens vers le cœur du centre pour une pause. Option : finir par le paseo si tu veux prolonger la balade.</p>
         </div>
       </div>
-    </section>
-
-    <!-- SECTION : Retour (mêmes CTA) -->
-    <section class="category">
-      <a class="cta" href="index.html#voir" style="display:block;text-align:center;padding:18px;border-radius:14px;font-weight:700">
-        Retour aux activités → 
-      </a>
     </section>
   </main>
 
