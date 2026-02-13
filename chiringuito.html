@@ -40,12 +40,11 @@
       color:var(--color-text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
-
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header (index.html) */
+    /* HEADER (index.html) */
     header{
       position:sticky;
       top:0;
@@ -54,125 +53,70 @@
       backdrop-filter:saturate(140%) blur(6px);
       border-bottom:1px solid var(--color-border);
     }
-
-    .header-row{
-      display:flex;
-      align-items:center;
-      gap:22px;
-      padding:16px 0;
-    }
-
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
     .brand{display:flex;align-items:center;gap:12px}
     .brand-logo{
-      width:44px;
-      height:44px;
-      border-radius:12px;
-      overflow:hidden;
-      border:1px solid var(--color-border);
-      box-shadow:var(--shadow);
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
     .brand-logo img{width:100%;height:100%;object-fit:cover}
-
-    nav.primary{
-      margin-left:auto;
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    nav.primary a{
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid transparent;
-    }
-    nav.primary a:hover{
-      border-color:var(--color-border);
-      background:rgba(255,255,255,.04);
-    }
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
     .search{
       margin-left:auto;
-      display:flex;
-      gap:8px;
-      align-items:center;
+      display:flex;gap:8px;align-items:center;
       background:var(--color-surface);
       border:1px solid var(--color-border);
       border-radius:999px;
       padding:8px 12px;
     }
     .search input{
-      background:transparent;
-      border:0;
-      outline:0;
-      color:var(--color-text);
-      min-width:200px;
-      font-size:16px; /* évite zoom iOS */
+      background:transparent;border:0;outline:0;color:var(--color-text);
+      min-width:200px;font-size:16px; /* évite zoom iOS */
     }
-
     .burger{
-      display:none;
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      border:1px solid var(--color-border);
-      background:var(--color-surface);
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface);
       cursor:pointer;
     }
-
     @media (max-width:980px){
       nav.primary,.search{display:none}
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Menu mobile (index.html) */
+    /* MENU MOBILE (index.html) */
     .mobile-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:140}
     .mobile-menu{
-      position:fixed;
-      top:0;
-      right:0;
-      height:100vh;
-      width:min(360px,86vw);
+      position:fixed;top:0;right:0;height:100vh;width:min(360px,86vw);
       background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
       border-left:1px solid var(--color-border);
-      z-index:150;
-      box-shadow:var(--shadow);
+      z-index:150;box-shadow:var(--shadow);
       padding:16px;
     }
     .mobile-menu-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:6px 0 12px;
-      border-bottom:1px solid var(--color-border);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
     }
     .mobile-close{
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      border:1px solid var(--color-border);
-      background:rgba(255,255,255,.03);
-      color:var(--color-text);
-      font-size:22px;
-      cursor:pointer;
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
     }
     .mobile-nav{display:grid;gap:10px;padding-top:14px}
     .mobile-nav a{
-      display:block;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid var(--color-border);
+      display:block;padding:12px;border-radius:12px;border:1px solid var(--color-border);
       background:rgba(255,255,255,.02)
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* Hero */
+    /* HERO */
     .page-hero{
       padding:22px 0 14px;
       border-bottom:1px solid var(--color-border);
       background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.2) 100%);
     }
-    .page-hero h1{margin:0 0 8px;font-size:30px;line-height:1.15}
-    .page-hero p{margin:0;color:var(--color-muted);max-width:760px;font-size:15px;line-height:1.55}
     .pill{
       display:inline-block;
       margin-bottom:10px;
@@ -183,8 +127,10 @@
       border:1px solid var(--color-border);
       color:var(--color-muted);
     }
+    .page-hero h1{margin:0 0 8px;font-size:30px;line-height:1.15}
+    .page-hero p{margin:0;color:var(--color-muted);max-width:760px;font-size:15px;line-height:1.55}
 
-    /* Filtres */
+    /* Filtres (chips) */
     .filters{
       margin-top:14px;
       display:flex;
@@ -199,11 +145,8 @@
       font-weight:600;
     }
     .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
       border:1px solid var(--color-border);
       background:rgba(255,255,255,.04);
       cursor:pointer;
@@ -214,7 +157,7 @@
     .chip input{accent-color:var(--color-primary)}
     .chip:hover{background:rgba(255,255,255,.06);color:var(--color-text)}
 
-    /* Contenu */
+    /* CONTENU */
     main{padding:18px 0 40px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
@@ -228,24 +171,18 @@
       overflow:hidden;
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
     }
-
     .card .thumb{
-      height:140px;
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      height:140px;width:100%;
+      display:flex;align-items:center;justify-content:center;
       background:#0b1322;
       overflow:hidden;
     }
     .card .thumb img{
       max-width:70%;
       max-height:80%;
-      width:auto;
-      height:auto;
+      width:auto;height:auto;
       object-fit:contain;
     }
-
     .card .body{padding:12px 14px 16px}
     .card .kicker{font-size:12px;color:var(--color-muted)}
     .card h3{margin:6px 0 8px;font-size:18px;line-height:1.35}
@@ -258,11 +195,7 @@
       color:var(--color-muted);
       background:rgba(255,255,255,.03);
     }
-    .meta a{
-      color:var(--color-primary);
-      text-decoration:underline;
-      text-decoration-color:rgba(45,180,255,.55)
-    }
+    .meta a{color:var(--color-primary);text-decoration:underline;text-decoration-color:rgba(45,180,255,.55)}
     .meta a:hover{color:#7fd3ff}
 
     /* Footer (index.html) */
@@ -273,21 +206,20 @@
     }
     .footer-top{
       padding:24px 0;
-      display:flex;
-      gap:18px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
+      display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between;
     }
     .footer-nav{display:flex;gap:16px;flex-wrap:wrap;color:var(--color-muted)}
     .social{display:flex;gap:12px}
     .social a{padding:8px 12px;border-radius:10px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
+    /* Mobile polish */
     @media (max-width:980px){
       .header-row{padding:12px 0;gap:12px}
       .brand-logo{width:38px;height:38px}
       .brand strong{font-size:16px}
+
       .page-hero{padding:18px 0 12px}
       .page-hero h1{font-size:22px}
       .page-hero p{font-size:13px}
@@ -303,7 +235,9 @@
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
@@ -318,8 +252,8 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <!-- recherche header : scroll vers liste + focus sur la recherche page -->
-      <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('#liste')?.scrollIntoView({behavior:'smooth'});document.querySelector('#q')?.focus({preventScroll:true});">
+      <form class="search" role="search"
+            onsubmit="event.preventDefault();document.querySelector('#grid')?.scrollIntoView({behavior:'smooth'});">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/>
@@ -333,13 +267,16 @@
         </svg>
       </button>
     </div>
+
+    <!-- ✅ SUPPRIMÉ : .quick-nav-wrap (la barre Zones/Budget/Liste/Contact) -->
   </header>
 
   <!-- MENU MOBILE -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
-      <button class="mobile-close" type="button" aria-label="Fermer le menu">×</button>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu"
+              onclick="document.querySelector('.burger')?.click()">×</button>
     </div>
 
     <nav class="mobile-nav">
@@ -359,7 +296,9 @@
     <div class="container">
       <span class="pill">Plage · Espetos · Sunset</span>
       <h1>Chiringuitos de plage à Estepona</h1>
-      <p>Tous les chiringuitos d’Estepona — <b>filtres par zone</b>, budget/tags, recherche et liens Google Maps.</p>
+      <p>
+        Tous les chiringuitos d’Estepona — <b>filtres par zone</b>, budget/tags, recherche et liens Google Maps.
+      </p>
 
       <!-- ZONES -->
       <div class="filters" id="zones" aria-label="Filtres par zones">
@@ -390,7 +329,7 @@
         <button class="chip" type="button" id="resetFilters">Réinitialiser</button>
       </div>
 
-      <!-- Recherche page -->
+      <!-- Recherche -->
       <form class="search" role="search" onsubmit="event.preventDefault();">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
@@ -415,6 +354,7 @@
         <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
         <strong>Vivre à Estepona</strong>
       </a>
+
       <nav class="footer-nav" aria-label="Navigation de pied de page">
         <a href="index.html#voir">À voir</a>
         <a href="index.html#manger">Restaurants</a>
@@ -422,49 +362,81 @@
         <a href="index.html#cartes">Cartes</a>
         <a href="index.html#faq">FAQ</a>
       </nav>
+
       <div class="social" aria-label="Réseaux sociaux">
         <a href="#" aria-label="Instagram">Instagram</a>
         <a href="#" aria-label="YouTube">YouTube</a>
         <a href="#" aria-label="TikTok">TikTok</a>
       </div>
     </div>
+
     <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
   </footer>
 
   <!-- DATASET -->
   <script id="dataset-chiringuitos" type="application/json">
   [
-    { "nom":"Beso Beach","image":"img/beso.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Playa El Padron, Km160, N-340, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd556d31884a7:0x1b10ecaefbae4a5a","note":"Plage del Padron" }
+    { "nom":"Beso Beach","image":"img/beso.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Playa El Padron, Km160, N-340, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd556d31884a7:0x1b10ecaefbae4a5a","note":"Plage del Padron" },
+    { "nom":"Laguna Beach","image":"img/Laguna.png","quartier":"Playa del Padron","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Carr. de Cadiz, Km 159, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd55f05011eeb:0xc48cf339115988df","note":"Plage del Padron" },
+    { "nom":"Trocadera Estepona","image":"img/Trocadero.png","quartier":"Plage de la Plata","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"C. Terral, 2, 29689 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd5acb730bb7f:0xc8f994b6779480f7","note":"Plage de la Plata" },
+
+    { "nom":"Chiringuito Malva Beach by Besaya","image":"img/malva.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, 2, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd509d653deff:0x427ec99801196188","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Les Tournesol","image":"img/tournesol.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd73b2f722d29:0x8d8d4474043cfd0d","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Africa Beach","image":"img/africa.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Av. España, s/n, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41c4e58d413:0xbf31fa53dcaaa17f","note":"Plage de la Rada" },
+    { "nom":"Chiringuito El Madero","image":"img/madero.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","espeto","vue"],"adresse":"Av. España, 69, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d7601986f:0xf89d021c72ec5804","note":"Plage de la Rada" },
+    { "nom":"Chiringuito La Peseta","image":"img/lapeseta.png","quartier":"Playa de la Rada (centre)","categorie":"€","tags":["plage","rustique"],"adresse":"Av. España, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a7c455c2cf:0xf35c2b4cbcc445d7","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Bahía Beach","image":"img/bahia.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","centre"],"adresse":"P.º Marítimo Pedro Manrique, 23, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd7cf4473b205:0xcef7eb6e6c5f3656","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Central Beach","image":"img/central.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"Glorieta Juan Carlos I, S/N, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41ef20a8c85:0x446133daa175d1c2","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Paco","image":"img/paco.png","quartier":"Playa de la Rada","categorie":"€€","tags":["plage","familial","poisson"],"adresse":"P.º Marítimo Pedro Manrique, 30, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6a8bb77c9f9:0xd394d3e2ba74c6c7","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Paraiso del Mar Beach Bar Beach","image":"img/paraiso.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Av. España, s/n, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6abfb7f822b:0x9d4a3d08a8697c1a","note":"Plage de la Rada" },
+    { "nom":"Chiringuito Tropical","image":"img/tropical.png","quartier":"Playa de la Rada (centre)","categorie":"€€","tags":["plage","espeto"],"adresse":"Playa de la rada SN paseo marítimo de, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd6ae5797f215:0xd17b8a50894b9dc7","note":"Plage de la Rada" },
+
+    { "nom":"Havana Beach Chiringuito","image":"img/havana.png","quartier":"Playa del Cristo / Port","categorie":"€€","tags":["plage","sunset","familial"],"adresse":"Playa Del Cristo, ESTEPONA, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd41d78d0a9d1:0xeeda4163282b7302","note":"Plage de Cristo" },
+    { "nom":"Eva","image":"img/eva.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://www.google.com/maps/search/?api=1&query=Eva+Playa+del+Cristo+Estepona","note":"Plage de Cristo" },
+    { "nom":"Lolailo","image":"img/lolailo.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Playa del Cristo, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd703460f43cd:0x8c861afe572b8806","note":"Plage de Cristo" },
+    { "nom":"Nido - Beach Club","image":"img/nido.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urbanización The Edge Chiringuito Costa Natura, Autovía del Mediterráneo, Km 151, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd1272f31ccef:0x8493b5f8c5ae83c4","note":"Plage de Cristo" },
+    { "nom":"Ancla Sea Bridge Estepona","image":"img/ancla.png","quartier":"Playa del Cristo / Port","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"bahia Doncella Beach, 4, 29693 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd79e7ac3ba85:0xe52f1c239cd4186f","note":"Plage de Cristo" },
+
+    { "nom":"Chiringuito Torre Velerín","image":"img/velerin.png","quartier":"Playa del Castor","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"CARRETERA N-340 KM-161.1 PLAYA DEL VELERIN, 29680 Estepona","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ef8861e697:0x72f955ae66ff05f0","note":"Playa del Castor" },
+    { "nom":"Sonora Beach","image":"img/sonora.png","quartier":"Plage de Guadalmina","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Los Granados Playa, 6, 29680, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4ddf5e8801f:0xaacf19bd08ae5e9f","note":"Plage de Guadalmina" },
+    { "nom":"Tikitano by Besaya","image":"img/tikitano.png","quartier":"Punta de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"urb. Guadalmansa, Carr. de Cadiz, KM 164, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd0cd4d1755c50e1:0x4d787de66826e11e","note":"Punta de Saladillo" },
+    { "nom":"Heaven Beach Bar","image":"img/heaven.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Rio Guadalmansa, 64, 29688 Playa del Sol Villacana, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732be2009d4e29:0xacb07d38866c7bd1","note":"Plage de Guadalmansa" },
+    { "nom":"Barraka Beach","image":"img/barraka.png","quartier":"Plage de Guadalmansa","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"Urb Villacana Ctra Nac 340 KM 165, 29680 Estepona, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732b2f54dfa277:0xf1d230f55c0c4017","note":"Plage de Guadalmansa" },
+    { "nom":"PEPE´S BEACH CHIRINGUITO","image":"img/pepe.png","quartier":"Plage de Saladillo","categorie":"€€€","tags":["plage","sunset","familial"],"adresse":"C. Sotavento, S/N, 29688 Saladillo Benamara, Málaga","maps":"https://maps.google.com/maps?hl=fr&gl=es&um=1&ie=UTF-8&fb=1&sa=X&ftid=0xd732a5084ab29a9:0xe67620ac5d5eaff1","note":"Plage de Saladillo" }
   ]
   </script>
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    (function(){
+    (function () {
       const dataEl  = document.getElementById("dataset-chiringuitos");
       const grid    = document.getElementById("grid");
       const q       = document.getElementById("q");
       const countEl = document.getElementById("resultCount");
 
-      if(!dataEl || !grid){
+      if (!dataEl || !grid) {
         console.error("Erreur : élément manquant");
         return;
       }
 
       let items = [];
-      try { items = JSON.parse(dataEl.textContent.trim()); }
-      catch(e){ console.error("Erreur JSON", e); items = []; }
+      try {
+        items = JSON.parse(dataEl.textContent.trim());
+      } catch (e) {
+        console.error("Erreur JSON", e);
+        items = [];
+      }
 
-      function detectZone(quartier){
+      function detectZone(quartier) {
         const s = (quartier || "").toLowerCase();
-        if(s.includes("cristo")) return "Cristo";
-        if(s.includes("natura")) return "Natura";
-        if(s.includes("rada")) return "Rada";
-        if(s.includes("port")) return "Port";
-        if(s.includes("benamara") || s.includes("saladillo")) return "Benamara";
-        if(s.includes("villacana")) return "Villacana";
-        if(s.includes("guadalmansa") || s.includes("guadalmina") || s.includes("castor")) return "Benamara";
-        if(s.includes("centre") || s.includes("centro")) return "Rada";
+        if (s.includes("cristo")) return "Cristo";
+        if (s.includes("natura")) return "Natura";
+        if (s.includes("rada")) return "Rada";
+        if (s.includes("port")) return "Port";
+        if (s.includes("benamara") || s.includes("saladillo")) return "Benamara";
+        if (s.includes("villacana")) return "Villacana";
+        if (s.includes("guadalmansa") || s.includes("guadalmina") || s.includes("castor")) return "Benamara";
+        if (s.includes("centre") || s.includes("centro")) return "Rada";
         return "Autre";
       }
 
@@ -474,31 +446,28 @@
       const zoneChips = Array.from(document.querySelectorAll("[data-zone]"));
       const resetBtn  = document.getElementById("resetFilters");
 
-      function esc(s){
+      function esc(s) {
         return String(s ?? "")
-          .replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       }
 
-      function render(list){
-        if(countEl){
-          countEl.textContent = `${list.length} résultat${list.length>1 ? "s" : ""} · ${items.length} au total`;
+      function render(list) {
+        if (countEl) {
+          countEl.textContent = `${list.length} résultat${list.length > 1 ? "s" : ""} · ${items.length} au total`;
         }
 
         grid.innerHTML = list.map(it => `
           <article class="card">
             <a class="thumb" href="${esc(it.maps)}" target="_blank" rel="noopener">
-              <img src="${esc(it.image)}" alt="${esc(it.nom)}" loading="lazy">
+              <img src="${esc(it.image)}" alt="${esc(it.nom)}">
             </a>
-
             <div class="body">
               <div class="kicker">
-                <span class="tag">${esc(it.zone)}</span>
-                · ${esc(it.quartier)}
-                · <span class="tag">${esc(it.categorie)}</span>
+                <span class="tag">${esc(it.zone)}</span> · ${esc(it.quartier)} · <span class="tag">${esc(it.categorie)}</span>
               </div>
 
               <h3>${esc(it.nom)}</h3>
@@ -508,17 +477,16 @@
               </div>
 
               <div class="meta" style="margin-top:8px">
-                Adresse : ${esc(it.adresse)}
-                · <a href="${esc(it.maps)}" target="_blank" rel="noopener">Voir sur Maps</a>
+                Adresse : ${esc(it.adresse)} · <a href="${esc(it.maps)}" target="_blank" rel="noopener">Voir sur Maps</a>
               </div>
 
-              ${it.note ? `<div class="meta" style="margin-top:8px">${esc(it.note)}</div>` : ""}
+              ${it.note ? `<div class="meta" style="margin-top:8px">${esc(it.note)}</div>` : ``}
             </div>
           </article>
         `).join("");
       }
 
-      function applyFilters(){
+      function applyFilters() {
         const txt   = (q?.value || "").toLowerCase().trim();
         const tags  = chips.filter(c => c.checked).map(c => (c.dataset.filter || "").toLowerCase());
         const zones = zoneChips.filter(c => c.checked).map(c => (c.dataset.zone || "").toLowerCase());
@@ -530,7 +498,7 @@
           ].join(" ").toLowerCase();
 
           const matchText  = !txt || hay.includes(txt);
-          const matchTags  = !tags.length  || tags.every(t => hay.includes(t));
+          const matchTags  = !tags.length || tags.every(t => hay.includes(t));
           const matchZones = !zones.length || zones.includes((it.zone || "").toLowerCase());
 
           return matchText && matchTags && matchZones;
@@ -543,22 +511,21 @@
       chips.forEach(c => c.addEventListener("change", applyFilters));
       zoneChips.forEach(c => c.addEventListener("change", applyFilters));
       resetBtn?.addEventListener("click", () => {
-        if(q) q.value = "";
-        chips.forEach(c => c.checked = false);
-        zoneChips.forEach(c => c.checked = false);
+        if (q) q.value = "";
+        chips.forEach(c => (c.checked = false));
+        zoneChips.forEach(c => (c.checked = false));
         applyFilters();
       });
 
-      // Menu mobile
+      // Menu mobile (même logique que index.html)
       const burger = document.querySelector(".burger");
       const mobile = document.getElementById("mobileMenu");
-      const closeBtn = document.querySelector(".mobile-close");
       let backdrop;
 
-      function openMenu(){
-        if(!mobile) return;
+      function openMenu() {
+        if (!mobile) return;
         mobile.hidden = false;
-        burger?.setAttribute("aria-expanded","true");
+        burger?.setAttribute("aria-expanded", "true");
         backdrop = document.createElement("div");
         backdrop.className = "mobile-backdrop";
         backdrop.addEventListener("click", closeMenu);
@@ -566,10 +533,10 @@
         document.body.style.overflow = "hidden";
       }
 
-      function closeMenu(){
-        if(!mobile) return;
+      function closeMenu() {
+        if (!mobile) return;
         mobile.hidden = true;
-        burger?.setAttribute("aria-expanded","false");
+        burger?.setAttribute("aria-expanded", "false");
         backdrop?.remove();
         document.body.style.overflow = "";
       }
@@ -579,10 +546,8 @@
         open ? closeMenu() : openMenu();
       });
 
-      closeBtn?.addEventListener("click", closeMenu);
-
-      document.addEventListener("keydown", (e) => {
-        if(e.key === "Escape" && mobile && !mobile.hidden) closeMenu();
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && mobile && !mobile.hidden) closeMenu();
       });
 
       // Init
