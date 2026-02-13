@@ -12,458 +12,560 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estepona — À voir / À faire</title>
-  <meta name="description" content="Nos lieux et activités immanquables à Estepona : vieille ville & fresques, actualités, paseo maritime." />
+  <title>Estepona — Vieille ville & fresques</title>
+  <meta name="description" content="Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue : itinéraire + points photo." />
   <meta name="theme-color" content="#0b3c49" />
 
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Vieille ville & fresques — Vivre à Estepona" />
+  <meta property="og:description" content="Balade dans le centre historique : ruelles fleuries, fresques géantes et spots photo." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
+
+  <!-- Preloads -->
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+
   <style>
-    /* Style calé sur vivreaestepona.com (palette + typographie + cartes) */
     :root{
-      --bg:#0b3c49;
-      --bg2:#083846;
-      --card:#083847;
-      --card2:#0a3f4f;
-      --line:rgba(255,255,255,.12);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.62);
-      --accent:#25b3ff;
-      --accent2:#52c5ff;
-      --shadow:0 20px 55px rgba(0,0,0,.30);
-      --r18:18px;
-      --r22:22px;
-      --max:1180px;
+      /* ✅ EXACTEMENT les mêmes variables que ton index.html */
+      --color-bg: #0b3c49;
+      --color-surface: #0f1f44;
+      --color-surface-2: #0f1625;
+      --color-primary: #2db4ff;
+      --color-accent: #00d0b6;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+
+      /* ✅ Tes variables “glass” sont utilisées dans le header/menu : on les définit ici pour éviter tout bug */
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
+    html,body{
       margin:0;
-      color:var(--text);
+      padding:0;
       background:
-        radial-gradient(900px 520px at 20% -10%, rgba(37,179,255,.18), transparent 55%),
-        radial-gradient(900px 520px at 90% 10%, rgba(82,197,255,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg), #062a33 85%);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      color:var(--color-text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
 
     a{color:inherit;text-decoration:none}
-    img{display:block;max-width:100%}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
 
-    .wrap{max-width:var(--max);margin:0 auto;padding:0 18px}
-
-    /* Header */
-    .top{
-      position:sticky;top:0;z-index:50;
-      background:linear-gradient(180deg, rgba(11,60,73,.95), rgba(11,60,73,.70));
-      backdrop-filter:saturate(140%) blur(10px);
-      border-bottom:1px solid var(--line);
+    /* Header (copié de ton index) */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border-bottom: 1px solid var(--glassLine);
+    }
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
 
-    .topbar{
-      display:flex;align-items:center;gap:18px;
-      padding:16px 0;
-    }
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-    .brand{
-      display:flex;align-items:center;gap:12px;
-      font-weight:800;font-size:20px;
-      white-space:nowrap;
-    }
-    .logo{
-      width:44px;height:44px;border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.10);
-      display:grid;place-items:center;
-      overflow:hidden;
-      flex:0 0 auto;
-    }
-    .logo svg{width:30px;height:30px;opacity:.95}
-
-    .nav{
-      display:flex;align-items:center;gap:16px;
-      margin-left:14px;
-      flex:1;
-      overflow:auto;
-      scrollbar-width:none;
-    }
-    .nav::-webkit-scrollbar{display:none}
-
-    .nav a{
-      padding:10px 10px;
-      border-radius:14px;
-      font-weight:650;
-      color:rgba(255,255,255,.90);
-      opacity:.95;
-      white-space:nowrap;
-      transition:background .15s ease, transform .15s ease;
-    }
-    .nav a:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
-
-    .actions{
-      display:flex;align-items:center;gap:10px;flex:0 0 auto;
-    }
-    .pill{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:10px 14px;border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.07);
-      font-weight:750;
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
       font-size:14px;
-      white-space:nowrap;
-      transition:background .15s ease, transform .15s ease;
+      line-height:1;
     }
-    .pill:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
-    .pill svg{width:18px;height:18px;opacity:.95}
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+    .social-top svg{width:16px;height:16px;opacity:.95}
 
-    /* Mobile menu button */
     .burger{
-      display:none;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.07);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:800;
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface);
       cursor:pointer;
     }
-
-    /* Required nav block (systématique) */
-    .quicknav{
-      padding:0 0 14px 0;
-      border-top:1px solid rgba(255,255,255,.08);
-      margin-top:0;
-    }
-    .quicknav > div{
-      display:flex;gap:16px;flex-wrap:wrap;
-      padding-top:12px;
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Page head */
-    .section{
-      padding:22px 0 10px;
+    /* ✅ Bloc de navigation demandé (systématique) */
+    .navblock{
+      width:min(1200px,92vw);
+      margin:0 auto;
+      padding:0 0 12px 0;
     }
-    h1{
-      margin:0 0 6px 0;
-      font-size:34px;
-      letter-spacing:.2px;
-      font-weight:900;
+    .navblock > div{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
     }
-    .lead{
-      margin:0;
-      color:var(--muted);
-      font-weight:600;
-      font-size:18px;
-      line-height:1.45;
-    }
-
-    /* Cards grid */
-    .cards-head{
-      display:flex;align-items:end;justify-content:space-between;gap:18px;
-      padding:22px 0 12px;
-    }
-    .cards-head h2{
-      margin:0;
-      font-size:24px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .ghostlink{
-      display:inline-flex;align-items:center;gap:10px;
-      color:rgba(255,255,255,.86);
-      font-weight:800;
-      padding:10px 14px;
-      border:1px solid var(--line);
+    .navblock a{
+      padding:8px 12px;
       border-radius:999px;
-      background:rgba(255,255,255,.06);
-      transition:background .15s ease, transform .15s ease;
-      white-space:nowrap;
+      border:1px solid transparent;
+      color:rgba(234,246,248,.92);
     }
-    .ghostlink:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
+    .navblock a:hover{
+      border-color:var(--color-border);
+      background:rgba(255,255,255,.04);
+    }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(12, 1fr);
-      gap:18px;
-      padding-bottom:46px;
-    }
+    /* Sections (identiques) */
+    section.category{margin:30px 0}
+    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head h3{margin:0;font-size:22px}
+    .section-head p{margin:0;color:var(--color-muted)}
+    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
+
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
     .card{
-      grid-column:span 4;
-      background:linear-gradient(180deg, rgba(8,56,71,.92), rgba(6,42,51,.92));
-      border:1px solid var(--line);
-      border-radius:var(--r22);
+      display:grid;grid-template-rows:auto 1fr;gap:10px;
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
       overflow:hidden;
-      box-shadow:var(--shadow);
-      min-height:430px;
-      display:flex;
-      flex-direction:column;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
-    .media{
-      padding:16px 16px 10px 16px;
-    }
-    .frame{
-      border-radius:var(--r18);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      height:210px;
-    }
-    .frame img{width:100%;height:100%;object-fit:cover}
 
-    .content{
-      padding:10px 18px 18px 18px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      flex:1;
+    .card .thumb{
+      position: relative;
+      height: clamp(200px, 22vw, 260px);
+      border-radius: 16px;
+      overflow: hidden;
+      background:#0b1322;
+      display:block;
+      margin:12px 12px 0 12px; /* ✅ comme visuel carte */
     }
-    .k{color:rgba(255,255,255,.72);font-weight:900;font-size:13px;letter-spacing:.35px}
-    .title{margin:0;font-size:24px;font-weight:950;letter-spacing:.15px}
-    .desc{margin:0;color:var(--muted2);font-weight:600;line-height:1.45}
+    .card .thumb img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .card .thumb.contain img{
+      object-fit:contain;
+      object-position:center;
+    }
+
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card .excerpt{color:var(--color-muted);font-size:14px}
 
     .cta{
-      margin-top:6px;
-      display:inline-flex;align-items:center;gap:10px;
-      padding:11px 14px;
-      border-radius:14px;
-      border:1px solid rgba(37,179,255,.28);
-      background:linear-gradient(180deg, rgba(37,179,255,.42), rgba(37,179,255,.22));
-      font-weight:950;
-      letter-spacing:.2px;
+      display:inline-block;
+      margin-top:10px;
+      font-weight:600;
+      color:#06131e;
+      background:var(--color-primary);
+      padding:10px 14px;
+      border-radius:12px;
+    }
+
+    /* ✅ Contenu “article” (même style, mêmes cartes) */
+    .article-hero{
+      margin:22px 0 14px;
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      overflow:hidden;
+      background:linear-gradient(180deg,#12224b,#0f1f44);
+      box-shadow:var(--shadow);
+      position:relative;
+      min-height:320px;
+    }
+    .article-hero img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      opacity:.55;
+      filter:grayscale(10%) contrast(1.05) saturate(1.06);
+    }
+    .article-hero .content{
+      position:relative;
+      padding:26px;
+      display:grid;
+      gap:12px;
+      min-height:320px;
+      align-content:end;
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(11,23,48,.15) 45%, rgba(11,23,48,.88) 100%);
+    }
+    .pill{
+      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid var(--color-border);color:var(--color-muted);
       width:max-content;
-      transition:transform .15s ease, filter .15s ease;
     }
-    .cta:hover{transform:translateY(-1px);filter:brightness(1.03)}
-    .cta svg{width:18px;height:18px}
-
-    .meta{
-      margin-top:auto;
-      display:flex;align-items:center;justify-content:space-between;
-      padding-top:10px;
-      color:rgba(255,255,255,.70);
-      font-weight:800;
+    .article-hero h1{
+      margin:0;
+      font-size:34px;
+      line-height:1.15;
     }
-
-    /* Footer */
-    footer{
-      border-top:1px solid rgba(255,255,255,.10);
-      padding:22px 0 28px;
-      color:rgba(255,255,255,.72);
-      text-align:center;
-      font-weight:700;
+    .article-hero .meta{
+      color:var(--color-muted);
+      font-size:14px;
+      max-width:70ch;
     }
 
-    /* Responsive */
+    /* ✅ Liste “itinéraire / spots” */
+    .list{
+      display:grid;
+      gap:12px;
+    }
+    .item{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      padding:14px;
+    }
+    .item strong{display:block;margin-bottom:4px}
+    .item p{margin:0;color:var(--color-muted);font-size:14px;line-height:1.45}
+
+    /* Footer (copié) */
+    footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
+    .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
+    .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
+
+    /* Menu mobile (copié) */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .mobile-menu-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
+    }
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
+    }
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+
     @media (max-width: 980px){
-      .actions{display:none}
-      .burger{display:inline-flex}
-      .nav{display:none}
-      .nav.open{
-        display:flex;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:6px;
-        padding:10px 0 0 0;
-        margin:0;
-      }
-      .nav.open a{width:100%}
-      .card{grid-column:span 6}
-      h1{font-size:30px}
+      .container{ width:min(1100px, 92vw); }
+      .header-row{ padding:12px 0; gap:12px; }
+      .brand-logo{ width:38px; height:38px; border-radius:12px; }
+      .brand strong{ font-size:16px; }
+
+      .article-hero{ margin:16px 0 12px; min-height:250px; }
+      .article-hero .content{ min-height:250px; padding:18px; gap:10px; }
+      .article-hero h1{ font-size:24px; }
+      section.category{ margin:22px 0; }
+      .section-head{ gap:10px; margin-bottom:12px; }
+      .section-head h3{ font-size:18px; }
+      .section-head p{ font-size:13px; }
+      .more{ display:none; }
+      .grid{ gap:14px; }
+      .card{ border-radius:16px; }
+      .card .body{ padding:12px 12px 14px; }
+      .card h4{ font-size:16px; }
+      .card .excerpt{ font-size:13px; }
+      .card .thumb{ height: 180px; }
     }
-    @media (max-width: 680px){
-      .card{grid-column:span 12}
-      .frame{height:190px}
-      .lead{font-size:16px}
-      .cards-head{flex-direction:column;align-items:flex-start}
+
+    @media (max-width: 380px){
+      .brand strong{ font-size:15px; }
+      .article-hero h1{ font-size:22px; }
+      .card .thumb{ height: 165px; }
+    }
+
+    /* ✅ Petit highlight dans le menu (page active) */
+    .is-active{
+      border-color:var(--color-border) !important;
+      background:rgba(255,255,255,.06) !important;
     }
   </style>
 </head>
 
 <body>
-  <header class="top">
-    <div class="wrap">
-      <div class="topbar">
-        <a class="brand" href="index.html" aria-label="Accueil Vivre à Estepona">
-          <span class="logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M3 16c3.5-6 6.5-9 9-9s5.5 3 9 9" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6 15c2-3 4-4.5 6-4.5S16 12 18 15" stroke="rgba(37,179,255,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M12 7V4" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
-          Vivre à Estepona
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
         </a>
-
-        <nav class="nav" id="mainNav" aria-label="Navigation principale">
-          <a href="restaurants.html">Restaurants</a>
-          <a href="que-faire.html">Que faire</a>
-          <a href="transport.html">Transport</a>
-          <a href="ecoles.html">Écoles</a>
-          <a href="sante.html">Santé</a>
-          <a href="trafic.html">Trafic</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-
-          <!-- En mobile on ré-affiche les réseaux dans le menu -->
-          <a class="pill" style="margin-top:6px" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
-              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
-              <path d="M17.5 6.5h.01" stroke="rgba(37,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            Instagram
-          </a>
-          <a class="pill" href="https://www.youtube.com/" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(255,255,255,.92)"/>
-              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-            YouTube
-          </a>
-        </nav>
-
-        <div class="actions" aria-label="Réseaux sociaux">
-          <a class="pill" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
-              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
-              <path d="M17.5 6.5h.01" stroke="rgba(37,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            Instagram
-          </a>
-          <a class="pill" href="https://www.youtube.com/" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(255,255,255,.92)"/>
-              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-            YouTube
-          </a>
-        </div>
-
-        <button class="burger" type="button" aria-controls="mainNav" aria-expanded="false" id="burgerBtn">
-          Menu
-        </button>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
       </div>
 
-      <!-- Bloc navigation demandé (systématique) -->
-      <div class="quicknav">
-        <div style="display:flex;gap:16px">
-          <a href="index.html">Accueil</a>
-          <a href="bons-plans.html">Bons plans</a>
-          <a href="que-faire.html">À voir / À faire</a>
-          <a href="restaurants.html">Restaurants</a>
-        </div>
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ✅ Bloc navigation demandé (systématique) -->
+    <div class="navblock">
+      <div style="display:flex;gap:16px">
+        <a href="index.html">Accueil</a>
+        <a href="bons-plans.html">Bons plans</a>
+        <a class="is-active" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
+        <a href="actualites.html">Actus</a>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="section">
-      <h1>À voir / À faire</h1>
-      <p class="lead">Nos lieux et activités immanquables à Estepona</p>
+  <!-- MENU MOBILE (drawer) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="index.html#faq" onclick="document.querySelector('.burger')?.click()">FAQ</a>
+      <a href="contact.html">Contact</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <!-- HERO (même style que slider, mais statique) -->
+    <section class="article-hero" aria-label="Vieille ville & fresques">
+      <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona" onerror="this.style.display='none';" />
+      <div class="content">
+        <span class="pill">Balade · Centro histórico</span>
+        <h1>Vieille ville &amp; fresques</h1>
+        <div class="meta">
+          Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
+          Une balade parfaite pour découvrir l’âme d’Estepona, à faire à pied (2–3h) avec des stops “photo”.
+        </div>
+        <a class="cta" href="#spots">Voir l’itinéraire »</a>
+      </div>
     </section>
 
-    <section class="cards-head" aria-label="En-tête des cartes">
-      <h2>Nos lieux et activités immanquables à Estepona</h2>
-      <a class="ghostlink" href="que-faire.html">Tout voir</a>
+    <!-- SECTION : À ne pas manquer (cartes comme index) -->
+    <section class="category" id="spots">
+      <div class="section-head">
+        <div>
+          <h3>Les incontournables</h3>
+          <p>Spots photo, ruelles fleuries et grandes fresques</p>
+        </div>
+        <a class="more" href="index.html#voir">Retour aux activités</a>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="#ruelles">
+            <img src="img/fresques_ruelles.jpg" alt="Ruelles fleuries" onerror="this.src='img/estepona-aquarelle.png';"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Centre historique</div>
+            <h4><a href="#ruelles">Ruelles blanches & pots fleuris</a></h4>
+            <p class="excerpt">Les rues piétonnes les plus jolies, avec les façades blanches et les géraniums suspendus.</p>
+            <div class="meta" style="color:var(--color-muted)">📍 Autour de la Plaza de las Flores</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb contain" href="#fresques">
+            <img src="img/mural_estepona.jpg" alt="Fresque murale à Estepona" onerror="this.src='img/News_Actualite_Estepona.png';"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Street art</div>
+            <h4><a href="#fresques">Les fresques géantes</a></h4>
+            <p class="excerpt">Des œuvres monumentales dans tout le centre. Parfait pour une chasse aux fresques.</p>
+            <div class="meta" style="color:var(--color-muted)">🎨 10+ fresques accessibles à pied</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="#pause">
+            <img src="img/plaza_flores.jpg" alt="Plaza de las Flores" onerror="this.src='img/aquerelle_paseo.png';"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Pause</div>
+            <h4><a href="#pause">Plaza de las Flores</a></h4>
+            <p class="excerpt">Le spot idéal pour faire une pause, prendre un café et profiter de l’ambiance.</p>
+            <div class="meta" style="color:var(--color-muted)">☕ À faire en matinée</div>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <section class="grid" aria-label="Cartes activités">
-      <!-- Carte 1 -->
-      <article class="card">
-        <div class="media">
-          <a class="frame" href="vieille-ville-fresques.html" aria-label="Vieille ville & fresques">
-            <img
-              src="images/vieille-ville.jpg"
-              alt="Vieille ville d’Estepona"
-              loading="lazy"
-              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><defs><linearGradient id=&quot;g&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f7f2e6&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23d6efe9&quot;/></linearGradient></defs><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;url(%23g)&quot;/><text x=&quot;90&quot; y=&quot;360&quot; font-family=&quot;Verdana&quot; font-size=&quot;60&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;800&quot;>VIEILLE VILLE</text><text x=&quot;90&quot; y=&quot;430&quot; font-family=&quot;Verdana&quot; font-size=&quot;60&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;800&quot;>&amp; FRESQUES</text></svg>';"
-            />
-          </a>
+    <!-- SECTION : Itinéraire (liste stylée, même charte) -->
+    <section class="category" id="itineraire">
+      <div class="section-head">
+        <div>
+          <h3>Itinéraire conseillé (2–3h)</h3>
+          <p>Simple et efficace, sans se presser</p>
         </div>
-        <div class="content">
-          <div class="k">Balade</div>
-          <h3 class="title">Vieille ville &amp; fresques</h3>
-          <p class="desc">Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.</p>
-          <div class="meta">
-            <span>⏱️ 2–3 h · Gratuit</span>
-            <span>↗</span>
-          </div>
-        </div>
-      </article>
+      </div>
 
-      <!-- Carte 2 -->
-      <article class="card">
-        <div class="media">
-          <a class="frame" href="actualites.html" aria-label="Actualité Estepona">
-            <img
-              src="images/actus.jpg"
-              alt="Actualités Estepona"
-              loading="lazy"
-              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;%23f4efe2&quot;/><text x=&quot;90&quot; y=&quot;290&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>NEWS</text><text x=&quot;90&quot; y=&quot;410&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>ACTUALIT%C3%89S</text><text x=&quot;90&quot; y=&quot;530&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>ESTEPONA</text></svg>';"
-            />
-          </a>
+      <div class="list">
+        <div class="item" id="ruelles">
+          <strong>1) Plaza de las Flores → ruelles fleuries</strong>
+          <p>Commence par les rues piétonnes autour de la place. Cherche les façades les plus fleuries et les petits patios.</p>
         </div>
-        <div class="content">
-          <div class="k">Actualités</div>
-          <h3 class="title">Actualité Estepona</h3>
-          <p class="desc">Toutes les actualités sur Estepona, événements et infos pratiques.</p>
-          <a class="cta" href="actualites.html">
-            Voir l’actu
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 17L17 7" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10 7h7v7" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <div class="meta">
-            <span>🗞️ Événements & infos</span>
-            <span>↗</span>
-          </div>
-        </div>
-      </article>
 
-      <!-- Carte 3 -->
-      <article class="card">
-        <div class="media">
-          <a class="frame" href="paseo-maritimo.html" aria-label="Paseo marítimo">
-            <img
-              src="images/paseo.jpg"
-              alt="Paseo marítimo"
-              loading="lazy"
-              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><defs><linearGradient id=&quot;sky&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f7f2e6&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23d8eff7&quot;/></linearGradient><linearGradient id=&quot;walk&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f2c9ad&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23f6e6c9&quot;/></linearGradient></defs><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;url(%23sky)&quot;/><rect x=&quot;0&quot; y=&quot;380&quot; width=&quot;1200&quot; height=&quot;320&quot; fill=&quot;url(%23walk)&quot;/><text x=&quot;90&quot; y=&quot;360&quot; font-family=&quot;Verdana&quot; font-size=&quot;70&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>PASEO</text><text x=&quot;90&quot; y=&quot;440&quot; font-family=&quot;Verdana&quot; font-size=&quot;70&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>MAR%C3%8DTIMO</text></svg>';"
-            />
-          </a>
+        <div class="item" id="fresques">
+          <strong>2) Chasse aux fresques</strong>
+          <p>Enchaîne avec 4–6 fresques proches (centre). Prends ton temps : certaines sont dans de petites rues discrètes.</p>
         </div>
-        <div class="content">
-          <div class="k">Paseo</div>
-          <h3 class="title">Paseo marítimo</h3>
-          <p class="desc">Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.</p>
-          <div class="meta">
-            <span>☀️ Idéal familles</span>
-            <span>↗</span>
-          </div>
+
+        <div class="item" id="pause">
+          <strong>3) Pause café / glace</strong>
+          <p>Reviens vers le cœur du centre pour une pause. Option : finir par le paseo si tu veux prolonger la balade.</p>
         </div>
-      </article>
+      </div>
+    </section>
+
+    <!-- SECTION : Retour (mêmes CTA) -->
+    <section class="category">
+      <a class="cta" href="index.html#voir" style="display:block;text-align:center;padding:18px;border-radius:14px;font-weight:700">
+        Retour aux activités → 
+      </a>
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer>
-    Vivre à Estepona · © 2026
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
   </footer>
 
   <script>
-    // Menu mobile (comme sur le site)
-    (function(){
-      const btn = document.getElementById('burgerBtn');
-      const nav = document.getElementById('mainNav');
-      if(!btn || !nav) return;
+    // Menu mobile (exactement comme ton index)
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
 
-      btn.addEventListener('click', () => {
-        const isOpen = nav.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(isOpen));
-        btn.textContent = isOpen ? '×' : 'Menu';
-      });
-    })();
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
+    }
+
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
   </script>
 </body>
 </html>
