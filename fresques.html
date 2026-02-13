@@ -33,6 +33,16 @@
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      /* ====== Alignement avec index.html ====== */
+      --color-surface: #0f1f44;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
     }
 
     *{box-sizing:border-box}
@@ -49,214 +59,179 @@
       min-height:100vh;
     }
     a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ====== Container (comme index.html) ====== */
+    .container{
+      width:min(1200px,92vw);
+      margin-inline:auto;
+    }
 
     /* =========================
-       HEADER (comme la capture)
+       HEADER (IDENTIQUE index.html)
        ========================= */
     header{
-      position:sticky; top:0; z-index:80;
-      background: rgba(6,18,30,.78);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(234,246,248,.10);
+      position: sticky;
+      top: 0;
+      z-index: 80;
+
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+      border-bottom: 1px solid var(--glassLine);
     }
-    .topbar{
-      max-width:1200px;
-      margin:0 auto;
-      padding:14px 18px;
+
+    .header-row{
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap:14px;
+      gap:22px;
+      padding:16px 0;
     }
 
     .brand{
       display:flex;
       align-items:center;
       gap:12px;
-      min-width: 240px;
-    }
-    .brand .mark{
-      width:38px;height:38px;border-radius:12px;
-      background:#ffffff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      box-shadow: 0 10px 20px rgba(0,0,0,.22);
-      flex:0 0 auto;
-    }
-    .brand .mark img{width:38px;height:38px;object-fit:cover;display:block}
-    .brand .name{
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:.2px;
-      color: rgba(234,246,248,.95);
-      white-space:nowrap;
     }
 
-    /* Desktop nav (centre) */
-    .nav-desktop{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:18px;
-      flex-wrap:wrap;
-      flex: 1 1 auto;
-    }
-    .navlink{
-      color: rgba(234,246,248,.88);
-      font-size:16px;
-      padding:10px 12px;
+    .brand-logo{
+      width:44px;
+      height:44px;
       border-radius:12px;
-      transition: background .12s ease, color .12s ease, transform .12s ease;
-      white-space:nowrap;
-    }
-    .navlink:hover{
-      background: rgba(234,246,248,.08);
-      color: rgba(234,246,248,.98);
-      transform: translateY(-1px);
-    }
-    .navlink.active{
-      background: rgba(234,246,248,.10);
-      color: rgba(234,246,248,.98);
-      border: 1px solid rgba(234,246,248,.14);
+      overflow:hidden;
+      border:1px solid var(--color-border);
+      box-shadow:var(--shadow);
+      background:#fff;
     }
 
-    /* Social pills (droite) */
-    .social{
+    nav.primary{
+      margin-left:auto;
       display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:nowrap;
-      justify-content:flex-end;
-      min-width: 260px;
+      gap:12px;
+      flex-wrap:wrap;
     }
-    .sbtn{
+
+    nav.primary a{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+    }
+
+    nav.primary a:hover{
+      border-color:var(--color-border);
+      background:rgba(255,255,255,.04);
+    }
+
+    .social-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .social-top a{
       display:inline-flex;
       align-items:center;
-      gap:10px;
-      padding:10px 14px;
+      gap:8px;
+      padding:8px 12px;
       border-radius:999px;
+
       background: rgba(234,246,248,.08);
       border: 1px solid rgba(234,246,248,.14);
+
       color: rgba(234,246,248,.92);
       font-size:14px;
-      transition: background .12s ease, transform .12s ease, border-color .12s ease;
-      user-select:none;
+      line-height:1;
       white-space:nowrap;
     }
-    .sbtn:hover{
+
+    .social-top a:hover{
       background: rgba(234,246,248,.12);
       border-color: rgba(234,246,248,.22);
-      transform: translateY(-1px);
     }
-    .icon{width:18px;height:18px;display:inline-block;flex:0 0 auto}
 
-    /* Burger (mobile) */
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
     .burger{
       display:none;
-      margin-left:auto;
-      align-items:center;
-      justify-content:center;
-      width:44px;height:44px;
-      border-radius:14px;
-      background: rgba(234,246,248,.08);
-      border: 1px solid rgba(234,246,248,.14);
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid var(--color-border);
+      background:var(--color-surface);
+      color:rgba(234,246,248,.92);
       cursor:pointer;
-      user-select:none;
     }
-    .burger:hover{ background: rgba(234,246,248,.12); border-color: rgba(234,246,248,.22); }
-    .burger span{
-      width:18px;height:2px;
-      background: rgba(234,246,248,.92);
-      position:relative;
-      display:block;
-      border-radius:99px;
-    }
-    .burger span:before,
-    .burger span:after{
-      content:"";
-      position:absolute;
-      left:0;
-      width:18px;height:2px;
-      background: rgba(234,246,248,.92);
-      border-radius:99px;
-    }
-    .burger span:before{ top:-6px; }
-    .burger span:after{ top:6px; }
+    .burger:active{ transform: scale(.98); }
 
-    /* Mobile drawer */
-    .drawer{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.60);
-      display:none;
-      z-index:9999;
-      padding:18px;
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
     }
-    .drawer.open{ display:block; }
-    .drawer-panel{
-      width:min(520px, 100%);
-      margin-left:auto;
-      background: rgba(7,26,34,.96);
-      border: 1px solid rgba(234,246,248,.12);
-      border-radius: 18px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.40);
-      overflow:hidden;
+
+    /* Menu mobile (index.html) */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
     }
-    .drawer-head{
+
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .mobile-menu-head{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding:14px 14px;
-      border-bottom: 1px solid rgba(234,246,248,.10);
+      gap:12px;
+      padding:6px 0 12px;
+      border-bottom:1px solid var(--panelLine);
     }
-    .drawer-title{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:800;
-      color: rgba(234,246,248,.95);
-    }
-    .drawer-close{
-      border-radius:12px;
-      padding:10px 12px;
+
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;
+      border:1px solid rgba(234,246,248,.18);
+      background:rgba(255,255,255,.03);
+      color:rgba(234,246,248,.92);
+      font-size:22px;
       cursor:pointer;
-      background: rgba(234,246,248,.08);
-      border: 1px solid rgba(234,246,248,.14);
-      color: rgba(234,246,248,.95);
-      user-select:none;
     }
-    .drawer-close:hover{ background: rgba(234,246,248,.12); border-color: rgba(234,246,248,.22); }
-    .drawer-body{ padding:10px 12px 12px; }
-    .drawer-nav{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      padding:8px 0 12px;
-    }
-    .drawer-nav a{
+
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;
       padding:12px 12px;
-      border-radius:14px;
-      background: rgba(234,246,248,.06);
-      border: 1px solid rgba(234,246,248,.10);
-      color: rgba(234,246,248,.92);
-      font-size:15px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.12);
+      background:rgba(255,255,255,.02)
     }
-    .drawer-nav a:hover{ background: rgba(234,246,248,.10); border-color: rgba(234,246,248,.18); }
-    .drawer-social{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      padding-top:10px;
-      border-top: 1px solid rgba(234,246,248,.10);
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+
+    header, .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
     }
 
     /* =========================
-       PAGE
+       PAGE (ton design)
        ========================= */
-    .container{max-width:1200px;margin:0 auto;padding:22px 18px 28px}
+    .page{
+      padding:22px 0 28px;
+    }
 
     .hero{
       margin:14px 0 14px;
@@ -315,7 +290,6 @@
       overflow:hidden;
     }
 
-    /* Mini-photo */
     .thumb{
       width:100%;
       aspect-ratio: 16 / 9;
@@ -337,7 +311,6 @@
     }
     .thumb:hover img{ transform: scale(1.06); }
 
-    /* Placeholder */
     .thumb.placeholder{
       cursor: default;
       display:flex;
@@ -492,16 +465,7 @@
     }
 
     /* Responsive */
-    @media (max-width: 1040px){
-      .social{ min-width: unset; }
-      .brand{ min-width: unset; }
-      .nav-desktop{ gap:10px; }
-      .navlink{ font-size:15px; padding:10px 10px; }
-    }
     @media (max-width: 860px){
-      .nav-desktop{ display:none; }
-      .social{ display:none; }
-      .burger{ display:flex; }
       .grid{ grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 680px){
@@ -512,103 +476,72 @@
 </head>
 
 <body>
+  <!-- HEADER (index.html) -->
   <header>
-    <div class="topbar">
-      <div class="brand">
-        <a class="mark" href="index.html" aria-label="Retour à l’accueil">
-          <!-- ✅ Mets ton logo ici -->
-          <img src="img/logo_bon_plan_estepona.png" alt="Vivre à Estepona">
-        </a>
-        <div class="name">Vivre à Estepona</div>
-      </div>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
 
-      <!-- Menu desktop (centre) -->
-      <nav class="nav-desktop" aria-label="Menu principal">
-        <a class="navlink" href="restaurants.html">Restaurants</a>
-        <a class="navlink" href="que-faire.html">Que faire</a>
-        <a class="navlink" href="transport.html">Transport</a>
-        <a class="navlink" href="ecoles.html">Écoles</a>
-        <a class="navlink" href="sante.html">Santé</a>
-        <a class="navlink" href="trafic.html">Trafic</a>
-        <a class="navlink" href="contact.html">Contact</a>
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
       </nav>
 
-      <!-- Social desktop (droite) -->
-      <div class="social">
-        <!-- Mets tes vrais liens -->
-        <a class="sbtn" href="#" target="_blank" rel="noopener">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M18 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           </svg>
           Instagram
         </a>
-
-        <a class="sbtn" href="#" target="_blank" rel="noopener">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M22 12s0-3.3-.4-4.8a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M10 15V9l6 3-6 3Z" fill="currentColor"/>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
           </svg>
           YouTube
         </a>
       </div>
 
-      <!-- Burger mobile -->
-      <button class="burger" id="burgerBtn" type="button" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false">
-        <span aria-hidden="true"></span>
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
       </button>
     </div>
   </header>
 
-  <!-- Drawer mobile -->
-  <div class="drawer" id="drawer" aria-hidden="true">
-    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
-      <div class="drawer-head">
-        <div class="drawer-title">
-          <span style="display:inline-flex;align-items:center;gap:10px">
-            <img src="img/logo_bon_plan_estepona.png" alt="" style="width:28px;height:28px;border-radius:10px;background:#fff;object-fit:cover">
-            Vivre à Estepona
-          </span>
-        </div>
-        <button class="drawer-close" id="drawerClose" type="button">✕</button>
-      </div>
-
-      <div class="drawer-body">
-        <nav class="drawer-nav" aria-label="Menu mobile">
-          <a href="restaurants.html">Restaurants</a>
-          <a href="que-faire.html">Que faire</a>
-          <a href="transport.html">Transport</a>
-          <a href="ecoles.html">Écoles</a>
-          <a href="sante.html">Santé</a>
-          <a href="trafic.html">Trafic</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-        </nav>
-
-        <div class="drawer-social">
-          <a class="sbtn" href="#" target="_blank" rel="noopener">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M18 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            Instagram
-          </a>
-
-          <a class="sbtn" href="#" target="_blank" rel="noopener">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M22 12s0-3.3-.4-4.8a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M10 15V9l6 3-6 3Z" fill="currentColor"/>
-            </svg>
-            YouTube
-          </a>
-        </div>
-      </div>
+  <!-- MENU MOBILE (index.html) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
     </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="contact.html" onclick="document.querySelector('.burger')?.click()">Contact</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
   </div>
 
-  <main class="container">
+  <main class="container page">
     <section class="hero">
       <h1 class="title">Route des fresques d’Estepona</h1>
       <p class="sub">Liste complète des œuvres en cartes (site artiste ou Instagram). Clique sur une photo pour l’ouvrir en grand.</p>
@@ -638,28 +571,33 @@
   </div>
 
   <script>
-    // ====== MENU MOBILE (drawer) ======
-    const drawer = document.getElementById("drawer");
-    const burgerBtn = document.getElementById("burgerBtn");
-    const drawerClose = document.getElementById("drawerClose");
+    // ====== MENU MOBILE (index.html) ======
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
 
-    function openDrawer(){
-      drawer.classList.add("open");
-      drawer.setAttribute("aria-hidden","false");
-      burgerBtn.setAttribute("aria-expanded","true");
-      document.body.style.overflow = "hidden";
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
     }
-    function closeDrawer(){
-      drawer.classList.remove("open");
-      drawer.setAttribute("aria-hidden","true");
-      burgerBtn.setAttribute("aria-expanded","false");
-      document.body.style.overflow = "";
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
     }
 
-    burgerBtn.addEventListener("click", openDrawer);
-    drawerClose.addEventListener("click", closeDrawer);
-    drawer.addEventListener("click", (e)=>{ if(e.target === drawer) closeDrawer(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") { closeDrawer(); closeLightbox(); } });
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
 
     // ====== FRESQUES ======
     // Images automatiques : images/fresques/001.jpg ... 062.jpg
@@ -777,6 +715,7 @@
 
     lbClose.addEventListener("click", closeLightbox);
     lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeLightbox(); });
 
     const cards = document.getElementById("cards");
     const list = murals.slice().sort((a,b)=>a.n-b.n);
@@ -822,7 +761,6 @@
       `;
       cards.appendChild(el);
 
-      // Image manquante -> placeholder (pas de carré vide)
       const thumb = el.querySelector(".thumb");
       const img = el.querySelector(".thumb img");
       img.addEventListener("error", ()=>{
@@ -850,6 +788,39 @@
       });
     });
   </script>
+
+  <script>
+    // Menu mobile (index.html)
+    const burgerBtn = document.querySelector('.burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let backdropEl;
+
+    function openMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = false;
+      burgerBtn?.setAttribute('aria-expanded','true');
+      backdropEl = document.createElement('div');
+      backdropEl.className = 'mobile-backdrop';
+      backdropEl.addEventListener('click', closeMenu);
+      document.body.appendChild(backdropEl);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = true;
+      burgerBtn?.setAttribute('aria-expanded','false');
+      backdropEl?.remove();
+      document.body.style.overflow='';
+    }
+
+    burgerBtn?.addEventListener('click',()=>{
+      const open = burgerBtn.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
+
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape' && !mobileMenu.hidden) closeMenu();
+    });
+  </script>
 </body>
 </html>
-
