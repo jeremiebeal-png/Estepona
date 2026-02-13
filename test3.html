@@ -1,533 +1,419 @@
 <!doctype html>
 <html lang="fr">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H5DN0R14FF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H5DN0R14FF');
+  </script>
+
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Carte — Fresques d’Estepona</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estepona — Nos lieux & activités</title>
+  <meta name="description" content="Nos lieux et activités immanquables à Estepona : vieille ville, fresques, paseo, actus." />
   <meta name="theme-color" content="#0b3c49" />
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nos lieux & activités — Vivre à Estepona" />
+  <meta property="og:description" content="Idées de balades, fresques, paseo et actualités à Estepona." />
 
   <style>
     :root{
-      /* Fond “bleu méditerranéen” */
-      --sea1:#0b3c49;     /* bleu profond */
-      --sea2:#0ea5e9;     /* azur */
-      --sea3:#2dd4bf;     /* turquoise */
-      --sand:#f6f1e7;     /* sable clair (très léger) */
-
-      /* Encadrés / cartes (bleu nuit) */
-      --panel:#071a22;
-      --panel2:#06161d;
-      --panelLine: rgba(234,246,248,.10);
-      --panelSoft: rgba(234,246,248,.06);
-
-      --textOn:#eaf6f8;
-      --mutedOn: rgba(234,246,248,.72);
-
-      --text:#eaf6f8;
-      --muted:rgba(234,246,248,.72);
-      --line:rgba(234,246,248,.14);
-
+      --bg0:#062a33;
+      --bg1:#0b3c49;
+      --bg2:#0a4453;
+      --card:#0b3c49;
+      --card2:#0a3642;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#e9f4f6;
+      --muted:rgba(233,244,246,.72);
+      --muted2:rgba(233,244,246,.60);
+      --accent:#2fb3ff;
+      --accent2:#5ac7ff;
+      --shadow:0 14px 40px rgba(0,0,0,.30);
       --radius:18px;
-      --shadow:0 14px 40px rgba(10, 30, 35, .22);
-
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-      /* Pastille numéro */
-      --pin: #e84b7a;
-      --pinBorder: rgba(255,255,255,.95);
-      --pinShadow: rgba(0,0,0,.25);
-
-      /* Mini-photo */
-      --thumbBorder: rgba(255,255,255,.9);
-      --thumbShadow: rgba(0,0,0,.25);
+      --radius2:22px;
+      --max:1160px;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family:var(--sans);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
-
-      /* ✅ Fond bleu méditerranéen */
       background:
-        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
-        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
-        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
-        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
-      min-height:100vh;
-    }
-    a{color:inherit}
-
-    header{
-      position:sticky;top:0;z-index:50;
-      background: rgba(7,26,34,.72);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(234,246,248,.12);
-    }
-    .header-inner{
-      max-width:1200px;margin:0 auto;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:14px 18px;
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:38px;height:38px;border-radius:12px;
-      background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.85));
-      box-shadow: 0 10px 22px rgba(0,0,0,.18);
-    }
-    .brand h1{margin:0;font-size:15px;color:var(--textOn)}
-    .brand p{margin:0;font-size:12px;color:var(--mutedOn)}
-
-    .chip{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      background: rgba(45,212,191,.14);
-      border: 1px solid rgba(45,212,191,.26);
-      color: rgba(234,246,248,.95);
-      font-size:12px;
-      white-space:nowrap;
+        radial-gradient(1200px 600px at 20% -10%, rgba(47,179,255,.18), transparent 55%),
+        radial-gradient(900px 540px at 85% 10%, rgba(90,199,255,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
     }
 
-    .layout{
-      max-width:1200px;margin:0 auto;padding:14px 18px 22px;
-      display:grid;grid-template-columns: 420px 1fr;
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 18px}
+
+    /* Topbar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      backdrop-filter:saturate(140%) blur(10px);
+      background:linear-gradient(180deg, rgba(11,60,73,.92), rgba(11,60,73,.72));
+      border-bottom:1px solid var(--stroke);
+    }
+
+    .topbar-inner{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      padding:14px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
       gap:12px;
+      min-width:220px;
     }
 
-    .panel{
-      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
-      border:1px solid var(--panelLine);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      color: var(--textOn);
+    .logo{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      background:rgba(255,255,255,.12);
+      border:1px solid var(--stroke2);
+      display:grid;
+      place-items:center;
       overflow:hidden;
     }
-    .panel .pad{padding:14px}
 
-    .controls{
-      display:flex;flex-wrap:wrap;gap:10px;
-      align-items:center;
-    }
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:9px 11px;border-radius:14px;
-      background: rgba(234,246,248,.08);
-      border: 1px solid rgba(234,246,248,.14);
-      color: var(--textOn);
-      text-decoration:none;
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .btn:hover{background:rgba(234,246,248,.12);border-color:rgba(234,246,248,.20)}
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(14,165,233,.88));
-      border:none;
-      color:#05262e;
+    .logo svg{width:30px; height:30px; opacity:.95}
+    .brand-title{
       font-weight:800;
+      letter-spacing:.2px;
+      font-size:18px;
+      line-height:1.1;
     }
 
-    .row{
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-      margin-top:10px;
-      color: var(--mutedOn);font-size:12px;
+    nav{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      flex:1;
+      min-width:0;
+      overflow:auto;
+      scrollbar-width:none;
+    }
+    nav::-webkit-scrollbar{display:none}
+    .navlink{
+      padding:8px 10px;
+      border-radius:12px;
+      color:rgba(233,244,246,.92);
+      white-space:nowrap;
+      font-weight:600;
+      font-size:15px;
+      opacity:.92;
+      transition:background .15s ease, opacity .15s ease;
+    }
+    .navlink:hover{background:rgba(255,255,255,.08); opacity:1}
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
     }
     .pill{
-      padding:6px 8px;border-radius:999px;
-      background: rgba(14,165,233,.10);
-      border: 1px solid rgba(14,165,233,.22);
-      color: rgba(234,246,248,.92);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.06);
+      color:rgba(233,244,246,.92);
+      font-weight:700;
+      font-size:14px;
+      transition:transform .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px); background:rgba(255,255,255,.10)}
+    .pill svg{width:18px; height:18px; opacity:.95}
+
+    /* Page head */
+    .page-head{
+      padding:22px 0 12px;
+    }
+    .kicker{
+      color:var(--muted);
+      font-weight:700;
+      font-size:18px;
+      letter-spacing:.2px;
+      margin:0;
     }
 
-    .search{margin-top:12px;display:flex;gap:10px}
-    input[type="text"]{
-      width:100%;
-      padding:10px 12px;border-radius:14px;
-      background: rgba(234,246,248,.06);
-      border:1px solid rgba(234,246,248,.12);
-      color: var(--textOn);
-      outline:none;
+    /* Cards */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12, 1fr);
+      gap:18px;
+      padding:10px 0 40px;
     }
-    input::placeholder{color: rgba(234,246,248,.55)}
-
-    .list{
-      border-top:1px solid rgba(234,246,248,.10);
-      max-height: calc(100vh - 260px);
-      overflow:auto;
-    }
-    .item{
-      display:flex;gap:10px;align-items:flex-start;
-      padding:12px 14px;
-      border-bottom:1px solid rgba(234,246,248,.08);
-      cursor:pointer;
-    }
-    .item:hover{background: rgba(234,246,248,.05)}
-    .num{
-      width:26px;height:26px;border-radius:999px;
-      background: var(--pin);
-      border:2px solid var(--pinBorder);
-      box-shadow: 0 8px 18px var(--pinShadow);
-      display:flex;align-items:center;justify-content:center;
-      color:#fff;font-weight:900;font-size:12px;
-      flex: 0 0 auto;
-      font-family: var(--mono);
-    }
-    .item h3{margin:0;font-size:13px;color:var(--textOn);line-height:1.25}
-    .item p{margin:6px 0 0;color:var(--mutedOn);font-size:12px;line-height:1.35}
-
-    #map{
-      width:100%;
-      height: calc(100vh - 140px);
-      border-radius: var(--radius);
-      border: 1px solid rgba(234,246,248,.14);
-      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+    .card{
+      grid-column:span 4;
+      background:linear-gradient(180deg, rgba(10,54,66,.92), rgba(8,44,54,.92));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
       overflow:hidden;
-      background: rgba(7,26,34,.35);
+      display:flex;
+      flex-direction:column;
+      min-height:420px;
     }
 
-    .pin{
-      width:28px;height:28px;border-radius:999px;
-      background: var(--pin);
-      border:2px solid var(--pinBorder);
-      box-shadow: 0 8px 18px var(--pinShadow);
-      display:flex;align-items:center;justify-content:center;
-      color:#fff;font-weight:900;font-size:12px;
-      font-family: var(--mono);
+    .media{
+      padding:16px;
+      padding-bottom:10px;
     }
-
-    .thumb{
-      width:110px;height:78px;
-      border-radius:10px;
-      border:2px solid var(--thumbBorder);
-      box-shadow: 0 10px 22px var(--thumbShadow);
+    .media-frame{
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      overflow:hidden;
+      height:190px;
+      display:block;
+    }
+    .media-frame img{
+      width:100%;
+      height:100%;
       object-fit:cover;
-      background:#fff;
       display:block;
     }
 
-    .leaflet-popup-content-wrapper{
-      background: rgba(7,26,34,.98);
-      color: var(--textOn);
-      border: 1px solid rgba(234,246,248,.10);
-      border-radius: 14px;
+    .content{
+      padding:8px 18px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
     }
-    .leaflet-popup-tip{
-      background: rgba(7,26,34,.98);
-      border: 1px solid rgba(234,246,248,.10);
+    .tag{
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.3px;
+      color:rgba(233,244,246,.72);
     }
-    .popupTitle{margin:0;font-size:14px;font-weight:900}
-    .popupMeta{margin:6px 0 0;color:var(--mutedOn);font-size:12px;line-height:1.35}
-    .popupLinks{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-    .plink{
-      padding:7px 9px;border-radius:12px;
-      background: rgba(234,246,248,.08);
-      border: 1px solid rgba(234,246,248,.14);
-      color: var(--textOn);
-      text-decoration:none;
-      font-size:12px;
-      display:inline-flex;align-items:center;gap:8px;
+    .title{
+      font-size:22px;
+      margin:0;
+      font-weight:900;
+      letter-spacing:.2px;
     }
-    .plink:hover{background:rgba(234,246,248,.12)}
-    .plink.map{border-color:rgba(45,212,191,.22)}
-    .plink.ig{border-color:rgba(251,191,36,.25)}
+    .desc{
+      margin:0;
+      color:var(--muted2);
+      line-height:1.45;
+      font-weight:600;
+    }
 
+    .meta{
+      margin-top:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-top:10px;
+      color:rgba(233,244,246,.70);
+      font-weight:700;
+    }
+
+    .btn{
+      align-self:flex-start;
+      margin-top:6px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid rgba(47,179,255,.25);
+      background:linear-gradient(180deg, rgba(47,179,255,.40), rgba(47,179,255,.22));
+      color:#eaf7ff;
+      font-weight:900;
+      letter-spacing:.2px;
+      transition:transform .12s ease, filter .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); filter:brightness(1.04)}
+    .btn svg{width:18px; height:18px}
+
+    /* Footer spacing */
+    .spacer{height:26px}
+
+    /* Responsive */
     @media (max-width: 980px){
-      .layout{grid-template-columns:1fr}
-      #map{height: 62vh}
-      .list{max-height: 40vh}
+      .brand{min-width:auto}
+      .card{grid-column:span 6}
+    }
+    @media (max-width: 680px){
+      .topbar-inner{gap:12px}
+      nav{gap:10px}
+      .card{grid-column:span 12; min-height:unset}
+      .media-frame{height:180px}
+      .kicker{font-size:16px}
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>Carte — Fresques d’Estepona</h1>
-          <p>Marqueurs numérotés + mini-photos (optionnel)</p>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="topbar-inner">
+        <a class="brand" href="index.html" aria-label="Retour à l'accueil">
+          <div class="logo" aria-hidden="true">
+            <!-- mini pictogramme -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 16c3.5-6 6.5-9 9-9s5.5 3 9 9" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 15c2-3 4-4.5 6-4.5S16 12 18 15" stroke="rgba(47,179,255,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 7V4" stroke="rgba(233,244,246,.85)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-title">Vivre à Estepona</div>
+        </a>
+
+        <nav aria-label="Navigation principale">
+          <a class="navlink" href="restaurants.html">Restaurants</a>
+          <a class="navlink" href="que-faire.html">Que faire</a>
+          <a class="navlink" href="transport.html">Transport</a>
+          <a class="navlink" href="ecoles.html">Écoles</a>
+          <a class="navlink" href="sante.html">Santé</a>
+          <a class="navlink" href="trafic.html">Trafic</a>
+          <a class="navlink" href="faq.html">FAQ</a>
+          <a class="navlink" href="contact.html">Contact</a>
+        </nav>
+
+        <div class="actions">
+          <a class="pill" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(233,244,246,.9)" stroke-width="2"/>
+              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(233,244,246,.9)" stroke-width="2"/>
+              <path d="M17.5 6.5h.01" stroke="rgba(47,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            Instagram
+          </a>
+          <a class="pill" href="https://www.youtube.com/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(233,244,246,.92)"/>
+              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(233,244,246,.9)" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            YouTube
+          </a>
         </div>
       </div>
-      <span class="chip">🗺️ OpenStreetMap</span>
+
+      <!-- Bloc de navigation demandé (systématique) -->
+      <div style="display:flex;gap:16px; padding:0 0 14px 0; flex-wrap:wrap;">
+        <a class="navlink" href="index.html">Accueil</a>
+        <a class="navlink" href="bons-plans.html">Bons plans</a>
+        <a class="navlink" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
+        <a class="navlink" href="actualites.html">Actus</a>
+      </div>
     </div>
   </header>
 
-  <main class="layout">
-    <section class="panel">
-      <div class="pad">
-        <div class="controls">
-          <button class="btn primary" id="fitBtn">🔎 Tout voir</button>
-          <button class="btn" id="toggleThumbsBtn">🖼️ Mini-photos: ON</button>
-          <button class="btn" id="geocodeBtn">📍 Placer via adresses</button>
-        </div>
-
-        <div class="row">
-          <span class="pill" id="countPill">0 fresques</span>
-          <span class="pill" id="geoPill">Géocodage: prêt</span>
-        </div>
-
-        <div class="search">
-          <input id="q" type="text" placeholder="Rechercher (titre, artiste, lieu)..." autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="list" id="list"></div>
+  <main class="wrap">
+    <section class="page-head">
+      <p class="kicker">Nos lieux et activités immanquables à Estepona</p>
     </section>
 
-    <div id="map" aria-label="Carte des fresques"></div>
-  </main>
-
-  <script>
-    // Mets :
-    // - soit lat/lng
-    // - soit address (la page peut géocoder)
-    // - imageUrl : optionnel (mini-photo)
-    const murals = [
-      { n: 1,  title: "Quijote del Siglo XXI", artist: "Curro Leyton", location: "Instituto Puerta del Mar", address: "IES Puerta del Mar, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:"curroleyton"},
-      { n: 2,  title: "Regando el Jardín", artist: "José Fernández Ríos", location: "Avda. Andalucía", address: "Avenida Andalucía, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:"la_riostia"},
-      { n: 3,  title: "Ángel, el buceador", artist: "Eric Aman", location: "C/ Gravina", address: "Calle Gravina, Estepona, Spain", lat: null, lng: null, imageUrl: "", instagram:""}
-      // 👉 colle ici la liste complète des 62 fresques
-    ];
-
-    const $ = (id) => document.getElementById(id);
-
-    function buildMapLink(text){
-      const q = encodeURIComponent(text + " Estepona");
-      return `https://www.google.com/maps/search/?api=1&query=${q}`;
-    }
-    function instagramLink(handle){ return `https://www.instagram.com/${handle}/`; }
-    function instagramSearchLink(name){
-      const q = encodeURIComponent(`site:instagram.com "${name}"`);
-      return `https://www.google.com/search?q=${q}`;
-    }
-    function norm(s){
-      return (s || "")
-        .toString()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .toLowerCase()
-        .trim();
-    }
-    function escapeHtml(str){
-      return (str ?? "").toString()
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    let map;
-    let markers = new Map();
-    let thumbMarkers = new Map();
-    let thumbsEnabled = true;
-
-    function pinIcon(n){
-      return L.divIcon({
-        className: "",
-        html: `<div class="pin">${n}</div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
-      });
-    }
-    function thumbIcon(url){
-      return L.divIcon({
-        className: "",
-        html: `<img class="thumb" src="${escapeHtml(url)}" alt="">`,
-        iconSize: [110, 78],
-        iconAnchor: [55, 78]
-      });
-    }
-
-    function popupHtml(m){
-      const where = [m.location, m.address].filter(Boolean).join(" — ");
-      const mapHref = buildMapLink(`${m.title} ${m.location || m.address || ""}`);
-      const igHref = m.instagram ? instagramLink(m.instagram) : instagramSearchLink(m.artist || "");
-      const igLabel = m.instagram ? `📷 Instagram @${escapeHtml(m.instagram)}` : "📷 Instagram";
-      return `
-        <div>
-          <p class="popupTitle">#${m.n} — ${escapeHtml(m.title)}</p>
-          <p class="popupMeta">
-            <b>${escapeHtml(m.artist || "—")}</b><br>
-            ${escapeHtml(where || "—")}
+    <section class="grid" aria-label="Cartes d'activités">
+      <!-- Carte 1 -->
+      <article class="card">
+        <div class="media">
+          <a class="media-frame" href="vieille-ville-fresques.html" aria-label="Ouvrir : Vieille ville & fresques">
+            <!-- Remplace l'image ci-dessous par ton visuel (même ratio conseillé) -->
+            <img
+              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <defs> <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'> <stop offset='0' stop-color='%23f7f2e6'/> <stop offset='1' stop-color='%23d6efe9'/> </linearGradient> </defs> <rect width='1200' height='700' fill='url(%23g)'/> <g opacity='.85'> <circle cx='260' cy='230' r='180' fill='%23cde7d6'/> <circle cx='840' cy='280' r='220' fill='%23f2e2b6'/> <circle cx='590' cy='520' r='260' fill='%23c5d6f0'/> </g> <text x='130' y='270' font-family='Verdana' font-size='52' fill='%230b3c49' font-weight='700'>CENTRO</text> <text x='130' y='330' font-family='Verdana' font-size='52' fill='%230b3c49' font-weight='700'>HIST%C3%93RICO</text> <text x='640' y='590' font-family='Verdana' font-size='34' fill='%230b3c49' font-weight='600'>PASEO / PLAYA</text> </svg>"
+              alt="Carte illustrée du centre historique"
+              loading="lazy"
+            />
+          </a>
+        </div>
+        <div class="content">
+          <div class="tag">Balade</div>
+          <h2 class="title">Vieille ville &amp; fresques</h2>
+          <p class="desc">
+            Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
           </p>
-          <div class="popupLinks">
-            <a class="plink map" target="_blank" rel="noopener" href="${mapHref}">🗺️ Maps</a>
-            <a class="plink ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>
+          <div class="meta">
+            <span>🧭 2–3 h · Gratuit</span>
+            <span>↗</span>
           </div>
         </div>
-      `;
-    }
+      </article>
 
-    function hasLatLng(m){
-      return typeof m.lat === "number" && typeof m.lng === "number";
-    }
+      <!-- Carte 2 -->
+      <article class="card">
+        <div class="media">
+          <a class="media-frame" href="actualites.html" aria-label="Ouvrir : Actualité Estepona">
+            <img
+              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <rect width='1200' height='700' fill='%23f4efe2'/> <g opacity='.30'> <path d='M0 520 C 220 460, 360 580, 540 520 C 760 450, 900 610, 1200 520 L1200 700 L0 700 Z' fill='%23c9e7ef'/> <path d='M0 520 C 220 460, 360 580, 540 520 C 760 450, 900 610, 1200 520' fill='none' stroke='%230b3c49' stroke-width='6'/> </g> <text x='120' y='270' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>NEWS</text> <text x='120' y='380' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>ACTUALIT%C3%89S</text> <text x='120' y='490' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>ESTEPONA</text> </svg>"
+              alt="Illustration Actualités Estepona"
+              loading="lazy"
+            />
+          </a>
+        </div>
+        <div class="content">
+          <div class="tag">Actualités</div>
+          <h2 class="title">Actualité Estepona</h2>
+          <p class="desc">
+            Toutes les actualités sur Estepona, événements et infos pratiques.
+          </p>
 
-    function addOrUpdateMarker(m){
-      if (!hasLatLng(m)) return;
+          <a class="btn" href="actualites.html">
+            Voir l’actu
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 17L17 7" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10 7h7v7" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
 
-      let mk = markers.get(m.n);
-      if (!mk){
-        mk = L.marker([m.lat, m.lng], { icon: pinIcon(m.n) }).addTo(map);
-        mk.bindPopup(popupHtml(m), { maxWidth: 340 });
-        markers.set(m.n, mk);
-      } else {
-        mk.setLatLng([m.lat, m.lng]);
-        mk.setIcon(pinIcon(m.n));
-        mk.setPopupContent(popupHtml(m));
-      }
-
-      const hasThumb = thumbsEnabled && m.imageUrl;
-      const existingThumb = thumbMarkers.get(m.n);
-
-      if (hasThumb){
-        if (!existingThumb){
-          const tmk = L.marker([m.lat, m.lng], {
-            icon: thumbIcon(m.imageUrl),
-            interactive: false,
-            keyboard: false
-          }).addTo(map);
-          thumbMarkers.set(m.n, tmk);
-        } else {
-          existingThumb.setLatLng([m.lat, m.lng]);
-          existingThumb.setIcon(thumbIcon(m.imageUrl));
-        }
-      } else {
-        if (existingThumb){
-          map.removeLayer(existingThumb);
-          thumbMarkers.delete(m.n);
-        }
-      }
-    }
-
-    function clearMarkers(){
-      for (const mk of markers.values()) map.removeLayer(mk);
-      for (const tmk of thumbMarkers.values()) map.removeLayer(tmk);
-      markers.clear();
-      thumbMarkers.clear();
-    }
-
-    function renderAll(filterText=""){
-      clearMarkers();
-
-      const q = norm(filterText);
-      const list = $("list");
-      list.innerHTML = "";
-
-      const filtered = murals
-        .slice()
-        .sort((a,b)=>a.n-b.n)
-        .filter(m => {
-          if (!q) return true;
-          const blob = norm([m.title,m.artist,m.location,m.address].join(" "));
-          return blob.includes(q);
-        });
-
-      $("countPill").textContent = `${filtered.length} fresques`;
-
-      for (const m of filtered){
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <div class="num">${m.n}</div>
-          <div>
-            <h3>${escapeHtml(m.title || "—")}</h3>
-            <p>${escapeHtml(m.artist || "—")}<br>${escapeHtml(m.location || m.address || "—")}</p>
+          <div class="meta">
+            <span>🗞️ Mise à jour régulière</span>
+            <span>↗</span>
           </div>
-        `;
-        div.addEventListener("click", ()=>{
-          if (hasLatLng(m)){
-            map.setView([m.lat, m.lng], Math.max(map.getZoom(), 16), { animate:true });
-            const mk = markers.get(m.n);
-            if (mk) mk.openPopup();
-          } else {
-            alert("Pas encore de coordonnées pour cette fresque.\nClique sur “📍 Placer via adresses” ou ajoute lat/lng dans la liste.");
-          }
-        });
-        list.appendChild(div);
+        </div>
+      </article>
 
-        addOrUpdateMarker(m);
-      }
-    }
+      <!-- Carte 3 -->
+      <article class="card">
+        <div class="media">
+          <a class="media-frame" href="paseo-maritimo.html" aria-label="Ouvrir : Paseo marítimo">
+            <img
+              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <defs> <linearGradient id='sky' x1='0' y1='0' x2='0' y2='1'> <stop offset='0' stop-color='%23f7f2e6'/> <stop offset='1' stop-color='%23d8eff7'/> </linearGradient> <linearGradient id='walk' x1='0' y1='0' x2='1' y2='1'> <stop offset='0' stop-color='%23f2c9ad'/> <stop offset='1' stop-color='%23f6e6c9'/> </linearGradient> </defs> <rect width='1200' height='700' fill='url(%23sky)'/> <rect x='0' y='380' width='1200' height='320' fill='url(%23walk)'/> <g opacity='.35'> <circle cx='220' cy='250' r='70' fill='%239bd6c7'/> <circle cx='340' cy='260' r='55' fill='%239bd6c7'/> <rect x='190' y='250' width='12' height='140' fill='%230b3c49'/> <rect x='310' y='265' width='12' height='125' fill='%230b3c49'/> </g> <path d='M0 455 C 260 430, 520 520, 760 470 C 920 438, 1040 470, 1200 450' fill='none' stroke='%230b3c49' stroke-width='6' opacity='.25'/> </svg>"
+              alt="Illustration du paseo maritime"
+              loading="lazy"
+            />
+          </a>
+        </div>
+        <div class="content">
+          <div class="tag">Paseo</div>
+          <h2 class="title">Paseo marítimo</h2>
+          <p class="desc">
+            Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.
+          </p>
+          <div class="meta">
+            <span>🌞 Idéal familles</span>
+            <span>↗</span>
+          </div>
+        </div>
+      </article>
+    </section>
 
-    function fitAll(){
-      const pts = [];
-      for (const m of murals){
-        if (hasLatLng(m)) pts.push([m.lat, m.lng]);
-      }
-      if (pts.length >= 2){
-        map.fitBounds(pts, { padding:[40,40] });
-      } else if (pts.length === 1){
-        map.setView(pts[0], 16);
-      } else {
-        map.setView([36.4276, -5.1459], 14);
-      }
-    }
-
-    async function geocodeOne(address){
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-      const res = await fetch(url, { headers: { "Accept": "application/json" } });
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (!data || !data[0]) return null;
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    }
-
-    async function geocodeMissing(){
-      const toDo = murals.filter(m => !hasLatLng(m) && m.address);
-      if (!toDo.length){
-        $("geoPill").textContent = "Géocodage: rien à faire";
-        return;
-      }
-
-      $("geoPill").textContent = `Géocodage: 0 / ${toDo.length}`;
-      let done = 0;
-
-      for (const m of toDo){
-        try{
-          const p = await geocodeOne(m.address);
-          if (p){
-            m.lat = p.lat;
-            m.lng = p.lng;
-          }
-        }catch(e){}
-        done++;
-        $("geoPill").textContent = `Géocodage: ${done} / ${toDo.length}`;
-        renderAll($("q").value);
-        await new Promise(r => setTimeout(r, 1100));
-      }
-
-      $("geoPill").textContent = "Géocodage: terminé";
-      fitAll();
-    }
-
-    window.addEventListener("DOMContentLoaded", ()=>{
-      map = L.map("map", { zoomControl:true }).setView([36.4276, -5.1459], 14);
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap"
-      }).addTo(map);
-
-      renderAll();
-      fitAll();
-
-      $("q").addEventListener("input", (e)=> renderAll(e.target.value));
-      $("fitBtn").addEventListener("click", fitAll);
-
-      $("toggleThumbsBtn").addEventListener("click", ()=>{
-        thumbsEnabled = !thumbsEnabled;
-        $("toggleThumbsBtn").textContent = `🖼️ Mini-photos: ${thumbsEnabled ? "ON" : "OFF"}`;
-        renderAll($("q").value);
-      });
-
-      $("geocodeBtn").addEventListener("click", geocodeMissing);
-    });
-  </script>
+    <div class="spacer"></div>
+  </main>
 </body>
 </html>
