@@ -12,344 +12,381 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estepona — Nos lieux & activités</title>
-  <meta name="description" content="Nos lieux et activités immanquables à Estepona : vieille ville, fresques, paseo, actus." />
+  <title>Estepona — À voir / À faire</title>
+  <meta name="description" content="Nos lieux et activités immanquables à Estepona : vieille ville & fresques, actualités, paseo maritime." />
   <meta name="theme-color" content="#0b3c49" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nos lieux & activités — Vivre à Estepona" />
-  <meta property="og:description" content="Idées de balades, fresques, paseo et actualités à Estepona." />
-
   <style>
+    /* Style calé sur vivreaestepona.com (palette + typographie + cartes) */
     :root{
-      --bg0:#062a33;
-      --bg1:#0b3c49;
-      --bg2:#0a4453;
-      --card:#0b3c49;
-      --card2:#0a3642;
-      --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
-      --text:#e9f4f6;
-      --muted:rgba(233,244,246,.72);
-      --muted2:rgba(233,244,246,.60);
-      --accent:#2fb3ff;
-      --accent2:#5ac7ff;
-      --shadow:0 14px 40px rgba(0,0,0,.30);
-      --radius:18px;
-      --radius2:22px;
-      --max:1160px;
+      --bg:#0b3c49;
+      --bg2:#083846;
+      --card:#083847;
+      --card2:#0a3f4f;
+      --line:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.62);
+      --accent:#25b3ff;
+      --accent2:#52c5ff;
+      --shadow:0 20px 55px rgba(0,0,0,.30);
+      --r18:18px;
+      --r22:22px;
+      --max:1180px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 20% -10%, rgba(47,179,255,.18), transparent 55%),
-        radial-gradient(900px 540px at 85% 10%, rgba(90,199,255,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg0));
+        radial-gradient(900px 520px at 20% -10%, rgba(37,179,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(82,197,255,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg), #062a33 85%);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
 
-    a{color:inherit; text-decoration:none}
-    .wrap{max-width:var(--max); margin:0 auto; padding:0 18px}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
 
-    /* Topbar */
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:30;
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 18px}
+
+    /* Header */
+    .top{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(180deg, rgba(11,60,73,.95), rgba(11,60,73,.70));
       backdrop-filter:saturate(140%) blur(10px);
-      background:linear-gradient(180deg, rgba(11,60,73,.92), rgba(11,60,73,.72));
-      border-bottom:1px solid var(--stroke);
+      border-bottom:1px solid var(--line);
     }
 
-    .topbar-inner{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      padding:14px 0;
+    .topbar{
+      display:flex;align-items:center;gap:18px;
+      padding:16px 0;
     }
 
     .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:220px;
+      display:flex;align-items:center;gap:12px;
+      font-weight:800;font-size:20px;
+      white-space:nowrap;
     }
-
     .logo{
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      background:rgba(255,255,255,.12);
-      border:1px solid var(--stroke2);
-      display:grid;
-      place-items:center;
+      width:44px;height:44px;border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.10);
+      display:grid;place-items:center;
       overflow:hidden;
+      flex:0 0 auto;
     }
+    .logo svg{width:30px;height:30px;opacity:.95}
 
-    .logo svg{width:30px; height:30px; opacity:.95}
-    .brand-title{
-      font-weight:800;
-      letter-spacing:.2px;
-      font-size:18px;
-      line-height:1.1;
-    }
-
-    nav{
-      display:flex;
-      align-items:center;
-      gap:18px;
+    .nav{
+      display:flex;align-items:center;gap:16px;
+      margin-left:14px;
       flex:1;
-      min-width:0;
       overflow:auto;
       scrollbar-width:none;
     }
-    nav::-webkit-scrollbar{display:none}
-    .navlink{
-      padding:8px 10px;
-      border-radius:12px;
-      color:rgba(233,244,246,.92);
+    .nav::-webkit-scrollbar{display:none}
+
+    .nav a{
+      padding:10px 10px;
+      border-radius:14px;
+      font-weight:650;
+      color:rgba(255,255,255,.90);
+      opacity:.95;
       white-space:nowrap;
-      font-weight:600;
-      font-size:15px;
-      opacity:.92;
-      transition:background .15s ease, opacity .15s ease;
+      transition:background .15s ease, transform .15s ease;
     }
-    .navlink:hover{background:rgba(255,255,255,.08); opacity:1}
+    .nav a:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
 
     .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-shrink:0;
+      display:flex;align-items:center;gap:10px;flex:0 0 auto;
     }
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:9px 14px;
-      border-radius:999px;
-      border:1px solid var(--stroke2);
-      background:rgba(255,255,255,.06);
-      color:rgba(233,244,246,.92);
-      font-weight:700;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 14px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.07);
+      font-weight:750;
       font-size:14px;
-      transition:transform .12s ease, background .12s ease;
       white-space:nowrap;
+      transition:background .15s ease, transform .15s ease;
     }
-    .pill:hover{transform:translateY(-1px); background:rgba(255,255,255,.10)}
-    .pill svg{width:18px; height:18px; opacity:.95}
+    .pill:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
+    .pill svg{width:18px;height:18px;opacity:.95}
+
+    /* Mobile menu button */
+    .burger{
+      display:none;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.07);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    /* Required nav block (systématique) */
+    .quicknav{
+      padding:0 0 14px 0;
+      border-top:1px solid rgba(255,255,255,.08);
+      margin-top:0;
+    }
+    .quicknav > div{
+      display:flex;gap:16px;flex-wrap:wrap;
+      padding-top:12px;
+    }
 
     /* Page head */
-    .page-head{
-      padding:22px 0 12px;
+    .section{
+      padding:22px 0 10px;
     }
-    .kicker{
-      color:var(--muted);
-      font-weight:700;
-      font-size:18px;
+    h1{
+      margin:0 0 6px 0;
+      font-size:34px;
       letter-spacing:.2px;
+      font-weight:900;
+    }
+    .lead{
       margin:0;
+      color:var(--muted);
+      font-weight:600;
+      font-size:18px;
+      line-height:1.45;
     }
 
-    /* Cards */
+    /* Cards grid */
+    .cards-head{
+      display:flex;align-items:end;justify-content:space-between;gap:18px;
+      padding:22px 0 12px;
+    }
+    .cards-head h2{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .ghostlink{
+      display:inline-flex;align-items:center;gap:10px;
+      color:rgba(255,255,255,.86);
+      font-weight:800;
+      padding:10px 14px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      transition:background .15s ease, transform .15s ease;
+      white-space:nowrap;
+    }
+    .ghostlink:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
+
     .grid{
       display:grid;
       grid-template-columns:repeat(12, 1fr);
       gap:18px;
-      padding:10px 0 40px;
+      padding-bottom:46px;
     }
     .card{
       grid-column:span 4;
-      background:linear-gradient(180deg, rgba(10,54,66,.92), rgba(8,44,54,.92));
-      border:1px solid var(--stroke);
-      border-radius:var(--radius2);
-      box-shadow:var(--shadow);
+      background:linear-gradient(180deg, rgba(8,56,71,.92), rgba(6,42,51,.92));
+      border:1px solid var(--line);
+      border-radius:var(--r22);
       overflow:hidden;
+      box-shadow:var(--shadow);
+      min-height:430px;
       display:flex;
       flex-direction:column;
-      min-height:420px;
     }
-
     .media{
-      padding:16px;
-      padding-bottom:10px;
+      padding:16px 16px 10px 16px;
     }
-    .media-frame{
-      border-radius:var(--radius);
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--stroke);
+    .frame{
+      border-radius:var(--r18);
       overflow:hidden;
-      height:190px;
-      display:block;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      height:210px;
     }
-    .media-frame img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
+    .frame img{width:100%;height:100%;object-fit:cover}
 
     .content{
-      padding:8px 18px 18px;
+      padding:10px 18px 18px 18px;
       display:flex;
       flex-direction:column;
       gap:10px;
       flex:1;
     }
-    .tag{
-      font-size:13px;
-      font-weight:800;
-      letter-spacing:.3px;
-      color:rgba(233,244,246,.72);
-    }
-    .title{
-      font-size:22px;
-      margin:0;
-      font-weight:900;
+    .k{color:rgba(255,255,255,.72);font-weight:900;font-size:13px;letter-spacing:.35px}
+    .title{margin:0;font-size:24px;font-weight:950;letter-spacing:.15px}
+    .desc{margin:0;color:var(--muted2);font-weight:600;line-height:1.45}
+
+    .cta{
+      margin-top:6px;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:11px 14px;
+      border-radius:14px;
+      border:1px solid rgba(37,179,255,.28);
+      background:linear-gradient(180deg, rgba(37,179,255,.42), rgba(37,179,255,.22));
+      font-weight:950;
       letter-spacing:.2px;
+      width:max-content;
+      transition:transform .15s ease, filter .15s ease;
     }
-    .desc{
-      margin:0;
-      color:var(--muted2);
-      line-height:1.45;
-      font-weight:600;
-    }
+    .cta:hover{transform:translateY(-1px);filter:brightness(1.03)}
+    .cta svg{width:18px;height:18px}
 
     .meta{
       margin-top:auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
+      display:flex;align-items:center;justify-content:space-between;
       padding-top:10px;
-      color:rgba(233,244,246,.70);
+      color:rgba(255,255,255,.70);
+      font-weight:800;
+    }
+
+    /* Footer */
+    footer{
+      border-top:1px solid rgba(255,255,255,.10);
+      padding:22px 0 28px;
+      color:rgba(255,255,255,.72);
+      text-align:center;
       font-weight:700;
     }
 
-    .btn{
-      align-self:flex-start;
-      margin-top:6px;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:14px;
-      border:1px solid rgba(47,179,255,.25);
-      background:linear-gradient(180deg, rgba(47,179,255,.40), rgba(47,179,255,.22));
-      color:#eaf7ff;
-      font-weight:900;
-      letter-spacing:.2px;
-      transition:transform .12s ease, filter .12s ease;
-      white-space:nowrap;
-    }
-    .btn:hover{transform:translateY(-1px); filter:brightness(1.04)}
-    .btn svg{width:18px; height:18px}
-
-    /* Footer spacing */
-    .spacer{height:26px}
-
     /* Responsive */
     @media (max-width: 980px){
-      .brand{min-width:auto}
+      .actions{display:none}
+      .burger{display:inline-flex}
+      .nav{display:none}
+      .nav.open{
+        display:flex;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:6px;
+        padding:10px 0 0 0;
+        margin:0;
+      }
+      .nav.open a{width:100%}
       .card{grid-column:span 6}
+      h1{font-size:30px}
     }
     @media (max-width: 680px){
-      .topbar-inner{gap:12px}
-      nav{gap:10px}
-      .card{grid-column:span 12; min-height:unset}
-      .media-frame{height:180px}
-      .kicker{font-size:16px}
+      .card{grid-column:span 12}
+      .frame{height:190px}
+      .lead{font-size:16px}
+      .cards-head{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
 
 <body>
-  <header class="topbar">
+  <header class="top">
     <div class="wrap">
-      <div class="topbar-inner">
-        <a class="brand" href="index.html" aria-label="Retour à l'accueil">
-          <div class="logo" aria-hidden="true">
-            <!-- mini pictogramme -->
+      <div class="topbar">
+        <a class="brand" href="index.html" aria-label="Accueil Vivre à Estepona">
+          <span class="logo" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M3 16c3.5-6 6.5-9 9-9s5.5 3 9 9" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6 15c2-3 4-4.5 6-4.5S16 12 18 15" stroke="rgba(47,179,255,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M12 7V4" stroke="rgba(233,244,246,.85)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M3 16c3.5-6 6.5-9 9-9s5.5 3 9 9" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 15c2-3 4-4.5 6-4.5S16 12 18 15" stroke="rgba(37,179,255,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 7V4" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"/>
             </svg>
-          </div>
-          <div class="brand-title">Vivre à Estepona</div>
+          </span>
+          Vivre à Estepona
         </a>
 
-        <nav aria-label="Navigation principale">
-          <a class="navlink" href="restaurants.html">Restaurants</a>
-          <a class="navlink" href="que-faire.html">Que faire</a>
-          <a class="navlink" href="transport.html">Transport</a>
-          <a class="navlink" href="ecoles.html">Écoles</a>
-          <a class="navlink" href="sante.html">Santé</a>
-          <a class="navlink" href="trafic.html">Trafic</a>
-          <a class="navlink" href="faq.html">FAQ</a>
-          <a class="navlink" href="contact.html">Contact</a>
-        </nav>
+        <nav class="nav" id="mainNav" aria-label="Navigation principale">
+          <a href="restaurants.html">Restaurants</a>
+          <a href="que-faire.html">Que faire</a>
+          <a href="transport.html">Transport</a>
+          <a href="ecoles.html">Écoles</a>
+          <a href="sante.html">Santé</a>
+          <a href="trafic.html">Trafic</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
 
-        <div class="actions">
-          <a class="pill" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+          <!-- En mobile on ré-affiche les réseaux dans le menu -->
+          <a class="pill" style="margin-top:6px" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(233,244,246,.9)" stroke-width="2"/>
-              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(233,244,246,.9)" stroke-width="2"/>
-              <path d="M17.5 6.5h.01" stroke="rgba(47,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
+              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
+              <path d="M17.5 6.5h.01" stroke="rgba(37,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
             </svg>
             Instagram
           </a>
           <a class="pill" href="https://www.youtube.com/" target="_blank" rel="noreferrer">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(233,244,246,.92)"/>
-              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(233,244,246,.9)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(255,255,255,.92)"/>
+              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            YouTube
+          </a>
+        </nav>
+
+        <div class="actions" aria-label="Réseaux sociaux">
+          <a class="pill" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
+              <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
+              <path d="M17.5 6.5h.01" stroke="rgba(37,179,255,.95)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            Instagram
+          </a>
+          <a class="pill" href="https://www.youtube.com/" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10 15.5V8.5l6 3.5-6 3.5Z" fill="rgba(255,255,255,.92)"/>
+              <path d="M21 12s0-4-1-5-6-1-8-1-7 0-8 1-1 5-1 5 0 4 1 5 6 1 8 1 7 0 8-1 1-5 1-5Z" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
             </svg>
             YouTube
           </a>
         </div>
+
+        <button class="burger" type="button" aria-controls="mainNav" aria-expanded="false" id="burgerBtn">
+          Menu
+        </button>
       </div>
 
-      <!-- Bloc de navigation demandé (systématique) -->
-      <div style="display:flex;gap:16px; padding:0 0 14px 0; flex-wrap:wrap;">
-        <a class="navlink" href="index.html">Accueil</a>
-        <a class="navlink" href="bons-plans.html">Bons plans</a>
-        <a class="navlink" href="vieille-ville-fresques.html">Vieille ville & fresques</a>
-        <a class="navlink" href="actualites.html">Actus</a>
+      <!-- Bloc navigation demandé (systématique) -->
+      <div class="quicknav">
+        <div style="display:flex;gap:16px">
+          <a href="index.html">Accueil</a>
+          <a href="bons-plans.html">Bons plans</a>
+          <a href="que-faire.html">À voir / À faire</a>
+          <a href="restaurants.html">Restaurants</a>
+        </div>
       </div>
     </div>
   </header>
 
   <main class="wrap">
-    <section class="page-head">
-      <p class="kicker">Nos lieux et activités immanquables à Estepona</p>
+    <section class="section">
+      <h1>À voir / À faire</h1>
+      <p class="lead">Nos lieux et activités immanquables à Estepona</p>
     </section>
 
-    <section class="grid" aria-label="Cartes d'activités">
+    <section class="cards-head" aria-label="En-tête des cartes">
+      <h2>Nos lieux et activités immanquables à Estepona</h2>
+      <a class="ghostlink" href="que-faire.html">Tout voir</a>
+    </section>
+
+    <section class="grid" aria-label="Cartes activités">
       <!-- Carte 1 -->
       <article class="card">
         <div class="media">
-          <a class="media-frame" href="vieille-ville-fresques.html" aria-label="Ouvrir : Vieille ville & fresques">
-            <!-- Remplace l'image ci-dessous par ton visuel (même ratio conseillé) -->
+          <a class="frame" href="vieille-ville-fresques.html" aria-label="Vieille ville & fresques">
             <img
-              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <defs> <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'> <stop offset='0' stop-color='%23f7f2e6'/> <stop offset='1' stop-color='%23d6efe9'/> </linearGradient> </defs> <rect width='1200' height='700' fill='url(%23g)'/> <g opacity='.85'> <circle cx='260' cy='230' r='180' fill='%23cde7d6'/> <circle cx='840' cy='280' r='220' fill='%23f2e2b6'/> <circle cx='590' cy='520' r='260' fill='%23c5d6f0'/> </g> <text x='130' y='270' font-family='Verdana' font-size='52' fill='%230b3c49' font-weight='700'>CENTRO</text> <text x='130' y='330' font-family='Verdana' font-size='52' fill='%230b3c49' font-weight='700'>HIST%C3%93RICO</text> <text x='640' y='590' font-family='Verdana' font-size='34' fill='%230b3c49' font-weight='600'>PASEO / PLAYA</text> </svg>"
-              alt="Carte illustrée du centre historique"
+              src="images/vieille-ville.jpg"
+              alt="Vieille ville d’Estepona"
               loading="lazy"
+              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><defs><linearGradient id=&quot;g&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f7f2e6&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23d6efe9&quot;/></linearGradient></defs><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;url(%23g)&quot;/><text x=&quot;90&quot; y=&quot;360&quot; font-family=&quot;Verdana&quot; font-size=&quot;60&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;800&quot;>VIEILLE VILLE</text><text x=&quot;90&quot; y=&quot;430&quot; font-family=&quot;Verdana&quot; font-size=&quot;60&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;800&quot;>&amp; FRESQUES</text></svg>';"
             />
           </a>
         </div>
         <div class="content">
-          <div class="tag">Balade</div>
-          <h2 class="title">Vieille ville &amp; fresques</h2>
-          <p class="desc">
-            Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.
-          </p>
+          <div class="k">Balade</div>
+          <h3 class="title">Vieille ville &amp; fresques</h3>
+          <p class="desc">Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.</p>
           <div class="meta">
-            <span>🧭 2–3 h · Gratuit</span>
+            <span>⏱️ 2–3 h · Gratuit</span>
             <span>↗</span>
           </div>
         </div>
@@ -358,31 +395,28 @@
       <!-- Carte 2 -->
       <article class="card">
         <div class="media">
-          <a class="media-frame" href="actualites.html" aria-label="Ouvrir : Actualité Estepona">
+          <a class="frame" href="actualites.html" aria-label="Actualité Estepona">
             <img
-              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <rect width='1200' height='700' fill='%23f4efe2'/> <g opacity='.30'> <path d='M0 520 C 220 460, 360 580, 540 520 C 760 450, 900 610, 1200 520 L1200 700 L0 700 Z' fill='%23c9e7ef'/> <path d='M0 520 C 220 460, 360 580, 540 520 C 760 450, 900 610, 1200 520' fill='none' stroke='%230b3c49' stroke-width='6'/> </g> <text x='120' y='270' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>NEWS</text> <text x='120' y='380' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>ACTUALIT%C3%89S</text> <text x='120' y='490' font-family='Verdana' font-size='86' fill='%230b3c49' font-weight='800'>ESTEPONA</text> </svg>"
-              alt="Illustration Actualités Estepona"
+              src="images/actus.jpg"
+              alt="Actualités Estepona"
               loading="lazy"
+              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;%23f4efe2&quot;/><text x=&quot;90&quot; y=&quot;290&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>NEWS</text><text x=&quot;90&quot; y=&quot;410&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>ACTUALIT%C3%89S</text><text x=&quot;90&quot; y=&quot;530&quot; font-family=&quot;Verdana&quot; font-size=&quot;86&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>ESTEPONA</text></svg>';"
             />
           </a>
         </div>
         <div class="content">
-          <div class="tag">Actualités</div>
-          <h2 class="title">Actualité Estepona</h2>
-          <p class="desc">
-            Toutes les actualités sur Estepona, événements et infos pratiques.
-          </p>
-
-          <a class="btn" href="actualites.html">
+          <div class="k">Actualités</div>
+          <h3 class="title">Actualité Estepona</h3>
+          <p class="desc">Toutes les actualités sur Estepona, événements et infos pratiques.</p>
+          <a class="cta" href="actualites.html">
             Voir l’actu
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 17L17 7" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10 7h7v7" stroke="rgba(233,244,246,.95)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 17L17 7" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10 7h7v7" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
-
           <div class="meta">
-            <span>🗞️ Mise à jour régulière</span>
+            <span>🗞️ Événements & infos</span>
             <span>↗</span>
           </div>
         </div>
@@ -391,29 +425,45 @@
       <!-- Carte 3 -->
       <article class="card">
         <div class="media">
-          <a class="media-frame" href="paseo-maritimo.html" aria-label="Ouvrir : Paseo marítimo">
+          <a class="frame" href="paseo-maritimo.html" aria-label="Paseo marítimo">
             <img
-              src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?> <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'> <defs> <linearGradient id='sky' x1='0' y1='0' x2='0' y2='1'> <stop offset='0' stop-color='%23f7f2e6'/> <stop offset='1' stop-color='%23d8eff7'/> </linearGradient> <linearGradient id='walk' x1='0' y1='0' x2='1' y2='1'> <stop offset='0' stop-color='%23f2c9ad'/> <stop offset='1' stop-color='%23f6e6c9'/> </linearGradient> </defs> <rect width='1200' height='700' fill='url(%23sky)'/> <rect x='0' y='380' width='1200' height='320' fill='url(%23walk)'/> <g opacity='.35'> <circle cx='220' cy='250' r='70' fill='%239bd6c7'/> <circle cx='340' cy='260' r='55' fill='%239bd6c7'/> <rect x='190' y='250' width='12' height='140' fill='%230b3c49'/> <rect x='310' y='265' width='12' height='125' fill='%230b3c49'/> </g> <path d='M0 455 C 260 430, 520 520, 760 470 C 920 438, 1040 470, 1200 450' fill='none' stroke='%230b3c49' stroke-width='6' opacity='.25'/> </svg>"
-              alt="Illustration du paseo maritime"
+              src="images/paseo.jpg"
+              alt="Paseo marítimo"
               loading="lazy"
+              onerror="this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;700&quot; viewBox=&quot;0 0 1200 700&quot;><defs><linearGradient id=&quot;sky&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f7f2e6&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23d8eff7&quot;/></linearGradient><linearGradient id=&quot;walk&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;%23f2c9ad&quot;/><stop offset=&quot;1&quot; stop-color=&quot;%23f6e6c9&quot;/></linearGradient></defs><rect width=&quot;1200&quot; height=&quot;700&quot; fill=&quot;url(%23sky)&quot;/><rect x=&quot;0&quot; y=&quot;380&quot; width=&quot;1200&quot; height=&quot;320&quot; fill=&quot;url(%23walk)&quot;/><text x=&quot;90&quot; y=&quot;360&quot; font-family=&quot;Verdana&quot; font-size=&quot;70&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>PASEO</text><text x=&quot;90&quot; y=&quot;440&quot; font-family=&quot;Verdana&quot; font-size=&quot;70&quot; fill=&quot;%230b3c49&quot; font-weight=&quot;900&quot;>MAR%C3%8DTIMO</text></svg>';"
             />
           </a>
         </div>
         <div class="content">
-          <div class="tag">Paseo</div>
-          <h2 class="title">Paseo marítimo</h2>
-          <p class="desc">
-            Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.
-          </p>
+          <div class="k">Paseo</div>
+          <h3 class="title">Paseo marítimo</h3>
+          <p class="desc">Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.</p>
           <div class="meta">
-            <span>🌞 Idéal familles</span>
+            <span>☀️ Idéal familles</span>
             <span>↗</span>
           </div>
         </div>
       </article>
     </section>
-
-    <div class="spacer"></div>
   </main>
+
+  <footer>
+    Vivre à Estepona · © 2026
+  </footer>
+
+  <script>
+    // Menu mobile (comme sur le site)
+    (function(){
+      const btn = document.getElementById('burgerBtn');
+      const nav = document.getElementById('mainNav');
+      if(!btn || !nav) return;
+
+      btn.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.textContent = isOpen ? '×' : 'Menu';
+      });
+    })();
+  </script>
 </body>
 </html>
