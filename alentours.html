@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H5DN0R14FF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H5DN0R14FF');
+  </script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aux alentours d’Estepona — Villes & escapades</title>
+  <meta name="description" content="Les plus belles villes autour d’Estepona : Marbella, Casares, Ronda, Gibraltar… distances, idées et carte." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Aux alentours d’Estepona — Villes & escapades" />
+  <meta property="og:description" content="Marbella, Casares, Ronda, Gibraltar… idées de sorties autour d’Estepona avec carte et conseils." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
+
+  <!-- Preloads -->
+  <link rel="preload" href="/video/Video-estepona.mp4" as="video" type="video/mp4" />
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+
+  <style>
+    :root{
+      /* ✅ aligné avec l’ambiance “fresques” */
+      --color-bg: #0b3c49;
+
+      --color-surface: #0f1f44;
+      --color-surface-2: #0f1625;
+      --color-primary: #2db4ff;
+      --color-accent: #00d0b6;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+
+      /* ✅ manquants (utilisés par header / menu mobile) */
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
+    }
+
+    html,body{
+      margin:0;
+      padding:0;
+
+      /* ✅ Fond identique */
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+
+      color:var(--color-text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+
+    /* Header */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+      border-bottom: 1px solid var(--glassLine);
+    }
+
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
+    }
+
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+
+    /* Boutons sociaux (header) */
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .search{
+      display:flex;gap:8px;align-items:center;
+      background:var(--color-surface);border:1px solid var(--color-border);
+      border-radius:999px;padding:8px 12px
+    }
+    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
+
+    .burger{
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface)
+    }
+    @media (max-width:980px){
+      nav.primary,.search,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    /* Sections (cartes) */
+    section.category{margin:30px 0}
+    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head h3{margin:0;font-size:22px}
+    .section-head p{margin:0;color:var(--color-muted)}
+    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
+
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      display:grid;grid-template-rows:auto 1fr;gap:10px;
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
+    }
+
+    /* Vignettes uniformes */
+    .card .thumb{
+      position: relative;
+      height: clamp(200px, 22vw, 260px);
+      border-radius: 16px;
+      overflow: hidden;
+      background:#0b1322;
+      display:block;
+    }
+    .card .thumb img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card .excerpt{color:var(--color-muted);font-size:14px}
+
+    /* Badges infos */
+    .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(234,246,248,.14);
+      background: rgba(234,246,248,.06);
+      color: rgba(234,246,248,.9);
+      font-size:13px;
+    }
+
+    /* Grille spéciale cartes */
+    .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
+    @media (max-width:980px){.map-grid{grid-template-columns:1fr}}
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;inset:0;display:none;
+      align-items:center;justify-content:center;
+      background:rgba(0,0,0,.8);z-index:200;padding:20px
+    }
+    .lightbox.open{display:flex}
+    .lightbox img{
+      max-width:min(100%,1200px);max-height:90vh;width:auto;height:auto;
+      border-radius:16px;box-shadow:var(--shadow)
+    }
+    .lb-close{
+      position:absolute;top:14px;right:16px;background:#ffffff;
+      border:0;border-radius:999px;width:40px;height:40px;font-size:22px;
+      line-height:40px;text-align:center;cursor:pointer;box-shadow:var(--shadow)
+    }
+    .lb-close:hover{background:#eef6f4}
+
+    /* Footer */
+    footer{
+      margin-top:48px;border-top:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
+    }
+    .footer-top{
+      padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between
+    }
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
+    .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
+
+    /* Menu mobile */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .mobile-menu-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
+    }
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
+    }
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+
+    /* ========== Mobile polish ========== */
+    .search input{ font-size:16px; }
+    header, .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    @media (max-width: 980px){
+      .container{ width:min(1100px, 92vw); }
+      .header-row{ padding:12px 0; gap:12px; }
+      .brand-logo{ width:38px; height:38px; border-radius:12px; }
+      .brand strong{ font-size:16px; }
+
+      section.category{ margin:22px 0; }
+      .section-head{ gap:10px; margin-bottom:12px; }
+      .section-head h3{ font-size:18px; }
+      .section-head p{ font-size:13px; }
+      .more{ display:none; }
+
+      .grid{ gap:14px; }
+      .card{ border-radius:16px; }
+      .card .body{ padding:12px 12px 14px; }
+      .card h4{ font-size:16px; }
+      .card .excerpt{ font-size:13px; }
+      .card .thumb{ height: 180px; }
+      .map-grid{ gap:14px; }
+    }
+
+    @media (max-width: 380px){
+      .brand strong{ font-size:15px; }
+      .card .thumb{ height: 165px; }
+    }
+
+    .burger{ cursor:pointer; }
+    .burger:active{ transform: scale(.98); }
+
+    /* ✅ petit hero simple, cohérent avec ton design */
+    .hero{
+      margin-top:18px;
+      padding:18px 18px 16px;
+      border:1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(234,246,248,.06), rgba(234,246,248,0));
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+    .hero h1{margin:0 0 8px;font-size:26px;letter-spacing:.2px}
+    .hero p{margin:0;color:var(--color-muted);max-width:72ch}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .cta{
+      display:inline-block;
+      background:var(--color-primary);
+      color:#06131e;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .cta.secondary{
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
+      font-weight:600;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU MOBILE (drawer) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="alentours.html">Aux Alentours</a>
+      <a href="contact.html">Contact</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <!-- ✅ Bloc navigation demandé (toujours présent) -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:18px">
+      <a class="cta secondary" href="index.html">← Retour à Estepona</a>
+      <a class="cta secondary" href="#villes">Villes</a>
+      <a class="cta secondary" href="#idees">Idées</a>
+      <a class="cta secondary" href="#carte">Carte</a>
+      <a class="cta secondary" href="#faq">FAQ</a>
+    </div>
+
+    <section class="hero" aria-label="Aux alentours d’Estepona">
+      <h1>Aux alentours d’Estepona</h1>
+      <p>Des idées de sorties à la journée : villages blancs, points de vue, plages, marchés… Sélection de villes proches avec distances indicatives.</p>
+      <div class="hero-actions">
+        <a class="cta" href="#villes">Voir les villes →</a>
+        <a class="cta secondary" href="#carte">Ouvrir la carte</a>
+      </div>
+    </section>
+
+    <!-- SECTION : Villes -->
+    <section class="category" id="villes" style="margin-top:22px">
+      <div class="section-head">
+        <div>
+          <h3>Villes & villages proches</h3>
+          <p>Parfait pour une escapade (1/2 journée à 1 journée)</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="marbella.html"><img src="img/alentours-marbella.jpg" alt="Marbella"/></a>
+          <div class="body">
+            <div class="kicker">Côte</div>
+            <h4><a href="marbella.html">Marbella</a></h4>
+            <p class="excerpt">Vieille ville, bord de mer, shopping & ambiance. Idéal en fin d’après-midi.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~30–45 min</span>
+              <span class="badge">🅿️ Parkings</span>
+              <span class="badge">🌆 Sunset</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="casares.html"><img src="img/alentours-casares.jpg" alt="Casares"/></a>
+          <div class="body">
+            <div class="kicker">Village blanc</div>
+            <h4><a href="casares.html">Casares</a></h4>
+            <p class="excerpt">Un des plus beaux villages blancs : ruelles, vues et ambiance typique andalouse.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~25–35 min</span>
+              <span class="badge">📸 Points de vue</span>
+              <span class="badge">🥾 Balade</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="ronda.html"><img src="img/alentours-ronda.jpg" alt="Ronda"/></a>
+          <div class="body">
+            <div class="kicker">Incontournable</div>
+            <h4><a href="ronda.html">Ronda</a></h4>
+            <p class="excerpt">Le pont mythique, le canyon et des panoramas incroyables. À faire en journée.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~1h15–1h30</span>
+              <span class="badge">🏞️ Panoramas</span>
+              <span class="badge">☕ Pause café</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="gibraltar.html"><img src="img/alentours-gibraltar.jpg" alt="Gibraltar"/></a>
+          <div class="body">
+            <div class="kicker">Journée</div>
+            <h4><a href="gibraltar.html">Gibraltar</a></h4>
+            <p class="excerpt">Le Rocher, vues sur l’Afrique (par temps clair), shopping et balade au sommet.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~1h15–1h45</span>
+              <span class="badge">🪪 Pièce d’identité</span>
+              <span class="badge">🐒 Singes</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="sotogrande.html"><img src="img/alentours-sotogrande.jpg" alt="Sotogrande"/></a>
+          <div class="body">
+            <div class="kicker">Marina</div>
+            <h4><a href="sotogrande.html">Sotogrande</a></h4>
+            <p class="excerpt">Marina chic, restos, marchés (selon jour) et ambiance paisible.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~35–50 min</span>
+              <span class="badge">⚓ Marina</span>
+              <span class="badge">🍽️ Restaurants</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="manilva.html"><img src="img/alentours-manilva.jpg" alt="Manilva"/></a>
+          <div class="body">
+            <div class="kicker">Proche</div>
+            <h4><a href="manilva.html">Manilva & Sabinillas</a></h4>
+            <p class="excerpt">Balade sur le paseo, plages plus calmes et bons plans chiringuitos.</p>
+            <div class="badges">
+              <span class="badge">⏱️ ~15–25 min</span>
+              <span class="badge">🏖️ Plages</span>
+              <span class="badge">🍤 Chiringuitos</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <p style="color:var(--color-muted);margin-top:12px">
+        Astuce : ajoute tes pages ville (ex: <code>marbella.html</code>) plus tard — si elles n’existent pas encore, tu peux laisser <code>href="#"</code>.
+      </p>
+    </section>
+
+    <!-- SECTION : Idées -->
+    <section class="category" id="idees">
+      <div class="section-head">
+        <div>
+          <h3>Idées de sorties (sans changer de ville)</h3>
+          <p>Des spots autour d’Estepona : nature, points de vue, plages</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="selwo.html"><img src="img/alentours-selwo.jpg" alt="Selwo Aventura"/></a>
+          <div class="body">
+            <div class="kicker">Famille</div>
+            <h4><a href="selwo.html">Selwo Aventura</a></h4>
+            <p class="excerpt">Parc animalier / aventure. Super option avec enfants ou invités.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="sierra-bermeja.html"><img src="img/alentours-sierra.jpg" alt="Sierra Bermeja"/></a>
+          <div class="body">
+            <div class="kicker">Nature</div>
+            <h4><a href="sierra-bermeja.html">Sierra Bermeja</a></h4>
+            <p class="excerpt">Randos, points de vue, air frais. Top au lever/fin de journée.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="plages-costa-del-sol.html"><img src="img/alentours-plages.jpg" alt="Plages autour d’Estepona"/></a>
+          <div class="body">
+            <div class="kicker">Plage</div>
+            <h4><a href="plages-costa-del-sol.html">Plages & criques</a></h4>
+            <p class="excerpt">Criques plus calmes, spots sunset, chiringuitos sélectionnés.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION : Carte -->
+    <section class="category" id="carte">
+      <div class="section-head">
+        <div>
+          <h3>Carte des alentours</h3>
+          <p>Un visuel à zoomer + option Google Maps</p>
+        </div>
+      </div>
+
+      <div class="map-grid">
+        <figure class="card" style="margin:0">
+          <a class="thumb" href="#">
+            <img class="zoomable" src="img/carte_alentours.jpg" alt="Carte des villes autour d’Estepona" data-full="img/carte_alentours.jpg"/>
+          </a>
+          <figcaption class="body" style="color:var(--color-muted)">Carte “villes autour d’Estepona”</figcaption>
+        </figure>
+
+        <figure class="card" style="margin:0">
+          <div class="body">
+            <div class="kicker">Option</div>
+            <h4>Carte interactive</h4>
+            <p class="excerpt">Tu peux intégrer ici une carte Google (iframe) vers “Estepona + alentours”.</p>
+
+            <!-- ✅ Décommente et remplace l'URL si tu veux un embed Google Maps
+            <div style="margin-top:12px;border-radius:14px;overflow:hidden;border:1px solid var(--color-border)">
+              <iframe
+                title="Carte des alentours d'Estepona"
+                src="https://www.google.com/maps/embed?pb=..."
+                width="100%" height="260" style="border:0"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            -->
+            <a class="cta" href="#villes" style="margin-top:12px">Retour aux villes ↑</a>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- SECTION : FAQ -->
+    <section class="category" id="faq">
+      <div class="section-head">
+        <div>
+          <h3>FAQ</h3>
+          <p>Questions fréquentes pour explorer autour d’Estepona</p>
+        </div>
+      </div>
+
+      <div class="card" style="overflow:hidden">
+        <div class="body" style="padding:0">
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Quelle ville faire en 1/2 journée ?
+            </button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Casares ou Manilva/Sabinillas : proche, facile, parfait en fin d’après-midi + dîner.
+            </div>
+          </div>
+
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Quelle sortie “wahou” en 1 journée ?
+            </button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Ronda : panoramas + vieille ville. Gibraltar si tu veux un mix balade + point de vue.
+            </div>
+          </div>
+
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Peut-on y aller sans voiture ?
+            </button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Marbella et certaines villes côtières : possible en bus/taxi. Pour Ronda / villages blancs, la voiture est beaucoup plus pratique.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
+    <img src="" alt="" id="lightbox-img" />
+    <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
+  </footer>
+
+  <script>
+    // Accordéon FAQ
+    const accBtns = document.querySelectorAll('.acc-btn');
+    accBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const expanded = btn.getAttribute('aria-expanded')==='true';
+        accBtns.forEach(b=>{
+          b.setAttribute('aria-expanded','false');
+          b.nextElementSibling.style.display='none';
+        });
+        if(!expanded){
+          btn.setAttribute('aria-expanded','true');
+          btn.nextElementSibling.style.display='block';
+        }
+      });
+    });
+
+    // Lightbox
+    const lb   = document.getElementById('lightbox');
+    const lbImg= document.getElementById('lightbox-img');
+    const lbClose = document.getElementById('lbClose');
+    let lastFocus = null;
+
+    function openLB(src, alt){
+      lastFocus = document.activeElement;
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      lbClose.focus();
+    }
+    function closeLB(){
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+      if(lastFocus) lastFocus.focus();
+    }
+
+    document.querySelectorAll('.zoomable').forEach(img=>{
+      img.addEventListener('click',()=> openLB(img.dataset.full||img.src, img.alt));
+      img.setAttribute('tabindex','0');
+      img.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          openLB(img.dataset.full||img.src, img.alt);
+        }
+      });
+    });
+
+    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    lbClose.addEventListener('click', closeLB);
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+
+    // Menu mobile
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
+
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
+    }
+
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
+  </script>
+</body>
+</html>
