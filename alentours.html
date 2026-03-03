@@ -62,7 +62,6 @@
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header */
     header{
       position: sticky;
       top: 0;
@@ -84,7 +83,6 @@
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-    /* Boutons sociaux (header) */
     .social-top{display:flex;gap:10px;align-items:center}
     .social-top a{
       display:inline-flex;
@@ -113,7 +111,6 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Sections */
     section.category{margin:30px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .section-head h3{margin:0;font-size:22px}
@@ -154,7 +151,6 @@
     .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
     @media (max-width:980px){.map-grid{grid-template-columns:1fr}}
 
-    /* Lightbox */
     .lightbox{
       position:fixed;inset:0;display:none;
       align-items:center;justify-content:center;
@@ -172,7 +168,6 @@
     }
     .lb-close:hover{background:#eef6f4}
 
-    /* Footer */
     footer{
       margin-top:48px;border-top:1px solid var(--color-border);
       background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
@@ -191,7 +186,6 @@
     .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
-    /* Menu mobile */
     .mobile-backdrop{
       position:fixed; inset:0;
       background:rgba(0,0,0,.55);
@@ -263,7 +257,6 @@
 </head>
 
 <body>
-  <!-- HEADER -->
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
@@ -307,7 +300,6 @@
     </div>
   </header>
 
-  <!-- MENU MOBILE -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
@@ -331,7 +323,6 @@
 
   <main class="container">
 
-    <!-- SECTION : Villes -->
     <section class="category" id="villes" style="margin-top:22px">
       <div class="section-head">
         <div>
@@ -394,73 +385,54 @@
             <p class="excerpt">Balade sur le paseo, plages plus calmes et bons plans chiringuitos.</p>
           </div>
         </article>
-      </div>
-    </section>
 
-
-
-    
         <article class="card">
-          <a class="thumb" href="Setenil.html"><img src="img/alentours-Setenil.jpg" alt="Setenil de las bodegas"/></a>
+          <a class="thumb" href="Setenil.html"><img src="img/alentours-Setenil.jpg" alt="Setenil de las Bodegas"/></a>
           <div class="body">
             <div class="kicker">Journée</div>
             <h4><a href="Setenil.html">Setenil de las Bodegas</a></h4>
-            <p class="excerpt">Le Rocher, vues sur l’Afrique (par temps clair), shopping et balade au sommet.</p>
+            <p class="excerpt">Village unique avec maisons sous la roche, ruelles photogéniques et restos atypiques.</p>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="tarifa.html"><img src="img/alentours-tarifa.jpg" alt="Tarifa"/></a>
           <div class="body">
-            <div class="kicker">Marina</div>
+            <div class="kicker">Océan</div>
             <h4><a href="tarifa.html">Tarifa</a></h4>
-            <p class="excerpt">Marina chic, restos, marchés (selon jour) et ambiance paisible.</p>
+            <p class="excerpt">Plages immenses, vent, surf/kitesurf et ambiance bohème.</p>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="cadiz.html"><img src="img/alentours-cadiz.jpg" alt="Cadiz"/></a>
           <div class="body">
-            <div class="kicker">Proche</div>
-            <h4><a href="cadiz.html">Cadiz</a></h4>
-            <p class="excerpt">Balade sur le paseo, plages plus calmes et bons plans chiringuitos.</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-            <article class="card">
-          <a class="thumb" href="Setenil.html"><img src="img/alentours-Setenil.jpg" alt="Setenil de las bodegas"/></a>
-          <div class="body">
             <div class="kicker">Journée</div>
-            <h4><a href="Setenil.html">Setenil de las Bodegas</a></h4>
-            <p class="excerpt">Le Rocher, vues sur l’Afrique (par temps clair), shopping et balade au sommet.</p>
+            <h4><a href="cadiz.html">Cadiz</a></h4>
+            <p class="excerpt">Vieille ville, front de mer, marchés et super ambiance andalouse.</p>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="Nerja.html"><img src="img/alentours-Nerja.jpg" alt="Nerja"/></a>
           <div class="body">
-            <div class="kicker">Marina</div>
-            <h4><a href="tarifa.html">Nerja</a></h4>
-            <p class="excerpt">Marina chic, restos, marchés (selon jour) et ambiance paisible.</p>
+            <div class="kicker">Côte</div>
+            <h4><a href="Nerja.html">Nerja</a></h4>
+            <p class="excerpt">Balcon de l’Europe, criques et jolies plages à l’est de Malaga.</p>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="Malaga.html"><img src="img/alentours-Malaga.jpg" alt="Malaga"/></a>
           <div class="body">
-            <div class="kicker">Proche</div>
-            <h4><a href="cadiz.html">Malaga</a></h4>
-            <p class="excerpt">Balade sur le paseo, plages plus calmes et bons plans chiringuitos.</p>
+            <div class="kicker">Ville</div>
+            <h4><a href="Malaga.html">Malaga</a></h4>
+            <p class="excerpt">Musées, centre historique, port et super option sans voiture (train/bus).</p>
           </div>
         </article>
       </div>
     </section>
-   
-   
 
-    <!-- SECTION : Carte (Google Maps intégrée) -->
     <section class="category" id="carte">
       <div class="section-head">
         <div>
@@ -509,13 +481,11 @@
 
   </main>
 
-  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
     <img src="" alt="" id="lightbox-img" />
     <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
       <a class="brand" href="index.html">
@@ -557,7 +527,7 @@
       lb.classList.add('open');
       lb.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
-      lbClose.focus();
+      lbClose?.focus();
     }
     function closeLB(){
       lb.classList.remove('open');
@@ -578,9 +548,11 @@
       });
     });
 
-    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
-    lbClose.addEventListener('click', closeLB);
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+    lb?.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    lbClose?.addEventListener('click', closeLB);
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape' && lb?.classList.contains('open')) closeLB();
+    });
 
     // Menu mobile
     const burger = document.querySelector('.burger');
