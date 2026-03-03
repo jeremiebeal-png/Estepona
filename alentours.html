@@ -28,9 +28,7 @@
 
   <style>
     :root{
-      /* ✅ aligné avec l’ambiance “fresques” */
       --color-bg: #0b3c49;
-
       --color-surface: #0f1f44;
       --color-surface-2: #0f1625;
       --color-primary: #2db4ff;
@@ -43,7 +41,6 @@
       --radius-md: 10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
 
-      /* ✅ manquants (utilisés par header / menu mobile) */
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
@@ -52,14 +49,11 @@
     html,body{
       margin:0;
       padding:0;
-
-      /* ✅ Fond identique */
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
         radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
-
       color:var(--color-text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
@@ -73,11 +67,9 @@
       position: sticky;
       top: 0;
       z-index: 50;
-
       background: var(--glass);
       backdrop-filter: blur(12px) saturate(140%);
       -webkit-backdrop-filter: blur(12px) saturate(140%);
-
       border-bottom: 1px solid var(--glassLine);
     }
 
@@ -100,10 +92,8 @@
       gap:8px;
       padding:8px 12px;
       border-radius:999px;
-
       background: rgba(234,246,248,.08);
       border: 1px solid rgba(234,246,248,.14);
-
       color: rgba(234,246,248,.92);
       font-size:14px;
       line-height:1;
@@ -112,31 +102,22 @@
       background: rgba(234,246,248,.12);
       border-color: rgba(234,246,248,.22);
     }
-
     .social-top svg{width:16px;height:16px;opacity:.95}
-
-    .search{
-      display:flex;gap:8px;align-items:center;
-      background:var(--color-surface);border:1px solid var(--color-border);
-      border-radius:999px;padding:8px 12px
-    }
-    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
 
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
       border:1px solid var(--color-border);background:var(--color-surface)
     }
     @media (max-width:980px){
-      nav.primary,.search,.social-top{display:none}
+      nav.primary,.social-top{display:none}
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Sections (cartes) */
+    /* Sections */
     section.category{margin:30px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .section-head h3{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
-    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
 
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
@@ -149,7 +130,6 @@
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
 
-    /* Vignettes uniformes */
     .card .thumb{
       position: relative;
       height: clamp(200px, 22vw, 260px);
@@ -171,18 +151,6 @@
     .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
 
-    /* Badges infos */
-    .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(234,246,248,.14);
-      background: rgba(234,246,248,.06);
-      color: rgba(234,246,248,.9);
-      font-size:13px;
-    }
-
-    /* Grille spéciale cartes */
     .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
     @media (max-width:980px){.map-grid{grid-template-columns:1fr}}
 
@@ -235,11 +203,9 @@
       right: 0;
       height: 100vh;
       width: min(360px, 86vw);
-
       background: var(--glass-strong);
       backdrop-filter: blur(14px) saturate(140%);
       -webkit-backdrop-filter: blur(14px) saturate(140%);
-
       border-left: 1px solid var(--glassLine);
       z-index: 150;
       box-shadow: var(--shadow);
@@ -262,54 +228,23 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* ========== Mobile polish ========== */
-    .search input{ font-size:16px; }
-    header, .mobile-menu{
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-    }
-
     @media (max-width: 980px){
-      .container{ width:min(1100px, 92vw); }
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
 
       section.category{ margin:22px 0; }
-      .section-head{ gap:10px; margin-bottom:12px; }
       .section-head h3{ font-size:18px; }
       .section-head p{ font-size:13px; }
-      .more{ display:none; }
 
-      .grid{ gap:14px; }
-      .card{ border-radius:16px; }
-      .card .body{ padding:12px 12px 14px; }
       .card h4{ font-size:16px; }
       .card .excerpt{ font-size:13px; }
       .card .thumb{ height: 180px; }
-      .map-grid{ gap:14px; }
-    }
-
-    @media (max-width: 380px){
-      .brand strong{ font-size:15px; }
-      .card .thumb{ height: 165px; }
     }
 
     .burger{ cursor:pointer; }
     .burger:active{ transform: scale(.98); }
 
-    /* ✅ petit hero simple, cohérent avec ton design */
-    .hero{
-      margin-top:18px;
-      padding:18px 18px 16px;
-      border:1px solid var(--color-border);
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(234,246,248,.06), rgba(234,246,248,0));
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-    }
-    .hero h1{margin:0 0 8px;font-size:26px;letter-spacing:.2px}
-    .hero p{margin:0;color:var(--color-muted);max-width:72ch}
-    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
     .cta{
       display:inline-block;
       background:var(--color-primary);
@@ -372,7 +307,7 @@
     </div>
   </header>
 
-  <!-- MENU MOBILE (drawer) -->
+  <!-- MENU MOBILE -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
@@ -395,23 +330,6 @@
   </div>
 
   <main class="container">
-    <!-- ✅ Bloc navigation demandé (toujours présent) -->
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:18px">
-      <a class="cta secondary" href="index.html">← Retour à Estepona</a>
-      <a class="cta secondary" href="#villes">Villes</a>
-      <a class="cta secondary" href="#idees">Idées</a>
-      <a class="cta secondary" href="#carte">Carte</a>
-      <a class="cta secondary" href="#faq">FAQ</a>
-    </div>
-
-    <section class="hero" aria-label="Aux alentours d’Estepona">
-      <h1>Aux alentours d’Estepona</h1>
-      <p>Des idées de sorties à la journée : villages blancs, points de vue, plages, marchés… Sélection de villes proches avec distances indicatives.</p>
-      <div class="hero-actions">
-        <a class="cta" href="#villes">Voir les villes →</a>
-        <a class="cta secondary" href="#carte">Ouvrir la carte</a>
-      </div>
-    </section>
 
     <!-- SECTION : Villes -->
     <section class="category" id="villes" style="margin-top:22px">
@@ -429,11 +347,6 @@
             <div class="kicker">Côte</div>
             <h4><a href="marbella.html">Marbella</a></h4>
             <p class="excerpt">Vieille ville, bord de mer, shopping & ambiance. Idéal en fin d’après-midi.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~30–45 min</span>
-              <span class="badge">🅿️ Parkings</span>
-              <span class="badge">🌆 Sunset</span>
-            </div>
           </div>
         </article>
 
@@ -443,11 +356,6 @@
             <div class="kicker">Village blanc</div>
             <h4><a href="casares.html">Casares</a></h4>
             <p class="excerpt">Un des plus beaux villages blancs : ruelles, vues et ambiance typique andalouse.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~25–35 min</span>
-              <span class="badge">📸 Points de vue</span>
-              <span class="badge">🥾 Balade</span>
-            </div>
           </div>
         </article>
 
@@ -457,11 +365,6 @@
             <div class="kicker">Incontournable</div>
             <h4><a href="ronda.html">Ronda</a></h4>
             <p class="excerpt">Le pont mythique, le canyon et des panoramas incroyables. À faire en journée.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~1h15–1h30</span>
-              <span class="badge">🏞️ Panoramas</span>
-              <span class="badge">☕ Pause café</span>
-            </div>
           </div>
         </article>
 
@@ -471,11 +374,6 @@
             <div class="kicker">Journée</div>
             <h4><a href="gibraltar.html">Gibraltar</a></h4>
             <p class="excerpt">Le Rocher, vues sur l’Afrique (par temps clair), shopping et balade au sommet.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~1h15–1h45</span>
-              <span class="badge">🪪 Pièce d’identité</span>
-              <span class="badge">🐒 Singes</span>
-            </div>
           </div>
         </article>
 
@@ -485,11 +383,6 @@
             <div class="kicker">Marina</div>
             <h4><a href="sotogrande.html">Sotogrande</a></h4>
             <p class="excerpt">Marina chic, restos, marchés (selon jour) et ambiance paisible.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~35–50 min</span>
-              <span class="badge">⚓ Marina</span>
-              <span class="badge">🍽️ Restaurants</span>
-            </div>
           </div>
         </article>
 
@@ -499,26 +392,17 @@
             <div class="kicker">Proche</div>
             <h4><a href="manilva.html">Manilva & Sabinillas</a></h4>
             <p class="excerpt">Balade sur le paseo, plages plus calmes et bons plans chiringuitos.</p>
-            <div class="badges">
-              <span class="badge">⏱️ ~15–25 min</span>
-              <span class="badge">🏖️ Plages</span>
-              <span class="badge">🍤 Chiringuitos</span>
-            </div>
           </div>
         </article>
       </div>
-
-      <p style="color:var(--color-muted);margin-top:12px">
-        Astuce : ajoute tes pages ville (ex: <code>marbella.html</code>) plus tard — si elles n’existent pas encore, tu peux laisser <code>href="#"</code>.
-      </p>
     </section>
 
     <!-- SECTION : Idées -->
     <section class="category" id="idees">
       <div class="section-head">
         <div>
-          <h3>Idées de sorties (sans changer de ville)</h3>
-          <p>Des spots autour d’Estepona : nature, points de vue, plages</p>
+          <h3>Idées de sorties</h3>
+          <p>Spots autour d’Estepona : nature, points de vue, plages</p>
         </div>
       </div>
 
@@ -552,12 +436,12 @@
       </div>
     </section>
 
-    <!-- SECTION : Carte -->
+    <!-- SECTION : Carte (Google Maps intégrée) -->
     <section class="category" id="carte">
       <div class="section-head">
         <div>
           <h3>Carte des alentours</h3>
-          <p>Un visuel à zoomer + option Google Maps</p>
+          <p>Carte à zoomer + Google Maps</p>
         </div>
       </div>
 
@@ -571,65 +455,34 @@
 
         <figure class="card" style="margin:0">
           <div class="body">
-            <div class="kicker">Option</div>
+            <div class="kicker">Google Maps</div>
             <h4>Carte interactive</h4>
-            <p class="excerpt">Tu peux intégrer ici une carte Google (iframe) vers “Estepona + alentours”.</p>
+            <p class="excerpt">Zoom, itinéraires, temps de trajet.</p>
 
-            <!-- ✅ Décommente et remplace l'URL si tu veux un embed Google Maps
-            <div style="margin-top:12px;border-radius:14px;overflow:hidden;border:1px solid var(--color-border)">
+            <div style="margin-top:12px;border-radius:14px;overflow:hidden;border:1px solid var(--color-border);background:#0b1322">
               <iframe
                 title="Carte des alentours d'Estepona"
-                src="https://www.google.com/maps/embed?pb=..."
-                width="100%" height="260" style="border:0"
-                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                src="https://www.google.com/maps?q=Estepona&output=embed"
+                width="100%"
+                height="320"
+                style="border:0;display:block"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
             </div>
-            -->
-            <a class="cta" href="#villes" style="margin-top:12px">Retour aux villes ↑</a>
+
+            <a class="cta secondary"
+               href="https://www.google.com/maps/search/?api=1&query=Estepona"
+               target="_blank" rel="noopener"
+               style="margin-top:12px;display:inline-block">
+              Ouvrir dans Google Maps
+            </a>
           </div>
         </figure>
       </div>
     </section>
 
-    <!-- SECTION : FAQ -->
-    <section class="category" id="faq">
-      <div class="section-head">
-        <div>
-          <h3>FAQ</h3>
-          <p>Questions fréquentes pour explorer autour d’Estepona</p>
-        </div>
-      </div>
-
-      <div class="card" style="overflow:hidden">
-        <div class="body" style="padding:0">
-          <div class="acc-item">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
-              Quelle ville faire en 1/2 journée ?
-            </button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              Casares ou Manilva/Sabinillas : proche, facile, parfait en fin d’après-midi + dîner.
-            </div>
-          </div>
-
-          <div class="acc-item" style="border-top:1px solid var(--color-border)">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
-              Quelle sortie “wahou” en 1 journée ?
-            </button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              Ronda : panoramas + vieille ville. Gibraltar si tu veux un mix balade + point de vue.
-            </div>
-          </div>
-
-          <div class="acc-item" style="border-top:1px solid var(--color-border)">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
-              Peut-on y aller sans voiture ?
-            </button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              Marbella et certaines villes côtières : possible en bus/taxi. Pour Ronda / villages blancs, la voiture est beaucoup plus pratique.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- LIGHTBOX -->
@@ -668,22 +521,6 @@
   </footer>
 
   <script>
-    // Accordéon FAQ
-    const accBtns = document.querySelectorAll('.acc-btn');
-    accBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const expanded = btn.getAttribute('aria-expanded')==='true';
-        accBtns.forEach(b=>{
-          b.setAttribute('aria-expanded','false');
-          b.nextElementSibling.style.display='none';
-        });
-        if(!expanded){
-          btn.setAttribute('aria-expanded','true');
-          btn.nextElementSibling.style.display='block';
-        }
-      });
-    });
-
     // Lightbox
     const lb   = document.getElementById('lightbox');
     const lbImg= document.getElementById('lightbox-img');
