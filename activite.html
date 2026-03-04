@@ -2,22 +2,28 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estepona — Activités, animations, jeux, idées & sorties</title>
-  <meta name="description" content="Le méga-guide d’activités à Estepona : plages, nature, randos, famille, sport, mer, sorties, marchés, culture + recherche et filtres." />
-  <meta name="theme-color" content="#0b3c49" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Que faire à Estepona — Le méga-guide" />
-  <meta property="og:description" content="Toutes les activités à Estepona : plage, nature, famille, sport, sorties, marchés, culture + recherche & filtres." />
-  <meta property="og:image" content="/img/og-estepona.jpg" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H5DN0R14FF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H5DN0R14FF');
+  </script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Infos pratiques — Vivre à Estepona</title>
+  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + inscription à la newsletter + météo." />
+  <meta name="theme-color" content="#0b3c49" />
 
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
     :root{
+      /* ✅ Palette & ambiance identiques au script 2 */
       --color-bg: #0b3c49;
+
       --color-surface: #0f1f44;
       --color-surface-2: #0f1625;
       --color-primary: #2db4ff;
@@ -30,35 +36,39 @@
       --radius-md: 10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
 
+      /* ✅ Ajouts “glass” (header + menu mobile) */
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
     }
 
     html,body{
-      margin:0;
-      padding:0;
+      margin:0;padding:0;
+
+      /* ✅ Fond identique au script 2 */
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
         radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+
       color:var(--color-text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
-
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
+    /* Header */
     header{
-      position: sticky; top: 0; z-index: 50;
-      background: var(--glass);
-      backdrop-filter: blur(12px) saturate(140%);
-      -webkit-backdrop-filter: blur(12px) saturate(140%);
-      border-bottom: 1px solid var(--glassLine);
-    }
+      position:sticky;top:0;z-index:50;
 
+      /* ✅ glass like script 2 */
+      background:var(--glass);
+      backdrop-filter:blur(12px) saturate(140%);
+      -webkit-backdrop-filter:blur(12px) saturate(140%);
+      border-bottom:1px solid var(--glassLine);
+    }
     .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
     .brand{display:flex;align-items:center;gap:12px}
     .brand-logo{
@@ -70,24 +80,24 @@
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
+    /* Boutons sociaux (header) - ✅ harmonisés script 2 */
     .social-top{display:flex;gap:10px;align-items:center}
     .social-top a{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px;
-      background: rgba(234,246,248,.08);
-      border: 1px solid rgba(234,246,248,.14);
-      color: rgba(234,246,248,.92);
-      font-size:14px; line-height:1;
-    }
-    .social-top a:hover{background: rgba(234,246,248,.12);border-color: rgba(234,246,248,.22)}
-    .social-top svg{width:16px;height:16px;opacity:.95}
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
 
-    .search{
-      display:flex;gap:8px;align-items:center;
-      background:var(--color-surface);border:1px solid var(--color-border);
-      border-radius:999px;padding:8px 12px
+      background:rgba(234,246,248,.08);
+      border:1px solid rgba(234,246,248,.14);
+
+      color:rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
     }
-    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px;font-size:16px}
+    .social-top a:hover{
+      background:rgba(234,246,248,.12);
+      border-color:rgba(234,246,248,.22);
+    }
+    .social-top svg{width:16px;height:16px;opacity:.95}
 
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
@@ -97,87 +107,55 @@
     .burger:active{ transform: scale(.98); }
 
     @media (max-width:980px){
-      nav.primary,.search,.social-top{display:none}
+      nav.primary,.social-top{display:none}
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Bloc nav standard demandé (toujours présent) */
-    .nav-block{
-      display:flex;gap:16px;flex-wrap:wrap;
-      margin:16px 0 6px;
+    /* Bloc navigation standard (obligatoire) */
+    .nav-standard{
+      padding:12px 0 6px;
+      border-bottom:1px solid var(--glassLine);
+
+      /* petit voile comme l’ambiance */
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(10,22,36,.18) 100%);
     }
-    .nav-block a{
-      padding:10px 12px;border-radius:999px;
+    .nav-standard .wrap{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .nav-standard .wrap a{
+      padding:8px 12px;
+      border-radius:999px;
+
+      background:rgba(234,246,248,.08);
       border:1px solid rgba(234,246,248,.14);
-      background: rgba(234,246,248,.06);
-      color: rgba(234,246,248,.92);
       font-size:14px;
+      color:rgba(234,246,248,.92);
     }
-    .nav-block a:hover{
-      background: rgba(234,246,248,.10);
-      border-color: rgba(234,246,248,.22);
+    .nav-standard .wrap a:hover{
+      background:rgba(234,246,248,.12);
+      border-color:rgba(234,246,248,.22);
+    }
+    @media (max-width:980px){
+      .nav-standard{display:none}
     }
 
-    /* Hero compact */
-    .hero{
-      margin:22px 0 8px;
-      border:1px solid var(--color-border);
-      border-radius: var(--radius-xl);
-      overflow:hidden;
-      background:
-        radial-gradient(800px 340px at 20% 0%, rgba(0,208,182,.16) 0%, rgba(0,208,182,0) 60%),
-        radial-gradient(900px 420px at 90% 10%, rgba(45,180,255,.18) 0%, rgba(45,180,255,0) 60%),
-        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.00));
-      box-shadow: var(--shadow);
+    /* Hero */
+    .page-hero{
+      padding:26px 0 10px;
+      border-bottom:1px solid var(--glassLine);
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(10,22,36,.18) 100%);
     }
-    .hero-inner{padding:18px 16px}
-    .hero h1{margin:0 0 6px;font-size:28px;line-height:1.2}
-    .hero p{margin:0;color:var(--color-muted)}
-    .hero-row{
-      display:grid; gap:12px;
-      grid-template-columns: 1.2fr .8fr;
-      margin-top:14px;
-    }
-    @media (max-width:980px){ .hero-row{grid-template-columns:1fr;} .hero h1{font-size:22px} }
-
-    .toolbar{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      padding:12px;
-      border:1px solid rgba(234,246,248,.14);
-      border-radius: 16px;
-      background: rgba(10, 22, 36, .35);
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 12px; border-radius:999px;
-      border:1px solid rgba(234,246,248,.14);
-      background: rgba(234,246,248,.06);
-      font-size:14px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .pill[aria-pressed="true"]{
-      border-color: rgba(45,180,255,.55);
-      background: rgba(45,180,255,.14);
-    }
-    .pill small{opacity:.85;color:var(--color-muted)}
-    .select{
-      padding:10px 12px;border-radius:12px;
-      border:1px solid rgba(234,246,248,.14);
-      background: rgba(15,31,68,.55);
-      color: var(--color-text);
-      outline: none;
-      font-size:14px;
-    }
+    .page-hero h1{margin:6px 0 6px;font-size:30px}
+    .page-hero p{margin:0;color:var(--color-muted)}
 
     /* Sections */
-    section.category{margin:24px 0}
+    section.category{margin:26px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-    .section-head h3{margin:0;font-size:22px}
+    .section-head h2{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
-    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
-    .more:hover{text-decoration:underline}
-
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
@@ -188,48 +166,52 @@
       overflow:hidden;
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
-
-    .card .thumb{
-      position: relative;
-      height: clamp(190px, 22vw, 250px);
-      border-radius: 16px;
-      overflow: hidden;
-      background:#0b1322;
-      display:block;
-    }
-    .card .thumb img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover; object-position:center;
-      display:block;
-    }
-
     .card .body{padding:12px 14px 16px}
     .card .kicker{font-size:12px;color:var(--color-muted)}
-    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
-    .card .excerpt{color:var(--color-muted);font-size:14px;margin:0 0 10px}
-    .meta-row{display:flex;gap:8px;flex-wrap:wrap;color:var(--color-muted);font-size:13px}
-    .tag{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:6px 10px;border-radius:999px;
+    .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card p{margin:0;color:var(--color-muted);font-size:14px;line-height:1.55}
+
+    .pill{
+      display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;
+      background:rgba(234,246,248,.08);
       border:1px solid rgba(234,246,248,.14);
-      background: rgba(234,246,248,.06);
-      font-size:12px;
-      color: rgba(234,246,248,.88);
+      color:rgba(234,246,248,.88);
     }
+
     .cta{
-      display:inline-block;margin-top:10px;
-      background:var(--color-primary);color:#06131e;
-      padding:9px 12px;border-radius:10px;font-weight:700;
+      display:inline-block;margin-top:10px;font-weight:700;color:#06131e;
+      background:var(--color-primary);padding:10px 14px;border-radius:12px
+    }
+    .cta.secondary{
+      background:rgba(234,246,248,.08);
+      color:rgba(234,246,248,.92);
+      border:1px solid rgba(234,246,248,.14);
+      font-weight:600;
+    }
+    .cta.secondary:hover{
+      background:rgba(234,246,248,.12);
+      border-color:rgba(234,246,248,.22);
+    }
+
+    /* Météo (conteneur) */
+    .weather-wrap{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+      padding:16px;
+      display:grid;
+      gap:14px;
     }
 
     /* Footer */
     footer{
-      margin-top:48px;border-top:1px solid var(--color-border);
+      margin-top:48px;
+      border-top:1px solid var(--color-border);
       background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
     }
     .footer-top{
-      padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;
+      padding:24px 0;
+      display:flex;gap:18px;flex-wrap:wrap;
       align-items:center;justify-content:space-between
     }
     .social{display:flex;gap:12px}
@@ -249,15 +231,18 @@
       z-index:140;
     }
     .mobile-menu{
-      position: fixed; top: 0; right: 0;
-      height: 100vh; width: min(360px, 86vw);
-      background: var(--glass-strong);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      border-left: 1px solid var(--glassLine);
-      z-index: 150;
-      box-shadow: var(--shadow);
-      padding: 16px;
+      position:fixed;top:0;right:0;height:100vh;
+      width:min(360px, 86vw);
+
+      /* ✅ glass strong like script 2 */
+      background:var(--glass-strong);
+      backdrop-filter:blur(14px) saturate(140%);
+      -webkit-backdrop-filter:blur(14px) saturate(140%);
+      border-left:1px solid var(--glassLine);
+
+      z-index:150;
+      box-shadow:var(--shadow);
+      padding:16px;
     }
     .mobile-menu-head{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -276,17 +261,22 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    @media (max-width: 980px){
+    /* Mobile polish */
+    header, .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+    @media (max-width:980px){
+      .container{ width:min(1100px,92vw); }
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
-      section.category{ margin:20px 0; }
-      .section-head h3{ font-size:18px; }
+      section.category{ margin:22px 0; }
+      .section-head h2{ font-size:18px; }
       .section-head p{ font-size:13px; }
-      .card h4{ font-size:16px; }
-      .card .excerpt{ font-size:13px; }
-      .card .thumb{ height: 180px; }
-      .more{ display:none; }
+    }
+    @media (max-width:380px){
+      .brand strong{ font-size:15px; }
     }
   </style>
 </head>
@@ -296,11 +286,13 @@
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" width="44" height="44" /></span>
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
-      <nav class="primary">
+      <nav class="primary" aria-label="Navigation principale">
         <a href="index.html#voir">À voir</a>
         <a href="index.html#manger">Restaurants</a>
         <a href="index.html#itin">Que faire</a>
@@ -308,13 +300,9 @@
         <a href="ecoles.html">Écoles</a>
         <a href="sante.html">Santé</a>
         <a href="trafic.html">Trafic</a>
+        <a href="index.html#faq">FAQ</a>
         <a href="contact.html">Contact</a>
       </nav>
-
-      <div class="search" aria-label="Recherche">
-        <span style="opacity:.8">🔎</span>
-        <input id="q" type="search" placeholder="Recherche : plage, rando, kids, kayak, marché, musée..." autocomplete="off" />
-      </div>
 
       <div class="social-top" aria-label="Réseaux sociaux">
         <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
@@ -325,6 +313,7 @@
           </svg>
           Instagram
         </a>
+
         <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
@@ -334,7 +323,7 @@
         </a>
       </div>
 
-      <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
@@ -342,162 +331,113 @@
     </div>
   </header>
 
+  <!-- Bloc navigation standard (obligatoire) -->
+  <div class="nav-standard" aria-label="Navigation secondaire">
+    <div class="container">
+      <div class="wrap" style="display:flex;gap:16px">
+        <a href="index.html">Accueil</a>
+        <a href="#infos">Infos</a>
+        <a href="#meteo">Météo</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+
   <!-- MENU MOBILE (drawer) -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
       <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
     </div>
+
     <nav class="mobile-nav">
-      <a href="index.html#voir">À voir</a>
-      <a href="index.html#manger">Restaurants</a>
-      <a href="index.html#itin">Que faire</a>
+      <a href="index.html#voir" onclick="document.querySelector('.burger')?.click()">À voir</a>
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
       <a href="transport-estepona.html">Transport</a>
       <a href="ecoles.html">Écoles</a>
       <a href="sante.html">Santé</a>
       <a href="trafic.html">Trafic</a>
+      <a href="#meteo" onclick="document.querySelector('.burger')?.click()">Météo</a>
       <a href="contact.html">Contact</a>
+
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
   </div>
 
-  <main class="container">
-
-    <!-- ✅ BLOC NAVIGATION STANDARD (toujours) -->
-    <div style="display:flex;gap:16px" class="nav-block">
-      <a href="index.html">Accueil</a>
-      <a href="fresques.html">Fresques</a>
-      <a href="chiringuito.html">Restaurants</a>
-      <a href="alentours.html">Aux alentours</a>
-      <a href="actualites.html">Actualités</a>
-      <a href="contact.html">Contact</a>
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="pill">Infos utiles</span>
+      <h1>Infos pratiques à Estepona</h1>
+      <p>Accès rapide aux infos locales et à la météo.</p>
     </div>
+  </section>
 
-    <!-- HERO -->
-    <section class="hero" aria-label="Intro">
-      <div class="hero-inner">
-        <h1>Tout faire à Estepona : activités, animations, jeux & sorties</h1>
-        <p>Recherche + filtres. Planifie un week-end, une semaine, en famille, en couple ou entre amis.</p>
-
-        <div class="hero-row">
-          <div class="toolbar" aria-label="Filtres rapides">
-            <button class="pill" type="button" data-pill="famille" aria-pressed="false">👨‍👩‍👧‍👦 Famille <small>kids</small></button>
-            <button class="pill" type="button" data-pill="plage" aria-pressed="false">🏖️ Plage</button>
-            <button class="pill" type="button" data-pill="nature" aria-pressed="false">🌿 Nature</button>
-            <button class="pill" type="button" data-pill="sport" aria-pressed="false">🏃 Sport</button>
-            <button class="pill" type="button" data-pill="culture" aria-pressed="false">🎭 Culture</button>
-            <button class="pill" type="button" data-pill="soir" aria-pressed="false">🌙 Soir</button>
-            <button class="pill" type="button" data-pill="gratuit" aria-pressed="false">💸 Gratuit</button>
-          </div>
-
-          <div class="toolbar" aria-label="Tri & catégorie">
-            <label style="display:flex;flex-direction:column;gap:6px;min-width:min(320px,100%)">
-              <span style="font-size:13px;color:var(--color-muted)">Catégorie</span>
-              <select id="cat" class="select" aria-label="Catégorie">
-                <option value="__all__">Toutes les catégories</option>
-              </select>
-            </label>
-
-            <label style="display:flex;flex-direction:column;gap:6px;min-width:min(320px,100%)">
-              <span style="font-size:13px;color:var(--color-muted)">Tri</span>
-              <select id="sort" class="select" aria-label="Tri">
-                <option value="popular">Populaires</option>
-                <option value="alpha">A → Z</option>
-                <option value="free">Gratuit d’abord</option>
-                <option value="kids">Kids-friendly d’abord</option>
-              </select>
-            </label>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-          <a class="cta" href="#catalogue">Voir le catalogue ↓</a>
-          <a class="cta" href="#agenda" style="background:var(--color-accent)">Agenda officiel & events</a>
-        </div>
-        <div id="count" style="margin-top:10px;color:var(--color-muted);font-size:14px"></div>
-      </div>
-    </section>
-
-    <!-- AGENDA -->
-    <section class="category" id="agenda">
+  <main class="container">
+    <!-- INFOS -->
+    <section class="category" id="infos">
       <div class="section-head">
         <div>
-          <h3>Agenda & événements (ce qui change tout le temps)</h3>
-          <p>Pour capter les concerts, fêtes, animations, expos et événements ponctuels.</p>
+          <h2>Informations</h2>
+          <p>Informations locales de Estepona.</p>
         </div>
       </div>
 
       <div class="grid">
         <article class="card">
-          <a class="thumb" href="https://turismo.estepona.es/agenda/" target="_blank" rel="noopener">
-            <img src="img/News_Actualite_Estepona.png" alt="Agenda Turismo Estepona">
-          </a>
           <div class="body">
-            <div class="kicker">Agenda</div>
-            <h4><a href="https://turismo.estepona.es/agenda/" target="_blank" rel="noopener">Agenda Turismo Estepona</a></h4>
-            <p class="excerpt">Événements, culture, activités à venir (source officielle tourisme).</p>
-            <a class="cta" href="https://turismo.estepona.es/agenda/" target="_blank" rel="noopener">Voir l’agenda</a>
+            <div class="kicker">Loisir</div>
+            <h3>Activités d’Estepona</h3>
+            <p>Informations officielles.</p>
+            <a class="cta" href="https://ayuntamiento.estepona.es/" target="_blank" rel="noopener">Information →</a>
           </div>
         </article>
 
         <article class="card">
-          <a class="thumb" href="https://ayuntamiento.estepona.es/agenda" target="_blank" rel="noopener">
-            <img src="img/aquerelle_paseo.png" alt="Agenda Ayuntamiento de Estepona">
-          </a>
           <div class="body">
-            <div class="kicker">Mairie</div>
-            <h4><a href="https://ayuntamiento.estepona.es/agenda" target="_blank" rel="noopener">Agenda culturel (Ayuntamiento)</a></h4>
-            <p class="excerpt">Programmation municipale : spectacles, actes officiels, événements.</p>
-            <a class="cta" href="https://ayuntamiento.estepona.es/agenda" target="_blank" rel="noopener">Voir l’agenda</a>
+            <div class="kicker">Sport</div>
+            <h3>Principaux matchs</h3>
+            <p>Sport à Estepona : football, basket-ball…</p>
+            <a class="cta" href="index.html">Sports →</a>
           </div>
         </article>
 
         <article class="card">
-          <a class="thumb" href="actualites.html">
-            <img src="img/estepona-aquarelle.png" alt="Actualités Estepona">
-          </a>
           <div class="body">
-            <div class="kicker">Infos</div>
-            <h4><a href="actualites.html">Actualités Estepona (ton site)</a></h4>
-            <p class="excerpt">Tes actus locales : ce qui se passe cette semaine et les bons plans.</p>
-            <a class="cta" href="actualites.html">Voir les actus</a>
+            <div class="kicker">Régions</div>
+            <h3>Autour d’Estepona</h3>
+            <p>Activités autour d’Estepona.</p>
+            <a class="cta" href="index.html">Découvrir →</a>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- CATALOGUE -->
-    <section class="category" id="catalogue">
+    <!-- MÉTÉO (eltiempo.es) -->
+    <section class="category" id="meteo">
       <div class="section-head">
         <div>
-          <h3>Catalogue d’activités (méga liste)</h3>
-          <p>Plage • Nature • Famille • Sport • Culture • Soirées • Shopping • Excursions</p>
+          <h2>Météo à Estepona</h2>
+          <p>Prévisions locales en temps réel.</p>
         </div>
-        <a class="more" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Haut ↑</a>
       </div>
 
-      <div id="resultGrid" class="grid" aria-live="polite"></div>
-
-      <div class="card" style="margin-top:16px">
-        <div class="body">
-          <div class="kicker">Astuce</div>
-          <h4>Tu veux “vraiment tout” ?</h4>
-          <p class="excerpt">
-            Ajoute tes activités dans <code>ACTIVITES</code> (en bas du fichier) et ça se range tout seul.
-            Tu peux aussi dupliquer cette page pour faire des sous-guides : “Famille”, “Sport”, “Plage”, etc.
-          </p>
-        </div>
+      <div class="weather-wrap">
+        <div id="c_35fff040c817e48c603e951ab7d867ae" class="ancho"></div>
       </div>
     </section>
-
   </main>
 
   <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
       <a class="brand" href="index.html">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" width="44" height="44" /></span>
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
@@ -510,6 +450,7 @@
           </svg>
           Instagram
         </a>
+
         <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
@@ -519,298 +460,49 @@
         </a>
       </div>
     </div>
+
     <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
   </footer>
 
+  <!-- Widget eltiempo.es -->
+  <script
+    src="https://fr.eltiempo.es/widget/widget_loader/35fff040c817e48c603e951ab7d867ae"
+    async
+  ></script>
+
+  <!-- Script menu mobile -->
   <script>
-    /* =========================
-       DONNÉES : catalogue activités
-       =========================
-       Champs:
-       - title: nom
-       - cat: catégorie (sert au filtre)
-       - tags: mots-clés (sert au filtre + pills)
-       - level: "easy" | "medium" | "sport" (simple indicateur)
-       - time: durée (ex "1–2h")
-       - cost: "gratuit" | "€" | "€€" | "€€€"
-       - where: zone (Centre, Port, Plage, Montagne, Alentours)
-       - map: URL maps (optionnel)
-       - img: vignette locale (optionnel)
-       - desc: description courte
-    */
-    const ACTIVITES = [
-      // Incontournables / ville
-      {title:"Vieille ville : ruelles fleuries & places", cat:"Incontournables", tags:["centre","balade","photo","gratuit"], level:"easy", time:"1–3h", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Balade dans le centro : façades blanches, pots fleuris, petites places."},
-      {title:"Ruta de los Murales : chasse aux fresques", cat:"Incontournables", tags:["centre","streetart","photo","gratuit","culture"], level:"easy", time:"1–3h", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Parcours des grandes fresques murales à travers la ville."},
-      {title:"Paseo Marítimo : marche / vélo au bord de mer", cat:"Plage & mer", tags:["plage","sport","velo","famille","gratuit"], level:"easy", time:"1–2h", cost:"gratuit", where:"Plage", img:"img/aquerelle_paseo.png", desc:"Promenade en front de mer : parfait au coucher de soleil."},
-      {title:"Puerto Deportivo : balade + terrasses", cat:"Sorties & soir", tags:["port","soir","restaurants","cocktail"], level:"easy", time:"1–3h", cost:"€€", where:"Port", img:"img/ciel.png", desc:"Ambiance port, bars, terrasses, sorties d’été."},
-      {title:"Plaza de las Flores : pause café", cat:"Food & chill", tags:["centre","food","photo","gratuit"], level:"easy", time:"30–60min", cost:"€", where:"Centre", img:"img/estepona-aquatelle1.png", desc:"Spot iconique pour un café et des photos."},
-
-      // Culture & musées
-      {title:"Orquidario (Parque Botánico-Orquidario)", cat:"Culture & visites", tags:["culture","famille","indoor","nature"], level:"easy", time:"45–90min", cost:"€", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Jardin botanique & orchidées sous dômes, super en été (frais)."},
-      {title:"Museo Paleontológico (Plaza de Toros)", cat:"Culture & visites", tags:["culture","famille","indoor","gratuit"], level:"easy", time:"45–90min", cost:"gratuit", where:"Plaza de Toros", img:"img/9.jpg", desc:"Fossiles & collections : parfait avec des enfants curieux."},
-      {title:"Églises & patrimoine (centre)", cat:"Culture & visites", tags:["culture","centre","gratuit"], level:"easy", time:"30–90min", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Petites visites patrimoine pendant la balade."},
-
-      // Plages (ajuste/complète selon tes pages)
-      {title:"Playa de la Rada", cat:"Plage & mer", tags:["plage","famille","jeux","gratuit"], level:"easy", time:"2–6h", cost:"gratuit", where:"Centre/Plage", img:"img/carte_plage.jpg", desc:"La grande plage centrale : pratique, animée, kids friendly."},
-      {title:"Playa del Cristo (côté port)", cat:"Plage & mer", tags:["plage","famille","calme","snack"], level:"easy", time:"2–6h", cost:"gratuit", where:"Port/Plage", img:"img/carte_plage.jpg", desc:"Crique plus abritée, top pour les familles."},
-      {title:"Chiringuitos : espeto & poissons grillés", cat:"Food & chill", tags:["plage","food","famille"], level:"easy", time:"1–2h", cost:"€€", where:"Plage", img:"img/espeto.png", desc:"Manger pieds dans le sable : espeto, pescaito, paella."},
-
-      // Nature & randos
-      {title:"Los Reales de Sierra Bermeja : mirador & pins", cat:"Nature & randos", tags:["nature","rando","sport","photo"], level:"sport", time:"2–5h", cost:"gratuit", where:"Montagne", img:"img/9.jpg", desc:"Montagne au-dessus d’Estepona : vues énormes, sentiers."},
-      {title:"Randonnée “Refugio – Mirador – Pico Los Reales”", cat:"Nature & randos", tags:["nature","rando","sport"], level:"sport", time:"3–6h", cost:"gratuit", where:"Montagne", img:"img/9.jpg", desc:"Itinéraire plus long pour marcheurs motivés."},
-      {title:"Balade nature facile (parcs & jardins urbains)", cat:"Nature & randos", tags:["nature","famille","gratuit","centre"], level:"easy", time:"30–90min", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Petits parcs et pauses vertes pour souffler."},
-
-      // Famille & kids
-      {title:"Selwo Aventura (parc animalier)", cat:"Famille & kids", tags:["famille","kids","animaux","fun"], level:"easy", time:"3–6h", cost:"€€€", where:"Alentours", img:"img/9.jpg", desc:"Parc animalier + activités aventure (journée complète)."},
-      {title:"Jeux de plage : raquettes, frisbee, châteaux", cat:"Famille & kids", tags:["famille","kids","plage","gratuit","jeux"], level:"easy", time:"1–3h", cost:"gratuit", where:"Plage", img:"img/carte_plage.jpg", desc:"Simple, efficace : kit jeux + goûter."},
-      {title:"Chasse au trésor (DIY) dans la vieille ville", cat:"Famille & kids", tags:["famille","kids","centre","gratuit","jeux"], level:"easy", time:"1–2h", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Jeu : retrouver 10 pots fleuris + 5 fresques + 3 places."},
-      {title:"Soirée “glace + paseo”", cat:"Famille & kids", tags:["famille","kids","soir","plage"], level:"easy", time:"1–2h", cost:"€", where:"Centre/Plage", img:"img/aquerelle_paseo.png", desc:"Plan simple du soir : balade + glace."},
-
-      // Sport & activités
-      {title:"Vélo / trottinette sur le paseo", cat:"Sport & activités", tags:["sport","plage","famille"], level:"easy", time:"1–2h", cost:"€", where:"Plage", img:"img/aquerelle_paseo.png", desc:"Louer (ou apporter) un vélo : super facile et fun."},
-      {title:"Running au lever du soleil (paseo)", cat:"Sport & activités", tags:["sport","plage","gratuit"], level:"medium", time:"30–60min", cost:"gratuit", where:"Plage", img:"img/aquerelle_paseo.png", desc:"Le meilleur créneau : calme, lumière parfaite."},
-      {title:"Yoga / stretching sur la plage", cat:"Sport & activités", tags:["sport","plage","gratuit","nature"], level:"easy", time:"30–60min", cost:"gratuit", where:"Plage", img:"img/carte_plage.jpg", desc:"Matin ou fin de journée : respiration + mer."},
-
-      // Mer & aventures
-      {title:"Sortie bateau / catamaran (côte)", cat:"Mer & aventures", tags:["mer","boat","photo","sunset"], level:"easy", time:"1–3h", cost:"€€€", where:"Port", img:"img/ciel.png", desc:"Balade en mer : souvent sunset, parfois baignade."},
-      {title:"Dauphins (excursion zone Gibraltar / détroit)", cat:"Mer & aventures", tags:["mer","boat","animaux","famille"], level:"easy", time:"1–4h", cost:"€€€", where:"Alentours", img:"img/ciel.png", desc:"Observation de dauphins (souvent en excursion vers la zone du détroit)."},
-      {title:"Paddle / Kayak (plages)", cat:"Mer & aventures", tags:["mer","sport","plage","famille"], level:"medium", time:"1–2h", cost:"€€", where:"Plage", img:"img/carte_plage.jpg", desc:"Location paddle/kayak quand la mer est calme."},
-      {title:"Snorkeling (masque & tuba)", cat:"Mer & aventures", tags:["mer","plage","nature","gratuit"], level:"easy", time:"30–90min", cost:"gratuit", where:"Plage", img:"img/carte_plage.jpg", desc:"Dans les zones rocheuses / eaux claires : petits poissons."},
-
-      // Shopping & marchés
-      {title:"Mercadillo du Port (dimanche matin)", cat:"Shopping & marchés", tags:["shopping","port","famille"], level:"easy", time:"1–2h", cost:"gratuit", where:"Port", img:"img/9.jpg", desc:"Marché au port : flâner, bonnes trouvailles."},
-      {title:"Marché local (selon jours)", cat:"Shopping & marchés", tags:["shopping","centre"], level:"easy", time:"1–2h", cost:"gratuit", where:"Ville", img:"img/9.jpg", desc:"Produits, vêtements, artisanat selon saison."},
-      {title:"Souvenirs & artisanat (centre)", cat:"Shopping & marchés", tags:["shopping","centre","photo"], level:"easy", time:"1–2h", cost:"€€", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Petites boutiques dans le centre historique."},
-
-      // Sorties & soirée
-      {title:"Sunset au port + cocktail", cat:"Sorties & soir", tags:["soir","port","cocktail"], level:"easy", time:"1–3h", cost:"€€", where:"Port", img:"img/ciel.png", desc:"Plan classique : coucher de soleil + verre."},
-      {title:"Tapas crawl (centre)", cat:"Sorties & soir", tags:["soir","centre","food"], level:"easy", time:"2–4h", cost:"€€", where:"Centre", img:"img/estepona-aquatelle1.png", desc:"2–4 bars à tapas, tranquille et gourmand."},
-      {title:"Rooftops & musique (selon saison)", cat:"Sorties & soir", tags:["soir","music","port"], level:"easy", time:"2–4h", cost:"€€", where:"Port/Centre", img:"img/ciel.png", desc:"Ambiance estivale : DJ, live, rooftops."},
-
-      // Excursions autour (idées)
-      {title:"Casares (village blanc) — demi-journée", cat:"Excursions", tags:["excursion","photo","culture"], level:"easy", time:"3–5h", cost:"€", where:"Alentours", img:"img/9.jpg", desc:"Un des plus beaux villages blancs à proximité."},
-      {title:"Ronda — journée", cat:"Excursions", tags:["excursion","culture","photo"], level:"easy", time:"1 journée", cost:"€€", where:"Alentours", img:"img/9.jpg", desc:"Pont, gorges, centre historique (journée complète)."},
-      {title:"Gibraltar — journée (dauphins possible)", cat:"Excursions", tags:["excursion","mer","animaux"], level:"easy", time:"1 journée", cost:"€€€", where:"Alentours", img:"img/9.jpg", desc:"Rocher, vues, et selon programme : mer & dauphins."},
-
-      // Idées “jeux / animations” (DIY)
-      {title:"Défi photo : 20 spots à capturer", cat:"Jeux & animations", tags:["jeux","photo","centre","gratuit"], level:"easy", time:"1–3h", cost:"gratuit", where:"Centre", img:"img/estepona-aquarelle.png", desc:"Jeu : fresque, pot fleuri, ruelle, ombre, porte colorée..."},
-      {title:"Pique-nique sunset (plage)", cat:"Jeux & animations", tags:["plage","soir","famille"], level:"easy", time:"1–2h", cost:"€", where:"Plage", img:"img/carte_plage.jpg", desc:"Couverture, snacks, musique soft, coucher de soleil."},
-      {title:"Tour “glaces” : tester 3 parfums", cat:"Jeux & animations", tags:["food","jeux","famille","centre"], level:"easy", time:"45–90min", cost:"€", where:"Centre", img:"img/estepona-aquatelle1.png", desc:"Petit jeu : 3 glaciers, 1 boule chacun, vote du meilleur."},
-    ];
-
-    /* =========================
-       RENDER + FILTRES
-       ========================= */
-    const $q = document.getElementById('q');
-    const $cat = document.getElementById('cat');
-    const $sort = document.getElementById('sort');
-    const $grid = document.getElementById('resultGrid');
-    const $count = document.getElementById('count');
-    const pills = [...document.querySelectorAll('.pill')];
-
-    const CAT_ALL = "__all__";
-    const THUMBS = {
-      "Incontournables":"img/estepona-aquarelle.png",
-      "Culture & visites":"img/estepona-aquarelle.png",
-      "Plage & mer":"img/carte_plage.jpg",
-      "Nature & randos":"img/9.jpg",
-      "Famille & kids":"img/9.jpg",
-      "Sport & activités":"img/aquerelle_paseo.png",
-      "Mer & aventures":"img/ciel.png",
-      "Shopping & marchés":"img/9.jpg",
-      "Sorties & soir":"img/ciel.png",
-      "Food & chill":"img/espeto.png",
-      "Excursions":"img/9.jpg",
-      "Jeux & animations":"img/estepona-aquarelle.png"
-    };
-
-    function uniq(arr){ return [...new Set(arr)].sort((a,b)=>a.localeCompare(b)); }
-
-    function buildCats(){
-      const cats = uniq(ACTIVITES.map(a=>a.cat));
-      cats.forEach(c=>{
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        $cat.appendChild(opt);
-      });
-    }
-
-    function normalize(s){
-      return (s||"")
-        .toString()
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g,'');
-    }
-
-    function activePillTags(){
-      return pills
-        .filter(p=>p.getAttribute('aria-pressed')==='true')
-        .map(p=>p.dataset.pill);
-    }
-
-    function matchActivity(a, query, cat, pillTags){
-      const hay = normalize([
-        a.title, a.cat, a.desc, a.where, a.cost, a.time,
-        ...(a.tags||[])
-      ].join(" | "));
-
-      const qOk = !query || hay.includes(query);
-      const cOk = (cat===CAT_ALL) || a.cat===cat;
-
-      // pills : chaque pill doit apparaître dans tags OU dans texte
-      const pOk = pillTags.every(t=>{
-        const nt = normalize(t);
-        const inTags = (a.tags||[]).map(normalize).includes(nt);
-        return inTags || hay.includes(nt);
-      });
-
-      return qOk && cOk && pOk;
-    }
-
-    function sortActivities(list, mode){
-      const arr = [...list];
-      if(mode==="alpha"){
-        arr.sort((x,y)=>x.title.localeCompare(y.title));
-      } else if(mode==="free"){
-        const rank = v => (v.cost==="gratuit" ? 0 : (v.cost==="€" ? 1 : (v.cost==="€€" ? 2 : 3)));
-        arr.sort((x,y)=> rank(x)-rank(y));
-      } else if(mode==="kids"){
-        const hasKids = a => (a.tags||[]).includes("famille") || (a.tags||[]).includes("kids");
-        arr.sort((x,y)=> (hasKids(y)-hasKids(x)) || x.title.localeCompare(y.title));
-      } else {
-        // popular (par défaut) : léger boost gratuit + incontournable + famille
-        const score = a => {
-          let s=0;
-          if(a.cost==="gratuit") s+=3;
-          if(a.cat==="Incontournables") s+=2;
-          if((a.tags||[]).includes("famille") || (a.tags||[]).includes("kids")) s+=1;
-          if((a.tags||[]).includes("plage")) s+=1;
-          return -s;
-        };
-        arr.sort((x,y)=> (score(x)-score(y)) || x.title.localeCompare(y.title));
-      }
-      return arr;
-    }
-
-    function badgeCost(cost){
-      if(cost==="gratuit") return "💸 Gratuit";
-      if(cost==="€") return "€ Budget";
-      if(cost==="€€") return "€€ Moyen";
-      if(cost==="€€€") return "€€€ Premium";
-      return cost || "—";
-    }
-
-    function badgeLevel(level){
-      if(level==="easy") return "🟢 Facile";
-      if(level==="medium") return "🟠 Modéré";
-      if(level==="sport") return "🔴 Sport";
-      return "—";
-    }
-
-    function render(){
-      const query = normalize($q.value.trim());
-      const cat = $cat.value || CAT_ALL;
-      const pillTags = activePillTags();
-
-      const filtered = ACTIVITES.filter(a => matchActivity(a, query, cat, pillTags));
-      const sorted = sortActivities(filtered, $sort.value);
-
-      $grid.innerHTML = "";
-      sorted.forEach(a=>{
-        const art = document.createElement('article');
-        art.className = "card";
-        const img = a.img || THUMBS[a.cat] || "img/estepona-aquarelle.png";
-
-        const mapLink = a.map
-          ? `<a class="tag" href="${a.map}" target="_blank" rel="noopener">📍 Carte</a>`
-          : `<span class="tag">📍 ${a.where || "—"}</span>`;
-
-        art.innerHTML = `
-          <a class="thumb" href="${a.map ? a.map : '#'}" ${a.map ? `target="_blank" rel="noopener"` : ''} aria-label="${a.title}">
-            <img src="${img}" alt="${a.title}">
-          </a>
-          <div class="body">
-            <div class="kicker">${a.cat}</div>
-            <h4>${a.title}</h4>
-            <p class="excerpt">${a.desc || ""}</p>
-            <div class="meta-row">
-              <span class="tag">${badgeCost(a.cost)}</span>
-              <span class="tag">${badgeLevel(a.level)}</span>
-              <span class="tag">⏱ ${a.time || "—"}</span>
-              ${mapLink}
-            </div>
-          </div>
-        `;
-        $grid.appendChild(art);
-      });
-
-      $count.textContent = `${sorted.length} activité(s) affichée(s) — utilise la recherche + filtres pour affiner.`;
-      if(sorted.length===0){
-        const empty = document.createElement('div');
-        empty.className = "card";
-        empty.innerHTML = `
-          <div class="body">
-            <div class="kicker">Aucun résultat</div>
-            <h4>Essaie un autre mot-clé</h4>
-            <p class="excerpt">Exemples : <b>plage</b>, <b>famille</b>, <b>rando</b>, <b>port</b>, <b>musée</b>, <b>sunset</b>, <b>marché</b>.</p>
-          </div>
-        `;
-        $grid.appendChild(empty);
-      }
-    }
-
-    // Init
-    buildCats();
-    render();
-
-    // Events
-    $q.addEventListener('input', render);
-    $cat.addEventListener('change', render);
-    $sort.addEventListener('change', render);
-
-    pills.forEach(p=>{
-      p.addEventListener('click', ()=>{
-        const on = p.getAttribute('aria-pressed')==='true';
-        p.setAttribute('aria-pressed', String(!on));
-        render();
-      });
-    });
-
-    /* =========================
-       MENU MOBILE
-       ========================= */
     const burger = document.querySelector('.burger');
     const mobile = document.getElementById('mobileMenu');
     let backdrop;
 
     function openMenu(){
-      if(!mobile) return;
+      if (!mobile || !burger) return;
+
       mobile.hidden = false;
-      burger?.setAttribute('aria-expanded','true');
+      burger.setAttribute('aria-expanded', 'true');
+
       backdrop = document.createElement('div');
       backdrop.className = 'mobile-backdrop';
       backdrop.addEventListener('click', closeMenu);
+
       document.body.appendChild(backdrop);
-      document.body.style.overflow='hidden';
+      document.body.style.overflow = 'hidden';
     }
+
     function closeMenu(){
-      if(!mobile) return;
+      if (!mobile || !burger) return;
+
       mobile.hidden = true;
-      burger?.setAttribute('aria-expanded','false');
+      burger.setAttribute('aria-expanded', 'false');
+
       backdrop?.remove();
-      document.body.style.overflow='';
+      document.body.style.overflow = '';
     }
 
-    burger?.addEventListener('click',()=>{
-      const open = burger.getAttribute('aria-expanded')==='true';
-      open ? closeMenu() : openMenu();
-    });
-
-    document.addEventListener('keydown', e=>{
-      if(e.key==='Escape' && !mobile.hidden) closeMenu();
+    burger?.addEventListener('click', () => {
+      const isOpen = burger.getAttribute('aria-expanded') === 'true';
+      isOpen ? closeMenu() : openMenu();
     });
   </script>
 </body>
