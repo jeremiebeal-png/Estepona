@@ -14,7 +14,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Infos pratiques — Vivre à Estepona</title>
-  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + inscription à la newsletter + météo." />
+  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + météo." />
   <meta name="theme-color" content="#0b3c49" />
 
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -22,7 +22,6 @@
   <style>
     :root{
       --color-bg: #0b3c49;
-
       --color-surface: #0f1f44;
       --color-surface-2: #0f1625;
       --color-primary: #2db4ff;
@@ -63,27 +62,53 @@
       -webkit-backdrop-filter:blur(12px) saturate(140%);
       border-bottom:1px solid var(--glassLine);
     }
-    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
-    .brand{display:flex;align-items:center;gap:12px}
+
+    /* ✅ menu propre : brand | nav centré (no wrap) | socials à droite */
+    .header-row{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      padding:16px 0;
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      flex:0 0 auto;
+    }
     .brand-logo{
       width:44px;height:44px;border-radius:12px;overflow:hidden;
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
 
-    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
-    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary{
+      flex:1 1 auto;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:nowrap;           /* ✅ ne passe plus à la ligne */
+      overflow-x:auto;            /* ✅ si manque de place -> scroll */
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      min-width:0;
+    }
+    nav.primary::-webkit-scrollbar{display:none;}
+    nav.primary a{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      white-space:nowrap;         /* ✅ garde chaque item sur une ligne */
+    }
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-    /* Boutons sociaux */
-    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top{display:flex;gap:10px;align-items:center;flex:0 0 auto}
     .social-top a{
       display:inline-flex;align-items:center;gap:8px;
       padding:8px 12px;border-radius:999px;
       background:rgba(234,246,248,.08);
       border:1px solid rgba(234,246,248,.14);
       color:rgba(234,246,248,.92);
-      font-size:14px;
-      line-height:1;
+      font-size:14px;line-height:1;
+      white-space:nowrap;
     }
     .social-top a:hover{
       background:rgba(234,246,248,.12);
@@ -117,7 +142,6 @@
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .section-head h2{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
-
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
@@ -155,16 +179,13 @@
       border-color:rgba(234,246,248,.22);
     }
 
-    /* ✅ Bloc photo (remplace les 2 cartes de droite) */
-    .span-2{ grid-column: span 2; }
-    @media (max-width:980px){ .span-2{ grid-column: auto; } }
-
+    /* ✅ Photos format “cadre” */
     .photo-card .thumb{
       position:relative;
-      height: clamp(210px, 22vw, 280px);
+      height: clamp(220px, 22vw, 280px);
       display:block;
-      overflow:hidden;
       background:#0b1322;
+      overflow:hidden;
       border-bottom:1px solid rgba(255,255,255,.06);
     }
     .photo-card .thumb img{
@@ -260,7 +281,6 @@
 </head>
 
 <body>
-  <!-- HEADER -->
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
@@ -309,8 +329,6 @@
     </div>
   </header>
 
-  <!-- ✅ SUPPRIMÉ : Bloc nav-standard (rectangle du haut) -->
-
   <!-- MENU MOBILE -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
@@ -334,7 +352,6 @@
     </nav>
   </div>
 
-  <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <span class="pill">Infos utiles</span>
@@ -344,7 +361,6 @@
   </section>
 
   <main class="container">
-    <!-- INFOS -->
     <section class="category" id="infos">
       <div class="section-head">
         <div>
@@ -353,8 +369,8 @@
         </div>
       </div>
 
+      <!-- ✅ 3 cadres comme sur ton screenshot -->
       <div class="grid">
-        <!-- carte 1 conservée -->
         <article class="card">
           <div class="body">
             <div class="kicker">Loisir</div>
@@ -364,24 +380,32 @@
           </div>
         </article>
 
-        <!-- ✅ Remplace les 2 cartes (Sport + Régions) par 1 bloc photo + lien externe -->
-        <article class="card photo-card span-2">
-          <a class="thumb zoomable" href="#" data-full="img/ta-photo.jpg" aria-label="Agrandir la photo">
-            <img src="img/ta-photo.jpg" alt="Photo d’Estepona" loading="lazy">
+        <article class="card photo-card">
+          <a class="thumb zoomable" href="#" data-full="img/photo-1.jpg" aria-label="Agrandir la photo 1">
+            <img src="img/photo-1.jpg" alt="Photo d’Estepona 1" loading="lazy">
           </a>
           <div class="body">
             <div class="kicker">Découverte</div>
-            <h3>Voir la photo en grand</h3>
-            <p>Clique sur la photo pour l’agrandir, ou ouvre le lien externe ci-dessous.</p>
-
-            <!-- 🔁 Remplace l’URL par ta page externe -->
+            <h3>Photo 1</h3>
+            <p>Clique sur la photo pour l’agrandir.</p>
             <a class="cta secondary" href="https://exemple.com" target="_blank" rel="noopener">Ouvrir le site externe →</a>
+          </div>
+        </article>
+
+        <article class="card photo-card">
+          <a class="thumb zoomable" href="#" data-full="img/photo-2.jpg" aria-label="Agrandir la photo 2">
+            <img src="img/photo-2.jpg" alt="Photo d’Estepona 2" loading="lazy">
+          </a>
+          <div class="body">
+            <div class="kicker">Infos</div>
+            <h3>Photo 2</h3>
+            <p>Clique sur la photo pour l’agrandir.</p>
+            <a class="cta secondary" href="https://exemple.com" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- MÉTÉO -->
     <section class="category" id="meteo">
       <div class="section-head">
         <div>
@@ -396,13 +420,12 @@
     </section>
   </main>
 
-  <!-- ✅ LIGHTBOX -->
+  <!-- Lightbox -->
   <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
     <img src="" alt="" id="lightbox-img" />
     <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
       <a class="brand" href="index.html">
@@ -436,21 +459,17 @@
   </footer>
 
   <!-- Widget eltiempo.es -->
-  <script
-    src="https://fr.eltiempo.es/widget/widget_loader/35fff040c817e48c603e951ab7d867ae"
-    async
-  ></script>
+  <script src="https://fr.eltiempo.es/widget/widget_loader/35fff040c817e48c603e951ab7d867ae" async></script>
 
   <script>
-    // ✅ Lightbox (photo agrandie)
-    const lb   = document.getElementById('lightbox');
-    const lbImg= document.getElementById('lightbox-img');
+    // Lightbox
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
     const lbClose = document.getElementById('lbClose');
-    let lastFocus = null;
 
     function openLB(src, alt){
-      lastFocus = document.activeElement;
-      lbImg.src = src; lbImg.alt = alt || '';
+      lbImg.src = src;
+      lbImg.alt = alt || '';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
@@ -461,7 +480,6 @@
       lb.setAttribute('aria-hidden','true');
       lbImg.src = '';
       document.body.style.overflow = '';
-      if(lastFocus) lastFocus.focus();
     }
 
     document.querySelectorAll('.zoomable').forEach(a=>{
@@ -485,24 +503,19 @@
       if (!mobile || !burger) return;
       mobile.hidden = false;
       burger.setAttribute('aria-expanded', 'true');
-
       backdrop = document.createElement('div');
       backdrop.className = 'mobile-backdrop';
       backdrop.addEventListener('click', closeMenu);
-
       document.body.appendChild(backdrop);
       document.body.style.overflow = 'hidden';
     }
-
     function closeMenu(){
       if (!mobile || !burger) return;
       mobile.hidden = true;
       burger.setAttribute('aria-expanded', 'false');
-
       backdrop?.remove();
       document.body.style.overflow = '';
     }
-
     burger?.addEventListener('click', () => {
       const isOpen = burger.getAttribute('aria-expanded') === 'true';
       isOpen ? closeMenu() : openMenu();
