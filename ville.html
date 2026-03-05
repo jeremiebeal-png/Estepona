@@ -1,269 +1,202 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gastronomie internationale — Ville</title>
-  <meta name="description" content="Découvrir la gastronomie internationale : adresses, ambiances et inspirations." />
-  <meta name="theme-color" content="#0b3c49" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gastronomie internationale — Marbella</title>
+<meta name="description" content="Découvrez la gastronomie internationale à Marbella : cuisines du monde et restaurants inspirants." />
+<meta name="theme-color" content="#0b3c49" />
 
-  <!-- IMPORTANT :
-    Colle ici TON style global (celui de index.html) pour garder exactement la même charte.
-    Si tu as déjà un CSS global chargé, tu peux supprimer ce bloc.
-  -->
-  <style>
-    :root{
-      /* Valeurs fallback si jamais non définies dans ton index.html */
-      --color-bg:#0b3c49;
-      --color-surface:#0f4b59;
-      --color-text:#eaf6f8;
-      --color-muted:rgba(234,246,248,.75);
-      --color-border:rgba(234,246,248,.14);
-      --color-accent:#9fe7f5;
+<style>
 
-      --radius:16px;
-      --shadow: 0 18px 50px rgba(0,0,0,.25);
-      --maxw:1100px;
-    }
+:root{
+--color-bg:#0b3c49;
+--color-surface:#0f4b59;
+--color-text:#eaf6f8;
+--color-muted:rgba(234,246,248,.75);
+--color-border:rgba(234,246,248,.14);
+--color-accent:#9fe7f5;
+--radius:16px;
+--shadow:0 18px 50px rgba(0,0,0,.25);
+--maxw:1100px;
+}
 
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-      background: var(--color-bg);
-      color: var(--color-text);
-    }
+body{
+margin:0;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+background:var(--color-bg);
+color:var(--color-text);
+}
 
-    a{ color:inherit; text-decoration:none; }
-    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 18px 16px 56px; }
+.wrap{
+max-width:var(--maxw);
+margin:0 auto;
+padding:18px 16px 56px;
+}
 
-    /* Bloc “shell” pour rester proche d’un layout app */
-    .surface{
-      background: color-mix(in srgb, var(--color-surface) 86%, transparent);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
+.surface{
+background:color-mix(in srgb, var(--color-surface) 86%, transparent);
+border:1px solid var(--color-border);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+overflow:hidden;
+}
 
-    header{
-      padding: 18px 18px 0;
-    }
+header{
+padding:18px 18px 0;
+}
 
-    /* Navigation obligatoire (tu peux remplacer les liens) */
-    .nav{
-      display:flex;
-      gap:16px;
-      flex-wrap:wrap;
-      padding: 10px 0 14px;
-      border-bottom: 1px solid var(--color-border);
-    }
-    .nav a{
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--color-border);
-      background: color-mix(in srgb, var(--color-bg) 55%, transparent);
-      font-weight: 600;
-      opacity:.95;
-    }
-    .nav a:hover{ border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-border)); }
+.hero{
+padding:18px 0 10px;
+}
 
-    .hero{
-      padding: 18px 0 10px;
-    }
-    .hero h1{
-      margin: 10px 0 8px;
-      font-size: clamp(26px, 3.2vw, 40px);
-      line-height: 1.06;
-      letter-spacing: -0.02em;
-    }
-    .hero p{
-      margin: 0 0 12px;
-      color: var(--color-muted);
-      font-size: 16px;
-      line-height: 1.55;
-      max-width: 70ch;
-    }
+.hero h1{
+margin:10px 0 8px;
+font-size:38px;
+}
 
-    .content{
-      padding: 16px 18px 18px;
-    }
+.hero p{
+margin:0;
+color:var(--color-muted);
+line-height:1.6;
+}
 
-    .section-title{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap: 12px;
-      margin: 6px 0 14px;
-    }
-    .section-title h2{
-      margin:0;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-    }
-    .section-title span{
-      color: var(--color-muted);
-      font-size: 13px;
-    }
+.grid{
+display:grid;
+grid-template-columns:repeat(12,1fr);
+gap:12px;
+padding:20px;
+}
 
-    /* Galerie 12 photos */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 12px;
-    }
+.card{
+grid-column:span 6;
+border-radius:14px;
+overflow:hidden;
+border:1px solid var(--color-border);
+background:color-mix(in srgb, var(--color-bg) 55%, transparent);
+position:relative;
+min-height:190px;
+cursor:pointer;
+}
 
-    /* cartes */
-    .card{
-      grid-column: span 6;
-      border-radius: 14px;
-      overflow:hidden;
-      border: 1px solid var(--color-border);
-      background: color-mix(in srgb, var(--color-bg) 55%, transparent);
-      position: relative;
-      min-height: 190px;
-      box-shadow: 0 10px 26px rgba(0,0,0,.18);
-    }
-    @media (max-width: 860px){
-      .card{ grid-column: span 12; }
-    }
+.card img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
 
-    .card img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      transform: scale(1.02);
-      filter: saturate(1.05) contrast(1.02);
-    }
+@media(max-width:860px){
+.card{grid-column:span 12;}
+}
 
-    .overlay{
-      position:absolute;
-      inset:0;
-      background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.12) 55%, rgba(0,0,0,0));
-      display:flex;
-      align-items:flex-end;
-      padding: 14px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 9px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(12, 32, 38, .35);
-      backdrop-filter: blur(8px);
-      max-width: 100%;
-    }
-    .badge strong{
-      font-size: 14px;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-      max-width: 42ch;
-    }
-    .badge small{
-      color: rgba(255,255,255,.78);
-      font-size: 12px;
-      white-space: nowrap;
-    }
+/* LIGHTBOX */
 
-    footer{
-      padding: 14px 18px 18px;
-      color: var(--color-muted);
-      font-size: 13px;
-      border-top: 1px solid var(--color-border);
-    }
-  </style>
+.lightbox{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+cursor:zoom-out;
+}
+
+.lightbox img{
+max-width:92%;
+max-height:92%;
+border-radius:12px;
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+
+.lightbox.active{
+display:flex;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="surface">
-      <header>
-        <!-- Bloc de navigation obligatoire -->
-        <div style="display:flex;gap:16px">
-          <a href="/index.html">Accueil</a>
-          <a href="/infos-pratiques.html">Infos pratiques</a>
-          <a href="/gastronomie.html">Gastronomie</a>
-          <a href="/contact.html">Contact</a>
-        </div>
 
-        <!-- Titre ville + description (à personnaliser) -->
-        <div class="hero">
-          <h1>Marbella</h1>
-          <p>
-            Une sélection d’adresses et d’ambiances pour explorer la gastronomie internationale :
-            cuisines du monde, lieux conviviaux et inspirations pour sortir.
-          </p>
-        </div>
-      </header>
+<div class="wrap">
 
-      <div class="content">
-        <div class="section-title">
-          <h2>Galerie — 12 inspirations</h2>
-          <span>Photos (remplaçables) • Grille responsive</span>
-        </div>
+<div class="surface">
 
-        <div class="grid">
-          <!-- Remplace les src par tess images locales (/img/...) si tu préfères -->
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 1">
-            <div class="overlay"><div class="badge"><strong>Cuisine du monde</strong><small>Ambiance</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 2">
-            <div class="overlay"><div class="badge"><strong>Street food</strong><small>À partager</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 3">
-            <div class="overlay"><div class="badge"><strong>Méditerranéen</strong><small>Fraîcheur</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 4">
-            <div class="overlay"><div class="badge"><strong>Asiatique</strong><small>Saveurs</small></div></div>
-          </a>
+<header>
 
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1514511547117-fd6c1e8f3b45?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 5">
-            <div class="overlay"><div class="badge"><strong>Grill</strong><small>Convivial</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 6">
-            <div class="overlay"><div class="badge"><strong>Italien</strong><small>Classique</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1529694157877-ec19a9a8b61d?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 7">
-            <div class="overlay"><div class="badge"><strong>Tapas</strong><small>Local & mix</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 8">
-            <div class="overlay"><div class="badge"><strong>Fusion</strong><small>Créatif</small></div></div>
-          </a>
+<div style="display:flex;gap:16px">
+<a href="/">Accueil</a>
+<a href="#">Restaurants</a>
+<a href="#">Bars</a>
+<a href="#">Contact</a>
+</div>
 
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 9">
-            <div class="overlay"><div class="badge"><strong>Desserts</strong><small>Gourmand</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 10">
-            <div class="overlay"><div class="badge"><strong>Brunch</strong><small>Week-end</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 11">
-            <div class="overlay"><div class="badge"><strong>Café</strong><small>Pause</small></div></div>
-          </a>
-          <a class="card" href="#">
-            <img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1400&q=70" alt="Cuisine internationale 12">
-            <div class="overlay"><div class="badge"><strong>Bar & cocktails</strong><small>Soirée</small></div></div>
-          </a>
-        </div>
-      </div>
+<div class="hero">
+<h1>Marbella</h1>
 
-      <footer>
-        Astuce : remplace les liens de chaque carte par une page “fiche” (ex: restaurant) si tu veux reproduire un listing cliquable.
-      </footer>
-    </div>
-  </div>
+<p>
+Marbella est une destination incontournable de la Costa del Sol, connue pour ses plages, 
+son climat ensoleillé et sa gastronomie internationale. Découvrez une sélection d’ambiances 
+culinaires venues du monde entier.
+</p>
+
+</div>
+
+</header>
+
+<div class="grid">
+
+<div class="card"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80"></div>
+
+<div class="card"><img src="https://images.unsplash.com/photo-1514511547117-fd6c1e8f3b45?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1529694157877-ec19a9a8b61d?auto=format&fit=crop&w=1200&q=80"></div>
+
+<div class="card"><img src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80"></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1200&q=80"></div>
+
+</div>
+
+</div>
+</div>
+
+<!-- LIGHTBOX -->
+
+<div class="lightbox" id="lightbox">
+<img src="">
+</div>
+
+<script>
+
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = lightbox.querySelector('img');
+
+document.querySelectorAll('.card img').forEach(img => {
+
+img.addEventListener('click', () => {
+
+lightboxImg.src = img.src;
+
+lightbox.classList.add('active');
+
+});
+
+});
+
+lightbox.addEventListener('click', () => {
+
+lightbox.classList.remove('active');
+
+});
+
+</script>
+
 </body>
 </html>
