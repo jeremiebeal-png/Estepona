@@ -12,17 +12,18 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marbella — Gastronomie internationale</title>
-  <meta name="description" content="Marbella : 12 inspirations en images autour de la gastronomie internationale. Cliquez pour agrandir." />
+  <title>Estepona — Bons plans</title>
+  <meta name="description" content="Guide d’Estepona : vidéos, quartiers, visites, restaurants, itinéraires et cartes." />
   <meta name="theme-color" content="#0b3c49" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Marbella — Gastronomie internationale" />
-  <meta property="og:description" content="12 inspirations en images (clic pour agrandir)." />
+  <meta property="og:title" content="Bons plans à Estepona — Guide local" />
+  <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
   <meta property="og:image" content="/img/og-estepona.jpg" />
 
   <!-- Preloads -->
+  <link rel="preload" href="/video/Video-estepona.mp4" as="video" type="video/mp4" />
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
@@ -165,10 +166,20 @@
       display:block;
     }
 
+    /* ✅ Fix image "Actualités" mal cadrée : on affiche l'image en entier */
+    .card .thumb.contain img{
+      object-fit:contain;
+      object-position:center;
+    }
+
     .card .body{padding:12px 14px 16px}
     .card .kicker{font-size:12px;color:var(--color-muted)}
     .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
+
+    /* Grille spéciale cartes */
+    .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
+    @media (max-width:980px){.map-grid{grid-template-columns:1fr}}
 
     /* Lightbox */
     .lightbox{
@@ -246,7 +257,9 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* ========== Mobile polish ========== */
+    /* ==========
+       Mobile polish
+       ========== */
     .search input{ font-size:16px; }
     header, .mobile-menu{
       padding-left: env(safe-area-inset-left);
@@ -271,6 +284,7 @@
       .card h4{ font-size:16px; }
       .card .excerpt{ font-size:13px; }
       .card .thumb{ height: 180px; }
+      .map-grid{ gap:14px; }
     }
 
     @media (max-width: 380px){
@@ -280,9 +294,6 @@
 
     .burger{ cursor:pointer; }
     .burger:active{ transform: scale(.98); }
-
-    /* ✅ Petit plus : curseur zoom sur les images galerie */
-    .zoomable{ cursor: zoom-in; }
   </style>
 </head>
 
@@ -296,8 +307,8 @@
       </a>
 
       <nav class="primary">
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
+        <a href="#manger">Restaurants</a>
+        <a href="#itin">Que faire</a>
         <a href="transport-estepona.html">Transport</a>
         <a href="ecoles.html">Écoles</a>
         <a href="sante.html">Santé</a>
@@ -339,8 +350,8 @@
     </div>
 
     <nav class="mobile-nav">
-      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
-      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
       <a href="transport-estepona.html">Transport</a>
       <a href="ecoles.html">Écoles</a>
       <a href="sante.html">Santé</a>
@@ -354,158 +365,167 @@
   </div>
 
   <main class="container">
-    <!-- ✅ Bloc de navigation obligatoire (ajouté sur toutes les nouvelles pages) -->
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px">
-      <a href="index.html">Accueil</a>
-      <a href="alentours.html">Aux alentours</a>
-      <a href="restaurant_centre.html">Restaurants</a>
-      <a href="contact.html">Contact</a>
-    </div>
+    <!-- ✅ HERO / SLIDER SUPPRIMÉ -->
 
-    <!-- ✅ Titre de ville + description -->
-    <section class="category" id="intro" style="margin-top:22px">
+    <!-- SECTION : À voir / À faire -->
+    <section class="category" id="voir" style="margin-top:22px">
       <div class="section-head">
         <div>
-          <h3>Marbella — Gastronomie internationale</h3>
-          <p>12 inspirations en images (clique sur une photo pour l’agrandir)</p>
+          <h3>À voir / À faire</h3>
+          <p>Nos lieux et activités immanquables à Estepona</p>
+        </div>
+        <a class="more" href="fresques.html">Tout voir</a>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="estepona1.html"><img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona"/></a>
+          <div class="body">
+            <div class="kicker">Balade</div>
+            <h4><a href="estepona1.html">Vieille ville &amp; fresques</a></h4>
+            <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb contain" href="actualites.html">
+            <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Actualités</div>
+            <h4><a href="actualites.html">Actualité Estepona</a></h4>
+            <p class="excerpt">Toutes les actualités sur Estepona, événements et infos pratiques.</p>
+            <a class="cta" href="actualites.html" style="display:inline-block;margin-top:8px;background:var(--color-primary);color:#06131e;padding:8px 12px;border-radius:10px;font-weight:600">Voir l’actu</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="histoire_paseo.html"><img src="img/aquerelle_paseo.png" alt="Paseo marítimo"/></a>
+          <div class="body">
+            <div class="kicker">Paseo</div>
+            <h4><a href="histoire_paseo.html">Paseo marítimo</a></h4>
+            <p class="excerpt">Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.</p>
+            <div class="meta" style="color:var(--color-muted)">☀️ Idéal familles</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION : Restaurants -->
+    <section class="category" id="manger">
+      <div class="section-head">
+        <div>
+          <h3>Restaurants &amp; Chiringuitos</h3>
+          <p>Nos bonnes adresses triées par budget et quartier</p>
+        </div>
+        <a class="more" href="chiringuito.html">Tous les restos</a>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <a class="thumb" href="chiringuito.html"><img src="img/espeto.png" alt="Chiringuito"/></a>
+          <div class="body">
+            <div class="kicker">Playa</div>
+            <h4><a href="chiringuito.html">Chiringuito</a></h4>
+            <p class="excerpt">Les chiringuitos d’Estepona : espeto, poissons grillés, pieds dans le sable.</p>
+            <div class="meta" style="color:var(--color-muted)">Playa</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="restaurant_centre.html"><img src="img/estepona-aquatelle1.png" alt="Centre ville"/></a>
+          <div class="body">
+            <div class="kicker">Centro</div>
+            <h4><a href="restaurant_centre.html">Au centre</a></h4>
+            <p class="excerpt">Les restaurants du centre historique : tapas, bodegas et petites places.</p>
+            <div class="meta" style="color:var(--color-muted)">Centro</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="Sortie_disco.html"><img src="img/ciel.png" alt="Rooftop"/></a>
+          <div class="body">
+            <div class="kicker">Port</div>
+            <h4><a href="Sortie_disco.html">Rooftops &amp; cocktails</a></h4>
+            <p class="excerpt">Admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
+            <div class="meta" style="color:var(--color-muted)">Port</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION : Que faire? -->
+    <section class="category" id="itin">
+      <div class="section-head">
+        <div>
+          <h3>Quelle ville peut-t-on visiter.</h3>
+          <p>Nos suggestions détaillées d’activités et de balades</p>
+        </div>
+      </div>
+      <a class="cta" href="alentours.html" style="display:block;text-align:center;background:var(--color-primary);color:#06131e;padding:18px;border-radius:14px;font-weight:700">Découvrir les villes de la région →</a>
+    </section>
+
+    <!-- SECTION : Cartes -->
+    <section class="category" id="cartes">
+      <div class="section-head">
+        <div>
+          <h3>Cartes</h3>
+          <p>Cliquez sur une carte pour l’agrandir</p>
         </div>
       </div>
 
-      <!-- ✅ 12 photos (cliquables = lightbox) -->
-      <div class="grid">
-        <!-- Remplace les src/data-full par tes images (ou chemins /img/...) -->
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 1">
-            <img class="zoomable" src="img/gastro/01.jpg" alt="Gastronomie internationale 1" data-full="img/gastro/01.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 1</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
+      <div class="map-grid">
+        <figure class="card" style="margin:0">
+          <a class="thumb" href="#"><img class="zoomable" src="img/carte_plage.jpg" alt="Carte des plages d’Estepona" data-full="img/carte_plage.jpg"/></a>
+          <figcaption class="body" style="color:var(--color-muted)">Carte des plages</figcaption>
+        </figure>
+        <figure class="card" style="margin:0">
+          <a class="thumb" href="alentours.html"><img class="zoomable" src="img/9.jpg" alt="Carte d'Andalousie" data-full="img/9.jpg"/></a>
+          <figcaption class="body" style="color:var(--color-muted)">Carte Andalousie</figcaption>
+        </figure>
+      </div>
+    </section>
 
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 2">
-            <img class="zoomable" src="img/gastro/02.jpg" alt="Gastronomie internationale 2" data-full="img/gastro/02.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 2</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
+    <!-- SECTION : FAQ -->
+    <section class="category" id="faq">
+      <div class="section-head">
+        <div>
+          <h3>FAQ</h3>
+          <p>Questions fréquentes pour préparer votre séjour</p>
+        </div>
+      </div>
 
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 3">
-            <img class="zoomable" src="img/gastro/03.jpg" alt="Gastronomie internationale 3" data-full="img/gastro/03.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 3</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
+      <div class="card" style="overflow:hidden">
+        <div class="body" style="padding:0">
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Quelle est la meilleure période pour venir ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Le top compromis 👇<br>fin mai–juin et septembre–mi-octobre : 24–30 °C, mer 20–24 °C, moins de monde et tarifs plus doux.<br><br>
+              Selon ton objectif :<br><br>
+              Plage & ambiance : juillet–août (28–35 °C, mer 23–25 °C) → très animé, mais cher et bondé.<br>
+              Visites/randos : mars–avril ou fin sept.–nov. (17–24 °C) → agréable pour marcher, mer plus fraîche.<br>
+              Budget mini / calme : déc.–févr. (12–18 °C) → doux mais plus de pluie et eau froide.<br><br>
+              Astuce : vise semaines hors vacances et évite les jours de levante (vent d’est) si tu veux la plage parfaite.
+            </div>
           </div>
-        </article>
 
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 4">
-            <img class="zoomable" src="img/gastro/04.jpg" alt="Gastronomie internationale 4" data-full="img/gastro/04.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 4</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Où loger à Estepona ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              Sans voiture → près du centre historique, Playa de la Rada, port/marina ou Playa del Cristo.<br><br>
+              Avec voiture → New Golden Mile (Costalita/El Padrón), Selwo/Cancelada, Casares Costa / Bahia Dorada, arrière-pays (Valle Romano, Estepona Golf).
+            </div>
           </div>
-        </article>
 
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 5">
-            <img class="zoomable" src="img/gastro/05.jpg" alt="Gastronomie internationale 5" data-full="img/gastro/05.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 5</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Faut-il une voiture ?</button>
+            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
+              1–3 jours centrés sur Estepona : pas indispensable (vieille ville, paseo, plage de la Rada et port à pied).<br><br>
+              Sans voiture : taxis/VTC (Uber/Cabify), bus côtiers, vélos sur le paseo.<br><br>
+              Utile si logement excentré (New Golden Mile, Selwo, Cancelada, Casares Costa) ou pour explorer (Casares, Ronda, Marbella, Gibraltar, Sierra Bermeja).
+            </div>
           </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 6">
-            <img class="zoomable" src="img/gastro/06.jpg" alt="Gastronomie internationale 6" data-full="img/gastro/06.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 6</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 7">
-            <img class="zoomable" src="img/gastro/07.jpg" alt="Gastronomie internationale 7" data-full="img/gastro/07.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 7</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 8">
-            <img class="zoomable" src="img/gastro/08.jpg" alt="Gastronomie internationale 8" data-full="img/gastro/08.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 8</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 9">
-            <img class="zoomable" src="img/gastro/09.jpg" alt="Gastronomie internationale 9" data-full="img/gastro/09.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 9</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 10">
-            <img class="zoomable" src="img/gastro/10.jpg" alt="Gastronomie internationale 10" data-full="img/gastro/10.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 10</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 11">
-            <img class="zoomable" src="img/gastro/11.jpg" alt="Gastronomie internationale 11" data-full="img/gastro/11.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 11</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
-        <article class="card">
-          <a class="thumb" href="#" aria-label="Agrandir photo 12">
-            <img class="zoomable" src="img/gastro/12.jpg" alt="Gastronomie internationale 12" data-full="img/gastro/12.jpg"/>
-          </a>
-          <div class="body">
-            <div class="kicker">Photo</div>
-            <h4>Inspiration 12</h4>
-            <p class="excerpt">Clique pour agrandir.</p>
-          </div>
-        </article>
-
+        </div>
       </div>
     </section>
   </main>
@@ -546,7 +566,23 @@
   </footer>
 
   <script>
-    // Lightbox (réutilise exactement ta logique)
+    // Accordéon FAQ
+    const accBtns = document.querySelectorAll('.acc-btn');
+    accBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const expanded = btn.getAttribute('aria-expanded')==='true';
+        accBtns.forEach(b=>{
+          b.setAttribute('aria-expanded','false');
+          b.nextElementSibling.style.display='none';
+        });
+        if(!expanded){
+          btn.setAttribute('aria-expanded','true');
+          btn.nextElementSibling.style.display='block';
+        }
+      });
+    });
+
+    // Lightbox
     const lb   = document.getElementById('lightbox');
     const lbImg= document.getElementById('lightbox-img');
     const lbClose = document.getElementById('lbClose');
@@ -569,10 +605,7 @@
     }
 
     document.querySelectorAll('.zoomable').forEach(img=>{
-      img.addEventListener('click',(e)=>{
-        e.preventDefault();
-        openLB(img.dataset.full||img.src, img.alt);
-      });
+      img.addEventListener('click',()=> openLB(img.dataset.full||img.src, img.alt));
       img.setAttribute('tabindex','0');
       img.addEventListener('keydown',e=>{
         if(e.key==='Enter'||e.key===' '){
@@ -586,7 +619,7 @@
     lbClose.addEventListener('click', closeLB);
     document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
 
-    // Menu mobile (identique)
+    // Menu mobile
     const burger = document.querySelector('.burger');
     const mobile = document.getElementById('mobileMenu');
     let backdrop;
