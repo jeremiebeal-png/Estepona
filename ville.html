@@ -1,202 +1,618 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gastronomie internationale — Marbella</title>
-<meta name="description" content="Découvrez la gastronomie internationale à Marbella : cuisines du monde et restaurants inspirants." />
-<meta name="theme-color" content="#0b3c49" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H5DN0R14FF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H5DN0R14FF');
+  </script>
 
-<style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marbella — Gastronomie internationale</title>
+  <meta name="description" content="Marbella : 12 inspirations en images autour de la gastronomie internationale. Cliquez pour agrandir." />
+  <meta name="theme-color" content="#0b3c49" />
 
-:root{
---color-bg:#0b3c49;
---color-surface:#0f4b59;
---color-text:#eaf6f8;
---color-muted:rgba(234,246,248,.75);
---color-border:rgba(234,246,248,.14);
---color-accent:#9fe7f5;
---radius:16px;
---shadow:0 18px 50px rgba(0,0,0,.25);
---maxw:1100px;
-}
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Marbella — Gastronomie internationale" />
+  <meta property="og:description" content="12 inspirations en images (clic pour agrandir)." />
+  <meta property="og:image" content="/img/og-estepona.jpg" />
 
-body{
-margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-background:var(--color-bg);
-color:var(--color-text);
-}
+  <!-- Preloads -->
+  <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
-.wrap{
-max-width:var(--maxw);
-margin:0 auto;
-padding:18px 16px 56px;
-}
+  <style>
+    :root{
+      /* ✅ aligné avec l’ambiance “fresques” */
+      --color-bg: #0b3c49;
 
-.surface{
-background:color-mix(in srgb, var(--color-surface) 86%, transparent);
-border:1px solid var(--color-border);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-overflow:hidden;
-}
+      --color-surface: #0f1f44;
+      --color-surface-2: #0f1625;
+      --color-primary: #2db4ff;
+      --color-accent: #00d0b6;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
 
-header{
-padding:18px 18px 0;
-}
+      /* ✅ manquants (utilisés par header / menu mobile) */
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
+    }
 
-.hero{
-padding:18px 0 10px;
-}
+    html,body{
+      margin:0;
+      padding:0;
 
-.hero h1{
-margin:10px 0 8px;
-font-size:38px;
-}
+      /* ✅ Fond identique à la page “fresques” */
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
 
-.hero p{
-margin:0;
-color:var(--color-muted);
-line-height:1.6;
-}
+      color:var(--color-text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(12,1fr);
-gap:12px;
-padding:20px;
-}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1200px,92vw);margin-inline:auto}
 
-.card{
-grid-column:span 6;
-border-radius:14px;
-overflow:hidden;
-border:1px solid var(--color-border);
-background:color-mix(in srgb, var(--color-bg) 55%, transparent);
-position:relative;
-min-height:190px;
-cursor:pointer;
-}
+    /* Header */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
 
-.card img{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
-}
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
 
-@media(max-width:860px){
-.card{grid-column:span 12;}
-}
+      border-bottom: 1px solid var(--glassLine);
+    }
 
-/* LIGHTBOX */
+    .header-row{display:flex;align-items:center;gap:22px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:44px;height:44px;border-radius:12px;overflow:hidden;
+      border:1px solid var(--color-border);box-shadow:var(--shadow)
+    }
 
-.lightbox{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.92);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-cursor:zoom-out;
-}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
+    nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-.lightbox img{
-max-width:92%;
-max-height:92%;
-border-radius:12px;
-box-shadow:0 20px 60px rgba(0,0,0,.6);
-}
+    /* Boutons sociaux (header) */
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
 
-.lightbox.active{
-display:flex;
-}
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
 
-</style>
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+    }
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .search{
+      display:flex;gap:8px;align-items:center;
+      background:var(--color-surface);border:1px solid var(--color-border);
+      border-radius:999px;padding:8px 12px
+    }
+    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
+
+    .burger{
+      display:none;width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--color-border);background:var(--color-surface)
+    }
+    @media (max-width:980px){
+      nav.primary,.search,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    /* Sections (cartes) */
+    section.category{margin:30px 0}
+    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head h3{margin:0;font-size:22px}
+    .section-head p{margin:0;color:var(--color-muted)}
+    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
+
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      display:grid;grid-template-rows:auto 1fr;gap:10px;
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
+    }
+
+    /* Vignettes uniformes */
+    .card .thumb{
+      position: relative;
+      height: clamp(200px, 22vw, 260px);
+      border-radius: 16px;
+      overflow: hidden;
+      background:#0b1322;
+      display:block;
+    }
+    .card .thumb img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+
+    .card .body{padding:12px 14px 16px}
+    .card .kicker{font-size:12px;color:var(--color-muted)}
+    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card .excerpt{color:var(--color-muted);font-size:14px}
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;inset:0;display:none;
+      align-items:center;justify-content:center;
+      background:rgba(0,0,0,.8);z-index:200;padding:20px
+    }
+    .lightbox.open{display:flex}
+    .lightbox img{
+      max-width:min(100%,1200px);max-height:90vh;width:auto;height:auto;
+      border-radius:16px;box-shadow:var(--shadow)
+    }
+    .lb-close{
+      position:absolute;top:14px;right:16px;background:#ffffff;
+      border:0;border-radius:999px;width:40px;height:40px;font-size:22px;
+      line-height:40px;text-align:center;cursor:pointer;box-shadow:var(--shadow)
+    }
+    .lb-close:hover{background:#eef6f4}
+
+    /* Footer */
+    footer{
+      margin-top:48px;border-top:1px solid var(--color-border);
+      background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
+    }
+    .footer-top{
+      padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between
+    }
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
+    .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
+
+    /* Menu mobile */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .mobile-menu-head{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:6px 0 12px;border-bottom:1px solid var(--color-border);
+    }
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);
+      background:rgba(255,255,255,.03);color:var(--color-text);
+      font-size:22px;cursor:pointer;
+    }
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--color-border);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+
+    /* ========== Mobile polish ========== */
+    .search input{ font-size:16px; }
+    header, .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    @media (max-width: 980px){
+      .container{ width:min(1100px, 92vw); }
+      .header-row{ padding:12px 0; gap:12px; }
+      .brand-logo{ width:38px; height:38px; border-radius:12px; }
+      .brand strong{ font-size:16px; }
+
+      section.category{ margin:22px 0; }
+      .section-head{ gap:10px; margin-bottom:12px; }
+      .section-head h3{ font-size:18px; }
+      .section-head p{ font-size:13px; }
+      .more{ display:none; }
+
+      .grid{ gap:14px; }
+      .card{ border-radius:16px; }
+      .card .body{ padding:12px 12px 14px; }
+      .card h4{ font-size:16px; }
+      .card .excerpt{ font-size:13px; }
+      .card .thumb{ height: 180px; }
+    }
+
+    @media (max-width: 380px){
+      .brand strong{ font-size:15px; }
+      .card .thumb{ height: 165px; }
+    }
+
+    .burger{ cursor:pointer; }
+    .burger:active{ transform: scale(.98); }
+
+    /* ✅ Petit plus : curseur zoom sur les images galerie */
+    .zoomable{ cursor: zoom-in; }
+  </style>
 </head>
 
 <body>
+  <!-- HEADER -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
 
-<div class="wrap">
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-<div class="surface">
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
 
-<header>
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
 
-<div style="display:flex;gap:16px">
-<a href="/">Accueil</a>
-<a href="#">Restaurants</a>
-<a href="#">Bars</a>
-<a href="#">Contact</a>
-</div>
+  <!-- MENU MOBILE (drawer) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
 
-<div class="hero">
-<h1>Marbella</h1>
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="index.html">Aux Alentours</a>
+      <a href="contact.html">Contact</a>
 
-<p>
-Marbella est une destination incontournable de la Costa del Sol, connue pour ses plages, 
-son climat ensoleillé et sa gastronomie internationale. Découvrez une sélection d’ambiances 
-culinaires venues du monde entier.
-</p>
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
 
-</div>
+  <main class="container">
+    <!-- ✅ Bloc de navigation obligatoire (ajouté sur toutes les nouvelles pages) -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px">
+      <a href="index.html">Accueil</a>
+      <a href="alentours.html">Aux alentours</a>
+      <a href="restaurant_centre.html">Restaurants</a>
+      <a href="contact.html">Contact</a>
+    </div>
 
-</header>
+    <!-- ✅ Titre de ville + description -->
+    <section class="category" id="intro" style="margin-top:22px">
+      <div class="section-head">
+        <div>
+          <h3>Marbella — Gastronomie internationale</h3>
+          <p>12 inspirations en images (clique sur une photo pour l’agrandir)</p>
+        </div>
+      </div>
 
-<div class="grid">
+      <!-- ✅ 12 photos (cliquables = lightbox) -->
+      <div class="grid">
+        <!-- Remplace les src/data-full par tes images (ou chemins /img/...) -->
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 1">
+            <img class="zoomable" src="img/gastro/01.jpg" alt="Gastronomie internationale 1" data-full="img/gastro/01.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 1</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<div class="card"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80"></div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 2">
+            <img class="zoomable" src="img/gastro/02.jpg" alt="Gastronomie internationale 2" data-full="img/gastro/02.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 2</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<div class="card"><img src="https://images.unsplash.com/photo-1514511547117-fd6c1e8f3b45?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1529694157877-ec19a9a8b61d?auto=format&fit=crop&w=1200&q=80"></div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 3">
+            <img class="zoomable" src="img/gastro/03.jpg" alt="Gastronomie internationale 3" data-full="img/gastro/03.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 3</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<div class="card"><img src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80"></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=1200&q=80"></div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 4">
+            <img class="zoomable" src="img/gastro/04.jpg" alt="Gastronomie internationale 4" data-full="img/gastro/04.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 4</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-</div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 5">
+            <img class="zoomable" src="img/gastro/05.jpg" alt="Gastronomie internationale 5" data-full="img/gastro/05.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 5</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-</div>
-</div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 6">
+            <img class="zoomable" src="img/gastro/06.jpg" alt="Gastronomie internationale 6" data-full="img/gastro/06.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 6</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<!-- LIGHTBOX -->
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 7">
+            <img class="zoomable" src="img/gastro/07.jpg" alt="Gastronomie internationale 7" data-full="img/gastro/07.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 7</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<div class="lightbox" id="lightbox">
-<img src="">
-</div>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 8">
+            <img class="zoomable" src="img/gastro/08.jpg" alt="Gastronomie internationale 8" data-full="img/gastro/08.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 8</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-<script>
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 9">
+            <img class="zoomable" src="img/gastro/09.jpg" alt="Gastronomie internationale 9" data-full="img/gastro/09.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 9</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = lightbox.querySelector('img');
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 10">
+            <img class="zoomable" src="img/gastro/10.jpg" alt="Gastronomie internationale 10" data-full="img/gastro/10.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 10</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-document.querySelectorAll('.card img').forEach(img => {
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 11">
+            <img class="zoomable" src="img/gastro/11.jpg" alt="Gastronomie internationale 11" data-full="img/gastro/11.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 11</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-img.addEventListener('click', () => {
+        <article class="card">
+          <a class="thumb" href="#" aria-label="Agrandir photo 12">
+            <img class="zoomable" src="img/gastro/12.jpg" alt="Gastronomie internationale 12" data-full="img/gastro/12.jpg"/>
+          </a>
+          <div class="body">
+            <div class="kicker">Photo</div>
+            <h4>Inspiration 12</h4>
+            <p class="excerpt">Clique pour agrandir.</p>
+          </div>
+        </article>
 
-lightboxImg.src = img.src;
+      </div>
+    </section>
+  </main>
 
-lightbox.classList.add('active');
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
+    <img src="" alt="" id="lightbox-img" />
+    <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
+  </div>
 
-});
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-top">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
 
-});
+      <div class="social" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
+  </footer>
 
-lightbox.addEventListener('click', () => {
+  <script>
+    // Lightbox (réutilise exactement ta logique)
+    const lb   = document.getElementById('lightbox');
+    const lbImg= document.getElementById('lightbox-img');
+    const lbClose = document.getElementById('lbClose');
+    let lastFocus = null;
 
-lightbox.classList.remove('active');
+    function openLB(src, alt){
+      lastFocus = document.activeElement;
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      lbClose.focus();
+    }
+    function closeLB(){
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+      if(lastFocus) lastFocus.focus();
+    }
 
-});
+    document.querySelectorAll('.zoomable').forEach(img=>{
+      img.addEventListener('click',(e)=>{
+        e.preventDefault();
+        openLB(img.dataset.full||img.src, img.alt);
+      });
+      img.setAttribute('tabindex','0');
+      img.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          openLB(img.dataset.full||img.src, img.alt);
+        }
+      });
+    });
 
-</script>
+    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    lbClose.addEventListener('click', closeLB);
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
 
+    // Menu mobile (identique)
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
+
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
+    }
+
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
+  </script>
 </body>
 </html>
