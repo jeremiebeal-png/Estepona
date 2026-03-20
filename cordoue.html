@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Village de Casares — Vivre à Estepona</title>
+  <meta name="description" content="Galerie photo de Casares avec ouverture en grand au clic." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <style>
+    :root{
+      --sea1:#0b3c49;
+      --sea2:#0ea5e9;
+      --sea3:#2dd4bf;
+      --panel:#071a22;
+      --panelLine: rgba(234,246,248,.10);
+      --textOn:#eaf6f8;
+      --mutedOn: rgba(234,246,248,.74);
+      --radius:18px;
+      --shadow:0 14px 40px rgba(10, 30, 35, .18);
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
+      --color-surface: #0f1f44;
+      --color-border: #1a2d5a;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--textOn);
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      min-height:100vh;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .container{
+      width:min(1200px,92vw);
+      margin-inline:auto;
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border-bottom: 1px solid var(--glassLine);
+    }
+
+    .header-row{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      padding:16px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand-logo{
+      width:44px;
+      height:44px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--color-border);
+      box-shadow:var(--shadow);
+      background:#fff;
+    }
+
+    nav.primary{
+      margin-left:auto;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    nav.primary a{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+    }
+
+    nav.primary a:hover{
+      border-color:var(--color-border);
+      background:rgba(255,255,255,.04);
+    }
+
+    .social-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .burger{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid var(--color-border);
+      background:var(--color-surface);
+      color:rgba(234,246,248,.92);
+      cursor:pointer;
+    }
+
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    .mobile-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .mobile-menu-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:6px 0 12px;
+      border-bottom:1px solid var(--panelLine);
+    }
+
+    .mobile-close{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.18);
+      background:rgba(255,255,255,.03);
+      color:rgba(234,246,248,.92);
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .mobile-nav{
+      display:grid;
+      gap:10px;
+      padding-top:14px;
+    }
+
+    .mobile-nav a{
+      display:block;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.12);
+      background:rgba(255,255,255,.02);
+    }
+
+    .page{
+      padding:24px 0 28px;
+    }
+
+    .hero{
+      margin:14px 0 18px;
+      padding:20px;
+      border-radius: var(--radius);
+      background: linear-gradient(90deg, rgba(7,26,34,.96), rgba(2,24,34,.92));
+      border: 1px solid var(--panelLine);
+      box-shadow: var(--shadow);
+    }
+
+    .title{
+      margin:0;
+      font-size:30px;
+      line-height:1.12;
+      letter-spacing:.2px;
+      color: var(--textOn);
+    }
+
+    .sub{
+      margin:8px 0 0;
+      color: var(--mutedOn);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .grid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+    }
+
+    .thumb{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(234,246,248,.10);
+      background: rgba(234,246,248,.06);
+      cursor: zoom-in;
+      position:relative;
+      box-shadow: 0 10px 24px rgba(10,30,35,.16);
+    }
+
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition: transform .18s ease;
+    }
+
+    .thumb:hover img{
+      transform: scale(1.05);
+    }
+
+    .thumb.placeholder{
+      cursor: default;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:14px;
+      color: rgba(234,246,248,.75);
+      border-style:dashed;
+      min-height:220px;
+    }
+
+    .thumb.placeholder .ph{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .thumb.placeholder .ph .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.85);
+    }
+
+    .foot{
+      margin:22px 0 10px;
+      color: rgba(234,246,248,.70);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.72);
+      z-index:9999;
+      padding:24px;
+    }
+
+    .lightbox.open{
+      display:flex;
+    }
+
+    .lightbox-inner{
+      width:min(1100px, 100%);
+      max-height: calc(100vh - 48px);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(234,246,248,.12);
+      background: rgba(7,26,34,.95);
+      box-shadow: 0 20px 60px rgba(0,0,0,.40);
+      position:relative;
+    }
+
+    .lightbox-inner img{
+      width:100%;
+      height:auto;
+      max-height: calc(100vh - 48px);
+      display:block;
+      object-fit:contain;
+      background: rgba(0,0,0,.25);
+    }
+
+    .lightbox-close{
+      position:absolute;
+      top:12px;
+      right:12px;
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      background: rgba(234,246,248,.10);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.95);
+      font-size:13px;
+    }
+
+    .lightbox-close:hover{
+      background: rgba(234,246,248,.14);
+    }
+
+    .lightbox-caption{
+      padding:10px 14px 14px;
+      color: rgba(234,246,248,.85);
+      font-size:12px;
+      line-height:1.45;
+      border-top: 1px solid rgba(234,246,248,.10);
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px){
+      .grid{ grid-template-columns: 1fr; }
+      .title{ font-size:24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="contact.html" onclick="document.querySelector('.burger')?.click()">Contact</a>
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <main class="container page">
+    <section class="hero">
+      <h1 class="title">Village de Ronda</h1>
+      <p class="sub">A environ 1 heure de Estepona.</p>
+    </section>
+
+    <section>
+      <div id="gallery" class="grid" aria-live="polite"></div>
+
+      <p class="foot">Photos ©</p>
+    </section>
+  </main>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement de l’image">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightboxClose" type="button">✕ Fermer</button>
+      <img id="lightboxImg" alt="" />
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <script>
+    const burgerBtn = document.querySelector('.burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let backdropEl;
+
+    function openMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = false;
+      burgerBtn?.setAttribute('aria-expanded','true');
+      backdropEl = document.createElement('div');
+      backdropEl.className = 'mobile-backdrop';
+      backdropEl.addEventListener('click', closeMenu);
+      document.body.appendChild(backdropEl);
+      document.body.style.overflow='hidden';
+    }
+
+    function closeMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = true;
+      burgerBtn?.setAttribute('aria-expanded','false');
+      backdropEl?.remove();
+      document.body.style.overflow='';
+    }
+
+    burgerBtn?.addEventListener('click',()=>{
+      const open = burgerBtn.getAttribute('aria-expanded') === 'true';
+      open ? closeMenu() : openMenu();
+    });
+
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape' && !mobileMenu.hidden) closeMenu();
+    });
+
+    const photos = [
+      { title:"Cordoue", file:"images/villes/cordoue.jpeg" },
+      { title:"Cordoue", file:"images/villes/cordoue1.jpeg" },
+      { title:"Cordoue", file:"images/villes/cordoue2.jpeg" },
+      { title:"Cordoue", file:"images/villes/cordoue3.jpeg" }
+            
+    ];
+
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    const lb = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lightboxImg");
+    const lbCaption = document.getElementById("lightboxCaption");
+    const lbClose = document.getElementById("lightboxClose");
+
+    function openLightbox(src, alt, caption){
+      lbImg.src = src;
+      lbImg.alt = alt || "";
+      lbCaption.textContent = caption || "";
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox(){
+      lb.classList.remove("open");
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    lbClose.addEventListener("click", closeLightbox);
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeLightbox(); });
+
+    const gallery = document.getElementById("gallery");
+
+    for (const p of photos){
+      const el = document.createElement("div");
+      el.className = "thumb";
+      el.setAttribute("data-img", p.file);
+      el.setAttribute("data-alt", p.title);
+      el.setAttribute("data-cap", p.title);
+
+      el.innerHTML = `<img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />`;
+      gallery.appendChild(el);
+
+      const img = el.querySelector("img");
+
+      img.addEventListener("error", ()=>{
+        el.classList.add("placeholder");
+        el.removeAttribute("data-img");
+        el.removeAttribute("data-alt");
+        el.removeAttribute("data-cap");
+        el.innerHTML = `
+          <div class="ph">
+            <div class="tag">Photo à ajouter</div>
+            <div>${escapeHtml(p.title)}</div>
+          </div>
+        `;
+      });
+
+      el.addEventListener("click", ()=>{
+        const src = el.getAttribute("data-img");
+        if(!src) return;
+        const alt = el.getAttribute("data-alt") || "";
+        const cap = el.getAttribute("data-cap") || "";
+        openLightbox(src, alt, cap);
+      });
+    }
+  </script>
+</body>
+</html>
