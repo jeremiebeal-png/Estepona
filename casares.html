@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Route des fresques — Vivre à Estepona</title>
+  <meta name="description" content="Route des fresques d’Estepona : œuvres, artistes, lieux, dates et descriptions." />
+  <meta name="theme-color" content="#0b3c49" />
+
+  <style>
+    :root{
+      /* Fond “bleu méditerranéen” */
+      --sea1:#0b3c49;
+      --sea2:#0ea5e9;
+      --sea3:#2dd4bf;
+      --sand:#f6f1e7;
+
+      /* Surfaces */
+      --panel:#071a22;
+      --panel2:#06161d;
+      --panelLine: rgba(234,246,248,.10);
+
+      /* Texte */
+      --textOn:#eaf6f8;
+      --mutedOn: rgba(234,246,248,.74);
+
+      /* Pills */
+      --pill-bg: rgba(14,165,233,.10);
+      --pill-br: rgba(14,165,233,.22);
+
+      --radius:18px;
+      --shadow:0 14px 40px rgba(10, 30, 35, .18);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      /* ====== Alignement avec index.html ====== */
+      --color-surface: #0f1f44;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+
+      --glass: rgba(10, 22, 36, .55);
+      --glass-strong: rgba(10, 22, 36, .82);
+      --glassLine: rgba(234,246,248,.14);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--textOn);
+
+      background:
+        radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+        linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ====== Container (comme index.html) ====== */
+    .container{
+      width:min(1200px,92vw);
+      margin-inline:auto;
+    }
+
+    /* =========================
+       HEADER (IDENTIQUE index.html)
+       ========================= */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 80;
+
+      background: var(--glass);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+      border-bottom: 1px solid var(--glassLine);
+    }
+
+    .header-row{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      padding:16px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand-logo{
+      width:44px;
+      height:44px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--color-border);
+      box-shadow:var(--shadow);
+      background:#fff;
+    }
+
+    nav.primary{
+      margin-left:auto;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    nav.primary a{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+    }
+
+    nav.primary a:hover{
+      border-color:var(--color-border);
+      background:rgba(255,255,255,.04);
+    }
+
+    .social-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .burger{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid var(--color-border);
+      background:var(--color-surface);
+      color:rgba(234,246,248,.92);
+      cursor:pointer;
+    }
+    .burger:active{ transform: scale(.98); }
+
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    /* Menu mobile (index.html) */
+    .mobile-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .mobile-menu-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:6px 0 12px;
+      border-bottom:1px solid var(--panelLine);
+    }
+
+    .mobile-close{
+      width:42px;height:42px;border-radius:12px;
+      border:1px solid rgba(234,246,248,.18);
+      background:rgba(255,255,255,.03);
+      color:rgba(234,246,248,.92);
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav a{
+      display:block;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.12);
+      background:rgba(255,255,255,.02)
+    }
+    .mobile-nav a:hover{background:rgba(255,255,255,.05)}
+
+    header, .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* =========================
+       PAGE (ton design)
+       ========================= */
+    .page{
+      padding:22px 0 28px;
+    }
+
+    .hero{
+      margin:14px 0 14px;
+      padding:20px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.88));
+      border: 1px solid var(--panelLine);
+      box-shadow: var(--shadow);
+    }
+    .title{
+      margin:0;
+      font-size:30px;
+      line-height:1.12;
+      letter-spacing:.2px;
+      color: var(--textOn);
+    }
+    .sub{
+      margin:8px 0 0;
+      color: var(--mutedOn);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .results-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:14px 0 8px;
+    }
+    .results-head h2{
+      margin:0;
+      font-size:16px;
+      color: rgba(234,246,248,.95);
+    }
+
+    .grid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+    }
+
+    .mural{
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
+      border: 1px solid var(--panelLine);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 240px;
+      box-shadow: 0 10px 24px rgba(10,30,35,.16);
+      color: var(--textOn);
+      overflow:hidden;
+    }
+
+    .thumb{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(234,246,248,.10);
+      background: rgba(234,246,248,.06);
+      cursor: zoom-in;
+      user-select:none;
+      position:relative;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.02);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .thumb:hover img{ transform: scale(1.06); }
+
+    .thumb.placeholder{
+      cursor: default;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:14px;
+      color: rgba(234,246,248,.75);
+      border-style:dashed;
+    }
+    .thumb.placeholder .ph{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      line-height:1.35;
+    }
+    .thumb.placeholder .ph .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.85);
+    }
+
+    .mural .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(45,212,191,.12);
+      border: 1px solid rgba(45,212,191,.24);
+      color: rgba(234,246,248,.95);
+      flex:0 0 auto;
+    }
+
+    .mural h3{margin:0;font-size:14px;line-height:1.25;color:var(--textOn)}
+    .mural .who{margin:0;color:var(--mutedOn);font-size:12px}
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color: var(--mutedOn);
+      font-size:12px;
+    }
+    .pill{
+      padding:6px 8px;
+      border-radius:999px;
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-br);
+      color: rgba(234,246,248,.95);
+    }
+
+    .desc{
+      margin:0;
+      color:rgba(234,246,248,.90);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .actions{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap
+    }
+    .link{
+      padding:8px 10px;
+      border-radius:12px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      font-size:12px;
+      color:var(--textOn);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .link:hover{background:rgba(234,246,248,.12)}
+    .link.site{border-color:rgba(14,165,233,.25)}
+    .link.ig{border-color:rgba(251,191,36,.25)}
+
+    .foot{
+      margin:22px 0 10px;
+      color: rgba(234,246,248,.70);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .foot a{ text-decoration: underline; }
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.72);
+      z-index:9999;
+      padding:24px;
+    }
+    .lightbox.open{display:flex}
+    .lightbox-inner{
+      width:min(1100px, 100%);
+      max-height: calc(100vh - 48px);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(234,246,248,.12);
+      background: rgba(7,26,34,.95);
+      box-shadow: 0 20px 60px rgba(0,0,0,.40);
+      position:relative;
+    }
+    .lightbox-inner img{
+      width:100%;
+      height:auto;
+      max-height: calc(100vh - 48px);
+      display:block;
+      object-fit:contain;
+      background: rgba(0,0,0,.25);
+    }
+    .lightbox-close{
+      position:absolute;
+      top:12px;
+      right:12px;
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      background: rgba(234,246,248,.10);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.95);
+      font-size:13px;
+      user-select:none;
+    }
+    .lightbox-close:hover{background: rgba(234,246,248,.14)}
+    .lightbox-caption{
+      padding:10px 14px 14px;
+      color: rgba(234,246,248,.85);
+      font-size:12px;
+      line-height:1.45;
+      border-top: 1px solid rgba(234,246,248,.10);
+    }
+
+    /* Responsive */
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px){
+      .grid{ grid-template-columns: 1fr; }
+      .title{ font-size:24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER (index.html) -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <strong>Vivre à Estepona</strong>
+      </a>
+
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU MOBILE (index.html) -->
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+    </div>
+
+    <nav class="mobile-nav">
+      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
+      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="transport-estepona.html">Transport</a>
+      <a href="ecoles.html">Écoles</a>
+      <a href="sante.html">Santé</a>
+      <a href="trafic.html">Trafic</a>
+      <a href="contact.html" onclick="document.querySelector('.burger')?.click()">Contact</a>
+
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+
+  <main class="container page">
+    <section class="hero">
+      <h1 class="title">Route des fresques d’Estepona</h1>
+      <p class="sub">Liste complète des œuvres en cartes (site artiste ou Instagram). Clique sur une photo pour l’ouvrir en grand.</p>
+    </section>
+
+    <section class="results">
+      <div class="results-head">
+        <h2>Résultats</h2>
+      </div>
+
+      <div id="cards" class="grid" aria-live="polite"></div>
+
+      <p class="foot">
+        Astuce : certaines œuvres peuvent être restaurées ou remplacées. Sur place, les plaques et infos locales restent la référence.<br><br>
+        Photos © <a href="https://www.turismo.estepona.es" target="_blank" rel="noopener">www.turismo.estepona.es</a>
+      </p>
+    </section>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement de l’image">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightboxClose" type="button">✕ Fermer</button>
+      <img id="lightboxImg" alt="" />
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====== MENU MOBILE (index.html) ======
+    const burger = document.querySelector('.burger');
+    const mobile = document.getElementById('mobileMenu');
+    let backdrop;
+
+    function openMenu(){
+      if(!mobile) return;
+      mobile.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobile) return;
+      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow='';
+    }
+
+    burger?.addEventListener('click',()=>{
+      const open = burger.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
+
+    // ====== FRESQUES ======
+    // Images automatiques : images/fresques/001.jpg ... 062.jpg
+    const IMAGE_BASE = "images/fresques/";
+    const IMAGE_EXT = ".jpg";
+
+    const murals = [
+      {n:1,  title:"¡ESTEPONA BERMEJA!", artist:"Ana Cecilia Salinas", location:"C/ Formentera (Bda. Los Televisores)", date:"2013", meaning:"Mural monumental évoquant Estepona et son paysage (Sierra Bermeja).", artistSite:"", artistInstagram:"anasalinasmata"},
+      {n:2,  title:"La Casa de la Buena Gente", artist:"Conchi Álvarez", location:"C/ Tres Banderas", date:"2013", meaning:"Trompe-l’œil “maison habitée” : scènes de voisinage, balcons et personnages.", artistSite:"https://www.conchialvarez.com/", artistInstagram:"conchialvarezalvarez"},
+      {n:3,  title:"Almas del Mar", artist:"Blanca Larrauri", location:"Prolongación Avda. San Lorenzo", date:"—", meaning:"Évocation poétique de l’univers marin.", artistSite:"", artistInstagram:"larrauriblanca"},
+      {n:4,  title:"Tiempos de Claridad", artist:"Ana Cecilia Salinas", location:"Avda. Andalucía (Bda. San Isidro)", date:"2013", meaning:"Jeu de lumière et de paysage (œuvre liée à la nature et à la clarté).", artistSite:"", artistInstagram:"anasalinasmata"},
+      {n:5,  title:"La Mirada de un Niño", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", meaning:"Portrait / regard d’enfance, émotion et innocence.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+      {n:6,  title:"Madre Amorosa", artist:"Francisco Alarcón", location:"C/ Terraza (Bda. Primavera)", date:"—", meaning:"Figure maternelle : tendresse et protection.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+      {n:7,  title:"Pasen y Vean", artist:"Elena Aguilera", location:"Plaza María Bravo / C/ Goya (Bda. El Cid)", date:"février 2013", meaning:"Invitation au spectacle : esprit affiche / cirque (“Entrez et regardez”).", artistSite:"", artistInstagram:"elenaaguileracirugeda"},
+      {n:8,  title:"Siglo XXI", artist:"Néstor Prada", location:"Plaza ABC", date:"2013", meaning:"Collage d’icônes/scènes urbaines : mémoire locale et modernité.", artistSite:"", artistInstagram:""},
+      {n:9,  title:"Obra Artística", artist:"Juanjo San Pedro", location:"Auditorio Felipe VI (horaires d’ouverture)", date:"—", meaning:"Œuvre liée à la culture / aux arts (pièce exposée).", artistSite:"", artistInstagram:""},
+      {n:10, title:"Fundación Antonia Guerrero", artist:"Joaquín Aguilera", location:"C/ Pilar de Farinós", date:"2013", meaning:"Hommage à Antonia Guerrero : éducation, liberté, transmission.", artistSite:"", artistInstagram:""},
+      {n:11, title:"Una Flor de Futuro", artist:"José Fernández Ríos", location:"C/ Ntra. Sra. de Los Remedios", date:"—", meaning:"Espoir, croissance, futur.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:12, title:"Día de Pesca", artist:"José Fernández Ríos", location:"C/ Terraza (Bda. Isabel Simón)", date:"2014", meaning:"Hommage aux pêcheurs et à la tradition maritime.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:13, title:"Azul y Plata", artist:"Colectivo Moraga", location:"Avda. Libertad (Bda. Blas Infantes)", date:"—", meaning:"Palette bleu/argent : abstraction / atmosphère.", artistSite:"", artistInstagram:""},
+      {n:14, title:"Keep on Tracking", artist:"Juan Abia Presa (Nano4814)", location:"C/ Mantilla (Bda. Mar y Sierra)", date:"—", meaning:"Mouvement, trajectoire, “poursuivre la piste”.", artistSite:"", artistInstagram:"nano4814"},
+      {n:15, title:"Ángel, le buceador", artist:"Eric Aman", location:"C/ Gravina (Bda. Tres Banderas)", date:"2014", meaning:"Plongeur en trompe-l’œil : effet 3D réaliste, très photographié.", artistSite:"https://www.stoagallery.com/en/eric-aman/", artistInstagram:""},
+      {n:16, title:"Salartij", artist:"Colectivo Moraga", location:"Bda. Blas Infante, bloque 12", date:"—", meaning:"Œuvre urbaine / jeu graphique (titre stylisé).", artistSite:"", artistInstagram:""},
+      {n:17, title:"Regando el Jardín", artist:"José Fernández Ríos", location:"Avda. Andalucía", date:"—", meaning:"Hyperréalisme : fillette arrosant… un arbre réel (illusion).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:18, title:"Aires de Música", artist:"Blanca Larrauri", location:"Plaza San Fernando", date:"—", meaning:"Hommage à la musique : ambiance, rythme, instruments suggérés.", artistSite:"", artistInstagram:"larrauriblanca"},
+      {n:19, title:"La Poda de la Buganvilla", artist:"José Fernández Ríos", location:"Avda. San Lorenzo (Colegio Víctor de la Serna)", date:"avril 2015", meaning:"Hyperréalisme : jardinier taillant une bougainvillée sur une échelle.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:20, title:"La Huerta de Irene", artist:"Encarnación de Hoyos", location:"Avda. Andalucía (Guardería Los Pitufos)", date:"—", meaning:"Potager / nature : thème enfance et croissance.", artistSite:"", artistInstagram:""},
+      {n:21, title:"4M", artist:"Miguel González", location:"C/ Cristo del Amor (Edf. Los Claveles)", date:"2015", meaning:"Portrait monumental (style contemporain).", artistSite:"", artistInstagram:""},
+      {n:22, title:"Sin Memoria No Hay Historia", artist:"Joaquín Aguilera", location:"Parque Botánico y Orquidario", date:"—", meaning:"Mémoire collective : sans mémoire, pas d’histoire.", artistSite:"", artistInstagram:""},
+      {n:23, title:"San Isidro Labrador", artist:"Blanca Larrauri", location:"C/ María Magdalena (Bda. Fuerzas Armadas)", date:"2015", meaning:"Saint patron : tradition agricole et identité populaire.", artistSite:"", artistInstagram:"larrauriblanca"},
+      {n:24, title:"Reflejos del Jardín", artist:"José Fernández Ríos", location:"Parque Botánico y Orquidario", date:"—", meaning:"Nature et reflets : profondeur végétale (hyperréalisme).", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:25, title:"Quijote del Siglo XXI", artist:"Curro Leyton", location:"C/ Eslovaquia (Instituto Puerta del Mar)", date:"2016", meaning:"Don Quichotte revisité : hommage à Cervantès en version moderne.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+      {n:26, title:"In Memoriam", artist:"Pilar Castañón y María Romero", location:"Avda. Juan Carlos I (Bda. San Isidro)", date:"—", meaning:"Souvenir/hommage : mémoire et reconnaissance.", artistSite:"", artistInstagram:""},
+      {n:27, title:"6 Segundos de Oscuridad", artist:"Ana Torralba (Anula Mixtura)", location:"C/ Frasquito Gil (Edf. Vista África)", date:"—", meaning:"Contraste lumière/ombre : instant suspendu.", artistSite:"", artistInstagram:"anulamixtura"},
+      {n:28, title:"Antonia Guerrero, Sueño de Libertad", artist:"Francisco Alarcón Pérez", location:"C/ Valencia", date:"—", meaning:"Liberté/émancipation : hommage à Antonia Guerrero.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+      {n:29, title:"Desde el Mar", artist:"José Fernández Ríos", location:"Plaza de las Flores", date:"—", meaning:"Point de vue marin : lien ville/mer.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:30, title:"Quijote en el Guernica", artist:"Curro Leyton", location:"C/ Ricardo Ortega (Instituto Monterroso)", date:"—", meaning:"Dialogue Quichotte/Guernica : culture espagnole et mémoire.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+      {n:31, title:"Simbiosis", artist:"José Fernández Ríos", location:"C/ Ciudad Real (Pabellón La Lobilla)", date:"—", meaning:"Symbiose : coexistence humain/nature.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:32, title:"Sin Título", artist:"Efrén Calderón", location:"Plaza Juanito Valderrama", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:""},
+      {n:33, title:"Hola", artist:"Edmon", location:"Avda. Juan Carlos I (Colegio Ramón García)", date:"—", meaning:"Salut/accueil : style pop urbain.", artistSite:"", artistInstagram:""},
+      {n:34, title:"La Imagen Vuelta", artist:"Fernando Clemente", location:"Avda. Andalucía, 57", date:"—", meaning:"Jeu sur la perception : image inversée / retournée.", artistSite:"", artistInstagram:"fernando.clemente"},
+      {n:35, title:"La Luna", artist:"Dadi Dreucol", location:"Avda. Andalucía, 67", date:"—", meaning:"Lune / nuit : poésie et atmosphère.", artistSite:"", artistInstagram:"dadi_dreucol"},
+      {n:36, title:"Llegando a tu Destino", artist:"Dourone", location:"Prolongación Avda. San Lorenzo, 17", date:"—", meaning:"Voyage : arrivée, cheminement, destination.", artistSite:"", artistInstagram:"dourone"},
+      {n:37, title:"Paraíso Golf", artist:"Manuel León", location:"C/ Terraza, 168", date:"—", meaning:"Univers golf : “paradis” sportif.", artistSite:"", artistInstagram:"manuelleonmoreno"},
+      {n:38, title:"Musas", artist:"Lalone", location:"C/ Dos de Mayo (Bda. Solís)", date:"—", meaning:"Muses : inspiration artistique, figures allégoriques.", artistSite:"", artistInstagram:"lalone_graff"},
+      {n:39, title:"Jump Into Blue", artist:"CAZL", location:"Pasaje Poetas Andaluces", date:"—", meaning:"Plonger dans le bleu : mer/ciel et énergie.", artistSite:"https://www.caz-l.com/streetart", artistInstagram:"caz.l"},
+      {n:40, title:"Freaks", artist:"Rebelzer", location:"C/ Granada, 16", date:"—", meaning:"Personnages décalés : culture urbaine.", artistSite:"", artistInstagram:"rebelzer_freaks"},
+      {n:41, title:"Agua (en sistema Braille)", artist:"Fran Redondo", location:"C/ Málaga (Edf. Saymar)", date:"—", meaning:"Thème de l’eau + accessibilité (braille).", artistSite:"", artistInstagram:""},
+      {n:42, title:"Recuerdos Orientales", artist:"José Fernández Ríos", location:"Plaza Antonia Guerrero", date:"—", meaning:"Ambiance orientale : motifs et souvenirs.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:43, title:"Pórticos del Cielo", artist:"José Fernández Ríos", location:"Avda. Andalucía, 3", date:"—", meaning:"Portiques vers le ciel : architecture et verticalité.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:44, title:"La Última Cena", artist:"Curro Leyton", location:"C/ Madrid (Iglesia San José)", date:"—", meaning:"Référence à la Cène : iconographie religieuse revisité.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+      {n:45, title:"Mural Histórico (S. XIX)", artist:"Anónimo", location:"Jardín de la Costa del Sol", date:"XIXe siècle", meaning:"Fresque patrimoniale historique (XIXe).", artistSite:"", artistInstagram:""},
+      {n:46, title:"Espíritu de Equipo", artist:"Francisco Alarcón", location:"Pabellón J.A. Pineda (C/ Cristóbal Ruiz Méndez)", date:"—", meaning:"Sport collectif : esprit d’équipe et cohésion.", artistSite:"", artistInstagram:"francisco_alarcon_perez"},
+      {n:47, title:"Leyton", artist:"Curro Leyton", location:"C/ Virgen de la Cabeza (Colegio María Espinosa)", date:"—", meaning:"Signature/identité visuelle de l’artiste.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+      {n:48, title:"Frescos de la Casa Mondéjar (S. XVIII)", artist:"Anónimo", location:"C/ Mondéjar", date:"XVIIIe siècle", meaning:"Fresques patrimoniales historiques (XVIIIe).", artistSite:"", artistInstagram:""},
+      {n:49, title:"Atlantas", artist:"José Fernández Ríos", location:"Avda. Andalucía, 115", date:"—", meaning:"Atlantes : figures porteuses / mythologie architecturale.", artistSite:"https://www.jfrios.com/", artistInstagram:"la_riostia"},
+      {n:50, title:"Deporte para Todos", artist:"Félix García Álvarez", location:"Centro Deportivo José Ramón de la Morena", date:"—", meaning:"Sport pour tous : inclusion, santé, accessibilité.", artistSite:"", artistInstagram:""},
+      {n:51, title:"Estepona se Viste de Flores", artist:"Susana Velasco", location:"C/ Félix Rodríguez de la Fuente", date:"—", meaning:"Hommage à la ville fleurie : identité d’Estepona.", artistSite:"https://www.demuchoscoloressusana.com/", artistInstagram:"demuchoscoloressusana"},
+      {n:52, title:"Nutrir", artist:"Samantha Jordaan", location:"C/ Terraza (Conjunto Andalucía)", date:"—", meaning:"Nourrir : soin, croissance, lien au vivant.", artistSite:"", artistInstagram:"samanthajordaan"},
+      {n:53, title:"Sin Nombre", artist:"El Chorro Arts", location:"C/ Terraza (Bda. Isabel Simón) nº 1", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"elchorroarts"},
+      {n:54, title:"La Caída", artist:"Vyacheslav Gunin", location:"C/ Peineta (Bda. Isabel Simón) nº 6", date:"2020", meaning:"Composition onirique : chute / rêve / nature.", artistSite:"", artistInstagram:"sav45"},
+      {n:55, title:"Sin Nombre", artist:"Alejandro Gambín Vicente", location:"C/ Santo Domingo de Guzmán, nº 7", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:""},
+      {n:56, title:"Momento Pasajero", artist:"Ángel Caballero Rioja", location:"C/ Melilla (Edf. Royber)", date:"—", meaning:"Instant fugace : temps qui passe.", artistSite:"", artistInstagram:""},
+      {n:57, title:"Ilusión", artist:"José Antonio Barrientos", location:"C/ San Roque (Edf. Bustamante)", date:"—", meaning:"Rêve/illusion : imaginaire.", artistSite:"", artistInstagram:""},
+      {n:58, title:"Sin Nombre", artist:"Alex Senna", location:"C/ Cristóbal Ruiz Méndez (Edf. Soto)", date:"—", meaning:"Œuvre sans titre : lecture libre.", artistSite:"", artistInstagram:"alexsenna"},
+      {n:59, title:"La Fase Azul de Pajarito Curioso", artist:"André Farkos", location:"C/ San Juan Bosco", date:"—", meaning:"Oiseau curieux : “phase bleue”, poésie chromatique.", artistSite:"", artistInstagram:""},
+      {n:60, title:"Fragmentación de un Entorno Concreto", artist:"Alberto Montes Sánchez", location:"Prolongación Avda. San Lorenzo, nº 25", date:"—", meaning:"Fragmentation urbaine : abstraction / architecture.", artistSite:"", artistInstagram:""},
+      {n:61, title:"Fémina", artist:"Curro Leyton", location:"Polideportivo La Lobilla", date:"—", meaning:"Figure féminine : force et présence.", artistSite:"https://curroleyton.com/es", artistInstagram:"curroleyton"},
+      {n:62, title:"El Pescador Moderno", artist:"Juan Pineda", location:"C/ San Juan Bosco", date:"—", meaning:"Pêcheur contemporain : tradition et modernité.", artistSite:"", artistInstagram:""}
+    ];
+
+    function pad3(n){
+      const s = String(n);
+      return s.length === 1 ? "00" + s : (s.length === 2 ? "0" + s : s);
+    }
+    function imgFor(n){
+      return IMAGE_BASE + pad3(n) + IMAGE_EXT;
+    }
+
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function instagramLink(handle){
+      return `https://www.instagram.com/${handle}/`;
+    }
+    function instagramSearchLink(artistName){
+      const q = encodeURIComponent(`site:instagram.com "${artistName}"`);
+      return `https://www.google.com/search?q=${q}`;
+    }
+
+    // Lightbox
+    const lb = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lightboxImg");
+    const lbCaption = document.getElementById("lightboxCaption");
+    const lbClose = document.getElementById("lightboxClose");
+
+    function openLightbox(src, alt, caption){
+      lbImg.src = src;
+      lbImg.alt = alt || "";
+      lbCaption.textContent = caption || "";
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function closeLightbox(){
+      lb.classList.remove("open");
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    lbClose.addEventListener("click", closeLightbox);
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeLightbox(); });
+
+    const cards = document.getElementById("cards");
+    const list = murals.slice().sort((a,b)=>a.n-b.n);
+
+    for (const m of list){
+      const photo = imgFor(m.n);
+
+      const actions = [];
+      if (m.artistSite){
+        actions.push(`<a class="link site" target="_blank" rel="noopener" href="${escapeHtml(m.artistSite)}">🌐 Site artiste</a>`);
+      } else {
+        const igHref = m.artistInstagram ? instagramLink(m.artistInstagram) : instagramSearchLink(m.artist);
+        const igLabel = m.artistInstagram ? `📷 Instagram @${escapeHtml(m.artistInstagram)}` : `📷 Instagram`;
+        actions.push(`<a class="link ig" target="_blank" rel="noopener" href="${igHref}">${igLabel}</a>`);
+      }
+
+      const el = document.createElement("article");
+      el.className = "mural";
+      el.innerHTML = `
+        <div class="thumb" data-img="${escapeHtml(photo)}" data-alt="${escapeHtml(m.title)}"
+             data-cap="${escapeHtml(m.title)} — ${escapeHtml(m.artist)}">
+          <img src="${escapeHtml(photo)}" alt="${escapeHtml(m.title)}" loading="lazy" />
+        </div>
+
+        <div class="top">
+          <div>
+            <h3>${escapeHtml(m.title)}</h3>
+            <p class="who">${escapeHtml(m.artist)}</p>
+          </div>
+          <div class="badge">#${m.n}</div>
+        </div>
+
+        <div class="row">
+          <span class="pill">📍 ${escapeHtml(m.location)}</span>
+          <span class="pill">🗓️ ${escapeHtml(m.date || "—")}</span>
+        </div>
+
+        <p class="desc">${escapeHtml(m.meaning || "—")}</p>
+
+        <div class="actions">
+          ${actions.join("")}
+        </div>
+      `;
+      cards.appendChild(el);
+
+      const thumb = el.querySelector(".thumb");
+      const img = el.querySelector(".thumb img");
+      img.addEventListener("error", ()=>{
+        thumb.classList.add("placeholder");
+        thumb.removeAttribute("data-img");
+        thumb.removeAttribute("data-alt");
+        thumb.removeAttribute("data-cap");
+        thumb.innerHTML = `
+          <div class="ph">
+            <div class="tag">Photo à ajouter</div>
+            <div>${escapeHtml(m.title)}</div>
+          </div>
+        `;
+      });
+    }
+
+    // Clic image -> lightbox (si data-img existe)
+    document.querySelectorAll(".thumb").forEach(t=>{
+      t.addEventListener("click", ()=>{
+        const src = t.getAttribute("data-img");
+        if(!src) return;
+        const alt = t.getAttribute("data-alt") || "";
+        const cap = t.getAttribute("data-cap") || "";
+        openLightbox(src, alt, cap);
+      });
+    });
+  </script>
+
+  <script>
+    // Menu mobile (index.html)
+    const burgerBtn = document.querySelector('.burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let backdropEl;
+
+    function openMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = false;
+      burgerBtn?.setAttribute('aria-expanded','true');
+      backdropEl = document.createElement('div');
+      backdropEl.className = 'mobile-backdrop';
+      backdropEl.addEventListener('click', closeMenu);
+      document.body.appendChild(backdropEl);
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = true;
+      burgerBtn?.setAttribute('aria-expanded','false');
+      backdropEl?.remove();
+      document.body.style.overflow='';
+    }
+
+    burgerBtn?.addEventListener('click',()=>{
+      const open = burgerBtn.getAttribute('aria-expanded')==='true';
+      open ? closeMenu() : openMenu();
+    });
+
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape' && !mobileMenu.hidden) closeMenu();
+    });
+  </script>
+</body>
+</html>
