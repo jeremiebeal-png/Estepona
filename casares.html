@@ -15,7 +15,6 @@
       --sand:#f6f1e7;
 
       --panel:#071a22;
-      --panel2:#06161d;
       --panelLine: rgba(234,246,248,.10);
 
       --textOn:#eaf6f8;
@@ -29,8 +28,6 @@
       --glassLine: rgba(234,246,248,.14);
 
       --color-surface: #0f1f44;
-      --color-text: #eaf2ff;
-      --color-muted: #a8b6cf;
       --color-border: #1a2d5a;
 
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -38,7 +35,6 @@
     }
 
     *{box-sizing:border-box}
-
     body{
       margin:0;
       font-family:var(--sans);
@@ -202,7 +198,7 @@
     }
 
     .page{
-      padding:22px 0 28px;
+      padding:24px 0 28px;
     }
 
     .hero{
@@ -212,7 +208,6 @@
       background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.88));
       border: 1px solid var(--panelLine);
       box-shadow: var(--shadow);
-      text-align:center;
     }
 
     .title{
@@ -231,20 +226,20 @@
     }
 
     .grid{
+      margin-top:10px;
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:14px;
+      gap:12px;
     }
 
     .thumb{
       width:100%;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 9;
       border-radius: 18px;
       overflow:hidden;
       border: 1px solid rgba(234,246,248,.10);
       background: rgba(234,246,248,.06);
       cursor: zoom-in;
-      user-select:none;
       position:relative;
       box-shadow: 0 10px 24px rgba(10,30,35,.16);
     }
@@ -253,26 +248,11 @@
       width:100%;
       height:100%;
       object-fit:cover;
-      display:block;
-      transition: transform .2s ease, filter .2s ease;
+      transition: transform .18s ease;
     }
 
     .thumb:hover img{
       transform: scale(1.05);
-    }
-
-    .thumb::after{
-      content:"Agrandir";
-      position:absolute;
-      right:10px;
-      bottom:10px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:11px;
-      background: rgba(7,26,34,.78);
-      border:1px solid rgba(234,246,248,.14);
-      color: rgba(234,246,248,.95);
-      backdrop-filter: blur(6px);
     }
 
     .thumb.placeholder{
@@ -287,9 +267,7 @@
       min-height:220px;
     }
 
-    .thumb.placeholder::after{display:none}
-
-    .ph{
+    .thumb.placeholder .ph{
       display:flex;
       flex-direction:column;
       gap:6px;
@@ -299,7 +277,7 @@
       line-height:1.35;
     }
 
-    .ph .tag{
+    .thumb.placeholder .ph .tag{
       font-family:var(--mono);
       font-size:11px;
       padding:6px 8px;
@@ -314,8 +292,9 @@
       color: rgba(234,246,248,.70);
       font-size:12px;
       line-height:1.5;
-      text-align:center;
     }
+
+    .foot a{ text-decoration: underline; }
 
     .lightbox{
       position:fixed;
@@ -323,7 +302,7 @@
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,.78);
+      background: rgba(0,0,0,.72);
       z-index:9999;
       padding:24px;
     }
@@ -331,7 +310,7 @@
     .lightbox.open{display:flex}
 
     .lightbox-inner{
-      width:min(1200px, 100%);
+      width:min(1100px, 100%);
       max-height: calc(100vh - 48px);
       border-radius: 18px;
       overflow:hidden;
@@ -361,11 +340,10 @@
       border: 1px solid rgba(234,246,248,.14);
       color: rgba(234,246,248,.95);
       font-size:13px;
-      user-select:none;
     }
 
     .lightbox-close:hover{
-      background: rgba(234,246,248,.14)
+      background: rgba(234,246,248,.14);
     }
 
     .lightbox-caption{
@@ -374,7 +352,6 @@
       font-size:12px;
       line-height:1.45;
       border-top: 1px solid rgba(234,246,248,.10);
-      text-align:center;
     }
 
     @media (max-width: 860px){
@@ -453,8 +430,8 @@
 
   <main class="container page">
     <section class="hero">
-      <h1 class="title">Galerie des fresques d’Estepona</h1>
-      <p class="sub">Clique sur une image pour l’ouvrir en grand.</p>
+      <h1 class="title">Village de Casares</h1>
+      <p class="sub">A 20 minutes de Estepona.</p>
     </section>
 
     <section>
@@ -499,7 +476,7 @@
     }
 
     burgerBtn?.addEventListener('click',()=>{
-      const open = burgerBtn.getAttribute('aria-expanded')==='true';
+      const open = burgerBtn.getAttribute('aria-expanded') === 'true';
       open ? closeMenu() : openMenu();
     });
 
@@ -511,10 +488,11 @@
     const IMAGE_EXT = ".jpg";
 
     const murals = [
-      {n:1, title:"Casares"},
-      {n:2, title:"casares1"},
-      {n:3, title:"CAsares3"}
-         ];
+      {n:1,title:"Casares"},
+      {n:2,title:"Casares1"},
+      {n:3,title:"Casares2"}
+      
+    ];
 
     function pad3(n){
       const s = String(n);
@@ -561,15 +539,18 @@
 
     for (const m of murals){
       const photo = imgFor(m.n);
+
       const el = document.createElement("div");
       el.className = "thumb";
       el.setAttribute("data-img", photo);
       el.setAttribute("data-alt", m.title);
       el.setAttribute("data-cap", m.title);
+
       el.innerHTML = `<img src="${escapeHtml(photo)}" alt="${escapeHtml(m.title)}" loading="lazy" />`;
       gallery.appendChild(el);
 
       const img = el.querySelector("img");
+
       img.addEventListener("error", ()=>{
         el.classList.add("placeholder");
         el.removeAttribute("data-img");
@@ -590,7 +571,7 @@
         const cap = el.getAttribute("data-cap") || "";
         openLightbox(src, alt, cap);
       });
-    });
+    }
   </script>
 </body>
 </html>
