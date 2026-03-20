@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Galerie des fresques — Vivre à Estepona</title>
-  <meta name="description" content="Galerie des fresques d’Estepona avec ouverture en grand au clic." />
+  <title>Village de Casares — Vivre à Estepona</title>
+  <meta name="description" content="Galerie photo de Casares avec ouverture en grand au clic." />
   <meta name="theme-color" content="#0b3c49" />
 
   <style>
@@ -12,29 +12,23 @@
       --sea1:#0b3c49;
       --sea2:#0ea5e9;
       --sea3:#2dd4bf;
-      --sand:#f6f1e7;
-
       --panel:#071a22;
       --panelLine: rgba(234,246,248,.10);
-
       --textOn:#eaf6f8;
       --mutedOn: rgba(234,246,248,.74);
-
       --radius:18px;
       --shadow:0 14px 40px rgba(10, 30, 35, .18);
-
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
-
       --color-surface: #0f1f44;
       --color-border: #1a2d5a;
-
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:var(--sans);
@@ -150,7 +144,8 @@
     }
 
     .mobile-backdrop{
-      position:fixed; inset:0;
+      position:fixed;
+      inset:0;
       background:rgba(0,0,0,.55);
       z-index:140;
     }
@@ -180,7 +175,9 @@
     }
 
     .mobile-close{
-      width:42px;height:42px;border-radius:12px;
+      width:42px;
+      height:42px;
+      border-radius:12px;
       border:1px solid rgba(234,246,248,.18);
       background:rgba(255,255,255,.03);
       color:rgba(234,246,248,.92);
@@ -188,13 +185,18 @@
       cursor:pointer;
     }
 
-    .mobile-nav{display:grid;gap:10px;padding-top:14px}
+    .mobile-nav{
+      display:grid;
+      gap:10px;
+      padding-top:14px;
+    }
+
     .mobile-nav a{
       display:block;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid rgba(234,246,248,.12);
-      background:rgba(255,255,255,.02)
+      background:rgba(255,255,255,.02);
     }
 
     .page{
@@ -205,7 +207,7 @@
       margin:14px 0 18px;
       padding:20px;
       border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.88));
+      background: linear-gradient(90deg, rgba(7,26,34,.96), rgba(2,24,34,.92));
       border: 1px solid var(--panelLine);
       box-shadow: var(--shadow);
     }
@@ -294,8 +296,6 @@
       line-height:1.5;
     }
 
-    .foot a{ text-decoration: underline; }
-
     .lightbox{
       position:fixed;
       inset:0;
@@ -307,7 +307,9 @@
       padding:24px;
     }
 
-    .lightbox.open{display:flex}
+    .lightbox.open{
+      display:flex;
+    }
 
     .lightbox-inner{
       width:min(1100px, 100%);
@@ -437,9 +439,7 @@
     <section>
       <div id="gallery" class="grid" aria-live="polite"></div>
 
-      <p class="foot">
-        Photos ©
-      </p>
+      <p class="foot">Photos ©</p>
     </section>
   </main>
 
@@ -484,24 +484,11 @@
       if(e.key === 'Escape' && !mobileMenu.hidden) closeMenu();
     });
 
-    const IMAGE_BASE = "images/villes/";
-    const IMAGE_EXT = ".jpg";
-
-    const murals = [
-      {n:1,title:"Casares"},
-      {n:2,title:"Casares1"},
-      {n:3,title:"Casares3"}
-      
+    const photos = [
+      { title:"Casares", file:"images/villes/casares.jpg" },
+      { title:"Casares1", file:"images/villes/casares1.jpeg" },
+      { title:"Casares3", file:"images/villes/casares3.jpeg" }
     ];
-
-    function pad3(n){
-      const s = String(n);
-      return s.length === 1 ? "00" + s : (s.length === 2 ? "0" + s : s);
-    }
-
-    function imgFor(n){
-      return IMAGE_BASE + pad3(n) + IMAGE_EXT;
-    }
 
     function escapeHtml(str){
       return (str ?? "").toString()
@@ -537,16 +524,14 @@
 
     const gallery = document.getElementById("gallery");
 
-    for (const m of murals){
-      const photo = imgFor(m.n);
-
+    for (const p of photos){
       const el = document.createElement("div");
       el.className = "thumb";
-      el.setAttribute("data-img", photo);
-      el.setAttribute("data-alt", m.title);
-      el.setAttribute("data-cap", m.title);
+      el.setAttribute("data-img", p.file);
+      el.setAttribute("data-alt", p.title);
+      el.setAttribute("data-cap", p.title);
 
-      el.innerHTML = `<img src="${escapeHtml(photo)}" alt="${escapeHtml(m.title)}" loading="lazy" />`;
+      el.innerHTML = `<img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />`;
       gallery.appendChild(el);
 
       const img = el.querySelector("img");
@@ -559,7 +544,7 @@
         el.innerHTML = `
           <div class="ph">
             <div class="tag">Photo à ajouter</div>
-            <div>${escapeHtml(m.title)}</div>
+            <div>${escapeHtml(p.title)}</div>
           </div>
         `;
       });
