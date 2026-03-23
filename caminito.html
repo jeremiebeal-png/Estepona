@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Village de Casares — Vivre à Estepona</title>
-  <meta name="description" content="Galerie photo de Casares avec ouverture en grand au clic." />
+  <title>Caminito del Rey — Vivre à Estepona</title>
+  <meta name="description" content="Galerie photo et vidéo du Caminito del Rey avec ouverture en grand au clic." />
   <meta name="theme-color" content="#0b3c49" />
 
   <style>
@@ -42,7 +42,7 @@
     }
 
     a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
+    img, video{max-width:100%;display:block}
 
     .container{
       width:min(1200px,92vw);
@@ -246,15 +246,35 @@
       box-shadow: 0 10px 24px rgba(10,30,35,.16);
     }
 
-    .thumb img{
+    .thumb img,
+    .thumb video{
       width:100%;
       height:100%;
       object-fit:cover;
       transition: transform .18s ease;
+      background:#000;
     }
 
-    .thumb:hover img{
+    .thumb:hover img,
+    .thumb:hover video{
       transform: scale(1.05);
+    }
+
+    .thumb.is-video::after{
+      content:"▶";
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:38px;
+      height:38px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;
+      font-size:16px;
+      pointer-events:none;
     }
 
     .thumb.placeholder{
@@ -322,7 +342,8 @@
       position:relative;
     }
 
-    .lightbox-inner img{
+    .lightbox-inner img,
+    .lightbox-inner video{
       width:100%;
       height:auto;
       max-height: calc(100vh - 48px);
@@ -342,6 +363,7 @@
       border: 1px solid rgba(234,246,248,.14);
       color: rgba(234,246,248,.95);
       font-size:13px;
+      z-index:2;
     }
 
     .lightbox-close:hover{
@@ -396,7 +418,7 @@
         </a>
         <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
           </svg>
           YouTube
@@ -433,20 +455,19 @@
   <main class="container page">
     <section class="hero">
       <h1 class="title">Caminito del Rey</h1>
-      <p class="sub">Le Caminito del Rey est une randonnée spectaculaire, environ 1h45 – 2h de route depuis Estepona</p>
+      <p class="sub">Le Caminito del Rey est une randonnée spectaculaire, à environ 1h45 – 2h de route depuis Estepona.</p>
     </section>
 
     <section>
       <div id="gallery" class="grid" aria-live="polite"></div>
-
       <p class="foot">Photos ©</p>
     </section>
   </main>
 
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement de l’image">
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement du média">
     <div class="lightbox-inner">
       <button class="lightbox-close" id="lightboxClose" type="button">✕ Fermer</button>
-      <img id="lightboxImg" alt="" />
+      <div id="lightboxMedia"></div>
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </div>
@@ -485,25 +506,24 @@
     });
 
     const photos = [
-      { title:"Camino deL Reys", file:"images/villes/camino1.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino2.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino3.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino4.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino5.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino6.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino7.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino8.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino9.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino10.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino11.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino12.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino13.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino14.jpeg" },
-      { title:"Camino deL Reys", file:"images/villes/camino15.mp4" },
-      { title:"Camino deL Reys", file:"images/villes/camino16.mp4" },
-      { title:"Camino deL Reys", file:"images/villes/camino17.mp4" },
-
-            { title:"Camino deL Reys", file:"images/villes/camino18.mp4" }
+      { title:"Caminito del Rey", file:"images/villes/camino1.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino2.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino3.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino4.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino5.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino6.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino7.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino8.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino9.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino10.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino11.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino12.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino13.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino14.jpeg" },
+      { title:"Caminito del Rey", file:"images/villes/camino15.mp4" },
+      { title:"Caminito del Rey", file:"images/villes/camino16.mp4" },
+      { title:"Caminito del Rey", file:"images/villes/camino17.mp4" },
+      { title:"Caminito del Rey", file:"images/villes/camino18.mp4" }
     ];
 
     function escapeHtml(str){
@@ -515,14 +535,29 @@
         .replaceAll("'","&#039;");
     }
 
+    function isVideoFile(file){
+      return /\.(mp4|webm|ogg)$/i.test(file);
+    }
+
     const lb = document.getElementById("lightbox");
-    const lbImg = document.getElementById("lightboxImg");
+    const lbMedia = document.getElementById("lightboxMedia");
     const lbCaption = document.getElementById("lightboxCaption");
     const lbClose = document.getElementById("lightboxClose");
 
-    function openLightbox(src, alt, caption){
-      lbImg.src = src;
-      lbImg.alt = alt || "";
+    function openLightbox(src, alt, caption, type){
+      lbMedia.innerHTML = "";
+
+      if(type === "video"){
+        lbMedia.innerHTML = `
+          <video controls autoplay playsinline>
+            <source src="${escapeHtml(src)}" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        `;
+      } else {
+        lbMedia.innerHTML = `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt || "")}" />`;
+      }
+
       lbCaption.textContent = caption || "";
       lb.classList.add("open");
       document.body.style.overflow = "hidden";
@@ -530,7 +565,7 @@
 
     function closeLightbox(){
       lb.classList.remove("open");
-      lbImg.src = "";
+      lbMedia.innerHTML = "";
       document.body.style.overflow = "";
     }
 
@@ -542,35 +577,50 @@
 
     for (const p of photos){
       const el = document.createElement("div");
-      el.className = "thumb";
-      el.setAttribute("data-img", p.file);
+      const isVideo = isVideoFile(p.file);
+
+      el.className = "thumb" + (isVideo ? " is-video" : "");
+      el.setAttribute("data-src", p.file);
       el.setAttribute("data-alt", p.title);
       el.setAttribute("data-cap", p.title);
+      el.setAttribute("data-type", isVideo ? "video" : "image");
 
-      el.innerHTML = `<img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />`;
+      if(isVideo){
+        el.innerHTML = `
+          <video muted playsinline preload="metadata">
+            <source src="${escapeHtml(p.file)}" type="video/mp4">
+          </video>
+        `;
+      } else {
+        el.innerHTML = `<img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />`;
+      }
+
       gallery.appendChild(el);
 
-      const img = el.querySelector("img");
+      const media = el.querySelector(isVideo ? "video" : "img");
 
-      img.addEventListener("error", ()=>{
+      media.addEventListener("error", ()=>{
         el.classList.add("placeholder");
-        el.removeAttribute("data-img");
+        el.classList.remove("is-video");
+        el.removeAttribute("data-src");
         el.removeAttribute("data-alt");
         el.removeAttribute("data-cap");
+        el.removeAttribute("data-type");
         el.innerHTML = `
           <div class="ph">
-            <div class="tag">Photo à ajouter</div>
+            <div class="tag">${isVideo ? "Vidéo à ajouter" : "Photo à ajouter"}</div>
             <div>${escapeHtml(p.title)}</div>
           </div>
         `;
       });
 
       el.addEventListener("click", ()=>{
-        const src = el.getAttribute("data-img");
+        const src = el.getAttribute("data-src");
         if(!src) return;
         const alt = el.getAttribute("data-alt") || "";
         const cap = el.getAttribute("data-cap") || "";
-        openLightbox(src, alt, cap);
+        const type = el.getAttribute("data-type") || "image";
+        openLightbox(src, alt, cap, type);
       });
     }
   </script>
