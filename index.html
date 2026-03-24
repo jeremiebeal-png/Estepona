@@ -12,25 +12,35 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estepona — Bons plans</title>
-  <meta name="description" content="Guide d’Estepona : vidéos, quartiers, visites, restaurants, itinéraires et cartes." />
+
+  <title>Vivre à Estepona : guide local, restaurants, plages, quartiers et activités</title>
+  <meta name="description" content="Découvrez Vivre à Estepona : guide local avec restaurants, plages, quartiers, activités, santé, écoles, transport, cartes et conseils pratiques pour visiter ou s’installer à Estepona." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
+  <link rel="canonical" href="https://www.vivreaestepona.com/" />
 
   <!-- Open Graph -->
+  <meta property="og:locale" content="fr_FR" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Bons plans à Estepona — Guide local" />
-  <meta property="og:description" content="Vidéos, quartiers, visites, restos, itinéraires et carte interactive pour découvrir Estepona." />
-  <meta property="og:image" content="/img/og-estepona.jpg" />
+  <meta property="og:site_name" content="Vivre à Estepona" />
+  <meta property="og:title" content="Vivre à Estepona : guide local, restaurants, plages et activités" />
+  <meta property="og:description" content="Le guide local d’Estepona : quartiers, restaurants, plages, activités, écoles, santé, transport et cartes pratiques." />
+  <meta property="og:url" content="https://www.vivreaestepona.com/" />
+  <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
+  <meta property="og:image:alt" content="Vue d’Estepona sur la Costa del Sol" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Vivre à Estepona : guide local, restaurants, plages et activités" />
+  <meta name="twitter:description" content="Explorez Estepona avec notre guide local : restaurants, quartiers, plages, cartes et idées de visites." />
+  <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
   <!-- Preloads -->
-  <link rel="preload" href="/video/Video-estepona.mp4" as="video" type="video/mp4" />
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
     :root{
-      /* ✅ aligné avec l’ambiance “fresques” */
       --color-bg: #0b3c49;
-
       --color-surface: #0f1f44;
       --color-surface-2: #0f1625;
       --color-primary: #2db4ff;
@@ -42,8 +52,6 @@
       --radius-lg: 14px;
       --radius-md: 10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-
-      /* ✅ manquants (utilisés par header / menu mobile) */
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
@@ -52,14 +60,11 @@
     html,body{
       margin:0;
       padding:0;
-
-      /* ✅ Fond identique à la page “fresques” */
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
         radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
-
       color:var(--color-text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
@@ -68,16 +73,25 @@
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header */
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+
     header{
       position: sticky;
       top: 0;
       z-index: 50;
-
       background: var(--glass);
       backdrop-filter: blur(12px) saturate(140%);
       -webkit-backdrop-filter: blur(12px) saturate(140%);
-
       border-bottom: 1px solid var(--glassLine);
     }
 
@@ -92,7 +106,6 @@
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
-    /* Boutons sociaux (header) */
     .social-top{display:flex;gap:10px;align-items:center}
     .social-top a{
       display:inline-flex;
@@ -100,10 +113,8 @@
       gap:8px;
       padding:8px 12px;
       border-radius:999px;
-
       background: rgba(234,246,248,.08);
       border: 1px solid rgba(234,246,248,.14);
-
       color: rgba(234,246,248,.92);
       font-size:14px;
       line-height:1;
@@ -115,26 +126,45 @@
 
     .social-top svg{width:16px;height:16px;opacity:.95}
 
-    .search{
-      display:flex;gap:8px;align-items:center;
-      background:var(--color-surface);border:1px solid var(--color-border);
-      border-radius:999px;padding:8px 12px
-    }
-    .search input{background:transparent;border:0;outline:0;color:var(--color-text);min-width:200px}
-
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
-      border:1px solid var(--color-border);background:var(--color-surface)
+      border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;
     }
+
     @media (max-width:980px){
-      nav.primary,.search,.social-top{display:none}
+      nav.primary,.social-top{display:none}
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Sections (cartes) */
+    .hero-intro{
+      padding:32px 0 12px;
+    }
+
+    .hero-card{
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card h1{
+      margin:0 0 12px;
+      font-size:clamp(30px,4vw,48px);
+      line-height:1.1;
+    }
+
+    .hero-card p{
+      margin:0;
+      color:var(--color-text);
+      max-width:900px;
+      font-size:17px;
+      line-height:1.7;
+    }
+
     section.category{margin:30px 0}
     .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-    .section-head h3{margin:0;font-size:22px}
+    .section-head h2{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
     .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
 
@@ -149,7 +179,6 @@
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00))
     }
 
-    /* Vignettes uniformes */
     .card .thumb{
       position: relative;
       height: clamp(200px, 22vw, 260px);
@@ -158,6 +187,7 @@
       background:#0b1322;
       display:block;
     }
+
     .card .thumb img{
       position:absolute; inset:0;
       width:100%; height:100%;
@@ -166,7 +196,6 @@
       display:block;
     }
 
-    /* ✅ Fix image "Actualités" mal cadrée : on affiche l'image en entier */
     .card .thumb.contain img{
       object-fit:contain;
       object-position:center;
@@ -174,14 +203,12 @@
 
     .card .body{padding:12px 14px 16px}
     .card .kicker{font-size:12px;color:var(--color-muted)}
-    .card h4{margin:4px 0 6px;font-size:18px;line-height:1.35}
+    .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
 
-    /* Grille spéciale cartes */
     .map-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
     @media (max-width:980px){.map-grid{grid-template-columns:1fr}}
 
-    /* Lightbox */
     .lightbox{
       position:fixed;inset:0;display:none;
       align-items:center;justify-content:center;
@@ -199,7 +226,6 @@
     }
     .lb-close:hover{background:#eef6f4}
 
-    /* Footer */
     footer{
       margin-top:48px;border-top:1px solid var(--color-border);
       background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))
@@ -218,7 +244,6 @@
     .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
-    /* Menu mobile */
     .mobile-backdrop{
       position:fixed; inset:0;
       background:rgba(0,0,0,.55);
@@ -230,11 +255,9 @@
       right: 0;
       height: 100vh;
       width: min(360px, 86vw);
-
       background: var(--glass-strong);
       backdrop-filter: blur(14px) saturate(140%);
       -webkit-backdrop-filter: blur(14px) saturate(140%);
-
       border-left: 1px solid var(--glassLine);
       z-index: 150;
       box-shadow: var(--shadow);
@@ -257,10 +280,6 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* ==========
-       Mobile polish
-       ========== */
-    .search input{ font-size:16px; }
     header, .mobile-menu{
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
@@ -271,17 +290,17 @@
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
-
+      .hero-intro{ padding:20px 0 8px; }
+      .hero-card{ padding:18px; }
       section.category{ margin:22px 0; }
       .section-head{ gap:10px; margin-bottom:12px; }
-      .section-head h3{ font-size:18px; }
+      .section-head h2{ font-size:18px; }
       .section-head p{ font-size:13px; }
       .more{ display:none; }
-
       .grid{ gap:14px; }
       .card{ border-radius:16px; }
       .card .body{ padding:12px 12px 14px; }
-      .card h4{ font-size:16px; }
+      .card h3{ font-size:16px; }
       .card .excerpt{ font-size:13px; }
       .card .thumb{ height: 180px; }
       .map-grid{ gap:14px; }
@@ -291,22 +310,74 @@
       .brand strong{ font-size:15px; }
       .card .thumb{ height: 165px; }
     }
-
-    .burger{ cursor:pointer; }
-    .burger:active{ transform: scale(.98); }
   </style>
+
+  <!-- Données structurées -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"Vivre à Estepona",
+    "url":"https://www.vivreaestepona.com/",
+    "inLanguage":"fr",
+    "description":"Guide local pour visiter, découvrir ou vivre à Estepona.",
+    "publisher":{
+      "@type":"Organization",
+      "name":"Vivre à Estepona",
+      "url":"https://www.vivreaestepona.com/",
+      "logo":{
+        "@type":"ImageObject",
+        "url":"https://www.vivreaestepona.com/img/logo_bon_plan_estepona.png"
+      }
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"Quelle est la meilleure période pour venir à Estepona ?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"La meilleure période pour venir à Estepona se situe généralement entre fin mai et juin, puis entre septembre et mi-octobre, avec un climat agréable, moins de monde et des tarifs souvent plus doux."
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"Où loger à Estepona ?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Pour loger à Estepona sans voiture, privilégiez le centre historique, Playa de la Rada, le port ou Playa del Cristo. Avec voiture, les secteurs du New Golden Mile, Selwo, Cancelada, Casares Costa ou l’arrière-pays sont aussi intéressants."
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"Faut-il une voiture à Estepona ?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Une voiture n’est pas indispensable pour profiter du centre d’Estepona, de la vieille ville, du paseo et de la plage. Elle devient utile si vous logez dans des zones plus excentrées ou pour explorer la région."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 
 <body>
-  <!-- HEADER -->
   <header>
     <div class="container header-row">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+      <a class="brand" href="index.html" aria-label="Accueil Vivre à Estepona">
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" width="44" height="44" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
-      <nav class="primary">
+      <nav class="primary" aria-label="Navigation principale">
         <a href="#manger">Restaurants</a>
         <a href="#itin">Que faire</a>
         <a href="transport-estepona.html">Transport</a>
@@ -317,7 +388,7 @@
       </nav>
 
       <div class="social-top" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Vivre à Estepona">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
@@ -325,7 +396,7 @@
           </svg>
           Instagram
         </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer" aria-label="YouTube Vivre à Estepona">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
@@ -334,7 +405,7 @@
         </a>
       </div>
 
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
@@ -342,36 +413,43 @@
     </div>
   </header>
 
-  <!-- MENU MOBILE (drawer) -->
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
       <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
     </div>
 
-    <nav class="mobile-nav">
+    <nav class="mobile-nav" aria-label="Navigation mobile">
       <a href="#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
       <a href="#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
       <a href="transport-estepona.html">Transport</a>
       <a href="ecoles.html">Écoles</a>
       <a href="sante.html">Santé</a>
       <a href="trafic.html">Trafic</a>
-      <a href="index.html">Aux Alentours</a>
+      <a href="alentours.html">Aux alentours</a>
       <a href="contact.html">Contact</a>
-
-      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">YouTube</a>
     </nav>
   </div>
 
   <main class="container">
-    <!-- ✅ HERO / SLIDER SUPPRIMÉ -->
+    <section class="hero-intro" aria-labelledby="page-title">
+      <div class="hero-card">
+        <h1 id="page-title">Vivre à Estepona : le guide local pour découvrir la ville, ses plages, ses restaurants et ses quartiers</h1>
+        <p>
+          Bienvenue sur <strong>Vivre à Estepona</strong>, votre guide local pour visiter Estepona, trouver les meilleurs
+          restaurants, découvrir les plages, explorer la vieille ville, préparer votre séjour et mieux connaître la
+          Costa del Sol. Que vous soyez en vacances, en repérage immobilier ou sur le point de vous installer,
+          vous trouverez ici des conseils pratiques, des idées de sorties, des cartes et des bonnes adresses.
+        </p>
+      </div>
+    </section>
 
-    <!-- SECTION : À voir / À faire -->
-    <section class="category" id="voir" style="margin-top:22px">
+    <section class="category" id="voir" aria-labelledby="section-voir">
       <div class="section-head">
         <div>
-          <h3>À voir / À faire</h3>
+          <h2 id="section-voir">À voir et à faire à Estepona</h2>
           <p>Nos lieux et activités immanquables à Estepona</p>
         </div>
         <a class="more" href="fresques.html">Tout voir</a>
@@ -379,43 +457,46 @@
 
       <div class="grid">
         <article class="card">
-          <a class="thumb" href="estepona1.html"><img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona"/></a>
+          <a class="thumb" href="estepona1.html">
+            <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona avec ses ruelles blanches et fresques murales" loading="eager" decoding="async" />
+          </a>
           <div class="body">
             <div class="kicker">Balade</div>
-            <h4><a href="estepona1.html">Vieille ville &amp; fresques</a></h4>
-            <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à chaque coin de rue.</p>
+            <h3><a href="estepona1.html">Vieille ville et fresques d’Estepona</a></h3>
+            <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à découvrir dans le centre historique d’Estepona.</p>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb contain" href="actualites.html">
-            <img src="img/News_Actualite_Estepona.png" alt="Actualités d’Estepona"/>
+            <img src="img/News_Actualite_Estepona.png" alt="Actualités et événements à Estepona" loading="lazy" decoding="async" />
           </a>
           <div class="body">
             <div class="kicker">Actualités</div>
-            <h4><a href="actualites.html">Actualité Estepona</a></h4>
-            <p class="excerpt">Toutes les actualités sur Estepona, événements et infos pratiques.</p>
+            <h3><a href="actualites.html">Actualités d’Estepona</a></h3>
+            <p class="excerpt">Retrouvez les événements, nouveautés et informations pratiques pour suivre la vie locale à Estepona.</p>
             <a class="cta" href="actualites.html" style="display:inline-block;margin-top:8px;background:var(--color-primary);color:#06131e;padding:8px 12px;border-radius:10px;font-weight:600">Voir l’actu</a>
           </div>
         </article>
 
         <article class="card">
-          <a class="thumb" href="histoire_paseo.html"><img src="img/aquerelle_paseo.png" alt="Paseo marítimo"/></a>
+          <a class="thumb" href="histoire_paseo.html">
+            <img src="img/aquerelle_paseo.png" alt="Promenade du paseo marítimo à Estepona" loading="lazy" decoding="async" />
+          </a>
           <div class="body">
             <div class="kicker">Paseo</div>
-            <h4><a href="histoire_paseo.html">Paseo marítimo</a></h4>
-            <p class="excerpt">Des kilomètres de sable, chiringuitos, douches, jeux et un paseo idéal à vélo.</p>
-            <div class="meta" style="color:var(--color-muted)">☀️ Idéal familles</div>
+            <h3><a href="histoire_paseo.html">Paseo marítimo d’Estepona</a></h3>
+            <p class="excerpt">Des kilomètres de plage, chiringuitos, jeux et promenade en bord de mer pour profiter d’Estepona à pied ou à vélo.</p>
+            <div class="meta" style="color:var(--color-muted)">Idéal pour les familles</div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- SECTION : Restaurants -->
-    <section class="category" id="manger">
+    <section class="category" id="manger" aria-labelledby="section-manger">
       <div class="section-head">
         <div>
-          <h3>Restaurants &amp; Chiringuitos</h3>
+          <h2 id="section-manger">Restaurants et chiringuitos à Estepona</h2>
           <p>Nos bonnes adresses triées par budget et quartier</p>
         </div>
         <a class="more" href="chiringuito.html">Tous les restos</a>
@@ -423,74 +504,85 @@
 
       <div class="grid">
         <article class="card">
-          <a class="thumb" href="chiringuito.html"><img src="img/espeto.png" alt="Chiringuito"/></a>
+          <a class="thumb" href="chiringuito.html">
+            <img src="img/espeto.png" alt="Chiringuito à Estepona avec spécialités de poissons grillés" loading="lazy" decoding="async" />
+          </a>
           <div class="body">
             <div class="kicker">Playa</div>
-            <h4><a href="chiringuito.html">Chiringuito</a></h4>
-            <p class="excerpt">Les chiringuitos d’Estepona : espeto, poissons grillés, pieds dans le sable.</p>
-            <div class="meta" style="color:var(--color-muted)">Playa</div>
+            <h3><a href="chiringuito.html">Chiringuitos à Estepona</a></h3>
+            <p class="excerpt">Les meilleurs chiringuitos d’Estepona pour déguster espeto, poissons grillés et cuisine locale les pieds dans le sable.</p>
+            <div class="meta" style="color:var(--color-muted)">Bord de mer</div>
           </div>
         </article>
 
         <article class="card">
-          <a class="thumb" href="restaurant_centre.html"><img src="img/estepona-aquatelle1.png" alt="Centre ville"/></a>
+          <a class="thumb" href="restaurant_centre.html">
+            <img src="img/estepona-aquatelle1.png" alt="Restaurants du centre historique d’Estepona" loading="lazy" decoding="async" />
+          </a>
           <div class="body">
             <div class="kicker">Centro</div>
-            <h4><a href="restaurant_centre.html">Au centre</a></h4>
-            <p class="excerpt">Les restaurants du centre historique : tapas, bodegas et petites places.</p>
-            <div class="meta" style="color:var(--color-muted)">Centro</div>
+            <h3><a href="restaurant_centre.html">Restaurants du centre d’Estepona</a></h3>
+            <p class="excerpt">Tapas, bodegas et bonnes tables à découvrir dans le centre historique d’Estepona.</p>
+            <div class="meta" style="color:var(--color-muted)">Centre-ville</div>
           </div>
         </article>
 
         <article class="card">
-          <a class="thumb" href="Sortie_disco.html"><img src="img/ciel.png" alt="Rooftop"/></a>
+          <a class="thumb" href="Sortie_disco.html">
+            <img src="img/ciel.png" alt="Rooftop et vue coucher de soleil à Estepona" loading="lazy" decoding="async" />
+          </a>
           <div class="body">
             <div class="kicker">Port</div>
-            <h4><a href="Sortie_disco.html">Rooftops &amp; cocktails</a></h4>
-            <p class="excerpt">Admirer le coucher de soleil sur le port et la Sierra Bermeja.</p>
+            <h3><a href="Sortie_disco.html">Rooftops et cocktails à Estepona</a></h3>
+            <p class="excerpt">Où boire un verre à Estepona avec vue sur le port, la mer et la Sierra Bermeja.</p>
             <div class="meta" style="color:var(--color-muted)">Port</div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- SECTION : Que faire? -->
-    <section class="category" id="itin">
+    <section class="category" id="itin" aria-labelledby="section-itin">
       <div class="section-head">
         <div>
-          <h3>Quelle ville peut-t-on visiter.</h3>
-          <p>Nos suggestions détaillées d’activités et de balades</p>
+          <h2 id="section-itin">Villes à visiter autour d’Estepona</h2>
+          <p>Nos suggestions d’excursions et de balades autour de la Costa del Sol</p>
         </div>
       </div>
+      <p style="color:var(--color-muted);margin:0 0 14px;">
+        Depuis Estepona, vous pouvez facilement visiter Marbella, Casares, Ronda, Gibraltar ou encore d’autres villes d’Andalousie.
+      </p>
       <a class="cta" href="alentours.html" style="display:block;text-align:center;background:var(--color-primary);color:#06131e;padding:18px;border-radius:14px;font-weight:700">Découvrir les villes de la région →</a>
     </section>
 
-    <!-- SECTION : Cartes -->
-    <section class="category" id="cartes">
+    <section class="category" id="cartes" aria-labelledby="section-cartes">
       <div class="section-head">
         <div>
-          <h3>Cartes</h3>
+          <h2 id="section-cartes">Cartes d’Estepona et de l’Andalousie</h2>
           <p>Cliquez sur une carte pour l’agrandir</p>
         </div>
       </div>
 
       <div class="map-grid">
         <figure class="card" style="margin:0">
-          <a class="thumb" href="#"><img class="zoomable" src="img/carte_plage.jpg" alt="Carte des plages d’Estepona" data-full="img/carte_plage.jpg"/></a>
-          <figcaption class="body" style="color:var(--color-muted)">Carte des plages</figcaption>
+          <a class="thumb" href="#">
+            <img class="zoomable" src="img/carte_plage.jpg" alt="Carte des plages d’Estepona" data-full="img/carte_plage.jpg" loading="lazy" decoding="async" />
+          </a>
+          <figcaption class="body" style="color:var(--color-muted)">Carte des plages d’Estepona</figcaption>
         </figure>
+
         <figure class="card" style="margin:0">
-          <a class="thumb" href="alentours.html"><img class="zoomable" src="img/9.jpg" alt="Carte d'Andalousie" data-full="img/9.jpg"/></a>
-          <figcaption class="body" style="color:var(--color-muted)">Carte Andalousie</figcaption>
+          <a class="thumb" href="alentours.html">
+            <img src="img/9.jpg" alt="Carte de l’Andalousie autour d’Estepona" loading="lazy" decoding="async" />
+          </a>
+          <figcaption class="body" style="color:var(--color-muted)">Carte de l’Andalousie</figcaption>
         </figure>
       </div>
     </section>
 
-    <!-- SECTION : FAQ -->
-    <section class="category" id="faq">
+    <section class="category" id="faq" aria-labelledby="section-faq">
       <div class="section-head">
         <div>
-          <h3>FAQ</h3>
+          <h2 id="section-faq">FAQ sur Estepona</h2>
           <p>Questions fréquentes pour préparer votre séjour</p>
         </div>
       </div>
@@ -498,54 +590,69 @@
       <div class="card" style="overflow:hidden">
         <div class="body" style="padding:0">
           <div class="acc-item">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Quelle est la meilleure période pour venir ?</button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              Le top compromis 👇<br>fin mai–juin et septembre–mi-octobre : 24–30 °C, mer 20–24 °C, moins de monde et tarifs plus doux.<br><br>
-              Selon ton objectif :<br><br>
-              Plage & ambiance : juillet–août (28–35 °C, mer 23–25 °C) → très animé, mais cher et bondé.<br>
-              Visites/randos : mars–avril ou fin sept.–nov. (17–24 °C) → agréable pour marcher, mer plus fraîche.<br>
-              Budget mini / calme : déc.–févr. (12–18 °C) → doux mais plus de pluie et eau froide.<br><br>
-              Astuce : vise semaines hors vacances et évite les jours de levante (vent d’est) si tu veux la plage parfaite.
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq1" id="faq-btn-1" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Quelle est la meilleure période pour venir à Estepona ?
+            </button>
+            <div class="acc-panel" id="faq1" role="region" aria-labelledby="faq-btn-1" hidden style="padding:0 16px 16px;color:var(--color-text)">
+              Le meilleur compromis se situe entre <strong>fin mai et juin</strong>, puis entre <strong>septembre et mi-octobre</strong> :
+              températures agréables, mer plus douce, moins de monde et tarifs souvent plus raisonnables.
             </div>
           </div>
 
           <div class="acc-item" style="border-top:1px solid var(--color-border)">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Où loger à Estepona ?</button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              Sans voiture → près du centre historique, Playa de la Rada, port/marina ou Playa del Cristo.<br><br>
-              Avec voiture → New Golden Mile (Costalita/El Padrón), Selwo/Cancelada, Casares Costa / Bahia Dorada, arrière-pays (Valle Romano, Estepona Golf).
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq2" id="faq-btn-2" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Où loger à Estepona ?
+            </button>
+            <div class="acc-panel" id="faq2" role="region" aria-labelledby="faq-btn-2" hidden style="padding:0 16px 16px;color:var(--color-text)">
+              Sans voiture, privilégiez le <strong>centre historique</strong>, <strong>Playa de la Rada</strong>, le <strong>port</strong> ou <strong>Playa del Cristo</strong>.
+              Avec voiture, les zones du <strong>New Golden Mile</strong>, <strong>Selwo</strong>, <strong>Cancelada</strong>, <strong>Casares Costa</strong> ou l’arrière-pays sont également très intéressantes.
             </div>
           </div>
 
           <div class="acc-item" style="border-top:1px solid var(--color-border)">
-            <button class="acc-btn" aria-expanded="false" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">Faut-il une voiture ?</button>
-            <div class="acc-panel" style="display:none;padding:0 16px 16px;color:var(--color-text)">
-              1–3 jours centrés sur Estepona : pas indispensable (vieille ville, paseo, plage de la Rada et port à pied).<br><br>
-              Sans voiture : taxis/VTC (Uber/Cabify), bus côtiers, vélos sur le paseo.<br><br>
-              Utile si logement excentré (New Golden Mile, Selwo, Cancelada, Casares Costa) ou pour explorer (Casares, Ronda, Marbella, Gibraltar, Sierra Bermeja).
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq3" id="faq-btn-3" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Faut-il une voiture à Estepona ?
+            </button>
+            <div class="acc-panel" id="faq3" role="region" aria-labelledby="faq-btn-3" hidden style="padding:0 16px 16px;color:var(--color-text)">
+              Pas forcément. Pour découvrir la vieille ville, le paseo, le port et les plages du centre, une voiture n’est pas indispensable.
+              Elle devient utile si vous logez à l’extérieur du centre ou si vous souhaitez explorer la région autour d’Estepona.
             </div>
           </div>
         </div>
       </div>
     </section>
+
+    <section class="category" aria-labelledby="section-seo-text">
+      <div class="section-head">
+        <div>
+          <h2 id="section-seo-text">Pourquoi visiter ou vivre à Estepona ?</h2>
+        </div>
+      </div>
+      <p style="color:var(--color-text);line-height:1.8;margin:0;">
+        Estepona séduit par son centre historique fleuri, ses plages, son paseo maritime, son ambiance plus authentique que d’autres villes de la Costa del Sol
+        et sa proximité avec Marbella, Casares ou Gibraltar. Que vous cherchiez des <strong>restaurants à Estepona</strong>, des idées de
+        <strong>visites autour d’Estepona</strong>, des informations sur les <strong>écoles</strong>, la <strong>santé</strong>, le <strong>transport</strong>
+        ou la vie locale, ce guide a pour objectif de centraliser les meilleures informations pratiques pour profiter pleinement de la ville.
+      </p>
+    </section>
   </main>
 
-  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
     <img src="" alt="" id="lightbox-img" />
     <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container footer-top">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+      <a class="brand" href="index.html" aria-label="Retour à l’accueil">
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" width="44" height="44" loading="lazy" decoding="async" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
       <div class="social" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
@@ -553,9 +660,9 @@
           </svg>
           Instagram
         </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
             <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
           </svg>
           YouTube
@@ -566,36 +673,41 @@
   </footer>
 
   <script>
-    // Accordéon FAQ
     const accBtns = document.querySelectorAll('.acc-btn');
-    accBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const expanded = btn.getAttribute('aria-expanded')==='true';
-        accBtns.forEach(b=>{
-          b.setAttribute('aria-expanded','false');
-          b.nextElementSibling.style.display='none';
+
+    accBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+        accBtns.forEach(b => {
+          b.setAttribute('aria-expanded', 'false');
+          const panel = document.getElementById(b.getAttribute('aria-controls'));
+          if (panel) panel.hidden = true;
         });
-        if(!expanded){
-          btn.setAttribute('aria-expanded','true');
-          btn.nextElementSibling.style.display='block';
+
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          const panel = document.getElementById(btn.getAttribute('aria-controls'));
+          if (panel) panel.hidden = false;
         }
       });
     });
 
-    // Lightbox
-    const lb   = document.getElementById('lightbox');
-    const lbImg= document.getElementById('lightbox-img');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
     const lbClose = document.getElementById('lbClose');
     let lastFocus = null;
 
     function openLB(src, alt){
       lastFocus = document.activeElement;
-      lbImg.src = src; lbImg.alt = alt || '';
+      lbImg.src = src;
+      lbImg.alt = alt || '';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
       lbClose.focus();
     }
+
     function closeLB(){
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden','true');
@@ -604,22 +716,28 @@
       if(lastFocus) lastFocus.focus();
     }
 
-    document.querySelectorAll('.zoomable').forEach(img=>{
-      img.addEventListener('click',()=> openLB(img.dataset.full||img.src, img.alt));
-      img.setAttribute('tabindex','0');
-      img.addEventListener('keydown',e=>{
-        if(e.key==='Enter'||e.key===' '){
+    document.querySelectorAll('.zoomable').forEach(img => {
+      img.addEventListener('click', e => {
+        e.preventDefault();
+        openLB(img.dataset.full || img.src, img.alt);
+      });
+      img.setAttribute('tabindex', '0');
+      img.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){
           e.preventDefault();
-          openLB(img.dataset.full||img.src, img.alt);
+          openLB(img.dataset.full || img.src, img.alt);
         }
       });
     });
 
-    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    lb.addEventListener('click', e => {
+      if(e.target === lb) closeLB();
+    });
     lbClose.addEventListener('click', closeLB);
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && lb.classList.contains('open')) closeLB();
+    });
 
-    // Menu mobile
     const burger = document.querySelector('.burger');
     const mobile = document.getElementById('mobileMenu');
     let backdrop;
@@ -632,18 +750,19 @@
       backdrop.className = 'mobile-backdrop';
       backdrop.addEventListener('click', closeMenu);
       document.body.appendChild(backdrop);
-      document.body.style.overflow='hidden';
+      document.body.style.overflow = 'hidden';
     }
+
     function closeMenu(){
       if(!mobile) return;
       mobile.hidden = true;
       burger?.setAttribute('aria-expanded','false');
       backdrop?.remove();
-      document.body.style.overflow='';
+      document.body.style.overflow = '';
     }
 
-    burger?.addEventListener('click',()=>{
-      const open = burger.getAttribute('aria-expanded')==='true';
+    burger?.addEventListener('click', () => {
+      const open = burger.getAttribute('aria-expanded') === 'true';
       open ? closeMenu() : openMenu();
     });
   </script>
