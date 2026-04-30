@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ville de Ronda — Vivre à Estepona</title>
-  <meta name="description" content="Galerie photo de Casares avec ouverture en grand au clic." />
+  <meta name="description" content="Galerie photo et vidéo de Ronda avec ouverture en grand au clic." />
   <meta name="theme-color" content="#0b3c49" />
 
   <style>
@@ -23,8 +23,8 @@
       --glassLine: rgba(234,246,248,.14);
       --color-surface: #0f1f44;
       --color-border: #1a2d5a;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     *{box-sizing:border-box}
@@ -36,7 +36,6 @@
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
-        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
       min-height:100vh;
     }
@@ -116,16 +115,10 @@
       border: 1px solid rgba(234,246,248,.14);
       color: rgba(234,246,248,.92);
       font-size:14px;
-      line-height:1;
       white-space:nowrap;
     }
 
-    .social-top a:hover{
-      background: rgba(234,246,248,.12);
-      border-color: rgba(234,246,248,.22);
-    }
-
-    .social-top svg{width:16px;height:16px;opacity:.95}
+    .social-top svg{width:16px;height:16px}
 
     .burger{
       display:none;
@@ -158,7 +151,6 @@
       width: min(360px, 86vw);
       background: var(--glass-strong);
       backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
       border-left: 1px solid var(--glassLine);
       z-index: 150;
       box-shadow: var(--shadow);
@@ -169,7 +161,6 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
       padding:6px 0 12px;
       border-bottom:1px solid var(--panelLine);
     }
@@ -193,7 +184,7 @@
 
     .mobile-nav a{
       display:block;
-      padding:12px 12px;
+      padding:12px;
       border-radius:12px;
       border:1px solid rgba(234,246,248,.12);
       background:rgba(255,255,255,.02);
@@ -216,7 +207,6 @@
       margin:0;
       font-size:30px;
       line-height:1.12;
-      letter-spacing:.2px;
       color: var(--textOn);
     }
 
@@ -246,15 +236,28 @@
       box-shadow: 0 10px 24px rgba(10,30,35,.16);
     }
 
-    .thumb img{
+    .thumb img,
+    .thumb video{
       width:100%;
       height:100%;
       object-fit:cover;
       transition: transform .18s ease;
     }
 
-    .thumb:hover img{
+    .thumb:hover img,
+    .thumb:hover video{
       transform: scale(1.05);
+    }
+
+    .play-icon{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size:42px;
+      background:rgba(0,0,0,.22);
+      color:#fff;
+      pointer-events:none;
     }
 
     .thumb.placeholder{
@@ -322,10 +325,11 @@
       position:relative;
     }
 
-    .lightbox-inner img{
+    .lightbox-inner img,
+    .lightbox-inner video{
       width:100%;
       height:auto;
-      max-height: calc(100vh - 48px);
+      max-height: calc(100vh - 96px);
       display:block;
       object-fit:contain;
       background: rgba(0,0,0,.25);
@@ -342,10 +346,7 @@
       border: 1px solid rgba(234,246,248,.14);
       color: rgba(234,246,248,.95);
       font-size:13px;
-    }
-
-    .lightbox-close:hover{
-      background: rgba(234,246,248,.14);
+      z-index:2;
     }
 
     .lightbox-caption{
@@ -371,7 +372,9 @@
   <header>
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
@@ -385,28 +388,13 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <div class="social-top" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
+      <div class="social-top">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
       </div>
 
       <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+        ☰
       </button>
     </div>
   </header>
@@ -414,17 +402,17 @@
   <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
     <div class="mobile-menu-head">
       <strong>Menu</strong>
-      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu">×</button>
     </div>
 
     <nav class="mobile-nav">
-      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
-      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
+      <a href="index.html#manger">Restaurants</a>
+      <a href="index.html#itin">Que faire</a>
       <a href="transport-estepona.html">Transport</a>
       <a href="ecoles.html">Écoles</a>
       <a href="sante.html">Santé</a>
       <a href="trafic.html">Trafic</a>
-      <a href="contact.html" onclick="document.querySelector('.burger')?.click()">Contact</a>
+      <a href="contact.html">Contact</a>
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
@@ -432,21 +420,21 @@
 
   <main class="container page">
     <section class="hero">
-      <h1 class="title">Village de Ronda</h1>
-      <p class="sub">A environ 1 heure de Estepona.</p>
+      <h1 class="title">Ville de Ronda</h1>
+      <p class="sub">À environ 1 heure d’Estepona.</p>
     </section>
 
     <section>
       <div id="gallery" class="grid" aria-live="polite"></div>
-
-      <p class="foot">Photos ©</p>
+      <p class="foot">Photos et vidéos ©</p>
     </section>
   </main>
 
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement de l’image">
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement du média">
     <div class="lightbox-inner">
       <button class="lightbox-close" id="lightboxClose" type="button">✕ Fermer</button>
       <img id="lightboxImg" alt="" />
+      <video id="lightboxVideo" controls playsinline style="display:none"></video>
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </div>
@@ -454,17 +442,20 @@
   <script>
     const burgerBtn = document.querySelector('.burger');
     const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.querySelector('.mobile-close');
     let backdropEl;
 
     function openMenu(){
       if(!mobileMenu) return;
       mobileMenu.hidden = false;
       burgerBtn?.setAttribute('aria-expanded','true');
+
       backdropEl = document.createElement('div');
       backdropEl.className = 'mobile-backdrop';
       backdropEl.addEventListener('click', closeMenu);
       document.body.appendChild(backdropEl);
-      document.body.style.overflow='hidden';
+
+      document.body.style.overflow = 'hidden';
     }
 
     function closeMenu(){
@@ -472,61 +463,73 @@
       mobileMenu.hidden = true;
       burgerBtn?.setAttribute('aria-expanded','false');
       backdropEl?.remove();
-      document.body.style.overflow='';
+      backdropEl = null;
+      document.body.style.overflow = '';
     }
 
-    burgerBtn?.addEventListener('click',()=>{
+    burgerBtn?.addEventListener('click', () => {
       const open = burgerBtn.getAttribute('aria-expanded') === 'true';
       open ? closeMenu() : openMenu();
     });
 
-    document.addEventListener('keydown', e=>{
-      if(e.key === 'Escape' && !mobileMenu.hidden) closeMenu();
+    mobileClose?.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.mobile-nav a').forEach(link => {
+      link.addEventListener('click', closeMenu);
     });
 
-    const photos = [
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape'){
+        if(!mobileMenu.hidden) closeMenu();
+        if(lb.classList.contains('open')) closeLightbox();
+      }
+    });
+
+    const medias = [
       { title:"Ronda", file:"images/villes/ronda.jpeg" },
       { title:"Ronda", file:"images/villes/ronda1.jpeg" },
       { title:"Ronda", file:"images/villes/ronda2.jpeg" },
       { title:"Ronda", file:"images/villes/ronda3.jpeg" },
-            { title:"Ronda", file:"images/villes/ronda45.jpeg" },
-            { title:"Ronda", file:"images/villes/ronda3.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda10.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda11.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda12.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda13.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda14.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda15.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda16.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda17.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda18.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda19.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda20.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda21.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda22.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda23.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda24.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda25.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda26.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda27.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda28.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda29.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda30.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda31.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda32.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda33.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda34.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda35.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda36.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda38.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda39.jpeg" },
-          { title:"Ronda", file:"images/villes/ronda40.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda41.jpeg" },         
+      { title:"Ronda", file:"images/villes/ronda45.jpeg" },
+
+      /* Ajoute ici tes vraies vidéos */
+      { title:"Vidéo Ronda", file:"images/villes/ronda-video.mp4" },
+      { title:"Vidéo Ronda", file:"images/villes/ronda-video2.mp4" },
+
+      { title:"Ronda", file:"images/villes/ronda10.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda11.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda12.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda13.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda14.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda15.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda16.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda17.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda18.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda19.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda20.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda21.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda22.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda23.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda24.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda25.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda26.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda27.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda28.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda29.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda30.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda31.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda32.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda33.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda34.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda35.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda36.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda38.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda39.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda40.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda41.jpeg" },
       { title:"Ronda", file:"images/villes/ronda42.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda43.jpeg" },
-                { title:"Ronda", file:"images/villes/ronda44.jpeg" }
-                
-            
+      { title:"Ronda", file:"images/villes/ronda43.jpeg" },
+      { title:"Ronda", file:"images/villes/ronda44.jpeg" }
     ];
 
     function escapeHtml(str){
@@ -538,62 +541,116 @@
         .replaceAll("'","&#039;");
     }
 
+    function isVideo(file){
+      return /\.(mp4|webm|mov|m4v)$/i.test(file);
+    }
+
+    function videoMime(file){
+      if(/\.webm$/i.test(file)) return "video/webm";
+      if(/\.(mov|m4v)$/i.test(file)) return "video/mp4";
+      return "video/mp4";
+    }
+
     const lb = document.getElementById("lightbox");
     const lbImg = document.getElementById("lightboxImg");
+    const lbVideo = document.getElementById("lightboxVideo");
     const lbCaption = document.getElementById("lightboxCaption");
     const lbClose = document.getElementById("lightboxClose");
 
-    function openLightbox(src, alt, caption){
-      lbImg.src = src;
-      lbImg.alt = alt || "";
+    function openLightbox(src, alt, caption, type){
       lbCaption.textContent = caption || "";
+
+      if(type === "video"){
+        lbImg.style.display = "none";
+        lbImg.src = "";
+
+        lbVideo.style.display = "block";
+        lbVideo.src = src;
+        lbVideo.load();
+
+        lbVideo.play().catch(() => {});
+      } else {
+        lbVideo.pause();
+        lbVideo.removeAttribute("src");
+        lbVideo.load();
+        lbVideo.style.display = "none";
+
+        lbImg.style.display = "block";
+        lbImg.src = src;
+        lbImg.alt = alt || "";
+      }
+
       lb.classList.add("open");
       document.body.style.overflow = "hidden";
     }
 
     function closeLightbox(){
       lb.classList.remove("open");
+
       lbImg.src = "";
+
+      lbVideo.pause();
+      lbVideo.removeAttribute("src");
+      lbVideo.load();
+
       document.body.style.overflow = "";
     }
 
     lbClose.addEventListener("click", closeLightbox);
-    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeLightbox(); });
+    lb.addEventListener("click", e => {
+      if(e.target === lb) closeLightbox();
+    });
 
     const gallery = document.getElementById("gallery");
 
-    for (const p of photos){
+    for (const p of medias){
+      const type = isVideo(p.file) ? "video" : "image";
+
       const el = document.createElement("div");
       el.className = "thumb";
-      el.setAttribute("data-img", p.file);
+      el.setAttribute("data-src", p.file);
       el.setAttribute("data-alt", p.title);
       el.setAttribute("data-cap", p.title);
+      el.setAttribute("data-type", type);
 
-      el.innerHTML = <img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />;
+      if(type === "video"){
+        el.innerHTML = `
+          <video muted playsinline preload="metadata">
+            <source src="${escapeHtml(p.file)}" type="${videoMime(p.file)}">
+          </video>
+          <div class="play-icon">▶</div>
+        `;
+      } else {
+        el.innerHTML = `
+          <img src="${escapeHtml(p.file)}" alt="${escapeHtml(p.title)}" loading="lazy" />
+        `;
+      }
+
       gallery.appendChild(el);
 
-      const img = el.querySelector("img");
+      const mediaEl = el.querySelector("img, video");
 
-      img.addEventListener("error", ()=>{
+      mediaEl?.addEventListener("error", () => {
         el.classList.add("placeholder");
-        el.removeAttribute("data-img");
-        el.removeAttribute("data-alt");
-        el.removeAttribute("data-cap");
-        el.innerHTML = 
+        el.removeAttribute("data-src");
+        el.innerHTML = `
           <div class="ph">
-            <div class="tag">Photo à ajouter</div>
+            <div class="tag">Média à ajouter</div>
             <div>${escapeHtml(p.title)}</div>
           </div>
-        ;
+        `;
       });
 
-      el.addEventListener("click", ()=>{
-        const src = el.getAttribute("data-img");
+      el.addEventListener("click", () => {
+        const src = el.getAttribute("data-src");
         if(!src) return;
-        const alt = el.getAttribute("data-alt") || "";
-        const cap = el.getAttribute("data-cap") || "";
-        openLightbox(src, alt, cap);
+
+        openLightbox(
+          src,
+          el.getAttribute("data-alt") || "",
+          el.getAttribute("data-cap") || "",
+          el.getAttribute("data-type") || "image"
+        );
       });
     }
   </script>
