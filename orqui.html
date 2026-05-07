@@ -3,16 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-
   <title>Orquidario — Vivre à Estepona</title>
+  <meta name="description" content="Photos de l’Orquidario d’Estepona." />
+  <meta name="theme-color" content="#0b3c49" />
 
   <style>
     :root{
       --sea1:#0b3c49;
       --sea2:#0ea5e9;
       --sea3:#2dd4bf;
+      --sand:#f6f1e7;
 
       --panel:#071a22;
+      --panel2:#06161d;
       --panelLine: rgba(234,246,248,.10);
 
       --textOn:#eaf6f8;
@@ -21,57 +24,47 @@
       --radius:18px;
       --shadow:0 14px 40px rgba(10, 30, 35, .18);
 
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+      --color-surface: #0f1f44;
+      --color-text: #eaf2ff;
+      --color-muted: #a8b6cf;
+      --color-border: #1a2d5a;
+
       --glass: rgba(10, 22, 36, .55);
       --glass-strong: rgba(10, 22, 36, .82);
       --glassLine: rgba(234,246,248,.14);
-
-      --color-border: #1a2d5a;
-
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    *{
-      box-sizing:border-box;
-    }
+    *{box-sizing:border-box}
 
     body{
       margin:0;
       font-family:var(--sans);
       color:var(--textOn);
-
       background:
         radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
         radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+        radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
         linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
-
       min-height:100vh;
     }
 
-    a{
-      color:inherit;
-      text-decoration:none;
-    }
-
-    img{
-      max-width:100%;
-      display:block;
-    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
 
     .container{
       width:min(1200px,92vw);
       margin-inline:auto;
     }
 
-    /* HEADER */
     header{
       position: sticky;
       top: 0;
       z-index: 80;
-
       background: var(--glass);
       backdrop-filter: blur(12px) saturate(140%);
       -webkit-backdrop-filter: blur(12px) saturate(140%);
-
       border-bottom: 1px solid var(--glassLine);
     }
 
@@ -94,6 +87,7 @@
       border-radius:12px;
       overflow:hidden;
       border:1px solid var(--color-border);
+      box-shadow:var(--shadow);
       background:#fff;
     }
 
@@ -107,10 +101,123 @@
     nav.primary a{
       padding:8px 12px;
       border-radius:999px;
+      border:1px solid transparent;
     }
 
     nav.primary a:hover{
-      background:rgba(255,255,255,.06);
+      border-color:var(--color-border);
+      background:rgba(255,255,255,.04);
+    }
+
+    .social-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .social-top a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
+      font-size:14px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .social-top a:hover{
+      background: rgba(234,246,248,.12);
+      border-color: rgba(234,246,248,.22);
+    }
+
+    .social-top svg{width:16px;height:16px;opacity:.95}
+
+    .burger{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid var(--color-border);
+      background:var(--color-surface);
+      color:rgba(234,246,248,.92);
+      cursor:pointer;
+    }
+
+    .burger:active{transform:scale(.98)}
+
+    @media (max-width:980px){
+      nav.primary,.social-top{display:none}
+      .burger{display:grid;place-items:center;margin-left:auto}
+    }
+
+    .mobile-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:140;
+    }
+
+    .mobile-menu{
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(360px, 86vw);
+      background: var(--glass-strong);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-left: 1px solid var(--glassLine);
+      z-index: 150;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .mobile-menu-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:6px 0 12px;
+      border-bottom:1px solid var(--panelLine);
+    }
+
+    .mobile-close{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.18);
+      background:rgba(255,255,255,.03);
+      color:rgba(234,246,248,.92);
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .mobile-nav{
+      display:grid;
+      gap:10px;
+      padding-top:14px;
+    }
+
+    .mobile-nav a{
+      display:block;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(234,246,248,.12);
+      background:rgba(255,255,255,.02);
+    }
+
+    .mobile-nav a:hover{
+      background:rgba(255,255,255,.05);
+    }
+
+    header,
+    .mobile-menu{
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
     }
 
     .page{
@@ -121,83 +228,115 @@
       margin:14px 0 20px;
       padding:20px;
       border-radius: var(--radius);
-
       background: linear-gradient(180deg, rgba(7,26,34,.92), rgba(6,22,29,.88));
-
       border: 1px solid var(--panelLine);
       box-shadow: var(--shadow);
     }
 
     .title{
       margin:0;
-      font-size:32px;
+      font-size:30px;
+      line-height:1.12;
+      letter-spacing:.2px;
+      color: var(--textOn);
     }
 
     .sub{
-      margin:10px 0 0;
-      color:var(--mutedOn);
-      font-size:14px;
+      margin:8px 0 0;
+      color: var(--mutedOn);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .results-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:14px 0 8px;
+    }
+
+    .results-head h2{
+      margin:0;
+      font-size:16px;
+      color: rgba(234,246,248,.95);
     }
 
     .grid{
+      margin-top:10px;
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:16px;
+      gap:12px;
     }
 
     .mural{
       border-radius:18px;
-      overflow:hidden;
-
-      background: rgba(7,26,34,.95);
-
+      background: linear-gradient(180deg, rgba(7,26,34,.98), rgba(6,22,29,.96));
       border:1px solid var(--panelLine);
-
+      padding:14px;
       box-shadow:0 10px 24px rgba(10,30,35,.16);
+      overflow:hidden;
     }
 
     .thumb{
       width:100%;
-      aspect-ratio:16/10;
-
+      aspect-ratio:16 / 9;
+      border-radius:16px;
       overflow:hidden;
-      cursor:pointer;
-      background:#06161d;
+      border:1px solid rgba(234,246,248,.10);
+      background:rgba(234,246,248,.06);
+      cursor:zoom-in;
     }
 
     .thumb img{
       width:100%;
       height:100%;
       object-fit:cover;
-
-      transition:transform .25s ease;
+      transform:scale(1.02);
+      transition:transform .15s ease;
     }
 
     .thumb:hover img{
       transform:scale(1.06);
     }
 
-    .placeholder{
+    .thumb.placeholder{
+      cursor:default;
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:220px;
-
-      color:rgba(234,246,248,.7);
-      font-size:14px;
+      text-align:center;
+      padding:14px;
+      color:rgba(234,246,248,.75);
+      border-style:dashed;
+      min-height:190px;
     }
 
-    /* LIGHTBOX */
+    .thumb.placeholder .tag{
+      display:inline-block;
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:999px;
+      background:rgba(234,246,248,.08);
+      border:1px solid rgba(234,246,248,.14);
+      margin-bottom:8px;
+    }
+
+    .foot{
+      margin:22px 0 10px;
+      color:rgba(234,246,248,.70);
+      font-size:12px;
+      line-height:1.5;
+    }
+
     .lightbox{
       position:fixed;
       inset:0;
-
       display:none;
       align-items:center;
       justify-content:center;
-
-      background:rgba(0,0,0,.82);
-
+      background:rgba(0,0,0,.72);
       z-index:9999;
       padding:24px;
     }
@@ -207,68 +346,96 @@
     }
 
     .lightbox-inner{
+      width:min(1100px,100%);
+      max-height:calc(100vh - 48px);
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(234,246,248,.12);
+      background:rgba(7,26,34,.95);
+      box-shadow:0 20px 60px rgba(0,0,0,.40);
       position:relative;
-      width:min(1200px,100%);
-      max-height:100%;
     }
 
     .lightbox-inner img{
       width:100%;
-      max-height:90vh;
+      height:auto;
+      max-height:calc(100vh - 48px);
+      display:block;
       object-fit:contain;
-
-      border-radius:18px;
+      background:rgba(0,0,0,.25);
     }
 
     .lightbox-close{
       position:absolute;
       top:12px;
       right:12px;
-
-      border:none;
       border-radius:999px;
-
-      padding:10px 14px;
-
-      background:rgba(0,0,0,.55);
-
-      color:#fff;
+      padding:10px 12px;
       cursor:pointer;
-      font-size:14px;
+      background:rgba(234,246,248,.10);
+      border:1px solid rgba(234,246,248,.14);
+      color:rgba(234,246,248,.95);
+      font-size:13px;
     }
 
-    @media (max-width:900px){
-      .grid{
-        grid-template-columns:repeat(2,1fr);
-      }
+    .lightbox-close:hover{
+      background:rgba(234,246,248,.14);
     }
 
-    @media (max-width:640px){
-      .grid{
-        grid-template-columns:1fr;
-      }
+    @media (max-width:860px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+    }
 
-      .title{
-        font-size:24px;
-      }
+    @media (max-width:680px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:24px}
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <div class="container header-row">
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="index.html" aria-label="Accueil">
+        <span class="brand-logo">
+          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+        </span>
+        <strong>Vivre à Estepona</strong>
+      </a>
 
-    <a class="brand" href="index.html">
-      <span class="brand-logo">
-        <img src="img/logo_bon_plan_estepona.png" alt="">
-      </span>
+      <nav class="primary">
+        <a href="index.html#manger">Restaurants</a>
+        <a href="index.html#itin">Que faire</a>
+        <a href="transport-estepona.html">Transport</a>
+        <a href="ecoles.html">Écoles</a>
+        <a href="sante.html">Santé</a>
+        <a href="trafic.html">Trafic</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-      <strong>Vivre à Estepona</strong>
-    </a>
+      <div class="social-top" aria-label="Réseaux sociaux">
+        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
+          Instagram
+        </a>
+        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
+          YouTube
+        </a>
+      </div>
 
-    <nav class="primary">
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
+    <div class="mobile-menu-head">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fermer le menu">×</button>
+    </div>
+
+    <nav class="mobile-nav">
       <a href="index.html#manger">Restaurants</a>
       <a href="index.html#itin">Que faire</a>
       <a href="transport-estepona.html">Transport</a>
@@ -276,133 +443,147 @@
       <a href="sante.html">Santé</a>
       <a href="trafic.html">Trafic</a>
       <a href="contact.html">Contact</a>
+      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
-
-  </div>
-</header>
-
-<main class="container page">
-
-  <section class="hero">
-    <h1 class="title">Orquidario d’Estepona</h1>
-
-    <p class="sub">
-      Clique sur une photo pour l’ouvrir en grand.
-    </p>
-  </section>
-
-  <div id="cards" class="grid"></div>
-
-</main>
-
-<!-- LIGHTBOX -->
-<div id="lightbox" class="lightbox">
-
-  <div class="lightbox-inner">
-
-    <button class="lightbox-close" id="lightboxClose">
-      ✕ Fermer
-    </button>
-
-    <img id="lightboxImg" alt="">
-
   </div>
 
-</div>
+  <main class="container page">
+    <section class="hero">
+      <h1 class="title">Orquidario d’Estepona</h1>
+      <p class="sub">Clique sur une photo pour l’ouvrir en grand.</p>
+    </section>
 
-<script>
-
-  const IMAGE_BASE = "/images/villes/";
-  const IMAGE_EXT = ".jpg";
-  const TOTAL_PHOTOS = 25;
-
-  function imgFor(n){
-    return IMAGE_BASE + "orqui" + n + IMAGE_EXT;
-  }
-
-  const cards = document.getElementById("cards");
-
-  for(let i = 1; i <= TOTAL_PHOTOS; i++){
-
-    const photo = imgFor(i);
-
-    const el = document.createElement("article");
-
-    el.className = "mural";
-
-    el.innerHTML = `
-      <div class="thumb" data-img="${photo}">
-        <img src="${photo}" alt="Photo ${i}" loading="lazy">
+    <section class="results">
+      <div class="results-head">
+        <h2>Photos</h2>
       </div>
-    `;
 
-    cards.appendChild(el);
+      <div id="cards" class="grid" aria-live="polite"></div>
 
-    const thumb = el.querySelector(".thumb");
-    const img = el.querySelector("img");
+      <p class="foot">
+        Photos de l’Orquidario d’Estepona.
+      </p>
+    </section>
+  </main>
 
-    img.addEventListener("error", ()=>{
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement de l’image">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightboxClose" type="button">✕ Fermer</button>
+      <img id="lightboxImg" alt="" />
+    </div>
+  </div>
 
-      thumb.classList.add("placeholder");
+  <script>
+    const burger = document.querySelector('.burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.querySelector('.mobile-close');
+    let backdrop;
 
-      thumb.innerHTML = `
-        <div>
-          Photo manquante<br>
-          orqui${i}.jpg
+    function openMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = false;
+      burger?.setAttribute('aria-expanded','true');
+
+      backdrop = document.createElement('div');
+      backdrop.className = 'mobile-backdrop';
+      backdrop.addEventListener('click', closeMenu);
+      document.body.appendChild(backdrop);
+
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu(){
+      if(!mobileMenu) return;
+      mobileMenu.hidden = true;
+      burger?.setAttribute('aria-expanded','false');
+      backdrop?.remove();
+      document.body.style.overflow = '';
+    }
+
+    burger?.addEventListener('click', () => {
+      const open = burger.getAttribute('aria-expanded') === 'true';
+      open ? closeMenu() : openMenu();
+    });
+
+    mobileClose?.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.mobile-nav a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape'){
+        closeMenu();
+        closeLightbox();
+      }
+    });
+
+    const IMAGE_BASE = "/images/villes/";
+    const IMAGE_EXT = ".jpg";
+    const TOTAL_PHOTOS = 25;
+
+    function imgFor(n){
+      return IMAGE_BASE + "orqui" + n + IMAGE_EXT;
+    }
+
+    const cards = document.getElementById("cards");
+    const lb = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lightboxImg");
+    const lbClose = document.getElementById("lightboxClose");
+
+    function openLightbox(src){
+      lbImg.src = src;
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox(){
+      lb.classList.remove("open");
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    lbClose.addEventListener("click", closeLightbox);
+
+    lb.addEventListener("click", e => {
+      if(e.target === lb) closeLightbox();
+    });
+
+    for(let i = 1; i <= TOTAL_PHOTOS; i++){
+      const photo = imgFor(i);
+      const el = document.createElement("article");
+
+      el.className = "mural";
+
+      el.innerHTML = `
+        <div class="thumb" data-img="${photo}">
+          <img src="${photo}" alt="Photo ${i}" loading="lazy">
         </div>
       `;
-    });
 
-    thumb.addEventListener("click", ()=>{
+      cards.appendChild(el);
 
-      const src = thumb.getAttribute("data-img");
+      const thumb = el.querySelector(".thumb");
+      const img = el.querySelector("img");
 
-      if(!src) return;
+      img.addEventListener("error", () => {
+        thumb.classList.add("placeholder");
+        thumb.removeAttribute("data-img");
+        thumb.innerHTML = `
+          <div>
+            <div class="tag">Photo manquante</div>
+            <div>orqui${i}.jpg</div>
+          </div>
+        `;
+      });
 
-      openLightbox(src);
-    });
-  }
-
-  // LIGHTBOX
-  const lb = document.getElementById("lightbox");
-  const lbImg = document.getElementById("lightboxImg");
-  const lbClose = document.getElementById("lightboxClose");
-
-  function openLightbox(src){
-
-    lbImg.src = src;
-
-    lb.classList.add("open");
-
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeLightbox(){
-
-    lb.classList.remove("open");
-
-    lbImg.src = "";
-
-    document.body.style.overflow = "";
-  }
-
-  lbClose.addEventListener("click", closeLightbox);
-
-  lb.addEventListener("click", (e)=>{
-
-    if(e.target === lb){
-      closeLightbox();
+      thumb.addEventListener("click", () => {
+        const src = thumb.getAttribute("data-img");
+        if(src) openLightbox(src);
+      });
     }
-  });
-
-  document.addEventListener("keydown", (e)=>{
-
-    if(e.key === "Escape"){
-      closeLightbox();
-    }
-  });
-
-</script>
+  </script>
 
 </body>
 </html>
