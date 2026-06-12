@@ -13,9 +13,21 @@
   </script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Infos pratiques — Vivre à Estepona</title>
-  <meta name="description" content="Infos utiles pour vivre/visiter Estepona + météo." />
+  <title>Actualités, fêtes et animations à Estepona — Vivre à Estepona</title>
+  <meta name="description" content="Toute l'actualité d'Estepona : fêtes locales, ferias, concerts, courses, cinéma, théâtre et programmation culturelle. Suivez les événements à venir et la météo en direct." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
+  <link rel="canonical" href="https://www.vivreaestepona.com/actualites.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vivre à Estepona" />
+  <meta property="og:title" content="Actualités, fêtes et animations à Estepona" />
+  <meta property="og:description" content="Fêtes locales, ferias, concerts, courses, cinéma, théâtre : toute l'actualité et les événements à venir à Estepona." />
+  <meta property="og:url" content="https://www.vivreaestepona.com/actualites.html" />
+  <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
+  <meta property="og:image:alt" content="Animations et fêtes à Estepona" />
 
   <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -23,12 +35,15 @@
     :root{
       --color-bg:#0b3c49;
       --color-surface:#0f1f44;
+      --color-surface-2:#0f1625;
       --color-primary:#2db4ff;
+      --color-accent:#00d0b6;
       --color-text:#eaf2ff;
       --color-muted:#a8b6cf;
       --color-border:#1a2d5a;
       --radius-xl:18px;
       --radius-lg:16px;
+      --radius-md:10px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
 
       --glass: rgba(10,22,36,.55);
@@ -51,7 +66,7 @@
     img{max-width:100%;display:block}
     .container{width:min(1200px,92vw);margin-inline:auto}
 
-    /* Header */
+    /* ── HEADER ── */
     header{
       position:sticky;top:0;z-index:50;
       background:var(--glass);
@@ -59,58 +74,31 @@
       -webkit-backdrop-filter: blur(12px) saturate(140%);
       border-bottom:1px solid var(--glassLine);
     }
-
-    .header-row{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      padding:16px 0;
-    }
-
+    .header-row{display:flex;align-items:center;gap:18px;padding:16px 0}
     .brand{display:flex;align-items:center;gap:12px;flex:0 0 auto}
     .brand-logo{
       width:44px;height:44px;border-radius:12px;overflow:hidden;
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
-
     nav.primary{
-      flex:1 1 auto;
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:nowrap;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      min-width:0;
+      flex:1 1 auto;display:flex;justify-content:center;gap:12px;
+      flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      scrollbar-width:none;min-width:0;
     }
     nav.primary::-webkit-scrollbar{display:none;}
-    nav.primary a{
-      padding:8px 12px;border-radius:999px;border:1px solid transparent;
-      white-space:nowrap;
-    }
+    nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
-
     .social-top{display:flex;gap:10px;align-items:center;flex:0 0 auto}
     .social-top a{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      background:rgba(234,246,248,.08);
-      border:1px solid rgba(234,246,248,.14);
-      color:rgba(234,246,248,.92);
-      font-size:14px;line-height:1;
-      white-space:nowrap;
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
+      background:rgba(234,246,248,.08);border:1px solid rgba(234,246,248,.14);
+      color:rgba(234,246,248,.92);font-size:14px;line-height:1;white-space:nowrap;
     }
-    .social-top a:hover{
-      background:rgba(234,246,248,.12);
-      border-color:rgba(234,246,248,.22);
-    }
+    .social-top a:hover{background:rgba(234,246,248,.12);border-color:rgba(234,246,248,.22)}
     .social-top svg{width:16px;height:16px;opacity:.95}
-
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
-      border:1px solid var(--color-border);background:var(--color-surface);
-      cursor:pointer;
+      border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;
     }
     .burger:active{transform:scale(.98)}
     @media (max-width:980px){
@@ -118,21 +106,46 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
-    /* Hero */
-    .page-hero{
-      padding:26px 0 10px;
-      border-bottom:1px solid var(--glassLine);
-      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(10,22,36,.18) 100%);
+    /* ── HERO ── */
+    .hero-intro{padding:32px 0 12px}
+    .hero-card{
+      border:1px solid var(--color-border);border-radius:var(--radius-xl);
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      padding:28px 32px;box-shadow:var(--shadow);
     }
-    .page-hero h1{margin:6px 0 6px;font-size:30px}
-    .page-hero p{margin:0;color:var(--color-muted)}
+    .hero-eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:13px;color:var(--color-accent);font-weight:600;
+      letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;
+    }
+    .hero-card h1{margin:0 0 14px;font-size:clamp(26px,3.8vw,44px);line-height:1.15}
+    .hero-card .lead{margin:0;color:var(--color-muted);font-size:17px;line-height:1.8}
 
-    /* Sections */
-    section.category{margin:26px 0}
-    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    /* ── BREADCRUMB ── */
+    .breadcrumb{
+      display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+      font-size:13px;color:var(--color-muted);padding:14px 0 0;
+    }
+    .breadcrumb a{color:var(--color-muted)}
+    .breadcrumb a:hover{color:var(--color-text)}
+    .breadcrumb span{opacity:.5}
+
+    /* ── SECTIONS ── */
+    section.category{margin:30px 0}
+    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
     .section-head h2{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
 
+    /* ── BADGES FILTRE (visuel, non fonctionnel) ── */
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+    .filter-chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02);
+      color:var(--color-muted);
+    }
+
+    /* ── GRID & CARDS ── */
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
 
@@ -141,22 +154,25 @@
       border-radius:var(--radius-lg);
       overflow:hidden;
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
-      display:flex;
-      flex-direction:column;
-      min-height: 420px;
+      display:flex;flex-direction:column;
     }
 
     .body{padding:14px 16px 16px}
-    .kicker{font-size:12px;color:var(--color-muted)}
-    .card h3{margin:4px 0 8px;font-size:20px;line-height:1.25}
+    .kicker{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+      color:var(--color-accent);
+    }
+    .card h3{margin:6px 0 8px;font-size:19px;line-height:1.3}
     .card p{margin:0;color:var(--color-muted);font-size:14px;line-height:1.55}
 
     .cta{
-      display:inline-block;margin-top:10px;
+      display:inline-block;margin-top:12px;
       font-weight:700;color:#06131e;
       background:var(--color-primary);
-      padding:10px 14px;border-radius:12px;
+      padding:10px 14px;border-radius:12px;font-size:14px;
     }
+    .cta:hover{opacity:.92}
     .cta.secondary{
       background:rgba(234,246,248,.08);
       color:rgba(234,246,248,.92);
@@ -168,62 +184,67 @@
       border-color:rgba(234,246,248,.22);
     }
 
-    /* Thumbs photos */
+    /* ── THUMBS ── */
     .thumb{
       position:relative;
-      height: clamp(220px, 22vw, 280px);
+      height: clamp(200px, 22vw, 260px);
       overflow:hidden;
       background:#0b1322;
       cursor:pointer;
       border-bottom:1px solid rgba(255,255,255,.06);
-
-      /* ✅ AJOUT : centrage horizontal + vertical */
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      /* petit padding pour éviter que ça touche les bords */
-      padding:10px;
-      box-sizing:border-box;
+      display:flex;align-items:center;justify-content:center;
+      padding:10px;box-sizing:border-box;
     }
     .thumb img{
-      /* ✅ AJOUT : centrage propre + image non coupée */
-      width:auto;
-      height:auto;
-      max-width:100%;
-      max-height:100%;
-      object-fit:contain;
-      object-position:center;
+      width:auto;height:auto;max-width:100%;max-height:100%;
+      object-fit:contain;object-position:center;
+      transition:transform .35s ease;
     }
+    .thumb:hover img{transform:scale(1.03)}
 
-    /* ✅ photo ajoutée DANS la carte "Activités" */
+    /* highlight card "à la une" */
+    .card.highlight{
+      border-color:var(--color-accent);
+      box-shadow:0 0 0 1px rgba(0,208,182,.25), var(--shadow);
+    }
+    .card.highlight .kicker{color:var(--color-accent)}
+
+    /* carte activités (avec photo intégrée dans le body) */
     .activity-card .body .thumb{
-      height: clamp(210px, 20vw, 250px);
-      border-radius:16px;
+      height: clamp(190px, 20vw, 230px);
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.06);
-      margin-top:14px;
-      border-bottom:none;
+      margin-top:14px;border-bottom:none;
     }
 
-    /* Météo */
+    /* ── MÉTÉO ── */
     .weather-wrap{
       border:1px solid var(--color-border);
       border-radius:var(--radius-xl);
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
-      padding:16px;
-      display:grid;
-      gap:14px;
+      padding:16px;display:grid;gap:14px;
     }
 
-    /* Footer */
+    /* ── CTA BANNER ── */
+    .cta-banner{
+      margin:30px 0;border:1px solid var(--color-border);border-radius:var(--radius-xl);
+      background:linear-gradient(135deg,rgba(0,208,182,.12),rgba(45,180,255,.10));
+      padding:28px 32px;display:flex;flex-wrap:wrap;align-items:center;gap:20px;
+    }
+    .cta-banner p{margin:0;flex:1;min-width:200px;font-size:16px;line-height:1.7}
+    .cta-banner a.btn{
+      display:inline-block;background:var(--color-primary);color:#06131e;
+      padding:12px 22px;border-radius:12px;font-weight:700;white-space:nowrap;font-size:15px;
+    }
+    .cta-banner a.btn:hover{opacity:.9}
+
+    /* ── FOOTER ── */
     footer{
-      margin-top:48px;
-      border-top:1px solid var(--color-border);
+      margin-top:48px;border-top:1px solid var(--color-border);
       background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1));
     }
     .footer-top{
-      padding:24px 0;
-      display:flex;gap:18px;flex-wrap:wrap;
+      padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;
       align-items:center;justify-content:space-between;
     }
     .social{display:flex;gap:12px}
@@ -236,7 +257,7 @@
     .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
-    /* Menu mobile */
+    /* ── MENU MOBILE ── */
     .mobile-backdrop{position:fixed; inset:0;background:rgba(0,0,0,.55);z-index:140;}
     .mobile-menu{
       position:fixed;top:0;right:0;height:100vh;width:min(360px,86vw);
@@ -263,30 +284,35 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* Lightbox */
+    /* ── LIGHTBOX ── */
     .lightbox{
       position:fixed;inset:0;display:none;
       align-items:center;justify-content:center;
-      background:rgba(0,0,0,.8);
-      z-index:220;
-      padding:20px;
+      background:rgba(0,0,0,.8);z-index:220;padding:20px;
     }
     .lightbox.open{display:flex}
     .lightbox img{
-      max-width:min(100%,1200px);
-      max-height:90vh;
-      width:auto;height:auto;
-      border-radius:16px;
-      box-shadow:var(--shadow);
+      max-width:min(100%,1200px);max-height:90vh;width:auto;height:auto;
+      border-radius:16px;box-shadow:var(--shadow);
     }
     .lb-close{
       position:absolute;top:14px;right:16px;
       background:#ffffff;border:0;border-radius:999px;
       width:40px;height:40px;font-size:22px;
-      line-height:40px;text-align:center;
-      cursor:pointer;box-shadow:var(--shadow)
+      line-height:40px;text-align:center;cursor:pointer;box-shadow:var(--shadow)
     }
     .lb-close:hover{background:#eef6f4}
+
+    @media (max-width:980px){
+      .container{width:min(1100px,92vw)}
+      .header-row{padding:12px 0;gap:12px}
+      .brand-logo{width:38px;height:38px}
+      .brand strong{font-size:16px}
+      .hero-intro{padding:20px 0 8px}
+      .hero-card{padding:18px 20px}
+      .cta-banner{padding:20px}
+      section.category{margin:22px 0}
+    }
   </style>
 </head>
 
@@ -296,7 +322,7 @@
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Accueil">
         <span class="brand-logo">
-          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+          <img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" />
         </span>
         <strong>Vivre à Estepona</strong>
       </a>
@@ -315,27 +341,17 @@
 
       <div class="social-top" aria-label="Réseaux sociaux">
         <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/><path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/><path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           Instagram
         </a>
-
         <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/><path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/></svg>
           YouTube
         </a>
       </div>
 
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
     </div>
   </header>
@@ -346,7 +362,6 @@
       <strong>Menu</strong>
       <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
     </div>
-
     <nav class="mobile-nav">
       <a href="index.html#voir" onclick="document.querySelector('.burger')?.click()">À voir</a>
       <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
@@ -357,208 +372,221 @@
       <a href="trafic.html">Trafic</a>
       <a href="#meteo" onclick="document.querySelector('.burger')?.click()">Météo</a>
       <a href="contact.html">Contact</a>
-
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
     </nav>
   </div>
 
-  <!-- HERO -->
-  <section class="page-hero">
-    <div class="container">
-      <p style="margin:0;color:var(--color-muted)"></p>
-    </div>
-  </section>
-
   <main class="container">
-    <!-- INFOS -->
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="index.html">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span>Actualités & animations</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-intro" aria-labelledby="page-title">
+      <div class="hero-card">
+        <div class="hero-eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2Z" fill="currentColor"/></svg>
+          Agenda local
+        </div>
+        <h1 id="page-title">Actualités, fêtes et animations à Estepona</h1>
+        <p class="lead">
+          Fêtes locales, ferias, concerts, courses, cinéma, théâtre… Retrouvez ici la programmation et les événements à venir
+          à Estepona, ainsi que la météo en direct pour bien organiser vos sorties.
+        </p>
+      </div>
+    </section>
+
+    <!-- ÉVÉNEMENTS -->
     <section class="category" id="infos">
       <div class="section-head">
         <div>
-          <h2>Informations</h2>
-          <p>Informations locales de Estepona.</p>
+          <h2>Événements & animations</h2>
+          <p>Tout ce qui se passe à Estepona, des fêtes traditionnelles aux concerts et activités sportives</p>
         </div>
       </div>
 
-      <div class="grid">
-        <!-- carte 1 (avec photo ajoutée) -->
-        <article class="card activity-card">
-          <div class="body">
-            <div class="kicker">Loisir</div>
-            <h3>Activités d’Estepona</h3>
-            <p>Informations officielles.</p>
-            <a class="cta" href="https://ayuntamiento.estepona.es/" target="_blank" rel="noopener">Information →</a>
+      <div class="filters" aria-hidden="true">
+        <span class="filter-chip">🎉 Fêtes</span>
+        <span class="filter-chip">🎵 Concerts</span>
+        <span class="filter-chip">🏃 Sport</span>
+        <span class="filter-chip">🎭 Culture</span>
+        <span class="filter-chip">🎬 Cinéma</span>
+      </div>
 
-            <!-- ✅ Photo ajoutée -->
+      <div class="grid">
+
+        <!-- carte activités officielles (avec photo intégrée) -->
+        <article class="card activity-card highlight">
+          <div class="body">
+            <div class="kicker">☀️ À venir cet été</div>
+            <h3>Activités d'Estepona</h3>
+            <p>De nouvelles animations et événements estivaux seront annoncés prochainement : restez connectés pour ne rien manquer !</p>
+            <a class="cta" href="#meteo" style="cursor:default">Prochainement →</a>
             <a class="thumb zoomable" href="#" data-full="img/ayuntamiento.jpg" aria-label="Agrandir la photo activités">
-              <img src="img/ayuntamiento.jpg" alt="Activités à Estepona" loading="lazy">
+              <img src="img/ayuntamiento.jpg" alt="Activités à venir à Estepona" loading="lazy">
             </a>
           </div>
         </article>
 
-    <!-- carte 1 -->
+        <!-- Fête locale -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/sanisidro.jpeg" aria-label="Agrandir la photo">
-            <img src="img/sanisidro.jpeg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/sanisidro.jpeg" aria-label="Agrandir la photo Fête San Isidro">
+            <img src="img/sanisidro.jpeg" alt="Fête locale San Isidro à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Ce Week-End</div>
-            <h3>Fete Locale </h3>
-            <p></p>
-            <a class="cta secondary" href="" target="_blank" rel="noopener"></a>
+            <div class="kicker">🎉 Ce week-end</div>
+            <h3>Fête de San Isidro</h3>
+            <p>La fête patronale traditionnelle d'Estepona, avec animations, processions et ambiance festive dans toute la ville.</p>
           </div>
         </article>
 
-        
-             <!-- carte 2 -->
- <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/feriasanisidro.jpg" aria-label="Agrandir la photo">
-            <img src="img/feriasanisidro.jpg" alt="Estepona" loading="lazy">
-          </a>
-          <div class="body">
-            <div class="kicker">Ce Week-End</div>
-            <h3>Fete Foraine </h3>
-            <p></p>
-            <a class="cta secondary" href="" target="_blank" rel="noopener"></a>
-          </div>
-        </article>
-
-
-        
-        <!-- carte 3 -->
+        <!-- Fête foraine -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/queso.jpg" aria-label="Agrandir la photo">
-            <img src="img/queso.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/feriasanisidro.jpg" aria-label="Agrandir la photo Fête foraine">
+            <img src="img/feriasanisidro.jpg" alt="Fête foraine à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Avril 2026</div>
-            <h3>11eme Feria Queso</h3>
-            <p></p>
-            <a class="cta secondary" href="actualites.html" target="_blank" rel="noopener">Voir plus →</a>
+            <div class="kicker">🎡 Ce week-end</div>
+            <h3>Fête foraine</h3>
+            <p>Manèges, stands et animations pour toute la famille dans le cadre des festivités locales.</p>
           </div>
         </article>
 
-        
-             <!-- carte 4 -->
- <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/vivesuscalle.jpg" aria-label="Agrandir la photo">
-            <img src="img/vivesuscalle.jpg" alt="Estepona" loading="lazy">
-          </a>
-          <div class="body">
-            <div class="kicker">Avril 2026</div>
-            <h3>Estepona vive sus calles</h3>
-            <p></p>
-            <a class="cta secondary" href="https://turismo.estepona.es/wp-content/uploads/2026/04/Estepona-Vive-sus-Calles-2026.pdf" target="_blank" rel="noopener">Voir plus →</a>
-          </div>
-        </article>
-
-                  <!-- carte 5 -->
+        <!-- Feria Queso -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/chenoa.jpg" aria-label="Agrandir la photo">
-            <img src="img/chenoa.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/queso.jpg" aria-label="Agrandir la photo Feria del Queso">
+            <img src="img/queso.jpg" alt="11e Feria del Queso à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Ce Week-End</div>
-            <h3>Concert ce Samedi</h3>
-            <p></p>
-            <a class="cta secondary" href="actualites.html" target="_blank" rel="noopener">Voir plus →</a>
+            <div class="kicker">🧀 Avril 2026</div>
+            <h3>11ᵉ Feria del Queso</h3>
+            <p>La foire au fromage d'Estepona revient pour sa 11ᵉ édition : dégustations, producteurs locaux et animations gourmandes.</p>
+            <a class="cta secondary" href="actualites.html">Voir plus →</a>
           </div>
         </article>
 
-
-         <!-- carte 6 -->
+        <!-- Estepona vive sus calles -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/cinema.jpg" aria-label="Agrandir la photo">
-            <img src="img/cinema.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/vivesuscalle.jpg" aria-label="Agrandir la photo Estepona Vive sus Calles">
+            <img src="img/vivesuscalle.jpg" alt="Estepona vive sus calles 2026" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Info</div>
-            <h3>Palacio de Exposiciones y Congresos de Estepona</h3>
-            <p></p>
+            <div class="kicker">🎭 Avril 2026</div>
+            <h3>Estepona Vive sus Calles</h3>
+            <p>Spectacles de rue, musique et animations dans tout le centre historique d'Estepona pendant plusieurs jours.</p>
+            <a class="cta secondary" href="https://turismo.estepona.es/wp-content/uploads/2026/04/Estepona-Vive-sus-Calles-2026.pdf" target="_blank" rel="noopener">Voir le programme →</a>
+          </div>
+        </article>
+
+        <!-- Concert -->
+        <article class="card photo-card">
+          <a class="thumb zoomable" href="#" data-full="img/chenoa.jpg" aria-label="Agrandir la photo concert Chenoa">
+            <img src="img/chenoa.jpg" alt="Concert à Estepona ce samedi" loading="lazy">
+          </a>
+          <div class="body">
+            <div class="kicker">🎵 Ce week-end</div>
+            <h3>Concert ce samedi</h3>
+            <p>Un grand concert en plein air est prévu ce samedi à Estepona — une soirée musicale à ne pas manquer.</p>
+            <a class="cta secondary" href="actualites.html">Voir plus →</a>
+          </div>
+        </article>
+
+        <!-- Cinéma / Palacio de Exposiciones -->
+        <article class="card photo-card">
+          <a class="thumb zoomable" href="#" data-full="img/cinema.jpg" aria-label="Agrandir la photo Palacio de Exposiciones">
+            <img src="img/cinema.jpg" alt="Palacio de Exposiciones y Congresos de Estepona" loading="lazy">
+          </a>
+          <div class="body">
+            <div class="kicker">🎬 Info</div>
+            <h3>Palacio de Exposiciones y Congresos</h3>
+            <p>Le Palacio de Exposiciones y Congresos de Estepona accueille événements culturels, expositions et projections tout au long de l'année.</p>
             <a class="cta secondary" href="https://multiversecinemaexpo.com/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
-        
-   <!-- carte 7 -->
+
+        <!-- Que faire ce week-end -->
         <article class="card photo-card">
           <a class="thumb zoomable" href="#" data-full="img/cortador.jpg" aria-label="Agrandir la photo">
-            <img src="img/cortador.jpg" alt="Estepona" loading="lazy">
+            <img src="img/cortador.jpg" alt="Que faire ce week-end à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Ce Week-End</div>
-            <h3>Que Faire ce week-end</h3>
-            <p></p>
-            <a class="cta secondary" href="actualites.html" target="_blank" rel="noopener">Voir plus →</a>
+            <div class="kicker">📅 Ce week-end</div>
+            <h3>Que faire ce week-end</h3>
+            <p>Notre sélection d'activités, sorties et événements à ne pas manquer ce week-end à Estepona.</p>
+            <a class="cta secondary" href="actualites.html">Voir plus →</a>
           </div>
         </article>
-        
-                <!-- carte 8 -->
+
+        <!-- Marathon -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/maraton.jpg" aria-label="Agrandir la photo">
-            <img src="img/maraton.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/maraton.jpg" aria-label="Agrandir la photo marathon">
+            <img src="img/maraton.jpg" alt="Premier marathon de la Costa del Sol à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Premier maraton de Estepona</div>
-            <h3>Activite</h3>
-            <p></p>
+            <div class="kicker">🏃 Premier marathon d'Estepona</div>
+            <h3>Marathon Costa del Sol</h3>
+            <p>Estepona accueille le premier marathon de la Costa del Sol : un parcours sportif au bord de la mer ouvert à tous les niveaux.</p>
             <a class="cta secondary" href="https://www.maratoncostadelsol.com/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
 
-         <!-- carte 9 -->
+        <!-- Course 25 avril -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/marcha.jpg" aria-label="Agrandir la photo">
-            <img src="img/marcha.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/marcha.jpg" aria-label="Agrandir la photo course du 25 avril">
+            <img src="img/marcha.jpg" alt="Course le 25 avril à Estepona" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Info</div>
-            <h3>Course le 25 avril a 12H</h3>
-            <p></p>
+            <div class="kicker">🏃 Info</div>
+            <h3>Course le 25 avril à 12h</h3>
+            <p>Une marche/course populaire est organisée le 25 avril à 12h dans les rues d'Estepona.</p>
             <a class="cta secondary" href="https://subidaestepona.es/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
 
-         <!-- carte 10 -->
+        <!-- Course de voiture -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/subida2026.jpg" aria-label="Agrandir la photo">
-            <img src="img/subida2026.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/subida2026.jpg" aria-label="Agrandir la photo course automobile">
+            <img src="img/subida2026.jpg" alt="Course automobile Subida a Estepona 2026" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Info</div>
-            <h3>Course de Voiture</h3>
-            <p></p>
+            <div class="kicker">🏎️ Info</div>
+            <h3>Course de voiture — Subida a Estepona</h3>
+            <p>La célèbre course de côte « Subida a Estepona » revient pour l'édition 2026, avec des véhicules de compétition dans les hauteurs de la ville.</p>
             <a class="cta secondary" href="https://subidaestepona.es/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
 
-        <!-- carte 11 -->
- <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/programme_1_trimestre_2026.jpg" aria-label="Agrandir la photo">
-            <img src="img/programme_1_trimestre_2026.jpg" alt="Estepona" loading="lazy">
+        <!-- Mirador del Carmen -->
+        <article class="card photo-card">
+          <a class="thumb zoomable" href="#" data-full="img/programme_1_trimestre_2026.jpg" aria-label="Agrandir la photo programmation Mirador del Carmen">
+            <img src="img/programme_1_trimestre_2026.jpg" alt="Programmation du Mirador del Carmen, 1er trimestre 2026" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Info</div>
-            <h3>Programmationdu Mirador del Carmen 1er trimestre 2026</h3>
-            <p></p>
+            <div class="kicker">🎭 Info</div>
+            <h3>Mirador del Carmen — 1ᵉʳ trimestre 2026</h3>
+            <p>Découvrez la programmation culturelle complète du Mirador del Carmen pour le premier trimestre 2026 : spectacles, expositions et événements.</p>
             <a class="cta secondary" href="https://miradordelcarmen.estepona.es/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
         </article>
 
-                <!-- carte 12 -->
+        <!-- Théâtre -->
         <article class="card photo-card">
-          <a class="thumb zoomable" href="#" data-full="img/teatro.jpg" aria-label="Agrandir">
-            <img src="img/teatro.jpg" alt="Estepona" loading="lazy">
+          <a class="thumb zoomable" href="#" data-full="img/teatro.jpg" aria-label="Agrandir la photo programmation théâtre">
+            <img src="img/teatro.jpg" alt="Programmation du théâtre d'Estepona 2025-2026" loading="lazy">
           </a>
           <div class="body">
-            <div class="kicker">Infos</div>
-            <h3>Programmation du Theatre 2025 / 2026 </h3>
-            <p></p>
+            <div class="kicker">🎭 Info</div>
+            <h3>Programmation du théâtre — saison 2025/2026</h3>
+            <p>Le théâtre d'Estepona dévoile sa programmation pour la saison 2025/2026 : pièces, spectacles musicaux et événements culturels.</p>
             <a class="cta secondary" href="https://teatroestepona.com/" target="_blank" rel="noopener">Voir plus →</a>
           </div>
-        </article> 
+        </article>
 
-        
-        
       </div>
     </section>
 
@@ -567,7 +595,7 @@
       <div class="section-head">
         <div>
           <h2>Météo à Estepona</h2>
-          <p>Prévisions locales en temps réel.</p>
+          <p>Prévisions locales en temps réel</p>
         </div>
       </div>
 
@@ -575,10 +603,17 @@
         <div id="c_35fff040c817e48c603e951ab7d867ae" class="ancho"></div>
       </div>
     </section>
+
+    <!-- CTA -->
+    <div class="cta-banner">
+      <p>Suivez notre Instagram pour ne rater aucun événement, fête ou bon plan à Estepona en temps réel.</p>
+      <a class="btn" href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Suivre sur Instagram →</a>
+    </div>
+
   </main>
 
   <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l'image">
     <img src="" alt="" id="lightbox-img" />
     <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
   </div>
@@ -588,26 +623,18 @@
     <div class="container footer-top">
       <a class="brand" href="index.html">
         <span class="brand-logo">
-          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
+          <img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" />
         </span>
         <strong>Vivre à Estepona</strong>
       </a>
 
       <div class="social" aria-label="Réseaux sociaux">
         <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/><path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/><path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           Instagram
         </a>
-
         <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/><path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/></svg>
           YouTube
         </a>
       </div>
