@@ -27,7 +27,7 @@
   <meta property="og:description" content="Préparez vos vacances ou votre installation à Estepona sur la Costa del Sol : plages, restaurants, vieille ville, activités, excursions, quartiers et bonnes adresses." />
   <meta property="og:url" content="https://www.vivreaestepona.com/" />
   <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
-  <meta property="og:image:alt" content="Vue d’Estepona sur la Costa del Sol" />
+  <meta property="og:image:alt" content="Vue d'Estepona sur la Costa del Sol" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -136,31 +136,32 @@
       .burger{display:grid;place-items:center;margin-left:auto}
     }
 
+    /* ── HERO COMPACT (titre + sous-titre uniquement) ── */
     .hero-intro{
-      padding:32px 0 12px;
+      padding:28px 0 4px;
     }
 
     .hero-card{
       border:1px solid var(--color-border);
       border-radius:var(--radius-xl);
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      padding:24px;
+      padding:22px 24px;
       box-shadow:var(--shadow);
       text-align:center;
     }
 
     .hero-card h1{
-      margin:0 0 12px;
-      font-size:clamp(30px,4vw,48px);
-      line-height:1.1;
+      margin:0 0 8px;
+      font-size:clamp(26px,3.6vw,42px);
+      line-height:1.15;
     }
 
-    .hero-card p{
+    .hero-card .subtitle{
       margin:0 auto;
-      color:var(--color-text);
-      max-width:1100px;
-      font-size:17px;
-      line-height:1.8;
+      color:var(--color-muted);
+      max-width:760px;
+      font-size:16px;
+      line-height:1.6;
       text-align:center;
     }
 
@@ -292,8 +293,9 @@
       .header-row{ padding:12px 0; gap:12px; }
       .brand-logo{ width:38px; height:38px; border-radius:12px; }
       .brand strong{ font-size:16px; }
-      .hero-intro{ padding:20px 0 8px; }
-      .hero-card{ padding:18px; }
+      .hero-intro{ padding:18px 0 4px; }
+      .hero-card{ padding:16px 18px; }
+      .hero-card .subtitle{ font-size:14px; }
       section.category{ margin:22px 0; }
       .section-head{ gap:10px; margin-bottom:12px; }
       .section-head h2{ font-size:18px; }
@@ -353,7 +355,7 @@
         "name":"Où loger à Estepona ?",
         "acceptedAnswer":{
           "@type":"Answer",
-          "text":"Pour loger à Estepona sans voiture, privilégiez le centre historique, Playa de la Rada, le port ou Playa del Cristo. Avec voiture, les secteurs du New Golden Mile, Selwo, Cancelada, Casares Costa ou l’arrière-pays sont aussi intéressants."
+          "text":"Pour loger à Estepona sans voiture, privilégiez le centre historique, Playa de la Rada, le port ou Playa del Cristo. Avec voiture, les secteurs du New Golden Mile, Selwo, Cancelada, Casares Costa ou l'arrière-pays sont aussi intéressants."
         }
       },
       {
@@ -361,7 +363,7 @@
         "name":"Faut-il une voiture à Estepona ?",
         "acceptedAnswer":{
           "@type":"Answer",
-          "text":"Une voiture n’est pas indispensable pour profiter du centre d’Estepona, de la vieille ville, du paseo et de la plage. Elle devient utile si vous logez dans des zones plus excentrées ou pour explorer la région."
+          "text":"Une voiture n'est pas indispensable pour profiter du centre d'Estepona, de la vieille ville, du paseo et de la plage. Elle devient utile si vous logez dans des zones plus excentrées ou pour explorer la région."
         }
       },
       {
@@ -369,7 +371,7 @@
         "name":"Que faire à Estepona pendant les vacances ?",
         "acceptedAnswer":{
           "@type":"Answer",
-          "text":"Pendant les vacances à Estepona, vous pouvez visiter la vieille ville, vous promener sur le paseo marítimo, profiter de Playa de la Rada ou Playa del Cristo, déjeuner dans un chiringuito, découvrir le port, faire des activités nautiques ou partir en excursion vers Marbella, Gibraltar, Málaga, Ronda et les villages blancs d’Andalousie."
+          "text":"Pendant les vacances à Estepona, vous pouvez visiter la vieille ville, vous promener sur le paseo marítimo, profiter de Playa de la Rada ou Playa del Cristo, déjeuner dans un chiringuito, découvrir le port, faire des activités nautiques ou partir en excursion vers Marbella, Gibraltar, Málaga, Ronda et les villages blancs d'Andalousie."
         }
       },
       {
@@ -456,16 +458,12 @@
   </div>
 
   <main class="container">
+
+    <!-- Hero compact : titre + sous-titre uniquement -->
     <section class="hero-intro" aria-labelledby="page-title">
       <div class="hero-card">
         <h1 id="page-title">Vivre et visiter Estepona : le guide local pour vos vacances sur la Costa del Sol</h1>
-        <p>
-          Bienvenue sur <strong>Vivre à Estepona</strong>, votre guide local pour <strong>visiter Estepona</strong>, préparer vos
-          <strong>vacances à Estepona</strong>, trouver les meilleurs restaurants, découvrir les plages, explorer la vieille ville
-          et organiser votre séjour sur la <strong>Costa del Sol</strong>, en <strong>Andalousie</strong>, au sud de l’<strong>Espagne</strong>.
-          Que vous soyez en voyage en famille, en couple, entre amis, en repérage immobilier ou sur le point de vous installer,
-          vous trouverez ici des conseils pratiques, des idées de sorties, des cartes et des bonnes adresses.
-        </p>
+        <p class="subtitle">Restaurants, plages, quartiers, activités et bons plans pour préparer votre séjour en Andalousie.</p>
       </div>
     </section>
 
@@ -473,7 +471,7 @@
       <div class="section-head">
         <div>
           <h2 id="section-vacances">Vacances à Estepona sur la Costa del Sol</h2>
-          <p>Préparer un séjour à Estepona, en Andalousie, au sud de l’Espagne</p>
+          <p>Préparer un séjour à Estepona, en Andalousie, au sud de l'Espagne</p>
         </div>
       </div>
 
@@ -481,7 +479,7 @@
         <div class="body">
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
             <strong>Estepona</strong> est une destination idéale pour des <strong>vacances sur la Costa del Sol</strong>, en
-            <strong>Andalousie</strong>, au sud de l’<strong>Espagne</strong>. Entre plages, vieille ville fleurie, restaurants,
+            <strong>Andalousie</strong>, au sud de l'<strong>Espagne</strong>. Entre plages, vieille ville fleurie, restaurants,
             port de plaisance, marchés locaux et promenades en bord de mer, la ville offre un cadre parfait pour un séjour
             en famille, en couple ou entre amis.
           </p>
@@ -489,14 +487,14 @@
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
             Située à proximité de <strong>Marbella</strong>, <strong>Málaga</strong>, <strong>Gibraltar</strong>, <strong>Casares</strong> et
             <strong>Sotogrande</strong>, Estepona permet de profiter facilement des plus beaux sites de la région. Les visiteurs
-            peuvent découvrir la vieille ville d’Estepona, se promener sur le <strong>paseo marítimo</strong>, profiter de
+            peuvent découvrir la vieille ville d'Estepona, se promener sur le <strong>paseo marítimo</strong>, profiter de
             <strong>Playa de la Rada</strong>, de <strong>Playa del Cristo</strong>, des chiringuitos, des beach clubs, des activités
             nautiques, des terrains de golf et des excursions en Andalousie.
           </p>
 
           <p style="color:var(--color-text);line-height:1.85;margin:0;">
             Si vous préparez un <strong>voyage à Estepona en Espagne</strong>, ce guide vous aide à trouver les meilleures plages,
-            les restaurants à découvrir, les activités à faire avec des enfants, les lieux à visiter autour d’Estepona,
+            les restaurants à découvrir, les activités à faire avec des enfants, les lieux à visiter autour d'Estepona,
             les quartiers où séjourner, les hôtels, les locations de vacances et les bonnes adresses locales.
           </p>
         </div>
@@ -516,14 +514,14 @@
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
             Pendant vos <strong>vacances à Estepona</strong>, vous pouvez visiter le centre historique, découvrir les ruelles
             blanches décorées de fleurs, marcher sur le front de mer, déjeuner dans un chiringuito, passer la journée à la plage,
-            visiter le port d’Estepona, faire une excursion à Marbella, Gibraltar, Málaga ou Ronda, ou encore profiter des golfs
+            visiter le port d'Estepona, faire une excursion à Marbella, Gibraltar, Málaga ou Ronda, ou encore profiter des golfs
             et activités nautiques de la Costa del Sol.
           </p>
 
           <ul style="color:var(--color-text);line-height:1.8;margin:0;padding-left:22px;">
-            <li>Visiter la vieille ville d’Estepona et ses ruelles fleuries</li>
+            <li>Visiter la vieille ville d'Estepona et ses ruelles fleuries</li>
             <li>Se détendre sur Playa de la Rada ou Playa del Cristo</li>
-            <li>Découvrir les restaurants, tapas bars et chiringuitos d’Estepona</li>
+            <li>Découvrir les restaurants, tapas bars et chiringuitos d'Estepona</li>
             <li>Se promener sur le paseo marítimo et le port de plaisance</li>
             <li>Faire une excursion à Marbella, Málaga, Gibraltar, Ronda ou Casares</li>
             <li>Profiter des activités en famille, des marchés et des plages de la Costa del Sol</li>
@@ -545,12 +543,12 @@
       <div class="grid">
         <article class="card">
           <a class="thumb" href="ruelles.html">
-            <img src="img/estepona-aquarelle.png" alt="Vieille ville d’Estepona avec ses ruelles blanches et fresques murales" loading="eager" decoding="async" />
+            <img src="img/estepona-aquarelle.png" alt="Vieille ville d'Estepona avec ses ruelles blanches et fresques murales" loading="eager" decoding="async" />
           </a>
           <div class="body">
             <div class="kicker">Balade</div>
-            <h3><a href="estepona1.html">Vieille ville et fresques d’Estepona</a></h3>
-            <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à découvrir dans le centre historique d’Estepona.</p>
+            <h3><a href="estepona1.html">Vieille ville et fresques d'Estepona</a></h3>
+            <p class="excerpt">Ruelles blanches, pots fleuris et grandes fresques murales à découvrir dans le centre historique d'Estepona.</p>
           </div>
         </article>
 
@@ -560,9 +558,9 @@
           </a>
           <div class="body">
             <div class="kicker">Actualités</div>
-            <h3><a href="actualites.html">Actualités d’Estepona</a></h3>
+            <h3><a href="actualites.html">Actualités d'Estepona</a></h3>
             <p class="excerpt">Retrouvez les événements, nouveautés et informations pratiques pour suivre la vie locale à Estepona.</p>
-            <a class="cta" href="actualites.html" style="display:inline-block;margin-top:8px;background:var(--color-primary);color:#06131e;padding:8px 12px;border-radius:10px;font-weight:600">Voir l’actu</a>
+            <a class="cta" href="actualites.html" style="display:inline-block;margin-top:8px;background:var(--color-primary);color:#06131e;padding:8px 12px;border-radius:10px;font-weight:600">Voir l'actu</a>
           </div>
         </article>
 
@@ -572,8 +570,8 @@
           </a>
           <div class="body">
             <div class="kicker">Paseo</div>
-            <h3><a href="histoire_paseo.html">Paseo marítimo d’Estepona</a></h3>
-            <p class="excerpt">Des kilomètres de plage, chiringuitos, jeux et promenade en bord de mer pour profiter d’Estepona à pied ou à vélo.</p>
+            <h3><a href="histoire_paseo.html">Paseo marítimo d'Estepona</a></h3>
+            <p class="excerpt">Des kilomètres de plage, chiringuitos, jeux et promenade en bord de mer pour profiter d'Estepona à pied ou à vélo.</p>
             <div class="meta" style="color:var(--color-muted)">Idéal pour les familles</div>
           </div>
         </article>
@@ -597,19 +595,19 @@
           <div class="body">
             <div class="kicker">Playa</div>
             <h3><a href="chiringuito.html">Chiringuitos à Estepona</a></h3>
-            <p class="excerpt">Les meilleurs chiringuitos d’Estepona pour déguster espeto, poissons grillés et cuisine locale les pieds dans le sable.</p>
+            <p class="excerpt">Les meilleurs chiringuitos d'Estepona pour déguster espeto, poissons grillés et cuisine locale les pieds dans le sable.</p>
             <div class="meta" style="color:var(--color-muted)">Bord de mer</div>
           </div>
         </article>
 
         <article class="card">
           <a class="thumb" href="restaurant_centre.html">
-            <img src="img/estepona-aquatelle1.png" alt="Restaurants du centre historique d’Estepona" loading="lazy" decoding="async" />
+            <img src="img/estepona-aquatelle1.png" alt="Restaurants du centre historique d'Estepona" loading="lazy" decoding="async" />
           </a>
           <div class="body">
             <div class="kicker">Centro</div>
-            <h3><a href="restaurant_centre.html">Restaurants du centre d’Estepona</a></h3>
-            <p class="excerpt">Tapas, bodegas et bonnes tables à découvrir dans le centre historique d’Estepona.</p>
+            <h3><a href="restaurant_centre.html">Restaurants du centre d'Estepona</a></h3>
+            <p class="excerpt">Tapas, bodegas et bonnes tables à découvrir dans le centre historique d'Estepona.</p>
             <div class="meta" style="color:var(--color-muted)">Centre-ville</div>
           </div>
         </article>
@@ -631,12 +629,12 @@
     <section class="category" id="itin" aria-labelledby="section-itin">
       <div class="section-head">
         <div>
-          <h2 id="section-itin">Villes à visiter autour d’Estepona</h2>
-          <p>Nos suggestions d’excursions et de balades autour de la Costa del Sol</p>
+          <h2 id="section-itin">Villes à visiter autour d'Estepona</h2>
+          <p>Nos suggestions d'excursions et de balades autour de la Costa del Sol</p>
         </div>
       </div>
       <p style="color:var(--color-muted);margin:0 0 14px;">
-        Depuis Estepona, vous pouvez facilement visiter Marbella, Casares, Ronda, Gibraltar ou encore d’autres villes d’Andalousie.
+        Depuis Estepona, vous pouvez facilement visiter Marbella, Casares, Ronda, Gibraltar ou encore d'autres villes d'Andalousie.
       </p>
       <a class="cta" href="alentours.html" style="display:block;text-align:center;background:var(--color-primary);color:#06131e;padding:18px;border-radius:14px;font-weight:700">Découvrir les villes de la région →</a>
     </section>
@@ -644,24 +642,24 @@
     <section class="category" id="cartes" aria-labelledby="section-cartes">
       <div class="section-head">
         <div>
-          <h2 id="section-cartes">Cartes d’Estepona et de l’Andalousie</h2>
-          <p>Cliquez sur une carte pour l’agrandir</p>
+          <h2 id="section-cartes">Cartes d'Estepona et de l'Andalousie</h2>
+          <p>Cliquez sur une carte pour l'agrandir</p>
         </div>
       </div>
 
       <div class="map-grid">
         <figure class="card" style="margin:0">
           <a class="thumb" href="#">
-            <img class="zoomable" src="img/carte_plage.jpg" alt="Carte des plages d’Estepona" data-full="img/carte_plage.jpg" loading="lazy" decoding="async" />
+            <img class="zoomable" src="img/carte_plage.jpg" alt="Carte des plages d'Estepona" data-full="img/carte_plage.jpg" loading="lazy" decoding="async" />
           </a>
-          <figcaption class="body" style="color:var(--color-muted)">Carte des plages d’Estepona</figcaption>
+          <figcaption class="body" style="color:var(--color-muted)">Carte des plages d'Estepona</figcaption>
         </figure>
 
         <figure class="card" style="margin:0">
           <a class="thumb" href="alentours.html">
-            <img src="img/9.jpg" alt="Carte de l’Andalousie autour d’Estepona" loading="lazy" decoding="async" />
+            <img src="img/9.jpg" alt="Carte de l'Andalousie autour d'Estepona" loading="lazy" decoding="async" />
           </a>
-          <figcaption class="body" style="color:var(--color-muted)">Carte de l’Andalousie</figcaption>
+          <figcaption class="body" style="color:var(--color-muted)">Carte de l'Andalousie</figcaption>
         </figure>
       </div>
     </section>
@@ -692,7 +690,7 @@
             </button>
             <div class="acc-panel" id="faq2" role="region" aria-labelledby="faq-btn-2" hidden style="padding:0 16px 16px;color:var(--color-text)">
               Sans voiture, privilégiez le <strong>centre historique</strong>, <strong>Playa de la Rada</strong>, le <strong>port</strong> ou <strong>Playa del Cristo</strong>.
-              Avec voiture, les zones du <strong>New Golden Mile</strong>, <strong>Selwo</strong>, <strong>Cancelada</strong>, <strong>Casares Costa</strong> ou l’arrière-pays sont également très intéressantes.
+              Avec voiture, les zones du <strong>New Golden Mile</strong>, <strong>Selwo</strong>, <strong>Cancelada</strong>, <strong>Casares Costa</strong> ou l'arrière-pays sont également très intéressantes.
             </div>
           </div>
 
@@ -701,8 +699,8 @@
               Faut-il une voiture à Estepona ?
             </button>
             <div class="acc-panel" id="faq3" role="region" aria-labelledby="faq-btn-3" hidden style="padding:0 16px 16px;color:var(--color-text)">
-              Pas forcément. Pour découvrir la vieille ville, le paseo, le port et les plages du centre, une voiture n’est pas indispensable.
-              Elle devient utile si vous logez à l’extérieur du centre ou si vous souhaitez explorer la région autour d’Estepona.
+              Pas forcément. Pour découvrir la vieille ville, le paseo, le port et les plages du centre, une voiture n'est pas indispensable.
+              Elle devient utile si vous logez à l'extérieur du centre ou si vous souhaitez explorer la région autour d'Estepona.
             </div>
           </div>
 
@@ -713,7 +711,7 @@
             <div class="acc-panel" id="faq4" role="region" aria-labelledby="faq-btn-4" hidden style="padding:0 16px 16px;color:var(--color-text)">
               Vous pouvez visiter la vieille ville, profiter de Playa de la Rada ou Playa del Cristo, vous promener sur le paseo marítimo,
               déjeuner dans un chiringuito, découvrir le port, faire des activités nautiques ou partir en excursion vers Marbella,
-              Gibraltar, Málaga, Ronda et les villages blancs d’Andalousie.
+              Gibraltar, Málaga, Ronda et les villages blancs d'Andalousie.
             </div>
           </div>
 
@@ -734,17 +732,17 @@
       <div class="section-head">
         <div>
           <h2 id="section-guide-estepona">Guide complet pour visiter ou vivre à Estepona</h2>
-          <p>Tout ce qu’il faut savoir avant de découvrir Estepona et la Costa del Sol</p>
+          <p>Tout ce qu'il faut savoir avant de découvrir Estepona et la Costa del Sol</p>
         </div>
       </div>
 
       <div class="card">
         <div class="body">
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
-            <strong>Vivre à Estepona</strong>, c’est profiter d’une ville andalouse agréable toute l’année, connue pour son
+            <strong>Vivre à Estepona</strong>, c'est profiter d'une ville andalouse agréable toute l'année, connue pour son
             centre historique fleuri, ses plages, son paseo maritime, ses restaurants, ses quartiers résidentiels et sa
             qualité de vie. Située sur la <strong>Costa del Sol</strong>, entre Marbella et Gibraltar, Estepona attire autant les
-            visiteurs en vacances que les familles, expatriés et investisseurs qui souhaitent s’installer dans le sud de l’Espagne.
+            visiteurs en vacances que les familles, expatriés et investisseurs qui souhaitent s'installer dans le sud de l'Espagne.
           </p>
 
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
@@ -756,16 +754,16 @@
           </p>
 
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
-            Si vous recherchez un <strong>guide d’Estepona</strong>, des conseils pour <strong>venir à Estepona</strong>, savoir
+            Si vous recherchez un <strong>guide d'Estepona</strong>, des conseils pour <strong>venir à Estepona</strong>, savoir
             <strong>où loger à Estepona</strong>, <strong>que faire à Estepona</strong> ou encore quels sont les meilleurs endroits
             pour sortir, manger ou se promener, vous êtes au bon endroit. Nous partageons aussi des cartes, des actualités
-            locales et des suggestions de visites autour d’Estepona pour profiter pleinement de la région.
+            locales et des suggestions de visites autour d'Estepona pour profiter pleinement de la région.
           </p>
 
           <p style="color:var(--color-text);line-height:1.85;margin:0;">
             Que vous prépariez un court séjour, un <strong>voyage à Estepona</strong>, des <strong>vacances en Espagne</strong>, un projet immobilier
             ou une installation plus durable, <strong>Vivre à Estepona</strong> vous accompagne avec des contenus utiles sur les
-            <strong>quartiers d’Estepona</strong>, les <strong>restaurants</strong>, les <strong>plages</strong>, les <strong>activités</strong>, les
+            <strong>quartiers d'Estepona</strong>, les <strong>restaurants</strong>, les <strong>plages</strong>, les <strong>activités</strong>, les
             locations de vacances, les hôtels et les villes à visiter en Andalousie.
           </p>
         </div>
@@ -773,14 +771,14 @@
     </section>
   </main>
 
-  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l’image">
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement de l'image">
     <img src="" alt="" id="lightbox-img" />
     <button class="lb-close" id="lbClose" aria-label="Fermer (Échap)">×</button>
   </div>
 
   <footer>
     <div class="container footer-top">
-      <a class="brand" href="index.html" aria-label="Retour à l’accueil">
+      <a class="brand" href="index.html" aria-label="Retour à l'accueil">
         <span class="brand-logo">
           <img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" width="44" height="44" loading="lazy" decoding="async" />
         </span>
