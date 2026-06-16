@@ -13,8 +13,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Vivre et visiter Estepona | Vacances, plages, restaurants, quartiers et guide local</title>
-  <meta name="description" content="Guide local pour vivre et passer des vacances à Estepona sur la Costa del Sol en Andalousie : plages, restaurants, vieille ville, activités, excursions, quartiers, immobilier et bonnes adresses." />
+  <title>Vacances à Estepona, Costa del Sol, Andalousie | Guide complet 2026</title>
+  <meta name="description" content="Préparez vos vacances à Estepona, sur la Costa del Sol, en Andalousie (Espagne) : plages, restaurants, vieille ville, activités, excursions, quartiers et bonnes adresses. Le guide local en français." />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
   <link rel="canonical" href="https://www.vivreaestepona.com/" />
@@ -23,16 +23,16 @@
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Vivre à Estepona" />
-  <meta property="og:title" content="Vivre et visiter Estepona : vacances, plages, restaurants et guide local" />
-  <meta property="og:description" content="Préparez vos vacances ou votre installation à Estepona sur la Costa del Sol : plages, restaurants, vieille ville, activités, excursions, quartiers et bonnes adresses." />
+  <meta property="og:title" content="Vacances à Estepona, Costa del Sol, Andalousie | Guide complet" />
+  <meta property="og:description" content="Le guide local pour vos vacances à Estepona, sur la Costa del Sol, en Andalousie : plages, restaurants, vieille ville, activités et excursions en Espagne." />
   <meta property="og:url" content="https://www.vivreaestepona.com/" />
   <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
-  <meta property="og:image:alt" content="Vue d'Estepona sur la Costa del Sol" />
+  <meta property="og:image:alt" content="Vacances à Estepona sur la Costa del Sol, Andalousie, Espagne" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Vivre et visiter Estepona : vacances, plages, restaurants et guide local" />
-  <meta name="twitter:description" content="Guide local pour visiter Estepona, préparer ses vacances sur la Costa del Sol et découvrir plages, restaurants, activités et excursions en Andalousie." />
+  <meta name="twitter:title" content="Vacances à Estepona, Costa del Sol, Andalousie | Guide complet" />
+  <meta name="twitter:description" content="Préparez vos vacances à Estepona sur la Costa del Sol, en Andalousie (Espagne) : plages, restaurants, activités et excursions." />
   <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
   <!-- Preloads -->
@@ -166,10 +166,10 @@
     }
 
     section.category{margin:30px 0}
-    .section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin-bottom:14px}
     .section-head h2{margin:0;font-size:22px}
     .section-head p{margin:0;color:var(--color-muted)}
-    .more{margin-left:auto;font-size:14px;color:var(--color-primary)}
+    .more{margin-left:0;font-size:14px;color:var(--color-primary)}
 
     .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
@@ -204,7 +204,22 @@
       object-position:center;
     }
 
-    .card .body{padding:12px 14px 16px}
+    /* Centrage global du texte des blocs de contenu */
+    section.category .card .body{
+      text-align:center;
+    }
+    section.category .card .body ul{
+      display:inline-block;
+      text-align:left;
+    }
+    .acc-panel{
+      text-align:center;
+    }
+    .acc-btn{
+      text-align:center !important;
+    }
+
+    .card .body{padding:12px 14px 16px;text-align:center}
     .card .kicker{font-size:12px;color:var(--color-muted)}
     .card h3{margin:4px 0 6px;font-size:18px;line-height:1.35}
     .card .excerpt{color:var(--color-muted);font-size:14px}
@@ -324,7 +339,7 @@
     "name":"Vivre à Estepona",
     "url":"https://www.vivreaestepona.com/",
     "inLanguage":"fr",
-    "description":"Guide local pour visiter Estepona, préparer ses vacances sur la Costa del Sol, découvrir les plages, restaurants, activités et vivre en Andalousie.",
+    "description":"Guide local pour préparer ses vacances à Estepona, sur la Costa del Sol, en Andalousie, en Espagne : plages, restaurants, activités et excursions.",
     "publisher":{
       "@type":"Organization",
       "name":"Vivre à Estepona",
@@ -333,6 +348,25 @@
         "@type":"ImageObject",
         "url":"https://www.vivreaestepona.com/img/logo_bon_plan_estepona.png"
       }
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TouristDestination",
+    "name":"Estepona",
+    "description":"Estepona est une ville touristique de la Costa del Sol, en Andalousie, dans le sud de l'Espagne, réputée pour ses plages, sa vieille ville fleurie et son paseo marítimo.",
+    "url":"https://www.vivreaestepona.com/",
+    "containedInPlace":{
+      "@type":"AdministrativeArea",
+      "name":"Andalousie, Espagne"
+    },
+    "geo":{
+      "@type":"GeoCoordinates",
+      "latitude":36.4275,
+      "longitude":-5.1450
     }
   }
   </script>
@@ -380,6 +414,22 @@
         "acceptedAnswer":{
           "@type":"Answer",
           "text":"Oui, Estepona est une destination très appréciée sur la Costa del Sol pour des vacances en famille, en couple ou entre amis. La ville combine plages, vieille ville andalouse, restaurants, promenade maritime, port de plaisance, marchés, activités pour enfants et accès facile aux excursions en Andalousie."
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"Où se trouve Estepona en Espagne ?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Estepona se trouve sur la Costa del Sol, dans la province de Málaga, en Andalousie, au sud de l'Espagne. Elle est située entre Marbella et Gibraltar, à environ une heure de l'aéroport de Málaga et 45 minutes de celui de Gibraltar."
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"Comment se rendre à Estepona depuis la France pour les vacances ?",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"Depuis la France, on rejoint Estepona en avion via l'aéroport de Málaga (le plus proche, à environ 1h de route) ou celui de Gibraltar, puis en voiture de location, navette ou bus. Il est aussi possible de venir en voiture depuis la France en traversant l'Espagne, un trajet d'environ 14 à 16 heures."
         }
       }
     ]
@@ -462,8 +512,8 @@
     <!-- Hero compact : titre + sous-titre uniquement -->
     <section class="hero-intro" aria-labelledby="page-title">
       <div class="hero-card">
-        <h1 id="page-title">Vivre et visiter Estepona : le guide local pour vos vacances sur la Costa del Sol</h1>
-        <p class="subtitle">Restaurants, plages, quartiers, activités et bons plans pour préparer votre séjour en Andalousie.</p>
+        <h1 id="page-title">Vacances à Estepona, sur la Costa del Sol, en Andalousie (Espagne)</h1>
+        <p class="subtitle">Le guide local en français pour préparer votre séjour : plages, restaurants, quartiers, activités et bons plans.</p>
       </div>
     </section>
 
@@ -478,10 +528,10 @@
       <div class="card">
         <div class="body">
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
-            <strong>Estepona</strong> est une destination idéale pour des <strong>vacances sur la Costa del Sol</strong>, en
-            <strong>Andalousie</strong>, au sud de l'<strong>Espagne</strong>. Entre plages, vieille ville fleurie, restaurants,
+            <strong>Estepona</strong> est une destination idéale pour des <strong>vacances en Espagne</strong>, sur la
+            <strong>Costa del Sol</strong>, en <strong>Andalousie</strong>. Entre plages, vieille ville fleurie, restaurants,
             port de plaisance, marchés locaux et promenades en bord de mer, la ville offre un cadre parfait pour un séjour
-            en famille, en couple ou entre amis.
+            en famille, en couple ou entre amis, au sud de l'Espagne.
           </p>
 
           <p style="color:var(--color-text);line-height:1.85;margin:0 0 16px;">
@@ -722,6 +772,26 @@
             <div class="acc-panel" id="faq5" role="region" aria-labelledby="faq-btn-5" hidden style="padding:0 16px 16px;color:var(--color-text)">
               Oui. Estepona est appréciée pour ses plages, son centre historique andalou, ses restaurants, son ambiance familiale,
               son port de plaisance, ses marchés, ses activités pour enfants et sa proximité avec Marbella, Málaga, Gibraltar et Ronda.
+            </div>
+          </div>
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq6" id="faq-btn-6" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Où se trouve Estepona en Espagne ?
+            </button>
+            <div class="acc-panel" id="faq6" role="region" aria-labelledby="faq-btn-6" hidden style="padding:0 16px 16px;color:var(--color-text)">
+              Estepona se trouve sur la <strong>Costa del Sol</strong>, dans la province de Málaga, en <strong>Andalousie</strong>, au sud de l'<strong>Espagne</strong>.
+              Elle est située entre Marbella et Gibraltar, à environ une heure de l'aéroport de Málaga et 45 minutes de celui de Gibraltar.
+            </div>
+          </div>
+
+          <div class="acc-item" style="border-top:1px solid var(--color-border)">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq7" id="faq-btn-7" style="width:100%;text-align:left;background:transparent;border:0;padding:16px;font-size:16px;cursor:pointer;color:var(--color-text)">
+              Comment se rendre à Estepona depuis la France pour les vacances ?
+            </button>
+            <div class="acc-panel" id="faq7" role="region" aria-labelledby="faq-btn-7" hidden style="padding:0 16px 16px;color:var(--color-text)">
+              Depuis la France, on rejoint Estepona en avion via l'<strong>aéroport de Málaga</strong> (le plus proche, à environ 1h de route) ou celui de
+              <strong>Gibraltar</strong>, puis en voiture de location, navette ou bus. Il est aussi possible de venir en voiture depuis la France en
+              traversant l'Espagne, un trajet d'environ 14 à 16 heures.
             </div>
           </div>
         </div>
