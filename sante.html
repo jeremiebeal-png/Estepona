@@ -1,4 +1,5 @@
-
+---
+---
 <!doctype html>
 <html lang="fr">
 <head>
@@ -15,7 +16,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Centres médicaux & santé — Estepona</title>
   <meta name="description" content="Hôpitaux, centres de santé publics, cliniques privées, dentistes, kinés, pédiatres et spécialistes à Estepona." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
+  <link rel="canonical" href="https://www.vivreaestepona.com/sante.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vivre à Estepona" />
+  <meta property="og:title" content="Centres médicaux & santé — Estepona" />
+  <meta property="og:description" content="Hôpitaux, centres de santé publics, cliniques privées, dentistes, kinés, pédiatres et spécialistes à Estepona." />
+  <meta property="og:url" content="https://www.vivreaestepona.com/sante.html" />
+  <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
+  <meta property="og:image:alt" content="Vivre à Estepona" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Centres médicaux & santé — Estepona" />
+  <meta name="twitter:description" content="Hôpitaux, centres de santé publics, cliniques privées, dentistes, kinés, pédiatres et spécialistes à Estepona." />
+  <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
   <style>
     :root{
@@ -32,6 +51,9 @@
       --radius-lg:14px;
       --radius-md:10px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
+      --glass: rgba(11,23,48,.92);
+      --glass-strong: rgba(11,23,48,.97);
+      --glassLine: rgba(234,246,248,.10);
     }
 
     html,body{
@@ -58,23 +80,34 @@
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
     .brand-logo img{width:100%;height:100%;object-fit:cover}
-    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+    .social-top{display:flex;gap:10px;align-items:center}
+    .social-top a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background: rgba(234,246,248,.08);
+      border: 1px solid rgba(234,246,248,.14);
+      color: rgba(234,246,248,.92);
+      font-size:14px;line-height:1;
+    }
+    .social-top a:hover{background: rgba(234,246,248,.12);border-color: rgba(234,246,248,.22);}
+    .social-top svg{width:16px;height:16px;opacity:.95}
     .search{
-      margin-left:auto;display:flex;gap:8px;align-items:center;
+      display:flex;gap:8px;align-items:center;
       background:var(--color-surface);border:1px solid var(--color-border);
       border-radius:999px;padding:8px 12px
     }
     .search input{
       background:transparent;border:0;outline:0;color:var(--color-text);
-      min-width:200px;font-size:16px; /* évite le zoom iOS */
+      min-width:180px;font-size:16px; /* évite le zoom iOS */
     }
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
-      border:1px solid var(--color-border);background:var(--color-surface)
+      border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);
     }
-    @media (max-width:980px){nav.primary,.search{display:none}.burger{display:grid;place-items:center;margin-left:auto}}
+    @media (max-width:980px){nav.primary,.social-top{display:none}.burger{display:grid;place-items:center;margin-left:auto}}
     .burger{cursor:pointer}
     .burger:active{transform:scale(.98)}
 
@@ -103,7 +136,7 @@
     }
     .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-    /* ✅ Bloc de navigation obligatoire (mémoire) */
+    /* Bandeau de raccourcis + recherche dans la page */
     .quick-nav-wrap{
       border-top:1px solid var(--color-border);
       border-bottom:1px solid var(--color-border);
@@ -112,17 +145,23 @@
     .quick-nav-inner{
       padding:8px 0;
       font-size:14px;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
     }
-    .quick-nav-inner > div a{
+    .quick-nav-links{
+      display:flex;gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    }
+    .quick-nav-links a{
       white-space:nowrap;
       padding:4px 8px;
       border-radius:999px;
       border:1px solid transparent;
       display:inline-block;
     }
-    .quick-nav-inner > div a:hover{
+    .quick-nav-links a:hover{
       border-color:var(--color-border);
       background:rgba(255,255,255,0.04);
     }
@@ -249,9 +288,14 @@
     /* Footer (index.html) */
     footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
     .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .footer-nav{display:flex;gap:16px;flex-wrap:wrap;color:var(--color-muted)}
     .social{display:flex;gap:12px}
-    .social a{padding:8px 12px;border-radius:10px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
+    .social a{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--color-border);background:rgba(255,255,255,.02)
+    }
+    .social a:hover{background:rgba(255,255,255,.05)}
+    .social svg{width:16px;height:16px;opacity:.95}
     .footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 
     /* Mobile polish */
@@ -269,24 +313,23 @@
 </head>
 
 <body>
-  <!-- HEADER (même structure que index.html) -->
-  <header>
-    <div class="container header-row">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-         <strong>Vivre à Estepona</strong>
-      </a>
 
-      <nav class="primary" aria-label="Navigation principale">
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="transport-estepona.html">Transport</a>
-        <a href="ecoles.html">Écoles</a>
-        <a href="sante.html">Santé</a>
-        <a href="trafic.html">Trafic</a>
-        <a href="index.html#faq">FAQ</a>
+{% include header.html %}
+
+  <!-- Bandeau de raccourcis + recherche dans la page -->
+  <div class="quick-nav-wrap">
+    <div class="container quick-nav-inner">
+      <div class="quick-nav-links">
+        <a href="#urgences">Urgences</a>
+        <a href="#centres-sante">Centres publics</a>
+        <a href="#cliniques">Cliniques</a>
+        <a href="#dentistes">Dentistes</a>
+        <a href="#kine">Kiné</a>
+        <a href="#pediatrie">Pédiatrie</a>
+        <a href="#autres">Spécialistes</a>
+        <a href="#cartes">Carte</a>
         <a href="contact.html">Contact</a>
-      </nav>
+      </div>
 
       <form class="search" role="search" onsubmit="event.preventDefault();document.querySelector('main')?.scrollIntoView({behavior:'smooth'});">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -295,49 +338,7 @@
         </svg>
         <input type="search" placeholder="Rechercher : hôpital, dentiste, kiné…" aria-label="Rechercher dans la page" />
       </form>
-
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
     </div>
-
-    <!-- ✅ Bloc de navigation obligatoire (même HTML que demandé) -->
-    <div class="quick-nav-wrap">
-      <div class="container quick-nav-inner">
-        <div style="display:flex;gap:16px">
-          <a href="#urgences">Urgences</a>
-          <a href="#centres-sante">Centres publics</a>
-          <a href="#cliniques">Cliniques</a>
-          <a href="#dentistes">Dentistes</a>
-          <a href="#kine">Kiné</a>
-          <a href="#pediatrie">Pédiatrie</a>
-          <a href="#autres">Spécialistes</a>
-          <a href="#cartes">Carte</a>
-          <a href="contact.html">Contact</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- MENU MOBILE -->
-  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
-    <div class="mobile-menu-head">
-      <strong>Menu</strong>
-      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
-    </div>
-
-    <nav class="mobile-nav">
-      <a href="index.html#manger">Restaurants</a>
-      <a href="index.html#itin">Que faire</a>
-      <a href="transport-estepona.html">Transport</a>
-      <a href="ecoles.html">Écoles</a>
-      <a href="sante.html">Santé</a>
-      <a href="trafic.html">Trafic</a>
-      <a href="index.html#faq">FAQ</a>
-      <a href="contact.html">Contact</a>
-    </nav>
   </div>
 
   <!-- HERO -->
@@ -347,7 +348,7 @@
       <h1>Centres médicaux, hôpitaux & spécialistes</h1>
       <p>
         Hôpitaux, centres publics, cliniques privées, dentistes, kinés & rééducation, pédiatrie et autres spécialistes à Estepona.
-        En cas d’urgence vitale : <strong>112</strong>.
+        En cas d'urgence vitale : <strong>112</strong>.
       </p>
     </div>
   </section>
@@ -357,7 +358,7 @@
     <!-- URGENCES & HÔPITAUX -->
     <section class="section" id="urgences">
       <h2>🚑 Urgences & hôpitaux</h2>
-      <p>Les structures principales pour les urgences et l’hospitalisation autour d’Estepona.</p>
+      <p>Les structures principales pour les urgences et l'hospitalisation autour d'Estepona.</p>
       <ul class="list two-cols">
         <li class="item">
           <div class="item-header">
@@ -622,7 +623,7 @@
       <ul class="list two-cols">
         <li class="item">
           <div class="item-header">
-            <strong>Accès “multi-spécialités”</strong>
+            <strong>Accès "multi-spécialités"</strong>
             <span class="badge">Privé</span>
           </div>
           <div class="item-body">
@@ -680,31 +681,7 @@
 
   </main>
 
-  <!-- FOOTER (style index.html) -->
-  <footer>
-    <div class="container footer-top">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Estepona — Bons plans</strong>
-      </a>
-
-      <nav class="footer-nav" aria-label="Navigation de pied de page">
-        <a href="index.html#voir">À voir</a>
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="index.html#cartes">Cartes</a>
-        <a href="index.html#faq">FAQ</a>
-      </nav>
-
-      <div class="social" aria-label="Réseaux sociaux">
-        <a href="#" aria-label="Instagram">Instagram</a>
-        <a href="#" aria-label="YouTube">YouTube</a>
-        <a href="#" aria-label="TikTok">TikTok</a>
-      </div>
-    </div>
-
-    <div class="container footer-bottom">© 2026 Bons Plans Estepona · Guide local indépendant</div>
-  </footer>
+{% include footer.html %}
 
   <script>
     // Bouton plein écran (ouvre la carte My Maps dans un nouvel onglet)
@@ -714,39 +691,6 @@
         "_blank",
         "noopener"
       );
-    });
-
-    // Menu mobile (même JS que index.html)
-    const burger = document.querySelector('.burger');
-    const mobile = document.getElementById('mobileMenu');
-    let backdrop;
-
-    function openMenu(){
-      if(!mobile) return;
-      mobile.hidden = false;
-      burger?.setAttribute('aria-expanded','true');
-      backdrop = document.createElement('div');
-      backdrop.className = 'mobile-backdrop';
-      backdrop.addEventListener('click', closeMenu);
-      document.body.appendChild(backdrop);
-      document.body.style.overflow='hidden';
-    }
-
-    function closeMenu(){
-      if(!mobile) return;
-      mobile.hidden = true;
-      burger?.setAttribute('aria-expanded','false');
-      backdrop?.remove();
-      document.body.style.overflow='';
-    }
-
-    burger?.addEventListener('click',()=>{
-      const open = burger.getAttribute('aria-expanded')==='true';
-      open ? closeMenu() : openMenu();
-    });
-
-    document.addEventListener('keydown',e=>{
-      if(e.key==='Escape' && mobile && !mobile.hidden) closeMenu();
     });
   </script>
 </body>
