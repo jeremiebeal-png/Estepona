@@ -1,3 +1,5 @@
+---
+---
 <!doctype html>
 <html lang="fr">
 <head>
@@ -14,7 +16,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Transports à Estepona — Bus & Taxis</title>
   <meta name="description" content="Bus urbains, bus régionaux et taxis à Estepona : infos pratiques, liens officiels Avanza et Radio Taxi Estepona." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
+  <link rel="canonical" href="https://www.vivreaestepona.com/transport-estepona.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vivre à Estepona" />
+  <meta property="og:title" content="Transports à Estepona — Bus & Taxis" />
+  <meta property="og:description" content="Bus urbains, bus régionaux et taxis à Estepona : infos pratiques, liens officiels Avanza et Radio Taxi Estepona." />
+  <meta property="og:url" content="https://www.vivreaestepona.com/transport-estepona.html" />
+  <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
+  <meta property="og:image:alt" content="Vivre à Estepona" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Transports à Estepona — Bus & Taxis" />
+  <meta name="twitter:description" content="Bus urbains, bus régionaux et taxis à Estepona : infos pratiques, liens officiels Avanza et Radio Taxi Estepona." />
+  <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
   <style>
     :root{
@@ -82,7 +102,7 @@
     }
     .brand-logo img{width:100%;height:100%;object-fit:cover}
 
-    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
@@ -291,72 +311,8 @@
 </head>
 
 <body>
-  <!-- HEADER (index.html) -->
-  <header>
-    <div class="container header-row">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo">
-          <img src="img/logo_bon_plan_estepona.png" alt="Estepona" />
-        </span>
-        <strong>Vivre à Estepona</strong>
-      </a>
 
-      <nav class="primary" aria-label="Navigation principale">
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="transport-estepona.html">Transport</a>
-        <a href="ecoles.html">Écoles</a>
-        <a href="sante.html">Santé</a>
-        <a href="trafic.html">Trafic</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-
-      <div class="social-top" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
-      </div>
-
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" type="button">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <!-- MENU MOBILE (index.html) -->
-  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
-    <div class="mobile-menu-head">
-      <strong>Menu</strong>
-      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
-    </div>
-
-    <nav class="mobile-nav">
-      <a href="index.html#manger" onclick="document.querySelector('.burger')?.click()">Restaurants</a>
-      <a href="index.html#itin" onclick="document.querySelector('.burger')?.click()">Que faire</a>
-      <a href="transport-estepona.html">Transport</a>
-      <a href="ecoles.html">Écoles</a>
-      <a href="sante.html">Santé</a>
-      <a href="trafic.html">Trafic</a>
-      <a href="contact.html" onclick="document.querySelector('.burger')?.click()">Contact</a>
-
-      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
-    </nav>
-  </div>
+{% include header.html %}
 
   <!-- HERO -->
   <section class="page-hero">
@@ -365,7 +321,7 @@
       <h1>Transports à Estepona</h1>
       <p>
         Comment se déplacer à Estepona sans stress : bus urbains, bus régionaux Avanza,
-        taxis et liaisons vers Málaga, l’aéroport, Gibraltar ou Algeciras.
+        taxis et liaisons vers Málaga, l'aéroport, Gibraltar ou Algeciras.
         Horaires et tarifs sont toujours à vérifier sur les sites officiels.
       </p>
       <div class="chips-row" aria-label="Résumé des options de transport">
@@ -385,12 +341,12 @@
         <article class="card">
           <h2>🚌 Bus urbains à Estepona</h2>
           <p>
-            Le réseau urbain d’Estepona est exploité par Avanza. Il relie les principaux
+            Le réseau urbain d'Estepona est exploité par Avanza. Il relie les principaux
             quartiers : Avenida Litoral, centre, hôpital, zones résidentielles et plages.
           </p>
           <ul>
             <li><strong>Lignes E-1, E-2…</strong> : liaisons internes Avenida Litoral, Beverly Hills, hôpital, Costa Galera, etc.</li>
-            <li><strong>Achat & rechargement</strong> : à la gare routière d’Estepona ou directement dans les bus.</li>
+            <li><strong>Achat & rechargement</strong> : à la gare routière d'Estepona ou directement dans les bus.</li>
             <li><strong>Horaires</strong> : varient selon les jours (semaine / week-end). Toujours vérifier en ligne avant de partir.</li>
           </ul>
           <div class="btn-row">
@@ -406,14 +362,14 @@
         <article class="card">
           <h2>🚍 Bus régionaux & longue distance</h2>
           <p>
-            Depuis la gare routière d’Estepona, les bus Avanza (Portillo) desservent Málaga,
-            l’aéroport, Marbella, La Línea/Gibraltar, Algeciras, Cádiz et d’autres villes
+            Depuis la gare routière d'Estepona, les bus Avanza (Portillo) desservent Málaga,
+            l'aéroport, Marbella, La Línea/Gibraltar, Algeciras, Cádiz et d'autres villes
             andalouses.
           </p>
 
           <div style="margin-bottom:8px">
             <span class="badge">Opérateur principal : Avanza</span>
-            <span class="badge">Départ : Gare routière d’Estepona</span>
+            <span class="badge">Départ : Gare routière d'Estepona</span>
           </div>
 
           <div style="overflow:auto;border-radius:12px;border:1px solid var(--color-border)">
@@ -448,7 +404,7 @@
                 <tr>
                   <td>La Línea / Gibraltar</td>
                   <td>Bus direct</td>
-                  <td>Ligne M-240 jusqu’à La Línea, pour rejoindre Gibraltar à pied.</td>
+                  <td>Ligne M-240 jusqu'à La Línea, pour rejoindre Gibraltar à pied.</td>
                   <td><a href="https://malaga.avanzagrupo.com/es/itinerarios-y-horarios/lineas/24o-m240-estepona-la-linea" target="_blank" rel="noopener">Voir ligne M-240</a></td>
                 </tr>
                 <tr>
@@ -469,7 +425,7 @@
 
           <div class="btn-row">
             <a class="btn btn-primary" href="https://malaga.avanzagrupo.com/es/destinos/estepona" target="_blank" rel="noopener">
-              Page “Estepona” sur Avanza
+              Page "Estepona" sur Avanza
             </a>
             <a class="btn" href="https://portillo.azurewebsites.net/es/itinerarios-y-horarios/horarios-en-pdf" target="_blank" rel="noopener">
               Tous les horaires en PDF
@@ -484,7 +440,7 @@
           <h2>🚕 Taxis à Estepona</h2>
           <p>
             Le taxi reste la solution la plus simple si tu voyages en famille, la nuit
-            ou avec des valises. Les taxis officiels d’Estepona appliquent un tarif
+            ou avec des valises. Les taxis officiels d'Estepona appliquent un tarif
             réglementé (compteur) avec suppléments aéroport/nuit.
           </p>
 
@@ -506,10 +462,10 @@
         </article>
 
         <article class="card">
-          <h2>📍 Gare routière d’Estepona</h2>
+          <h2>📍 Gare routière d'Estepona</h2>
           <p>
             La plupart des bus urbains, régionaux et longue distance partent de la
-            <strong>gare routière d’Estepona</strong> (avenida del Litoral, près du Palais
+            <strong>gare routière d'Estepona</strong> (avenida del Litoral, près du Palais
             des Congrès).
           </p>
           <ul>
@@ -535,70 +491,7 @@
     </div>
   </main>
 
-  <!-- FOOTER (index.html) -->
-  <footer>
-    <div class="container footer-top">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Vivre à Estepona</strong>
-      </a>
+{% include footer.html %}
 
-      <div class="social" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
-      </div>
-    </div>
-
-    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
-  </footer>
-
-  <script>
-    // Menu mobile (même JS que index.html)
-    const burger = document.querySelector('.burger');
-    const mobile = document.getElementById('mobileMenu');
-    let backdrop;
-
-    function openMenu(){
-      if(!mobile) return;
-      mobile.hidden = false;
-      burger?.setAttribute('aria-expanded','true');
-      backdrop = document.createElement('div');
-      backdrop.className = 'mobile-backdrop';
-      backdrop.addEventListener('click', closeMenu);
-      document.body.appendChild(backdrop);
-      document.body.style.overflow='hidden';
-    }
-
-    function closeMenu(){
-      if(!mobile) return;
-      mobile.hidden = true;
-      burger?.setAttribute('aria-expanded','false');
-      backdrop?.remove();
-      document.body.style.overflow='';
-    }
-
-    burger?.addEventListener('click',()=>{
-      const open = burger.getAttribute('aria-expanded')==='true';
-      open ? closeMenu() : openMenu();
-    });
-
-    document.addEventListener('keydown',e=>{
-      if(e.key==='Escape' && mobile && !mobile.hidden) closeMenu();
-    });
-  </script>
 </body>
 </html>
