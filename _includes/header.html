@@ -1,4 +1,36 @@
-<header>
+<style>
+    nav.primary{position:relative}
+    .dropdown{position:relative;display:inline-block}
+    .dropdown-toggle{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 12px;border-radius:999px;border:1px solid transparent;
+      background:transparent;color:inherit;font:inherit;cursor:pointer;
+    }
+    .dropdown-toggle:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
+    .dropdown-toggle .chev{width:11px;height:11px;transition:transform .15s ease}
+    .dropdown-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+
+    .dropdown-menu{
+      position:absolute;top:calc(100% + 8px);left:0;min-width:200px;
+      display:none;flex-direction:column;gap:2px;padding:8px;
+      background:var(--glass-strong);backdrop-filter:blur(14px) saturate(140%);
+      -webkit-backdrop-filter:blur(14px) saturate(140%);
+      border:1px solid var(--glassLine);border-radius:var(--radius-md);
+      box-shadow:var(--shadow);z-index:60;
+    }
+    .dropdown-menu.open{display:flex}
+    .dropdown-menu a{padding:9px 12px;border-radius:8px;white-space:nowrap}
+    .dropdown-menu a:hover{background:rgba(255,255,255,.06)}
+
+    .mobile-nav-label{
+      margin-top:10px;padding:6px 4px 2px;
+      font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+      color:var(--color-muted);
+    }
+    .mobile-nav-label:first-child{margin-top:0}
+  </style>
+
+  <header>
     <div class="container header-row">
       <a class="brand" href="{{ '/' | relative_url }}" aria-label="Accueil Vivre à Estepona">
         <span class="brand-logo">
@@ -8,15 +40,34 @@
       </a>
 
       <nav class="primary" aria-label="Navigation principale">
-        <a href="{{ '/index.html#manger' | relative_url }}">Restaurants</a>
         <a href="{{ '/index.html#vacances' | relative_url }}">Vacances</a>
-        <a href="{{ '/index.html#itin' | relative_url }}">Que faire</a>
-        <a href="{{ '/transport-estepona.html' | relative_url }}">Transport</a>
-        <a href="{{ '/ecoles.html' | relative_url }}">Écoles</a>
-        <a href="{{ '/sante.html' | relative_url }}">Santé</a>
-        <a href="{{ '/trafic.html' | relative_url }}">Trafic</a>
-        <a href="{{ '/installation.html' | relative_url }}">S'installer</a>
-        <a href="{{ '/alentours.html' | relative_url }}">Aux alentours</a>
+
+        <div class="dropdown">
+          <button class="dropdown-toggle" type="button" aria-expanded="false" aria-controls="dd-vivre">
+            Vivre ici
+            <svg class="chev" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dropdown-menu" id="dd-vivre">
+            <a href="{{ '/installation.html' | relative_url }}">S'installer</a>
+            <a href="{{ '/ecoles.html' | relative_url }}">Écoles</a>
+            <a href="{{ '/sante.html' | relative_url }}">Santé</a>
+            <a href="{{ '/transport-estepona.html' | relative_url }}">Transport</a>
+            <a href="{{ '/trafic.html' | relative_url }}">Trafic</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropdown-toggle" type="button" aria-expanded="false" aria-controls="dd-decouvrir">
+            Découvrir
+            <svg class="chev" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dropdown-menu" id="dd-decouvrir">
+            <a href="{{ '/index.html#manger' | relative_url }}">Restaurants</a>
+            <a href="{{ '/index.html#itin' | relative_url }}">Que faire</a>
+            <a href="{{ '/alentours.html' | relative_url }}">Aux alentours</a>
+          </div>
+        </div>
+
         <a href="{{ '/contact.html' | relative_url }}">Contact</a>
       </nav>
 
@@ -53,15 +104,20 @@
     </div>
 
     <nav class="mobile-nav" aria-label="Navigation mobile">
-      <a href="{{ '/index.html#manger' | relative_url }}">Restaurants</a>
       <a href="{{ '/index.html#vacances' | relative_url }}">Vacances</a>
-      <a href="{{ '/index.html#itin' | relative_url }}">Que faire</a>
-      <a href="{{ '/transport-estepona.html' | relative_url }}">Transport</a>
+
+      <div class="mobile-nav-label">Vivre ici</div>
+      <a href="{{ '/installation.html' | relative_url }}">S'installer</a>
       <a href="{{ '/ecoles.html' | relative_url }}">Écoles</a>
       <a href="{{ '/sante.html' | relative_url }}">Santé</a>
+      <a href="{{ '/transport-estepona.html' | relative_url }}">Transport</a>
       <a href="{{ '/trafic.html' | relative_url }}">Trafic</a>
-      <a href="{{ '/installation.html' | relative_url }}">S'installer</a>
+
+      <div class="mobile-nav-label">Découvrir</div>
+      <a href="{{ '/index.html#manger' | relative_url }}">Restaurants</a>
+      <a href="{{ '/index.html#itin' | relative_url }}">Que faire</a>
       <a href="{{ '/alentours.html' | relative_url }}">Aux alentours</a>
+
       <a href="{{ '/contact.html' | relative_url }}">Contact</a>
       <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">Instagram</a>
       <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">YouTube</a>
