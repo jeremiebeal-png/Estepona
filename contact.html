@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>Contact — Vivre à Estepona</title>
-  <meta name="description" content="Contact, newsletter et partenariats — Vivre à Estepona" />
+  <meta name="description" content="Contactez Vivre à Estepona sur Instagram ou Facebook, et inscrivez-vous à la newsletter." />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
   <link rel="canonical" href="https://www.vivreaestepona.com/contact.html" />
@@ -26,7 +26,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Vivre à Estepona" />
   <meta property="og:title" content="Contact — Vivre à Estepona" />
-  <meta property="og:description" content="Contact, newsletter et partenariats — Vivre à Estepona" />
+  <meta property="og:description" content="Contactez Vivre à Estepona sur Instagram ou Facebook, et inscrivez-vous à la newsletter." />
   <meta property="og:url" content="https://www.vivreaestepona.com/contact.html" />
   <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
   <meta property="og:image:alt" content="Vivre à Estepona" />
@@ -34,7 +34,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Contact — Vivre à Estepona" />
-  <meta name="twitter:description" content="Contact, newsletter et partenariats — Vivre à Estepona" />
+  <meta name="twitter:description" content="Contactez Vivre à Estepona sur Instagram ou Facebook, et inscrivez-vous à la newsletter." />
   <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
 <style>
@@ -93,7 +93,6 @@ nav.primary a:hover{background:rgba(255,255,255,.04)}
 .mobile-nav a{display:block;padding:12px 12px;border-radius:12px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
 .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-/* Hero, dans le même esprit que la page d'accueil */
 .hero-intro{padding:28px 0 4px}
 .hero-card{
   border:1px solid var(--color-border);
@@ -120,13 +119,12 @@ section.category{margin:30px 0}
 }
 
 label{display:block;margin-top:14px;font-size:14px;color:var(--color-muted)}
-input,textarea{
+input{
   width:100%;margin-top:6px;padding:11px 12px;border-radius:var(--radius-md);
   border:1px solid var(--color-border);background:var(--color-surface-2);
   color:var(--color-text);font-family:inherit;font-size:15px;
 }
-input:focus,textarea:focus{outline:2px solid var(--color-primary);outline-offset:1px}
-textarea{min-height:120px;resize:vertical}
+input:focus{outline:2px solid var(--color-primary);outline-offset:1px}
 
 .btn{
   margin-top:18px;padding:12px 20px;border-radius:999px;border:0;
@@ -135,23 +133,29 @@ textarea{min-height:120px;resize:vertical}
 }
 .btn:hover{filter:brightness(1.08)}
 
-/* Mini-cartes réseaux sociaux */
-.social-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
-@media(max-width:700px){.social-grid{grid-template-columns:1fr}}
+.contact-lead{
+  text-align:center;color:var(--color-text);line-height:1.7;
+  max-width:560px;margin:0 auto 22px;
+}
+
+.social-grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+@media(max-width:820px){.social-grid{grid-template-columns:1fr}}
 .social-card{
   display:flex;align-items:center;gap:14px;
   border:1px solid var(--color-border);border-radius:var(--radius-lg);
   padding:18px 20px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
-  box-shadow:var(--shadow);
+  box-shadow:var(--shadow);transition:transform .12s ease;
 }
-.social-card:hover{background:rgba(255,255,255,.05)}
+.social-card:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
 .social-card .icon{
-  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
-  background:rgba(45,180,255,.12);color:var(--color-primary);flex-shrink:0;
+  width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;
 }
-.social-card .icon svg{width:22px;height:22px}
+.social-card.instagram .icon{background:rgba(45,180,255,.12);color:var(--color-primary)}
+.social-card.facebook .icon{background:rgba(45,107,255,.15);color:#5b8cff}
+.social-card.youtube .icon{background:rgba(255,69,69,.14);color:#ff5b5b}
+.social-card .icon svg{width:24px;height:24px}
 .social-card strong{display:block;font-size:15px}
-.social-card span{display:block;color:var(--color-muted);font-size:13px}
+.social-card span.handle{display:block;color:var(--color-muted);font-size:13px}
 
 footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
 .footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
@@ -171,8 +175,60 @@ footer{margin-top:48px;border-top:1px solid var(--color-border);background:linea
 
   <section class="hero-intro">
     <div class="hero-card">
-      <h1>Contact & Newsletter</h1>
+      <h1>Contact</h1>
       <p class="subtitle">Une question, une envie de collaboration, ou simplement envie de nous dire bonjour ? On est ravis de vous lire — réponse rapide garantie 🌞</p>
+    </div>
+  </section>
+
+  <section class="category" id="contact">
+    <div class="section-head">
+      <div>
+        <h2>📩 Nous contacter</h2>
+        <p>Le plus simple et le plus rapide pour nous joindre</p>
+      </div>
+    </div>
+    <p class="contact-lead">
+      Pour nous contacter, le plus simple est de nous écrire directement sur <strong>Instagram</strong> ou <strong>Facebook</strong> — on vous répond en message privé, généralement très vite. Cliquez simplement sur l'un des liens ci-dessous :
+    </p>
+    <div class="social-grid">
+      <a class="social-card instagram" href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Instagram</strong>
+          <span class="handle">@vivreaestepona</span>
+        </span>
+      </a>
+
+      <a class="social-card facebook" href="https://www.facebook.com/profile.php?id=61587150058798" target="_blank" rel="noopener noreferrer">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22H14v-7h2.2l.4-3H14v-1.8c0-.9.3-1.5 1.7-1.5H17V6.1c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4v2H8.2v3H10.6V22H7.5A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Facebook</strong>
+          <span class="handle">Vivre à Estepona</span>
+        </span>
+      </a>
+
+      <a class="social-card youtube" href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>
+          <strong>YouTube</strong>
+          <span class="handle">@Vivre_a_Estepona</span>
+        </span>
+      </a>
     </div>
   </section>
 
@@ -192,75 +248,9 @@ footer{margin-top:48px;border-top:1px solid var(--color-border);background:linea
     </div>
   </section>
 
-  <section class="category" id="contact">
-    <div class="section-head">
-      <div>
-        <h2>📩 Envoyer un message</h2>
-        <p>Une question, un partenariat, une suggestion ? Écrivez-nous directement</p>
-      </div>
-    </div>
-    <div class="card">
-      <form id="contactForm" action="mailto:vivreaestepona@gmail.com" method="post" enctype="text/plain">
-        <label>Nom</label>
-        <input type="text" name="Nom" required placeholder="Votre nom">
-        <label>Email</label>
-        <input type="email" name="Email" required placeholder="vous@exemple.com">
-        <label>Message</label>
-        <textarea name="Message" required placeholder="Votre message..."></textarea>
-        <label>2 + 3 = ? <span style="color:var(--color-muted);font-weight:400">(anti-spam)</span></label>
-        <input id="captcha" type="number" required placeholder="Votre réponse">
-        <button class="btn">Envoyer</button>
-      </form>
-    </div>
-  </section>
-
-  <section class="category" id="suivez-nous">
-    <div class="section-head">
-      <div>
-        <h2>Suivez la vie d'Estepona au quotidien</h2>
-        <p>Des photos, des vidéos et les actus locales directement sur les réseaux</p>
-      </div>
-    </div>
-    <div class="social-grid">
-      <a class="social-card" href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">
-        <span class="icon">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span>
-          <strong>Instagram</strong>
-          <span>@vivreaestepona</span>
-        </span>
-      </a>
-      <a class="social-card" href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">
-        <span class="icon">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-        </span>
-        <span>
-          <strong>YouTube</strong>
-          <span>@Vivre_a_Estepona</span>
-        </span>
-      </a>
-    </div>
-  </section>
-
 </main>
 
 {% include footer.html %}
-
-<script>
-document.getElementById('contactForm').addEventListener('submit',e=>{
- if(document.getElementById('captcha').value!='5'){
-  e.preventDefault();alert('Anti-spam incorrect');
- }
-});
-</script>
 
 </body>
 </html>
