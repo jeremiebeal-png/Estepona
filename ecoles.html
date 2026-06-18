@@ -1,3 +1,5 @@
+---
+---
 <!doctype html>
 <html lang="fr">
 <head>
@@ -13,8 +15,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Écoles à Estepona — Vivre à Estepona</title>
-  <meta name="description" content="Liste des écoles d’Estepona : public/privé/international, niveaux, zones et liens officiels." />
+  <meta name="description" content="Liste des écoles d'Estepona : public/privé/international, niveaux, zones et liens officiels." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="theme-color" content="#0b3c49" />
+  <link rel="canonical" href="https://www.vivreaestepona.com/ecoles.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vivre à Estepona" />
+  <meta property="og:title" content="Écoles à Estepona — Vivre à Estepona" />
+  <meta property="og:description" content="Liste des écoles d'Estepona : public/privé/international, niveaux, zones et liens officiels." />
+  <meta property="og:url" content="https://www.vivreaestepona.com/ecoles.html" />
+  <meta property="og:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
+  <meta property="og:image:alt" content="Vivre à Estepona" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Écoles à Estepona — Vivre à Estepona" />
+  <meta name="twitter:description" content="Liste des écoles d'Estepona : public/privé/international, niveaux, zones et liens officiels." />
+  <meta name="twitter:image" content="https://www.vivreaestepona.com/img/og-estepona.jpg" />
 
   <style>
     :root{
@@ -70,7 +90,7 @@
       border:1px solid var(--color-border);box-shadow:var(--shadow)
     }
 
-    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+    nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     nav.primary a{padding:8px 12px;border-radius:999px;border:1px solid transparent}
     nav.primary a:hover{border-color:var(--color-border);background:rgba(255,255,255,.04)}
 
@@ -88,7 +108,7 @@
 
     .burger{
       display:none;width:42px;height:42px;border-radius:12px;
-      border:1px solid var(--color-border);background:var(--color-surface);
+      border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);
       cursor:pointer;
     }
     @media (max-width:980px){
@@ -283,71 +303,8 @@
 </head>
 
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="container header-row">
-      <a class="brand" href="index.html" aria-label="Accueil">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Vivre à Estepona</strong>
-      </a>
 
-      <nav class="primary" aria-label="Navigation principale">
-        <a href="index.html#manger">Restaurants</a>
-        <a href="index.html#itin">Que faire</a>
-        <a href="transport-estepona.html">Transport</a>
-        <a href="ecoles.html">Écoles</a>
-        <a href="sante.html">Santé</a>
-        <a href="trafic.html">Trafic</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-
-      <div class="social-top" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
-      </div>
-
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <!-- MENU MOBILE -->
-  <div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
-    <div class="mobile-menu-head">
-      <strong>Menu</strong>
-      <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
-    </div>
-
-    <nav class="mobile-nav">
-      <a href="index.html#manger">Restaurants</a>
-      <a href="index.html#itin">Que faire</a>
-      <a href="transport-estepona.html">Transport</a>
-      <a href="ecoles.html">Écoles</a>
-      <a href="sante.html">Santé</a>
-      <a href="trafic.html">Trafic</a>
-      <a href="index.html#faq">FAQ</a>
-      <a href="contact.html">Contact</a>
-
-      <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener">YouTube</a>
-    </nav>
-  </div>
+{% include header.html %}
 
   <!-- HERO -->
   <section class="page-hero">
@@ -355,7 +312,7 @@
       <span class="pill">Vie pratique · Familles</span>
       <h1>Écoles à Estepona & alentours</h1>
       <p>
-        Panorama des établissements autour d’Estepona : écoles publiques, institutos,
+        Panorama des établissements autour d'Estepona : écoles publiques, institutos,
         privés et internationales. Idéal pour choisir un quartier ou préparer une installation.
       </p>
       <p style="font-size:13px;color:var(--color-muted);margin:0">
@@ -375,9 +332,9 @@
   <main class="container">
     <!-- CARTE -->
     <section class="card map-card" aria-label="Carte des écoles">
-      <h2>📍 Carte des écoles autour d’Estepona</h2>
+      <h2>📍 Carte des écoles autour d'Estepona</h2>
       <p class="section-intro">
-        Vue d’ensemble : Estepona, New Golden Mile, Cancelada, Costa Galera, Marbella…
+        Vue d'ensemble : Estepona, New Golden Mile, Cancelada, Costa Galera, Marbella…
       </p>
       <div class="map-wrap">
         <iframe
@@ -449,7 +406,7 @@
               <td>CEIP Federico García Lorca</td>
               <td><span class="tag-level">Infantil</span><span class="tag-level">Primaria</span></td>
               <td><span class="badge public">Public</span></td>
-              <td>Zone Est d’Estepona</td>
+              <td>Zone Est d'Estepona</td>
               <td><a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipfgarcialorcaestepona/" target="_blank" rel="noopener">Site officiel</a></td>
             </tr>
 
@@ -457,7 +414,7 @@
               <td>CEIP Ramón García</td>
               <td><span class="tag-level">Infantil</span><span class="tag-level">Primaria</span></td>
               <td><span class="badge public">Public</span></td>
-              <td>Quartier nord d’Estepona</td>
+              <td>Quartier nord d'Estepona</td>
               <td><a class="school-link" href="https://blogsaverroes.juntadeandalucia.es/ceipramongarciaestepona/" target="_blank" rel="noopener">Site officiel</a></td>
             </tr>
 
@@ -490,7 +447,7 @@
               <td>IES Mar de Alborán</td>
               <td><span class="tag-level">ESO</span><span class="tag-level">Bachillerato</span></td>
               <td><span class="badge public">Public</span></td>
-              <td>Zone nord d’Estepona</td>
+              <td>Zone nord d'Estepona</td>
               <td><a class="school-link" href="https://www.iesmardealboran.com/" target="_blank" rel="noopener">Site officiel</a></td>
             </tr>
 
@@ -568,37 +525,10 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container footer-top">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Estepona" /></span>
-        <strong>Vivre à Estepona</strong>
-      </a>
-
-      <div class="social" aria-label="Réseaux sociaux">
-        <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          Instagram
-        </a>
-        <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
-          </svg>
-          YouTube
-        </a>
-      </div>
-    </div>
-    <div class="container footer-bottom">© 2026 Vivre à Estepona</div>
-  </footer>
+{% include footer.html %}
 
   <script>
-    // --- Filtres & tri du tableau ---
+    // --- Filtres & tri du tableau (spécifique à cette page) ---
     (function(){
       const table = document.getElementById('schoolTable');
       const tbody = table.querySelector('tbody');
@@ -678,38 +608,6 @@
         th.addEventListener('click',()=> sortByColumn(idx));
       });
     })();
-
-    // Menu mobile
-    const burger = document.querySelector('.burger');
-    const mobile = document.getElementById('mobileMenu');
-    let backdrop;
-
-    function openMenu(){
-      if(!mobile) return;
-      mobile.hidden = false;
-      burger?.setAttribute('aria-expanded','true');
-      backdrop = document.createElement('div');
-      backdrop.className = 'mobile-backdrop';
-      backdrop.addEventListener('click', closeMenu);
-      document.body.appendChild(backdrop);
-      document.body.style.overflow='hidden';
-    }
-    function closeMenu(){
-      if(!mobile) return;
-      mobile.hidden = true;
-      burger?.setAttribute('aria-expanded','false');
-      backdrop?.remove();
-      document.body.style.overflow='';
-    }
-
-    burger?.addEventListener('click',()=>{
-      const open = burger.getAttribute('aria-expanded')==='true';
-      open ? closeMenu() : openMenu();
-    });
-
-    document.addEventListener('keydown',e=>{
-      if(e.key==='Escape' && mobile && !mobile.hidden) closeMenu();
-    });
   </script>
 </body>
 </html>
