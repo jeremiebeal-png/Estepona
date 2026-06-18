@@ -1,3 +1,5 @@
+---
+---
 <!doctype html>
 <html lang="fr">
 <head>
@@ -37,23 +39,47 @@
 
 <style>
 :root{
- --color-bg:#0b1730;--color-surface:#0f1f44;--color-surface-2:#0f1625;
- --color-primary:#2db4ff;--color-text:#eaf2ff;--color-muted:#a8b6cf;--color-border:#1a2d5a;
- --radius-lg:14px;--radius-md:10px;--shadow:0 10px 30px rgba(0,0,0,.35);
- --glass:rgba(10,22,36,.55);--glass-strong:rgba(10,22,36,.82);--glassLine:rgba(234,246,248,.14);
+  --color-bg: #0b3c49;
+  --color-surface: #0f1f44;
+  --color-surface-2: #0f1625;
+  --color-primary: #2db4ff;
+  --color-accent: #00d0b6;
+  --color-text: #eaf2ff;
+  --color-muted: #a8b6cf;
+  --color-border: #1a2d5a;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --glass: rgba(10, 22, 36, .55);
+  --glass-strong: rgba(10, 22, 36, .82);
+  --glassLine: rgba(234,246,248,.14);
 }
-html,body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:Inter,system-ui}
-a{text-decoration:none;color:inherit}.container{width:min(1200px,92vw);margin:auto}
 
-header{position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border-bottom:1px solid var(--color-border)}
+html,body{
+  margin:0;
+  background:
+    radial-gradient(1000px 700px at 20% 0%, rgba(45,212,191,.28) 0%, rgba(45,212,191,0) 55%),
+    radial-gradient(900px 650px at 90% 10%, rgba(14,165,233,.30) 0%, rgba(14,165,233,0) 60%),
+    radial-gradient(1200px 900px at 40% 110%, rgba(246,241,231,.10) 0%, rgba(246,241,231,0) 55%),
+    linear-gradient(180deg, rgba(11,60,73,1) 0%, rgba(10,85,125,1) 45%, rgba(7,26,34,1) 100%);
+  color:var(--color-text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
+
+a{color:inherit;text-decoration:none}
+.container{width:min(1200px,92vw);margin-inline:auto}
+
+header{position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border-bottom:1px solid var(--glassLine)}
 .header-row{display:flex;gap:18px;align-items:center;padding:16px 0}
 .brand{display:flex;gap:12px;align-items:center}
-.brand-logo{width:42px;height:42px;border-radius:12px;overflow:hidden;border:1px solid var(--color-border)}
-nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.brand-logo{width:42px;height:42px;border-radius:12px;overflow:hidden;border:1px solid var(--color-border);box-shadow:var(--shadow)}
+nav.primary{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 nav.primary a{padding:8px 12px;border-radius:999px}
 nav.primary a:hover{background:rgba(255,255,255,.04)}
 .social-top{display:flex;gap:10px}
-.social-top a{display:flex;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--color-border)}
+.social-top a{display:flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--color-border)}
+.social-top svg{width:16px;height:16px}
 @media(max-width:980px){nav.primary,.social-top{display:none}}
 
 .burger{display:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;color:var(--color-text)}
@@ -67,159 +93,172 @@ nav.primary a:hover{background:rgba(255,255,255,.04)}
 .mobile-nav a{display:block;padding:12px 12px;border-radius:12px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
 .mobile-nav a:hover{background:rgba(255,255,255,.05)}
 
-.page-hero{padding:22px 0;border-bottom:1px solid var(--color-border)}
-.page-hero h1{margin:0;font-size:28px}
-.page-hero p{margin:0;color:var(--color-muted)}
+/* Hero, dans le même esprit que la page d'accueil */
+.hero-intro{padding:28px 0 4px}
+.hero-card{
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-xl);
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  padding:26px 24px;
+  box-shadow:var(--shadow);
+  text-align:center;
+}
+.hero-card h1{margin:0 0 8px;font-size:clamp(26px,3.6vw,40px);line-height:1.15}
+.hero-card .subtitle{margin:0 auto;color:var(--color-muted);max-width:620px;font-size:16px;line-height:1.6}
 
-section.category{margin:26px 0}
-.section-head h3{margin:0 0 6px}
-.card{border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:16px}
-label{display:block;margin-top:12px}
-input,textarea{width:100%;padding:10px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text)}
-.btn{margin-top:14px;padding:10px 14px;border-radius:999px;border:0;background:var(--color-primary);color:#06131e;font-weight:700;cursor:pointer}
-footer{border-top:1px solid var(--color-border);margin-top:48px;padding:16px 0;color:var(--color-muted)}
-.footer-top{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:16px 0}
+section.category{margin:30px 0}
+.section-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin-bottom:14px}
+.section-head h2{margin:0;font-size:22px}
+.section-head p{margin:0;color:var(--color-muted)}
+
+.card{
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
+  padding:22px 24px 26px;
+  box-shadow:var(--shadow);
+}
+
+label{display:block;margin-top:14px;font-size:14px;color:var(--color-muted)}
+input,textarea{
+  width:100%;margin-top:6px;padding:11px 12px;border-radius:var(--radius-md);
+  border:1px solid var(--color-border);background:var(--color-surface-2);
+  color:var(--color-text);font-family:inherit;font-size:15px;
+}
+input:focus,textarea:focus{outline:2px solid var(--color-primary);outline-offset:1px}
+textarea{min-height:120px;resize:vertical}
+
+.btn{
+  margin-top:18px;padding:12px 20px;border-radius:999px;border:0;
+  background:var(--color-primary);color:#06131e;font-weight:700;cursor:pointer;
+  font-size:15px;box-shadow:var(--shadow);
+}
+.btn:hover{filter:brightness(1.08)}
+
+/* Mini-cartes réseaux sociaux */
+.social-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
+@media(max-width:700px){.social-grid{grid-template-columns:1fr}}
+.social-card{
+  display:flex;align-items:center;gap:14px;
+  border:1px solid var(--color-border);border-radius:var(--radius-lg);
+  padding:18px 20px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
+  box-shadow:var(--shadow);
+}
+.social-card:hover{background:rgba(255,255,255,.05)}
+.social-card .icon{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(45,180,255,.12);color:var(--color-primary);flex-shrink:0;
+}
+.social-card .icon svg{width:22px;height:22px}
+.social-card strong{display:block;font-size:15px}
+.social-card span{display:block;color:var(--color-muted);font-size:13px}
+
+footer{margin-top:48px;border-top:1px solid var(--color-border);background:linear-gradient(180deg, rgba(15,31,68,1), rgba(11,23,48,1))}
+.footer-top{padding:24px 0;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .social{display:flex;gap:12px}
 .social a{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--color-border);background:rgba(255,255,255,.02)}
 .social a:hover{background:rgba(255,255,255,.05)}
+.social svg{width:16px;height:16px}
+.footer-bottom{padding:16px 0;color:var(--color-muted);font-size:14px}
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="container header-row">
-  <a class="brand" href="index.html" aria-label="Accueil Vivre à Estepona">
-    <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" width="42" height="42"></span>
-    <strong>Vivre à Estepona</strong>
-  </a>
-
-  <nav class="primary" aria-label="Navigation principale">
-    <a href="index.html#manger">Restaurants</a>
-    <a href="index.html#vacances">Vacances</a>
-    <a href="index.html#itin">Que faire</a>
-    <a href="transport-estepona.html">Transport</a>
-    <a href="ecoles.html">Écoles</a>
-    <a href="sante.html">Santé</a>
-    <a href="trafic.html">Trafic</a>
-    <a href="installation.html">S'installer</a>
-    <a href="alentours.html">Aux alentours</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-
-  <div class="social-top" aria-label="Réseaux sociaux">
-    <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">Instagram</a>
-    <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">YouTube</a>
-  </div>
-
-  <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
-  </button>
-</div>
-</header>
-
-<div id="mobileMenu" hidden aria-label="Menu mobile" class="mobile-menu">
-  <div class="mobile-menu-head">
-    <strong>Menu</strong>
-    <button class="mobile-close" type="button" aria-label="Fermer le menu" onclick="document.querySelector('.burger')?.click()">×</button>
-  </div>
-  <nav class="mobile-nav" aria-label="Navigation mobile">
-    <a href="index.html#manger">Restaurants</a>
-    <a href="index.html#vacances">Vacances</a>
-    <a href="index.html#itin">Que faire</a>
-    <a href="transport-estepona.html">Transport</a>
-    <a href="ecoles.html">Écoles</a>
-    <a href="sante.html">Santé</a>
-    <a href="trafic.html">Trafic</a>
-    <a href="installation.html">S'installer</a>
-    <a href="alentours.html">Aux alentours</a>
-    <a href="contact.html">Contact</a>
-    <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">Instagram</a>
-    <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">YouTube</a>
-  </nav>
-</div>
-
-<section class="page-hero">
-<div class="container">
-  <h1>Contact & Newsletter</h1>
-  <p>Recevez les bons plans et contactez-nous.</p>
-</div>
-</section>
+{% include header.html %}
 
 <main class="container">
 
-<section class="category" id="newsletter">
-  <div class="section-head"><h3>📬 Newsletter</h3></div>
-  <div class="card">
-    <form action="mailto:vivreaestepona@gmail.com?subject=Inscription%20Newsletter" method="post" enctype="text/plain">
-      <label>Email</label>
-      <input type="email" name="Email" required>
-      <button class="btn">S’inscrire</button>
-    </form>
-  </div>
-</section>
+  <section class="hero-intro">
+    <div class="hero-card">
+      <h1>Contact & Newsletter</h1>
+      <p class="subtitle">Une question, une envie de collaboration, ou simplement envie de nous dire bonjour ? On est ravis de vous lire — réponse rapide garantie 🌞</p>
+    </div>
+  </section>
 
-<section class="category" id="contact">
-  <div class="section-head"><h3>📩 Envoyer un message</h3></div>
-  <div class="card">
-    <form id="contactForm" action="mailto:vivreaestepona@gmail.com" method="post" enctype="text/plain">
-      <label>Nom</label><input type="text" name="Nom" required>
-      <label>Email</label><input type="email" name="Email" required>
-      <label>Message</label><textarea name="Message" required></textarea>
-      <label>2 + 3 = ?</label><input id="captcha" type="number" required>
-      <button class="btn">Envoyer</button>
-    </form>
-  </div>
-</section>
+  <section class="category" id="newsletter">
+    <div class="section-head">
+      <div>
+        <h2>📬 Restez informé</h2>
+        <p>Recevez nos bons plans, nouveautés et actus locales directement par email</p>
+      </div>
+    </div>
+    <div class="card">
+      <form action="mailto:vivreaestepona@gmail.com?subject=Inscription%20Newsletter" method="post" enctype="text/plain">
+        <label>Email</label>
+        <input type="email" name="Email" required placeholder="vous@exemple.com">
+        <button class="btn">S'inscrire</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="category" id="contact">
+    <div class="section-head">
+      <div>
+        <h2>📩 Envoyer un message</h2>
+        <p>Une question, un partenariat, une suggestion ? Écrivez-nous directement</p>
+      </div>
+    </div>
+    <div class="card">
+      <form id="contactForm" action="mailto:vivreaestepona@gmail.com" method="post" enctype="text/plain">
+        <label>Nom</label>
+        <input type="text" name="Nom" required placeholder="Votre nom">
+        <label>Email</label>
+        <input type="email" name="Email" required placeholder="vous@exemple.com">
+        <label>Message</label>
+        <textarea name="Message" required placeholder="Votre message..."></textarea>
+        <label>2 + 3 = ? <span style="color:var(--color-muted);font-weight:400">(anti-spam)</span></label>
+        <input id="captcha" type="number" required placeholder="Votre réponse">
+        <button class="btn">Envoyer</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="category" id="suivez-nous">
+    <div class="section-head">
+      <div>
+        <h2>Suivez la vie d'Estepona au quotidien</h2>
+        <p>Des photos, des vidéos et les actus locales directement sur les réseaux</p>
+      </div>
+    </div>
+    <div class="social-grid">
+      <a class="social-card" href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 16.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M17.3 6.7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Instagram</strong>
+          <span>@vivreaestepona</span>
+        </span>
+      </a>
+      <a class="social-card" href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.5.4A3 3 0 0 0 2.4 7.2 31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.7.4 7.5.4 7.5.4s5.8 0 7.5-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8Z" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M10.4 15.2V8.8L16 12l-5.6 3.2Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>
+          <strong>YouTube</strong>
+          <span>@Vivre_a_Estepona</span>
+        </span>
+      </a>
+    </div>
+  </section>
 
 </main>
 
-<footer>
-<div class="container footer-top">
-  <a class="brand" href="index.html" aria-label="Retour à l'accueil">
-    <span class="brand-logo"><img src="img/logo_bon_plan_estepona.png" alt="Logo Vivre à Estepona" width="42" height="42" loading="lazy"></span>
-    <strong>Vivre à Estepona</strong>
-  </a>
-  <div class="social" aria-label="Réseaux sociaux">
-    <a href="https://www.instagram.com/vivreaestepona/" target="_blank" rel="noopener noreferrer">Instagram</a>
-    <a href="https://www.youtube.com/@Vivre_a_Estepona" target="_blank" rel="noopener noreferrer">YouTube</a>
-  </div>
-</div>
-<div class="container">© 2026 Vivre à Estepona</div>
-</footer>
+{% include footer.html %}
 
 <script>
 document.getElementById('contactForm').addEventListener('submit',e=>{
  if(document.getElementById('captcha').value!='5'){
   e.preventDefault();alert('Anti-spam incorrect');
  }
-});
-
-const burger = document.querySelector('.burger');
-const mobile = document.getElementById('mobileMenu');
-let backdrop;
-function openMenu(){
-  if(!mobile) return;
-  mobile.hidden = false;
-  burger?.setAttribute('aria-expanded','true');
-  backdrop = document.createElement('div');
-  backdrop.className = 'mobile-backdrop';
-  backdrop.addEventListener('click', closeMenu);
-  document.body.appendChild(backdrop);
-  document.body.style.overflow = 'hidden';
-}
-function closeMenu(){
-  if(!mobile) return;
-  mobile.hidden = true;
-  burger?.setAttribute('aria-expanded','false');
-  backdrop?.remove();
-  document.body.style.overflow = '';
-}
-burger?.addEventListener('click', () => {
-  const open = burger.getAttribute('aria-expanded') === 'true';
-  open ? closeMenu() : openMenu();
 });
 </script>
 
