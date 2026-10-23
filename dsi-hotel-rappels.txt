@@ -1,0 +1,443 @@
+/**
+ * ============================================================================
+ *  DSI HOTEL — Worker de RAPPELS de fiches (Baie Informatique)
+ * ============================================================================
+ *
+ *  Rôle : une fois par jour (Cron Trigger), parcourt les fiches hotel_docs qui
+ *  ont une date de rappel (rappel_date) et envoie un email à support@dsihotel.com
+ *  aux jalons J-60, J-30, J-15 et J-0 avant l'échéance. Une fiche peut avoir ses
+ *  propres jalons (colonne rappel_jalons, ex. {30,15,4} pour les licences Veeam).
+ *  Chaque jalon n'est envoyé qu'une seule fois (mémorisé dans rappel_jalons_envoyes).
+ *
+ *  Variables d'environnement à définir sur ce Worker (mêmes que dsi-hotel-email) :
+ *    - MS_TENANT_ID      (Texte)
+ *    - MS_CLIENT_ID      (Texte)
+ *    - MS_CLIENT_SECRET  (Secret)
+ *    - MS_SENDER         (Texte, optionnel)  défaut : support@dsihotel.fr
+ *    - MS_REPLY_TO       (Texte, optionnel)  défaut : support@dsihotel.com
+ *    - SUPABASE_URL          (Texte)
+ *    - SUPABASE_SERVICE_KEY  (Secret)
+ *    - RAPPEL_DEST       (Texte, optionnel)  défaut : team@dsihotel.fr
+ *
+ *  Cron Trigger conseillé (Settings > Triggers) : "0 6 * * *" (tous les jours 6h UTC).
+ *
+ *  Déclenchement manuel de test : ouvrir l'URL du Worker avec ?run=1 (GET).
+ *
+ *  Inventaire serveurs (Pilotage → Inventaire serveurs) : licences Veeam et
+ *  Care Pack dont la case « 🔔 Alerte email » est cochée. Email au même
+ *  destinataire (RAPPEL_DEST) à J-60, J-30, J-15, J-5, J-1, puis une fois à
+ *  l'expiration (jusqu'à 30 jours après). Jalons mémorisés dans
+ *  licence_alertes_envoyees / care_pack_alertes_envoyees (0 = expiration).
+ * ============================================================================
+ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+const MS_SENDER_DEFAUT = "support@dsihotel.fr";
+const MS_REPLY_TO_DEFAUT = "support@dsihotel.com";
+const RAPPEL_DEST_DEFAUT = "team@dsihotel.fr";
+
+// Jalons d'envoi par défaut, en jours avant l'échéance. 0 = le jour même.
+// Une fiche peut les remplacer via sa colonne rappel_jalons (tableau d'entiers).
+const JALONS = [60, 30, 15, 0];
+
+function jalonsDeLaFiche(f) {
+  const j = Array.isArray(f && f.rappel_jalons)
+    ? f.rappel_jalons.map(Number).filter((n) => Number.isFinite(n) && n >= 0)
+    : [];
+  return j.length > 0 ? j : JALONS;
+}
+
+/* ------------------------------------------------------------------ Microsoft Graph */
+
+async function msGetToken(env) {
+  const tenant = env.MS_TENANT_ID;
+  const params = new URLSearchParams({
+    client_id: env.MS_CLIENT_ID,
+    client_secret: env.MS_CLIENT_SECRET,
+    scope: "https://graph.microsoft.com/.default",
+    grant_type: "client_credentials",
+  });
+  const url = `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error("Token Graph : " + (data.error_description || res.status));
+  return data.access_token;
+}
+
+function msRecipients(value) {
+  if (!value) return [];
+  const arr = Array.isArray(value) ? value : String(value).split(/[,;]/);
+  return arr
+    .map((v) => String(v).trim())
+    .filter(Boolean)
+    .map((address) => ({ emailAddress: { address } }));
+}
+
+async function sendViaGraph(env, msg) {
+  const sender = (env.MS_SENDER || MS_SENDER_DEFAUT).trim();
+  const replyToAddr = (msg.replyTo || env.MS_REPLY_TO || MS_REPLY_TO_DEFAUT).trim();
+
+  const toList = msRecipients(msg.to);
+  if (toList.length === 0) return { ok: false, status: 400, error: "Aucun destinataire" };
+
+  const useHtml = !!msg.html;
+  const message = {
+    subject: msg.subject || "(Sans objet)",
+    body: { contentType: useHtml ? "HTML" : "Text", content: useHtml ? msg.html : (msg.text || "") },
+    toRecipients: toList,
+  };
+  const replyList = msRecipients(replyToAddr);
+  if (replyList.length > 0) message.replyTo = replyList;
+
+  const token = await msGetToken(env);
+  const endpoint = `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(sender)}/sendMail`;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ message, saveToSentItems: true }),
+  });
+  if (res.status === 202) return { ok: true, status: 202 };
+  const detail = await res.text().catch(() => "");
+  return { ok: false, status: res.status, error: detail.slice(0, 300) };
+}
+
+/* ------------------------------------------------------------------ Supabase REST */
+
+function sb(env, path, options = {}) {
+  return fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      apikey: env.SUPABASE_SERVICE_KEY,
+      ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }),
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+}
+
+/* ------------------------------------------------------------------ Logique rappels */
+
+// Nombre de jours entre aujourd'hui (UTC, minuit) et une date "YYYY-MM-DD".
+function joursRestants(dateStr) {
+  const j = new Date(dateStr + "T00:00:00Z");
+  if (isNaN(j.getTime())) return null;
+  const today = new Date();
+  const t = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  return Math.round((j.getTime() - t) / 86400000);
+}
+
+// Détermine le jalon à envoyer aujourd'hui pour une fiche, ou null.
+// Règle : on identifie le PALIER COURANT = le plus petit seuil >= diff
+// (la fenêtre dans laquelle on se trouve aujourd'hui). On envoie ce palier
+// s'il n'a pas déjà été notifié. On ne "rattrape" jamais un palier inférieur :
+// à J-0, seul le jalon 0 est pertinent, pas les rappels en amont (15/30/60).
+// Exemples : diff=45 -> palier 60 ; diff=20 -> palier 30 ; diff=8 -> palier 15 ;
+// diff=0 -> palier 0.
+function jalonAEnvoyer(diff, dejaEnvoyes, jalons) {
+  if (diff === null || diff < 0) return null; // échéance passée : plus de rappel
+  const envoyes = new Set(
+    String(dejaEnvoyes || "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .map(Number)
+  );
+  // Paliers triés croissants : on prend le premier seuil >= diff.
+  const paliers = [...(jalons || JALONS)].sort((a, b) => a - b);
+  const palierCourant = paliers.find((seuil) => diff <= seuil);
+  if (palierCourant === undefined) return null;      // diff > plus grand jalon : trop tôt
+  if (envoyes.has(palierCourant)) return null;        // palier courant déjà notifié
+  return palierCourant;
+}
+
+function libelleJalon(jalon) {
+  if (jalon === 0) return "aujourd'hui";
+  if (jalon === 15) return "dans 15 jours";
+  if (jalon === 30) return "dans 1 mois";
+  if (jalon === 60) return "dans 2 mois";
+  return "dans " + jalon + " jours";
+}
+
+async function traiterRappels(env) {
+  const dest = (env.RAPPEL_DEST || RAPPEL_DEST_DEFAUT).trim();
+
+  // Fiches ayant une date de rappel non nulle.
+  const fiches = await sb(
+    env,
+    "hotel_docs?select=id,titre,hotel_id,rappel_date,rappel_note,rappel_jalons_envoyes,rappel_jalons&rappel_date=not.is.null"
+  ).then((r) => r.json()).catch(() => []);
+
+  if (!Array.isArray(fiches) || fiches.length === 0) {
+    return { traites: 0, envoyes: 0, detail: [] };
+  }
+
+  // Noms d'hôtels (pour un email lisible).
+  const hotels = await sb(env, "hotels?select=id,name").then((r) => r.json()).catch(() => []);
+  const nomHotel = {};
+  (hotels || []).forEach((h) => { nomHotel[h.id] = h.name; });
+
+  const detail = [];
+  let envoyes = 0;
+
+  for (const f of fiches) {
+    const diff = joursRestants(f.rappel_date);
+    const jalon = jalonAEnvoyer(diff, f.rappel_jalons_envoyes, jalonsDeLaFiche(f));
+    if (jalon === null) continue;
+
+    const hotel = nomHotel[f.hotel_id] || "Établissement inconnu";
+    const dateFr = new Date(f.rappel_date + "T00:00:00Z").toLocaleDateString("fr-FR");
+    const quand = libelleJalon(jalon);
+
+    const sujet = `[Rappel] ${hotel} — ${f.titre} — échéance ${quand} (${dateFr})`;
+    const html =
+      `<div style="font-family:system-ui,Arial,sans-serif;font-size:14px;color:#222">` +
+      `<p>Bonjour,</p>` +
+      `<p>Un rappel programmé arrive à échéance <b>${quand}</b> (${dateFr}).</p>` +
+      `<table style="border-collapse:collapse;margin:10px 0">` +
+      `<tr><td style="padding:3px 10px;color:#666">Établissement</td><td style="padding:3px 10px"><b>${hotel}</b></td></tr>` +
+      `<tr><td style="padding:3px 10px;color:#666">Fiche</td><td style="padding:3px 10px">${f.titre}</td></tr>` +
+      `<tr><td style="padding:3px 10px;color:#666">Échéance</td><td style="padding:3px 10px">${dateFr}</td></tr>` +
+      (f.rappel_note ? `<tr><td style="padding:3px 10px;color:#666">Motif</td><td style="padding:3px 10px">${f.rappel_note}</td></tr>` : "") +
+      `</table>` +
+      `<p>Retrouvez la fiche dans le portail : Infrastructure &rarr; ${hotel}.</p>` +
+      `<p style="color:#999;font-size:12px">Message automatique — ne pas répondre.</p>` +
+      `</div>`;
+
+    const r = await sendViaGraph(env, { to: dest, subject: sujet, html });
+
+    if (r.ok) {
+      envoyes++;
+      // Marque le jalon comme envoyé (accumulation CSV).
+      const liste = String(f.rappel_jalons_envoyes || "")
+        .split(",").map((x) => x.trim()).filter(Boolean);
+      if (!liste.includes(String(jalon))) liste.push(String(jalon));
+      await sb(env, `hotel_docs?id=eq.${f.id}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ rappel_jalons_envoyes: liste.join(",") }),
+      });
+      detail.push({ fiche: f.titre, hotel, jalon, status: "envoyé" });
+    } else {
+      detail.push({ fiche: f.titre, hotel, jalon, status: "échec", error: r.error });
+    }
+  }
+
+  return { traites: fiches.length, envoyes, detail };
+}
+
+/* ------------------------------------------------------------------ Logique tickets "En projet" */
+
+// Date du jour au format YYYY-MM-DD (UTC, cohérent avec joursRestants ci-dessus).
+function aujourdhuiStr() {
+  const d = new Date();
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
+    .toISOString()
+    .slice(0, 10);
+}
+
+async function traiterTicketsProjet(env) {
+  const dest = (env.RAPPEL_DEST || RAPPEL_DEST_DEFAUT).trim();
+  const today = aujourdhuiStr();
+
+  // Tickets marqués "En projet" (en_attente), non fermés, dont la date prévue est AUJOURD'HUI.
+  // Pour relancer tant que le ticket reste en projet (échus + en retard), remplacer
+  // `date_attente=eq.${today}` par `date_attente=lte.${today}`.
+  const tickets = await sb(
+    env,
+    `tickets?select=id,subject,hotel_id,date_attente&en_attente=eq.true&status=neq.closed` +
+    `&date_attente=eq.${today}&order=date_attente.asc`
+  ).then((r) => r.json()).catch(() => []);
+
+  if (!Array.isArray(tickets) || tickets.length === 0) {
+    return { tickets_traites: 0, tickets_envoye: false };
+  }
+
+  // Noms d'hôtels pour un email lisible.
+  const hotels = await sb(env, "hotels?select=id,name").then((r) => r.json()).catch(() => []);
+  const nomHotel = {};
+  (hotels || []).forEach((h) => { nomHotel[h.id] = h.name; });
+
+  const ligne = (t) => {
+    const hotel = t.hotel_id ? (nomHotel[t.hotel_id] || "Établissement inconnu") : "Non assigné";
+    const dateFr = new Date(t.date_attente + "T00:00:00Z").toLocaleDateString("fr-FR");
+    return `<tr>` +
+      `<td style="padding:6px 10px;border:1px solid #E2E2E8">${echapper(t.subject || "(sans objet)")}</td>` +
+      `<td style="padding:6px 10px;border:1px solid #E2E2E8">${echapper(hotel)}</td>` +
+      `<td style="padding:6px 10px;border:1px solid #E2E2E8;white-space:nowrap">${dateFr}</td>` +
+      `</tr>`;
+  };
+
+  const n = tickets.length;
+  const sujet = `[Projet] ${n} ticket${n > 1 ? "s" : ""} en projet à traiter aujourd'hui`;
+  const html =
+    `<div style="font-family:system-ui,Arial,sans-serif;font-size:14px;color:#222">` +
+    `<p>Bonjour,</p>` +
+    `<p>${n} ticket${n > 1 ? "s marqués" : " marqué"} <b>« En projet »</b> ${n > 1 ? "arrivent" : "arrive"} à échéance aujourd'hui (${new Date(today + "T00:00:00Z").toLocaleDateString("fr-FR")}) :</p>` +
+    `<table style="border-collapse:collapse;margin:10px 0;width:100%">` +
+    `<thead><tr>` +
+    `<th style="padding:6px 10px;border:1px solid #E2E2E8;background:#F4F4F9;text-align:left">Objet</th>` +
+    `<th style="padding:6px 10px;border:1px solid #E2E2E8;background:#F4F4F9;text-align:left">Hôtel</th>` +
+    `<th style="padding:6px 10px;border:1px solid #E2E2E8;background:#F4F4F9;text-align:left">Date prévue</th>` +
+    `</tr></thead>` +
+    `<tbody>${tickets.map(ligne).join("")}</tbody>` +
+    `</table>` +
+    `<p>Retrouvez-les dans le portail : Tickets &rarr; filtre « En projet ».</p>` +
+    `<p style="color:#999;font-size:12px">Message automatique — ne pas répondre.</p>` +
+    `</div>`;
+
+  const r = await sendViaGraph(env, { to: dest, subject: sujet, html });
+  return {
+    tickets_traites: n,
+    tickets_envoye: r.ok,
+    tickets_erreur: r.ok ? undefined : r.error,
+  };
+}
+
+function echapper(s) {
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* ------------------------------------------------------------------ Inventaire : licences Veeam + Care Pack */
+
+const JALONS_INVENTAIRE = [60, 30, 15, 5, 1];
+const EXPIRATION_FENETRE = 30; // jours après l'échéance pendant lesquels on envoie encore l'avis d'expiration
+
+// Jalon à envoyer pour une date de fin, ou null. 0 = avis d'expiration (le jour même ou après).
+function jalonInventaire(diff, dejaEnvoyes) {
+  if (diff === null) return null;
+  const envoyes = new Set((Array.isArray(dejaEnvoyes) ? dejaEnvoyes : []).map(Number));
+  if (diff <= 0) {
+    if (diff < -EXPIRATION_FENETRE || envoyes.has(0)) return null;
+    return 0;
+  }
+  const palier = [...JALONS_INVENTAIRE].sort((a, b) => a - b).find((seuil) => diff <= seuil);
+  if (palier === undefined || envoyes.has(palier)) return null;
+  return palier;
+}
+
+async function traiterInventaire(env) {
+  const dest = (env.RAPPEL_DEST || RAPPEL_DEST_DEFAUT).trim();
+  const lire = (path) => sb(env, path).then(async (r) => {
+    if (!r.ok) throw new Error("Supabase " + r.status + " : " + (await r.text()).slice(0, 200));
+    return r.json();
+  });
+
+  const types = [
+    { cle: "licence", libelle: "Licence Veeam", fin: "licence_fin", alerte: "licence_alerte", envoyes: "licence_alertes_envoyees", info: "licence_info" },
+    { cle: "care_pack", libelle: "Care Pack", fin: "care_pack_fin", alerte: "care_pack_alerte", envoyes: "care_pack_alertes_envoyees", info: "care_pack_ref" },
+  ];
+
+  let hotels = [];
+  try { hotels = await lire("hotels?select=id,name"); } catch (e) { hotels = []; }
+  const nomHotel = {};
+  (hotels || []).forEach((h) => { nomHotel[h.id] = h.name; });
+
+  const detail = [];
+  let envoyes = 0;
+
+  for (const t of types) {
+    let lignes;
+    try {
+      lignes = await lire(
+        `inventaire_serveurs?select=id,hotel_id,nom,role,${t.fin},${t.envoyes},${t.info}` +
+        `&${t.alerte}=is.true&${t.fin}=not.is.null`
+      );
+    } catch (e) {
+      detail.push({ type: t.libelle, status: "lecture impossible", error: String(e.message || e) });
+      continue;
+    }
+
+    for (const l of lignes || []) {
+      const diff = joursRestants(l[t.fin]);
+      const jalon = jalonInventaire(diff, l[t.envoyes]);
+      if (jalon === null) continue;
+
+      const hotel = nomHotel[l.hotel_id] || "Établissement inconnu";
+      const dateFr = new Date(l[t.fin] + "T00:00:00Z").toLocaleDateString("fr-FR");
+      const quand = jalon === 0
+        ? (diff === 0 ? "expire aujourd'hui" : "expirée depuis " + (-diff) + " jour" + (diff < -1 ? "s" : ""))
+        : "expire dans " + diff + " jour" + (diff > 1 ? "s" : "");
+      const urgent = jalon <= 5;
+
+      const sujet = `${urgent ? "🔴 " : ""}[${t.libelle}] ${hotel} — ${quand} (${dateFr})`;
+      const html =
+        `<div style="font-family:system-ui,Arial,sans-serif;font-size:14px;color:#222">` +
+        `<p>Bonjour,</p>` +
+        `<p>${t.libelle} de <b>${echapper(hotel)}</b> : <b style="color:${urgent ? "#C53030" : "#C05621"}">${quand}</b>.</p>` +
+        `<table style="border-collapse:collapse;margin:10px 0">` +
+        `<tr><td style="padding:3px 10px;color:#666">Établissement</td><td style="padding:3px 10px"><b>${echapper(hotel)}</b></td></tr>` +
+        `<tr><td style="padding:3px 10px;color:#666">Serveur</td><td style="padding:3px 10px">${echapper(l.nom || "")}${l.role ? " (" + echapper(l.role) + ")" : ""}</td></tr>` +
+        (l[t.info] ? `<tr><td style="padding:3px 10px;color:#666">${t.cle === "licence" ? "Licence" : "Référence"}</td><td style="padding:3px 10px">${echapper(l[t.info])}</td></tr>` : "") +
+        `<tr><td style="padding:3px 10px;color:#666">Date de fin</td><td style="padding:3px 10px">${dateFr}</td></tr>` +
+        `</table>` +
+        `<p>Retrouvez le serveur dans le portail : Pilotage &rarr; Inventaire serveurs &rarr; ${echapper(hotel)}.</p>` +
+        `<p style="color:#999;font-size:12px">Message automatique — ne pas répondre. Pour ne plus recevoir ces alertes, décochez « 🔔 Alerte email » sur la ligne du serveur.</p>` +
+        `</div>`;
+
+      const r = await sendViaGraph(env, { to: dest, subject: sujet, html });
+      if (r.ok) {
+        envoyes++;
+        const liste = (Array.isArray(l[t.envoyes]) ? l[t.envoyes] : []).map(Number);
+        if (!liste.includes(jalon)) liste.push(jalon);
+        await sb(env, `inventaire_serveurs?id=eq.${l.id}`, {
+          method: "PATCH",
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ [t.envoyes]: liste }),
+        });
+        detail.push({ type: t.libelle, hotel, serveur: l.nom, jalon, status: "envoyé" });
+      } else {
+        detail.push({ type: t.libelle, hotel, serveur: l.nom, jalon, status: "échec", error: r.error });
+      }
+    }
+  }
+  return { envoyes, detail };
+}
+
+/* ------------------------------------------------------------------ Entrées Worker */
+
+export default {
+  // Exécution planifiée quotidienne (Cron Trigger).
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil((async () => {
+      await traiterRappels(env);        // rappels de fiches (Infrastructure)
+      await traiterTicketsProjet(env);  // tickets "En projet" arrivant à échéance
+      await traiterInventaire(env);     // licences Veeam + Care Pack (inventaire serveurs)
+    })());
+  },
+
+  // Déclenchement manuel de test : GET ...?run=1 (protégé a minima par la
+  // présence du paramètre ; le Worker n'expose aucune donnée sensible).
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.searchParams.get("run") === "1") {
+      try {
+        const resFiches = await traiterRappels(env);
+        const resTickets = await traiterTicketsProjet(env);
+        const resInventaire = await traiterInventaire(env);
+        const res = { fiches: resFiches, tickets: resTickets, inventaire: resInventaire };
+        return new Response(JSON.stringify(res, null, 2), {
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({
+          erreur: String((e && e.message) || e),
+          stack: String((e && e.stack) || "")
+        }, null, 2), {
+          status: 200,
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+        });
+      }
+    }
+    return new Response("DSI Hotel — Worker rappels. Cron quotidien actif. Ajoutez ?run=1 pour un test manuel.", {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
+  },
+};

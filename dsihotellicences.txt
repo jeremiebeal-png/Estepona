@@ -1,0 +1,165 @@
+/**
+ * Worker Cloudflare « dsihotellicences »
+ * Vérifie chaque jour les licences Veeam ET les Care Pack (Inventaire serveurs) dont l'alerte est activée
+ * et envoie un email au support à J-60, J-30, J-15, J-5, J-1, puis à l'expiration.
+ *
+ * Variables / secrets du Worker :
+ *   SUPABASE_URL                ex. https://vkamubvlbezhpbunvdai.supabase.co
+ *   SUPABASE_SERVICE_ROLE_KEY   (secret)
+ *   MS_TENANT_ID                comme dsi-hotel-api-v2
+ *   MS_CLIENT_ID                comme dsi-hotel-api-v2
+ *   MS_CLIENT_SECRET            (secret) secret de la même application Entra
+ *   MAIL_SENDER                 optionnel, boîte qui envoie (défaut support@dsihotel.com)
+ *   MAIL_TO                     optionnel, défaut support@dsihotel.com (plusieurs : séparés par des virgules)
+ *   TEST_SECRET                 (secret) pour tester à la main via l'URL du Worker
+ *
+ * Déclenché chaque matin par pg_cron (Supabase), avec &mode=run
+ *
+ * Test manuel :
+ *   https://dsihotellicences.jeremie-beal.workers.dev/?secret=XXX            → simulation, rien n'est envoyé
+ *   https://dsihotellicences.jeremie-beal.workers.dev/?secret=XXX&mode=run   → envoie réellement
+ */
+
+const SEUILS = [60, 30, 15, 5, 1, 0]; // 0 = jour d'expiration (ou découverte d'une licence déjà expirée)
+const PORTAIL = "https://portail.dsihotel.com";
+
+export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(verifier(env, false));
+  },
+  async fetch(req, env) {
+    const u = new URL(req.url);
+    if (!env.TEST_SECRET || u.searchParams.get("secret") !== env.TEST_SECRET) {
+      return new Response("Non autorisé", { status: 401 });
+    }
+    try {
+      const r = await verifier(env, u.searchParams.get("mode") !== "run");
+      return new Response(JSON.stringify(r, null, 2), { headers: { "content-type": "application/json; charset=utf-8" } });
+    } catch (e) {
+      return new Response(JSON.stringify({ erreur: String(e.message || e) }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+    }
+  },
+};
+
+async function sb(env, chemin, init = {}) {
+  const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + chemin, {
+    ...init,
+    headers: {
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY,
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+  });
+  if (!res.ok) throw new Error("Supabase " + res.status + " : " + (await res.text()).slice(0, 300));
+  return res.status === 204 ? null : res.json();
+}
+
+const aujourdhui = () => new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" }); // AAAA-MM-JJ
+const joursRestants = (fin) => Math.round((Date.parse(fin + "T00:00:00Z") - Date.parse(aujourdhui() + "T00:00:00Z")) / 86400000);
+const frDate = (iso) => iso.split("-").reverse().join("/");
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+// ---------- Envoi via Microsoft Graph (même application que dsi-hotel-api-v2) ----------
+let jetonGraph = null;
+async function tokenGraph(env) {
+  if (jetonGraph && jetonGraph.exp > Date.now() + 60000) return jetonGraph.t;
+  const res = await fetch("https://login.microsoftonline.com/" + env.MS_TENANT_ID + "/oauth2/v2.0/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: env.MS_CLIENT_ID,
+      client_secret: env.MS_CLIENT_SECRET,
+      scope: "https://graph.microsoft.com/.default",
+      grant_type: "client_credentials",
+    }),
+  });
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok || !d.access_token) throw new Error("Connexion Microsoft impossible : " + (d.error_description || d.error || res.status));
+  jetonGraph = { t: d.access_token, exp: Date.now() + (d.expires_in || 3600) * 1000 };
+  return jetonGraph.t;
+}
+
+async function envoyerMail(env, subject, html) {
+  const expediteur = env.MAIL_SENDER || "support@dsihotel.com";
+  const dest = (env.MAIL_TO || "support@dsihotel.com").split(",").map((s) => s.trim()).filter(Boolean);
+  const res = await fetch("https://graph.microsoft.com/v1.0/users/" + encodeURIComponent(expediteur) + "/sendMail", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + (await tokenGraph(env)), "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: {
+        subject,
+        body: { contentType: "HTML", content: html },
+        toRecipients: dest.map((a) => ({ emailAddress: { address: a } })),
+      },
+      saveToSentItems: false,
+    }),
+  });
+  if (res.status !== 202) throw new Error("Envoi Microsoft " + res.status + " : " + (await res.text()).slice(0, 250));
+}
+
+// Deux types d'échéances suivies
+const TYPES = [
+  { cle: "licence", titre: "Licence Veeam", fin: "licence_fin", alerte: "licence_alerte", envoyees: "licence_alertes_envoyees",
+    ref: "licence_info", refLib: "Licence", conseil: "Pensez à demander le renouvellement de la licence / le devis au client." },
+  { cle: "carepack", titre: "Care Pack", fin: "care_pack_fin", alerte: "care_pack_alerte", envoyees: "care_pack_alertes_envoyees",
+    ref: "care_pack_ref", refLib: "N° série / réf.", conseil: "Pensez à demander le devis de renouvellement du Care Pack (Ckprint) et à l'envoyer au client." },
+];
+
+async function verifier(env, simulation) {
+  const hotels = await sb(env, "hotels?select=id,name");
+  const nomHotel = Object.fromEntries(hotels.map((h) => [h.id, h.name]));
+  const res = { date: aujourdhui(), simulation, verifiees: 0, envois: [], erreurs: [] };
+
+  for (const T of TYPES) {
+    const lignes = await sb(env,
+      "inventaire_serveurs?select=id,hotel_id,nom,role,ip," + T.ref + "," + T.fin + "," + T.envoyees +
+      "&" + T.alerte + "=eq.true&" + T.fin + "=not.is.null");
+    res.verifiees += lignes.length;
+
+    for (const l of lignes) {
+      const fin = l[T.fin];
+      const j = joursRestants(fin);
+      const deja = l[T.envoyees] || [];
+      const atteints = SEUILS.filter((s) => j <= s);
+      if (!atteints.some((s) => !deja.includes(s))) continue; // rien de nouveau
+
+      const hotel = nomHotel[l.hotel_id] || "Hôtel inconnu";
+      const quand = j > 1 ? "expire dans " + j + " jours"
+                  : j === 1 ? "expire demain"
+                  : j === 0 ? "expire aujourd'hui"
+                  : "est expiré" + (T.cle === "licence" ? "e" : "") + " depuis " + -j + " jour" + (-j > 1 ? "s" : "");
+      const subject = "⏰ " + T.titre + " — " + hotel + " — " + l.nom + " — " + quand + " (" + frDate(fin) + ")";
+      const couleur = j <= 5 ? "#C53030" : j <= 30 ? "#C05621" : "#B7791F";
+      const ligne = (k, v) => v ? '<tr><td style="padding:4px 12px 4px 0;color:#777">' + k + '</td><td style="padding:4px 0"><b>' + esc(v) + "</b></td></tr>" : "";
+      const html =
+        '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;color:#333">' +
+        '<div style="background:' + couleur + ';color:#fff;padding:14px 18px;border-radius:10px 10px 0 0;font-size:16px;font-weight:bold">⏰ ' + T.titre + " " + esc(quand) + "</div>" +
+        '<div style="border:1px solid #E8E8F0;border-top:none;border-radius:0 0 10px 10px;padding:16px 18px">' +
+        '<table style="font-size:14px;border-collapse:collapse">' +
+        ligne("Établissement", hotel) + ligne("Serveur", l.nom) + ligne("Adresse IP", l.ip) +
+        ligne(T.refLib, l[T.ref]) + ligne("Date de fin", frDate(fin)) +
+        "</table>" +
+        '<p style="font-size:13px;margin:16px 0 0">' + T.conseil + "</p>" +
+        '<p style="text-align:center;margin:18px 0 4px"><a href="' + PORTAIL + '" style="display:inline-block;background:#C9A84C;color:#111;text-decoration:none;border-radius:8px;padding:10px 20px;font-weight:bold">Ouvrir le portail (Inventaire serveurs)</a></p>' +
+        "</div></div>";
+
+      const info = { type: T.titre, hotel, serveur: l.nom, fin, jours: j };
+      if (simulation) { res.envois.push({ ...info, simulation: true }); continue; }
+
+      try {
+        await envoyerMail(env, subject, html);
+        // Un seul email par passage : tous les seuils déjà franchis sont marqués envoyés
+        await sb(env, "inventaire_serveurs?id=eq." + l.id, {
+          method: "PATCH",
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ [T.envoyees]: [...new Set([...deja, ...atteints])] }),
+        });
+        res.envois.push(info);
+      } catch (e) {
+        res.erreurs.push({ ...info, erreur: String(e.message || e) });
+      }
+    }
+  }
+  return res;
+}

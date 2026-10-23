@@ -1,0 +1,539 @@
+/**
+ * dsi-hotel-checkcentral.js
+ * ---------------------------------------------------------------------------
+ * Worker Cloudflare dédié à l'intégration CheckCentral (statuts de backup).
+ *
+ * RÔLE
+ *   Relais serveur entre le portail DSI Hotel et l'API CheckCentral.
+ *   Le portail (React) n'appelle JAMAIS CheckCentral directement :
+ *     - le token API resterait exposé dans le navigateur,
+ *     - CheckCentral ne renvoie pas les en-têtes CORS attendus par le navigateur.
+ *   Ce Worker détient le token (variable secrète), interroge CheckCentral via
+ *   l'endpoint getChecks, normalise la réponse et la renvoie au portail avec
+ *   les en-têtes CORS.
+ *
+ * VARIABLES À CONFIGURER (Cloudflare → le Worker → Settings → Variables) :
+ *   - CHECKCENTRAL_TOKEN  (Secret)  : token API "Read Only" créé dans
+ *       CheckCentral → Organization → API.
+ *   - PORTAIL_ORIGIN      (Texte, optionnel) : origine autorisée pour le CORS.
+ *       Défaut : https://portail.dsihotel.com
+ *   - SUPABASE_URL              (Texte)  : même valeur que dans dsi-hotel-api-v2.
+ *   - SUPABASE_SERVICE_ROLE_KEY (Secret) : même valeur que dans dsi-hotel-api-v2.
+ *   - BACKUP_TRIGGER_TOKEN      (Secret, optionnel) : même valeur que dans le Worker
+ *       dsihotelbackup. Active la SURVEILLANCE de la sauvegarde du portail :
+ *       ticket rouge si elle est bloquée ou sans réussite depuis 36 h (+ relance 12 h).
+ *   - BACKUP_URL                (Texte, optionnel) défaut https://dsihotelbackup.jeremie-beal.workers.dev
+ *   - VEEAM_ALERTES             (Texte, optionnel) "1" = les jobs Veeam reçus en direct
+ *       (tables veeam_jobs, Worker dsi-hotel-veeam) créent aussi des tickets.
+ *       Laisser vide pendant la période de comparaison avec CheckCentral (évite les doublons).
+ *   - VEEAM_SILENCE_HEURES      (Texte, optionnel, défaut 30) : sans mail Veeam depuis ce délai,
+ *       le job passe en « Failure / Overdue » (sauvegarde non exécutée).
+ *   CHECKCENTRAL_TOKEN devient optionnel : sans lui, seuls les jobs Veeam directs sont lus.
+ *
+ * SÉCURITÉ
+ *   /status exige une session admin du portail (en-tête Authorization: Bearer
+ *   <jeton Supabase>). Sans session admin valide -> 401 / 403.
+ *   Le CORS ne protège PAS contre curl / scripts : c'est ce contrôle qui protège.
+ *
+ * ROUTES
+ *   GET /status  → { checks: [...], count, fetchedAt, erreurs }  (CheckCentral + Veeam direct, origine:"veeam")
+ *   GET /alertes?mode=test|run&heures=24  (session admin requise)
+ *        mode=test : liste les sauvegardes en défaut depuis + de N heures, SANS rien créer
+ *        mode=run  : crée immédiatement les tickets d'alerte correspondants
+ *
+ * ALERTES AUTOMATIQUES (Cron Trigger horaire : "0 * * * *") — sans aucun clic
+ *   Toutes les heures, une sauvegarde en Failure ou Warning depuis plus de 24 h
+ *   crée UN ticket rouge dans le portail (source = "checkcentral").
+ *   - tant qu'elle reste en défaut : un NOUVEAU ticket « RELANCE n » toutes les
+ *     12 h après le précédent (variable RELANCE_HEURES pour changer le délai) ;
+ *   - table backup_incidents : début du défaut, dernier ticket, nombre de tickets ;
+ *   - quand la sauvegarde redevient OK : message « Sauvegarde rétablie » ajouté
+ *     au ticket (laissé ouvert pour vérification par un technicien) ;
+ *   - ignorées : sauvegardes en pause et celles justifiées par une note.
+ *   - sauvegardes non quotidiennes (table backup_frequences, réglée depuis le portail) :
+ *     un défaut « Overdue » est ignoré tant que la dernière réussite date de moins
+ *     d'une période + 48 h ; un vrai échec (source Message) alerte toujours.
+ *
+ * Chaque check normalisé :
+ *   {
+ *     id, name, description,
+ *     group, group_id,
+ *     status,            // Success | Warning | Failure | Paused | Resumed | ...
+ *     source,            // Message | Overdue | Override
+ *     updated,           // texte original CheckCentral ("Aug 8, 2026 3:06 AM")
+ *     updatedIso         // ISO 8601 UTC calculé depuis updated_ticks_utc (ou null)
+ *   }
+ * ---------------------------------------------------------------------------
+ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+const PORTAIL_ORIGIN_DEFAUT = "https://portail.dsihotel.com";
+const CC_API_BASE = "https://api.checkcentral.cc";
+
+// Conversion des "ticks" .NET (100 ns depuis l'an 0001-01-01) en ISO 8601 UTC.
+//  - 1 tick = 100 nanosecondes
+//  - Ticks de l'epoch Unix (1970-01-01) = 621355968000000000
+const UNIX_EPOCH_TICKS = 621355968000000000n;
+function ticksToIso(ticks) {
+  try {
+    if (ticks === null || ticks === undefined) return null;
+    const t = BigInt(ticks);
+    const ms = Number((t - UNIX_EPOCH_TICKS) / 10000n); // -> millisecondes Unix
+    if (!isFinite(ms)) return null;
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return null;
+    return d.toISOString();
+  } catch (e) {
+    return null;
+  }
+}
+
+function corsHeaders(env) {
+  const origin = (env && env.PORTAIL_ORIGIN) || PORTAIL_ORIGIN_DEFAUT;
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Max-Age": "86400",
+  };
+}
+
+function json(body, env, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders(env) },
+  });
+}
+
+// Vérifie que l'appelant est un admin connecté au portail.
+// Retourne { ok: true } ou { ok: false, status, error }.
+async function verifierAdmin(request, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { ok: false, status: 500, error: "SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY non configurés sur le Worker." };
+  }
+  const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
+  if (!token) return { ok: false, status: 401, error: "Non authentifié" };
+
+  const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_SERVICE_ROLE_KEY },
+  });
+  if (!uRes.ok) return { ok: false, status: 401, error: "Session invalide ou expirée" };
+  const user = await uRes.json().catch(() => null);
+  if (!user || !user.id) return { ok: false, status: 401, error: "Session invalide" };
+
+  const pRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=role`, {
+    headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, ...(String(env.SUPABASE_SERVICE_ROLE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }) },
+  });
+  const profs = await pRes.json().catch(() => []);
+  if (!Array.isArray(profs) || !profs[0] || profs[0].role !== "admin") {
+    return { ok: false, status: 403, error: "Réservé aux administrateurs DSI Hotel" };
+  }
+  return { ok: true };
+}
+
+// Lit et normalise les checks CheckCentral (utilisé par /status, /alertes et le cron).
+async function lireChecks(env) {
+  const endpoint = `${CC_API_BASE}/getChecks/?apiToken=${encodeURIComponent(env.CHECKCENTRAL_TOKEN)}`;
+  const res = await fetch(endpoint, { method: "GET", headers: { "Content-Type": "application/json" } });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error("CheckCentral a répondu " + res.status + (t ? " — " + t.slice(0, 200) : ""));
+  }
+  const data = await res.json();
+  const brut = Array.isArray(data) ? data : (data.checks || []);
+  return (brut || []).map((c) => ({
+    id: c.id || null,
+    name: c.name || "(sans nom)",
+    description: c.description || "",
+    group: c.group || null,
+    group_id: c.group_id || null,
+    status: c.status || "Unknown",
+    source: c.source || null,
+    updated: c.updated || null,
+    updatedIso: ticksToIso(c.updated_ticks_utc),
+    message: c.message || c.last_message || null,
+  }));
+}
+
+// Jobs Veeam reçus directement par mail (Worker dsi-hotel-veeam → table veeam_jobs),
+// convertis au même format que les checks CheckCentral.
+async function lireChecksVeeam(env) {
+  const jobs = (await sbJson(env, "veeam_jobs?select=id,nom,hotel_id,libelle,actif,dernier_statut,dernier_run_at,derniere_reussite_at,dernier_message&order=libelle.asc,nom.asc")) || [];
+  const now = Date.now();
+  const silenceMs = (parseFloat(env.VEEAM_SILENCE_HEURES) > 0 ? parseFloat(env.VEEAM_SILENCE_HEURES) : 30) * 3600000;
+  return jobs.map(j => {
+    const base = {
+      id: "veeam:" + j.id, name: j.nom, description: "", origine: "veeam",
+      group: (j.libelle || "Veeam") + " (Veeam direct)", group_id: null, hotel_id: j.hotel_id || null,
+      updated: null, updatedIso: j.dernier_run_at || null, derniereReussiteIso: j.derniere_reussite_at || null,
+      message: j.dernier_message || null,
+    };
+    if (!j.actif) return { ...base, status: "Paused", source: "Override" };
+    if (!j.dernier_run_at || now - new Date(j.dernier_run_at).getTime() > silenceMs) {
+      return { ...base, status: "Failure", source: "Overdue",
+        message: "Aucun mail Veeam reçu depuis " + (j.dernier_run_at ? dateFr(j.dernier_run_at) : "la création du job") };
+    }
+    return { ...base, status: j.dernier_statut || "Unknown", source: "Message" };
+  });
+}
+
+// CheckCentral (si le token est configuré) + Veeam direct. Une source en panne n'empêche pas l'autre.
+async function lireTout(env) {
+  const checks = [], erreurs = [];
+  if (env.CHECKCENTRAL_TOKEN) {
+    try { checks.push(...await lireChecks(env)); }
+    catch (e) { erreurs.push("CheckCentral : " + String((e && e.message) || e)); }
+  }
+  try { checks.push(...await lireChecksVeeam(env)); }
+  catch (e) { erreurs.push("Veeam direct : " + String((e && e.message) || e)); }
+  return { checks, erreurs };
+}
+
+/* =========================================================================
+   ALERTES : sauvegardes en défaut depuis plus de N heures -> tickets portail
+   ========================================================================= */
+
+const ALERTE_CONTACT = "team@dsihotel.fr";
+const BACKUP_URL_DEFAUT = "https://dsihotelbackup.jeremie-beal.workers.dev";
+
+/**
+ * Surveillance de la sauvegarde du portail (Worker dsihotelbackup → SharePoint).
+ * Renvoie un « check » au même format que CheckCentral, traité ensuite comme
+ * les autres : ticket rouge après 24 h de défaut, relance toutes les 12 h,
+ * message « rétablie » quand elle repart.
+ *  - cycle commencé et pas terminé : en défaut depuis le début du cycle
+ *    (un cycle normal dure quelques heures) ;
+ *  - aucune sauvegarde réussie depuis plus de 36 h : en défaut depuis la dernière réussite.
+ * Si le cycle est bloqué, on le relance aussi d'une étape (/run) à chaque passage.
+ */
+async function checkSauvegardePortail(env, relancer) {
+  if (!env.BACKUP_TRIGGER_TOKEN) return null;
+  const base = (env.BACKUP_URL || BACKUP_URL_DEFAUT).replace(/\/+$/, "");
+  const tok = encodeURIComponent(env.BACKUP_TRIGGER_TOKEN);
+  const c = { id: "saas-backup", name: "Sauvegarde du portail DSI (Supabase → SharePoint)", group: "DSI Hotel (interne)", group_id: null,
+    description: "Worker Cloudflare dsihotelbackup — procédure DSI-PROC-ADMIN-002 : vérifier en premier le Cron « */2 * * * * » du Worker." };
+  let r;
+  try {
+    const res = await fetch(`${base}/status?token=${tok}`);
+    r = await res.json().catch(() => ({}));
+    if (!res.ok || !r.ok) throw new Error((r && r.erreur) || ("HTTP " + res.status));
+  } catch (e) {
+    return { ...c, status: "Warning", updatedIso: new Date().toISOString(), message: "Statut de la sauvegarde illisible : " + String((e && e.message) || e) };
+  }
+  const now = Date.now();
+  const e = r.etat || {};
+  const derniere = r.derniere_reussite || (e.phase === "termine" ? e.termine_le : null);
+  if (e.phase && e.phase !== "termine" && e.demarre_le && now - new Date(e.demarre_le).getTime() > 6 * 3600000) {
+    if (relancer) { try { await fetch(`${base}/run?token=${tok}`, { method: "POST" }); } catch (_) {} }
+    return { ...c, status: "Failure", updatedIso: e.demarre_le,
+      message: `Cycle du ${e.cycle_date} non terminé : phase ${e.phase}, table n°${(e.db_index || 0) + 1}, offset ${e.db_offset || 0}` + (derniere ? ` — dernière réussite : ${derniere}` : "") };
+  }
+  if (derniere && now - new Date(derniere).getTime() > 36 * 3600000) {
+    return { ...c, status: "Failure", updatedIso: derniere, message: `Aucune sauvegarde réussie depuis le ${derniere}` };
+  }
+  return { ...c, status: "Success", updatedIso: derniere || null, message: null };
+}
+
+function sbFetch(env, path, options = {}) {
+  return fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+      ...(String(env.SUPABASE_SERVICE_ROLE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }),
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+  });
+}
+async function sbJson(env, path, options) {
+  const r = await sbFetch(env, path, options);
+  if (!r.ok) throw new Error("Supabase " + r.status + " sur " + path.split("?")[0] + " : " + (await r.text().catch(() => "")).slice(0, 200));
+  const t = await r.text();
+  return t ? JSON.parse(t) : null;
+}
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function dateFr(iso) {
+  try { return new Date(iso).toLocaleString("fr-FR", { timeZone: "Europe/Paris", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
+  catch (e) { return iso || "—"; }
+}
+function duree(ms) {
+  const h = Math.floor(ms / 3600000);
+  if (h < 48) return h + " h";
+  return Math.floor(h / 24) + " j " + (h % 24) + " h";
+}
+
+function corpsTicketHtml(c, hotelNom, firstIso, now, relance) {
+  const src = c.origine === "veeam" ? "Veeam" : "CheckCentral";
+  const echec = String(c.status).toLowerCase() === "failure";
+  const titre = relance
+    ? `RELANCE ${relance.n} — SAUVEGARDE TOUJOURS ${echec ? "EN ÉCHEC" : "EN AVERTISSEMENT"} (${duree(now - new Date(firstIso).getTime()).toUpperCase()})`
+    : (echec ? "SAUVEGARDE EN ÉCHEC DEPUIS PLUS DE 24 H" : "SAUVEGARDE EN AVERTISSEMENT DEPUIS PLUS DE 24 H");
+  const badge = echec
+    ? '<span style="background:#C53030;color:#fff;font-weight:bold;padding:2px 9px;border-radius:12px;">✖ Échec</span>'
+    : '<span style="background:#DD6B20;color:#fff;font-weight:bold;padding:2px 9px;border-radius:12px;">! Avertissement</span>';
+  const td1 = 'style="padding:7px 10px;background:#FDECEC;color:#9B2C2C;font-weight:bold;width:190px;vertical-align:top;"';
+  const td2 = 'style="padding:7px 10px;"';
+  const overdue = String(c.source || "").toLowerCase() === "overdue";
+  const ligne = (k, v) => `<tr><td ${td1}>${k}</td><td ${td2}>${v}</td></tr>`;
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222;">` +
+    `<div style="background:#C53030;color:#ffffff;border-radius:8px;padding:14px 16px;margin-bottom:14px;">` +
+      `<div style="font-size:16px;font-weight:bold;">⚠️ ${titre}</div>` +
+      `<div style="font-size:13px;margin-top:4px;">Alerte automatique ${src} — une intervention est nécessaire.` +
+        (relance ? ` Toujours en défaut ${relance.relanceH} h après le ticket précédent (${esc(relance.precedent)}).` : "") + `</div>` +
+    `</div>` +
+    `<table style="border-collapse:collapse;width:100%;max-width:640px;font-size:13px;border:1px solid #F5B5B5;">` +
+      ligne("Sauvegarde", esc(c.name)) +
+      ligne("Hôtel", esc(hotelNom || c.group || "Non rattaché")) +
+      (c.group ? ligne("Groupe " + src, esc(c.group)) : "") +
+      ligne("Statut " + src, badge + (overdue ? ' <span style="color:#9B2C2C;">— aucune remontée reçue (sauvegarde non exécutée ?)</span>' : "")) +
+      ligne("En défaut depuis", `<b style="color:#C53030;">${esc(dateFr(firstIso))}</b> (${duree(now - new Date(firstIso).getTime())})`) +
+      ligne("Dernière remontée", esc(c.updatedIso ? dateFr(c.updatedIso) : (c.updated || "—"))) +
+      (c.message ? ligne("Message", `<span style="font-family:Consolas,monospace;font-size:12px;color:#9B2C2C;">${esc(c.message)}</span>`) : "") +
+      (c.description ? ligne("Description", esc(c.description)) : "") +
+    `</table>` +
+    `<div style="margin-top:14px;padding:10px 14px;border-left:4px solid #C53030;background:#FFF5F5;font-size:13px;line-height:1.6;">` +
+      `<b>À faire :</b> vérifier le job dans la console de sauvegarde, corriger la cause, relancer la sauvegarde puis contrôler qu'elle repasse au vert dans ${src}.<br>` +
+      `Tant que la sauvegarde reste en défaut, un nouveau ticket de relance est créé toutes les 12 h. ` +
+      `Quand elle redevient OK, un message « Sauvegarde rétablie » est ajouté automatiquement au dernier ticket.` +
+    `</div></div>`;
+}
+
+function corpsRetablieHtml(c, now) {
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;">` +
+    `<div style="background:#2F855A;color:#fff;border-radius:8px;padding:12px 16px;">` +
+      `<div style="font-size:15px;font-weight:bold;">✅ SAUVEGARDE RÉTABLIE</div>` +
+      `<div style="font-size:13px;margin-top:3px;">${esc(c ? c.name : "La sauvegarde")} est repassée OK dans ${c && c.origine === "veeam" ? "Veeam" : "CheckCentral"} (constaté le ${esc(dateFr(new Date(now).toISOString()))}).</div>` +
+    `</div>` +
+    `<div style="font-size:12.5px;color:#555;margin-top:8px;">Vérifiez puis fermez ce ticket.</div></div>`;
+}
+
+/**
+ * mode : "test" (lecture seule) | "run" (crée les tickets) | "cron" (comme run)
+ * heures : seuil de défaut avant le 1er ticket (24 par défaut)
+ * relanceH : tant que la sauvegarde reste en défaut, un NOUVEAU ticket est créé
+ *            toutes les relanceH heures après le précédent (12 par défaut)
+ *
+ * Budget plan gratuit (50 sous-requêtes) : lectures groupées, une seule
+ * écriture groupée de backup_incidents, 2 requêtes par ticket créé.
+ */
+const RELANCE_H_DEFAUT = 12;
+const MARGE_FREQ_H = 48; // tolérance après la période déclarée (hebdo, mensuelle…)
+function libFreq(h) {
+  return h === 168 ? "hebdomadaire" : h === 336 ? "toutes les 2 semaines" : (h >= 672 && h <= 744) ? "mensuelle" : ("toutes les " + h + " h");
+}
+const MAX_TICKETS_PAR_PASSAGE = 15; // le reste part au passage suivant (1 h plus tard)
+
+async function traiterAlertes(env, { mode = "cron", heures = 24 } = {}) {
+  const ecrire = mode !== "test";
+  const now = Date.now();
+  const nowIso = new Date(now).toISOString();
+  const seuilMs = heures * 3600000;
+  const relanceMs = (parseFloat(env.RELANCE_HEURES) > 0 ? parseFloat(env.RELANCE_HEURES) : RELANCE_H_DEFAUT) * 3600000;
+
+  const lu = await lireTout(env);
+  if (!lu.checks.length && lu.erreurs.length) throw new Error(lu.erreurs.join(" ; "));
+  // Veeam direct : visible dans /status, mais tickets seulement si VEEAM_ALERTES = "1" (évite les doublons avec CheckCentral)
+  const checks = String(env.VEEAM_ALERTES || "") === "1" ? lu.checks : lu.checks.filter(c => c.origine !== "veeam");
+  try { const sb = await checkSauvegardePortail(env, ecrire); if (sb) checks.push(sb); }
+  catch (e) { console.log("Surveillance sauvegarde portail : " + ((e && e.message) || e)); }
+  const parId = {};
+  checks.forEach(c => { if (c.id) parId[c.id] = c; });
+
+  const incidents = (await sbJson(env, "backup_incidents?select=*")) || [];
+  const incParId = {};
+  incidents.forEach(i => { incParId[i.check_id] = i; });
+
+  let groupMap = {}, hotelNom = {};
+  try { ((await sbJson(env, "checkcentral_group_map?select=group_id,hotel_id")) || []).forEach(m => { if (m.group_id) groupMap[m.group_id] = m.hotel_id; }); } catch (e) {}
+  try { ((await sbJson(env, "hotels?select=id,name")) || []).forEach(h => { hotelNom[h.id] = h.name; }); } catch (e) {}
+
+  const justifiees = new Set();
+  try {
+    const notes = await sbJson(env, "rpc/get_backup_notes", { method: "POST", body: "{}" });
+    (notes || []).forEach(n => { if (n && n.check_id && String(n.note || "").trim()) justifiees.add(n.check_id); });
+  } catch (e) { /* RPC absente : aucune justification */ }
+
+  // Sauvegardes non quotidiennes : fréquence attendue + dernière réussite connue
+  const freq = {};
+  try { ((await sbJson(env, "backup_frequences?select=check_id,frequence_heures,derniere_reussite,created_at")) || []).forEach(f => { freq[String(f.check_id)] = f; }); }
+  catch (e) { /* table absente : tout est quotidien */ }
+  const majReussite = [];
+  for (const c of checks) {
+    const f = c.id != null ? freq[String(c.id)] : null;
+    if (!f || String(c.status || "").toLowerCase() !== "success") continue;
+    const iso = c.updatedIso || nowIso;
+    if (!f.derniere_reussite || new Date(iso) > new Date(f.derniere_reussite)) {
+      f.derniere_reussite = iso;
+      majReussite.push({ check_id: f.check_id, frequence_heures: f.frequence_heures, derniere_reussite: iso });
+    }
+  }
+  if (ecrire && majReussite.length) {
+    try { await sbFetch(env, "backup_frequences?on_conflict=check_id", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(majReussite) }); } catch (e) {}
+  }
+  // Fin de la fenêtre normale (ISO) si le défaut est attendu pour cette sauvegarde, sinon null
+  const masquee = (c) => {
+    const f = c && c.id != null ? freq[String(c.id)] : null;
+    if (!f || !(f.frequence_heures > 24)) return null;
+    if (String(c.source || "").toLowerCase() === "message") return null; // vrai échec remonté par le job
+    const ref = new Date(f.derniere_reussite || f.created_at).getTime();
+    if (isNaN(ref)) return null;
+    const lim = ref + (f.frequence_heures + MARGE_FREQ_H) * 3600000;
+    return now < lim ? new Date(lim).toISOString() : null;
+  };
+
+  // État des derniers tickets liés (ouvert / fermé)
+  const ticketIds = incidents.map(i => i.ticket_id).filter(Boolean);
+  const etatTicket = {};
+  for (let k = 0; k < ticketIds.length; k += 150) {
+    const lot = ticketIds.slice(k, k + 150).map(encodeURIComponent).join(",");
+    try { ((await sbJson(env, `tickets?id=in.(${lot})&select=id,status`)) || []).forEach(t => { etatTicket[String(t.id)] = t.status; }); } catch (e) {}
+  }
+
+  const resultat = { mode, heures, relanceHeures: relanceMs / 3600000, verifiees: checks.length, erreursLecture: lu.erreurs, veeamAlertes: String(env.VEEAM_ALERTES || "") === "1", enDefaut: [], ticketsCrees: [], relances: [], retablies: [], dejaSignalees: [], ignorees: [], erreurs: [], reportees: 0 };
+  const upserts = [];   // lignes backup_incidents à écrire (une seule requête)
+  let nbTickets = 0;
+
+  // 1) Sauvegardes en défaut
+  for (const c of checks) {
+    const st = String(c.status || "").toLowerCase();
+    if (!c.id || (st !== "failure" && st !== "warning")) continue;
+    const hotelId = c.hotel_id || (c.group_id ? (groupMap[c.group_id] || null) : null);
+    const nomH = hotelId ? hotelNom[hotelId] : null;
+    if (justifiees.has(c.id)) { resultat.ignorees.push({ sauvegarde: c.name, hotel: nomH || c.group, raison: "justifiée par une note" }); continue; }
+    const finFenetre = masquee(c);
+    if (finFenetre) { resultat.ignorees.push({ sauvegarde: c.name, hotel: nomH || c.group, raison: "sauvegarde " + libFreq(freq[String(c.id)].frequence_heures) + ", prochaine exécution attendue avant le " + dateFr(finFenetre) }); continue; }
+
+    const inc = incParId[c.id] || null;
+    const firstIso = inc ? inc.first_bad_at : (c.updatedIso && new Date(c.updatedIso).getTime() < now ? c.updatedIso : nowIso);
+    const age = now - new Date(firstIso).getTime();
+    const dernierTicketIso = inc && inc.ticket_id ? (inc.dernier_ticket_at || inc.last_seen_at || firstIso) : null;
+    const nbDeja = inc ? (inc.nb_tickets || (inc.ticket_id ? 1 : 0)) : 0;
+    const info = { sauvegarde: c.name, hotel: nomH || c.group || "Non rattaché", statut: c.status, source: c.source, depuis: dateFr(firstIso), duree: duree(age) };
+    resultat.enDefaut.push(info);
+
+    const ligne = { check_id: c.id, check_name: c.name, group_id: c.group_id || null, group_name: c.group || null, hotel_id: hotelId,
+      statut: st, first_bad_at: firstIso, last_seen_at: nowIso,
+      ticket_id: inc ? inc.ticket_id || null : null, ticket_ref: inc ? inc.ticket_ref || null : null,
+      dernier_ticket_at: inc ? inc.dernier_ticket_at || null : null, nb_tickets: nbDeja };
+
+    // Faut-il un ticket maintenant ?
+    let raison = null;
+    if (!ligne.ticket_id) { if (age >= seuilMs) raison = "premier"; }
+    else if (now - new Date(dernierTicketIso).getTime() >= relanceMs) raison = "relance";
+
+    if (!raison) {
+      if (ligne.ticket_id) {
+        const prochaine = new Date(new Date(dernierTicketIso).getTime() + relanceMs).toISOString();
+        resultat.dejaSignalees.push({ ...info, ticket: ligne.ticket_ref || ligne.ticket_id, prochaineRelance: dateFr(prochaine) });
+      }
+      upserts.push(ligne);
+      continue;
+    }
+    if (!ecrire) { (raison === "premier" ? resultat.ticketsCrees : resultat.relances).push({ ...info, simulation: true }); upserts.push(ligne); continue; }
+    if (nbTickets >= MAX_TICKETS_PAR_PASSAGE) { resultat.reportees++; upserts.push(ligne); continue; }
+
+    try {
+      const n = nbDeja + 1;
+      const etat = st === "failure" ? "en échec" : "en avertissement";
+      const precedent = ligne.ticket_ref || ligne.ticket_id;
+      const sujet = raison === "premier"
+        ? `🔴 Sauvegarde ${etat} depuis + de 24 h — ${c.name}`
+        : `🔴 RELANCE ${n - 1} — Sauvegarde toujours ${etat} (${duree(age)}) — ${c.name}`;
+      const message = `Sauvegarde ${etat} depuis le ${dateFr(firstIso)} (${duree(age)}) — ${c.name}` + (nomH ? ` — ${nomH}` : "") +
+        (raison === "relance" ? ` — toujours en défaut, ticket précédent : ${precedent}` : "");
+      const [ticket] = await sbJson(env, "tickets", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({
+        hotel_id: hotelId, contact_name: c.origine === "veeam" ? "Alerte Veeam" : "Alerte CheckCentral", contact_email: ALERTE_CONTACT,
+        category: "Sauvegarde", priority: "Haute", subject: sujet, message, status: "open",
+        source: "checkcentral", a_rattacher: hotelId === null,
+      }) });
+      await sbFetch(env, "ticket_messages", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({
+        ticket_id: ticket.id, sender_role: "client", sender_name: c.origine === "veeam" ? "Alerte Veeam" : "Alerte CheckCentral",
+        body: message, body_html: corpsTicketHtml(c, nomH, firstIso, now, raison === "relance" ? { n: n - 1, precedent, relanceH: relanceMs / 3600000 } : null),
+      }) });
+      ligne.ticket_id = String(ticket.id); ligne.ticket_ref = ticket.reference || null;
+      ligne.dernier_ticket_at = nowIso; ligne.nb_tickets = n;
+      nbTickets++;
+      (raison === "premier" ? resultat.ticketsCrees : resultat.relances).push({ ...info, ticket: ticket.reference || ticket.id, precedent: raison === "relance" ? precedent : undefined });
+    } catch (e) {
+      resultat.erreurs.push({ sauvegarde: c.name, erreur: String((e && e.message) || e) });
+    }
+    upserts.push(ligne);
+  }
+
+  // Écriture groupée des incidents en cours
+  if (ecrire && upserts.length) {
+    const r = await sbFetch(env, "backup_incidents?on_conflict=check_id", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(upserts) });
+    if (!r.ok) resultat.erreurs.push({ sauvegarde: "(suivi des incidents)", erreur: "Supabase " + r.status + " " + (await r.text().catch(() => "")).slice(0, 200) + " — le script backup_incidents_relance.sql a-t-il été exécuté ?" });
+  }
+
+  // 2) Sauvegardes revenues à la normale (ou en pause) : message sur le dernier ticket + fin du suivi
+  const messagesRetablies = [], aSupprimer = [];
+  for (const inc of incidents) {
+    const c = parId[inc.check_id];
+    if (!c) continue; // absent de la réponse : on ne conclut rien
+    const st = String(c.status || "").toLowerCase();
+    if ((st === "failure" || st === "warning") && !justifiees.has(inc.check_id) && !masquee(c)) continue;
+    if (st === "success" && inc.ticket_id) {
+      resultat.retablies.push({ sauvegarde: c.name, ticket: inc.ticket_ref || inc.ticket_id });
+      if (etatTicket[String(inc.ticket_id)] !== "closed") messagesRetablies.push({
+        ticket_id: inc.ticket_id, sender_role: "client", sender_name: c.origine === "veeam" ? "Alerte Veeam" : "Alerte CheckCentral",
+        body: "Sauvegarde rétablie : " + c.name + " est repassée OK dans " + (c.origine === "veeam" ? "Veeam" : "CheckCentral") + ".", body_html: corpsRetablieHtml(c, now),
+      });
+    }
+    aSupprimer.push(inc.check_id);
+  }
+  if (ecrire && messagesRetablies.length) await sbFetch(env, "ticket_messages", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify(messagesRetablies) });
+  if (ecrire && aSupprimer.length) {
+    const lst = aSupprimer.map(x => '"' + String(x).replace(/"/g, "") + '"').join(",");
+    await sbFetch(env, `backup_incidents?check_id=in.(${encodeURIComponent(lst)})`, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+  }
+
+  return resultat;
+}
+
+export default {
+  // Cron Trigger horaire (Settings → Triggers → Cron : "0 * * * *")
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(traiterAlertes(env, { mode: "cron", heures: 24 }).catch(e => console.log("Alertes sauvegardes :", e && e.message)));
+  },
+
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    // Préflight CORS
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders(env) });
+    }
+
+    // ---------- ROUTE : /status ----------
+    if (url.pathname === "/status" && request.method === "GET") {
+      const auth = await verifierAdmin(request, env);
+      if (!auth.ok) return json({ error: auth.error }, env, auth.status);
+      const { checks, erreurs } = await lireTout(env);
+      if (!checks.length && erreurs.length) {
+        return json({ error: "Échec de la lecture des sauvegardes", detail: erreurs.join(" ; ") }, env, 500);
+      }
+      return json({ checks, count: checks.length, fetchedAt: new Date().toISOString(), erreurs }, env);
+    }
+
+    // ---------- ROUTE : /alertes (test ou lancement manuel depuis le portail) ----------
+    if (url.pathname === "/alertes" && request.method === "GET") {
+      const auth = await verifierAdmin(request, env);
+      if (!auth.ok) return json({ error: auth.error }, env, auth.status);
+      const mode = url.searchParams.get("mode") === "run" ? "run" : "test";
+      const h = parseFloat(url.searchParams.get("heures") || "24");
+      const heures = isFinite(h) && h >= 0 && h <= 720 ? h : 24;
+      try {
+        return json(await traiterAlertes(env, { mode, heures }), env);
+      } catch (e) {
+        return json({ error: "Échec du traitement des alertes", detail: String((e && e.message) || e) }, env, 500);
+      }
+    }
+
+    return json({ error: "Route inconnue" }, env, 404);
+  },
+};

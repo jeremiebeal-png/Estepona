@@ -1,0 +1,726 @@
+/**
+ * dsi-hotel-backup.js  (v3 — plan Free, limite 50 subrequests/invocation)
+ *
+ * NOUVEAUTÉS v3
+ *   - Liste des tables DÉCOUVERTE AUTOMATIQUEMENT à chaque cycle (schéma de
+ *     l'API Supabase) : toute nouvelle table est sauvegardée sans modifier le
+ *     code. La liste TABLES ci-dessous ne sert plus que de secours.
+ *   - Taille des pages ADAPTATIVE (vise ~2 Mo par fichier) : les petites
+ *     tables vont vite, les tables lourdes (ticket_messages…) restent sûres.
+ *   - Date de la dernière sauvegarde réussie mémorisée (KV « derniere_reussite »)
+ *     et renvoyée par /status (champ derniere_reussite) : le Worker
+ *     dsi-hotel-checkcentral s'en sert pour alerter si la sauvegarde s'arrête.
+ * -------------------------------------------------------------------------
+ * Sauvegarde vers SharePoint (site DSI-Backups, bibliothèque "Documents").
+ *
+ * DEUX MODES, pour rester sous la limite de 50 subrequests du plan Free :
+ *
+ *   - Mode DB      : dump JSON des tables. Traité par tranches de tables,
+ *                    reprise via KV. En pratique 1 à 2 invocations suffisent.
+ *   - Mode STORAGE : miroir du bucket "uploads", par tranches de 15 fichiers,
+ *                    reprise via KV (index du prochain fichier à traiter).
+ *
+ * Le Worker s'AUTO-RELANCE tant qu'il reste du travail (fetch vers sa propre
+ * URL /run), ce qui enchaîne les tranches sans intervention. Si l'auto-relance
+ * échoue (limite atteinte), il suffit de relancer /run manuellement : la
+ * reprise sur état KV repart là où on s'était arrêté.
+ *
+ * ROUTES (toutes en POST, protégées par token) :
+ *   /run              -> avance le travail (DB puis Storage), auto-relance
+ *   /run?mode=db      -> force le mode DB uniquement
+ *   /run?mode=storage -> force le mode Storage uniquement
+ *   /reset            -> efface l'état KV (repart de zéro au prochain /run)
+ *   /status (GET)     -> renvoie l'état courant
+ *   /health (GET)     -> ping
+ *
+ * BINDINGS attendus :
+ *   KV namespace : BACKUP_KV
+ *
+ * Variables :
+ *   MS_TENANT_ID (Text), MS_CLIENT_ID (Text), MS_CLIENT_SECRET (Secret),
+ *   SP_SITE_ID (Text), SUPABASE_URL (Text), SUPABASE_SERVICE_ROLE (Secret),
+ *   BACKUP_TRIGGER_TOKEN (Secret),
+ *   WORKER_URL (Text) ex: https://dsihotelbackup.jeremie-beal.workers.dev
+ * -------------------------------------------------------------------------
+ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+// ====== CONFIGURATION ======
+
+// Secours uniquement (si la découverte automatique échoue).
+const TABLES = [
+  "backup_notes", "checkcentral_group_map", "email_hotel_mapping",
+  "hotel_doc_fichiers", "hotel_docs", "hotels", "login_logs",
+  "ninjaone_rapports", "procedure_files", "procedure_hotels", "procedures",
+  "profiles", "projet_fichiers", "projet_taches", "projets",
+  "rapport_demandes", "rapport_envois", "rapport_serveurs", "rapports",
+  "reponses_types", "ticket_counters", "ticket_fichiers",
+  "ticket_messages", "tickets",
+];
+
+const STORAGE_BUCKET = "uploads";
+const PAGE_SIZE = 1000;
+const RETENTION_JOURS = 30;
+const PURGE_MAX_PAR_CYCLE = 10; // suppressions max par cycle (limite 50 subrequests du plan Free)
+
+const DOSSIER_DB = "DB";
+const DOSSIER_STORAGE = "Storage";
+
+// Budget subrequests : on vise large sous 50.
+// Chaque fichier Storage = jusqu'à 3 subrequests (lookup + download + upload).
+// 15 fichiers * 3 = 45, + token + drive = ~47. On garde une marge.
+const FICHIERS_PAR_TRANCHE = 15;
+
+// Mode DB : export PAR PAGES pour ne jamais dépasser la mémoire du Worker
+// (128 Mo). Chaque page de lignes est écrite dans son propre fichier JSON
+// (table_p0001.json, table_p0002.json…) sans jamais charger la table entière.
+const DB_PAGE_DEFAUT = 500;
+// Tables aux lignes volumineuses (HTML, images intégrées…) : petites pages.
+const DB_PAGE_PAR_TABLE = { ticket_messages: 25, tickets: 100, rapports: 50, procedures: 50, hotel_docs: 50, projets: 100 };
+// Budget de subrequests par invocation en mode DB (limite 50 du plan Free,
+// dont 2 déjà prises par le token Graph + le drive).
+const DB_BUDGET_SUBREQ = 40;
+// Pages adaptatives : on vise ~2 Mo par fichier JSON.
+const DB_CIBLE_OCTETS = 2 * 1024 * 1024;
+const DB_PAGE_MIN = 10;
+const DB_PAGE_MAX = 2000;
+const KV_DERNIERE_REUSSITE = "derniere_reussite";
+// Taille max d'une réponse page acceptée (sécurité mémoire).
+const DB_PAGE_MAX_OCTETS = 25 * 1024 * 1024;
+
+const SEUIL_UPLOAD_SESSION = 4 * 1024 * 1024;
+const CHUNK_UPLOAD = 5 * 1024 * 1024;
+
+// Clés KV.
+const KV_ETAT = "etat_backup";
+const KV_LISTE_STORAGE = "liste_storage";
+
+// ====== ENTRÉE ======
+
+// Heure (UTC) à laquelle un nouveau cycle complet démarre chaque jour.
+// 23 = 23:00 UTC (01h Paris été / minuit hiver).
+const HEURE_DEMARRAGE_UTC = 23;
+
+export default {
+  async scheduled(event, env, ctx) {
+    // Le cron tourne fréquemment (toutes les 2 min). Chaque tick :
+    //   - démarre un nouveau cycle si on vient de passer l'heure fixe du jour
+    //     et qu'aucun cycle n'a encore tourné aujourd'hui ;
+    //   - sinon avance d'une tranche s'il reste du travail ;
+    //   - sinon ne fait rien (veille), pour ne rien consommer inutilement.
+    ctx.waitUntil(tickCron(env));
+  },
+
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    if (request.method === "GET" && url.pathname === "/health") {
+      return json({ ok: true, service: "dsi-hotel-backup" });
+    }
+
+    if (request.method === "GET" && url.pathname === "/status") {
+      if (!tokenValide(url, env)) return json({ ok: false, erreur: "Jeton invalide" }, 401);
+      const etat = await lireEtat(env);
+      const derniere_reussite = await env.BACKUP_KV.get(KV_DERNIERE_REUSSITE);
+      return json({ ok: true, etat, derniere_reussite: derniere_reussite || null });
+    }
+
+    if (request.method === "POST" && url.pathname === "/reset") {
+      if (!tokenValide(url, env)) return json({ ok: false, erreur: "Jeton invalide" }, 401);
+      await env.BACKUP_KV.delete(KV_ETAT);
+      await env.BACKUP_KV.delete(KV_LISTE_STORAGE);
+      return json({ ok: true, message: "État réinitialisé." });
+    }
+
+    if (request.method === "POST" && url.pathname === "/run") {
+      if (!tokenValide(url, env)) return json({ ok: false, erreur: "Jeton invalide" }, 401);
+      const mode = url.searchParams.get("mode") || "auto";
+      ctx.waitUntil(avancerTravail(env, { source: "manuel", mode }));
+      return json({ ok: true, message: "Traitement lancé en arrière-plan.", mode }, 202);
+    }
+
+    return json({ ok: false, erreur: "Route inconnue" }, 404);
+  },
+};
+
+// ====== LOGIQUE DU CRON (tick toutes les 2 min) ======
+
+async function tickCron(env) {
+  const log = faireLogger();
+  try {
+    verifierConfig(env);
+    const maintenant = new Date();
+    const aujourdhui = maintenant.toISOString().slice(0, 10); // AAAA-MM-JJ (UTC)
+    const heureUTC = maintenant.getUTCHours();
+
+    const etat = await lireEtat(env);
+
+    // Cas 1 : un cycle est en cours (pas terminé) -> on avance d'une tranche.
+    if (etat && etat.phase !== "termine") {
+      await avancerTravail(env, { source: "cron", mode: "auto" });
+      return;
+    }
+
+    // Cas 2 : le cycle du jour est déjà terminé -> veille, on ne fait rien.
+    if (etat && etat.phase === "termine" && etat.cycle_date === aujourdhui) {
+      return; // rien à faire, économie de subrequests
+    }
+
+    // Cas 3 : aucun cycle aujourd'hui. On démarre SEULEMENT si on a atteint
+    // l'heure de déclenchement quotidienne (évite de relancer en boucle à
+    // chaque tick avant l'heure prévue).
+    const dernierCycle = etat ? etat.cycle_date : null;
+    if (heureUTC >= HEURE_DEMARRAGE_UTC && dernierCycle !== aujourdhui) {
+      log(`Démarrage du cycle quotidien (${aujourdhui}, ${heureUTC}h UTC)`);
+      // On force la création d'un nouveau cycle en effaçant l'ancien état terminé.
+      await env.BACKUP_KV.delete(KV_ETAT);
+      await avancerTravail(env, { source: "cron", mode: "auto" });
+      return;
+    }
+
+    // Sinon : pas encore l'heure, on attend le prochain tick.
+  } catch (e) {
+    log(`ERREUR tickCron: ${e && e.message ? e.message : String(e)}`);
+  }
+}
+
+// ====== ORCHESTRATION PAR TRANCHES ======
+
+async function avancerTravail(env, { source, mode = "auto" }) {
+  const log = faireLogger();
+  try {
+    verifierConfig(env);
+    let etat = await lireEtat(env);
+
+    if (!etat || etat.phase === "termine") {
+      etat = {
+        phase: "db",
+        cycle_date: dateDuJour(),
+        db_index: 0,
+        db_offset: 0,
+        db_part: 1,
+        storage_index: 0,
+        storage_copies: 0,
+        storage_ignores: 0,
+        storage_erreurs: 0,
+        demarre_le: new Date().toISOString(),
+      };
+      try {
+        etat.tables = await decouvrirTables(env);
+        log(`Tables découvertes : ${etat.tables.length}`);
+      } catch (eT) {
+        etat.tables = TABLES.slice();
+        log(`Découverte des tables impossible (${eT && eT.message ? eT.message : eT}) : liste de secours (${TABLES.length})`);
+      }
+      await ecrireEtat(env, etat);
+      log(`Nouveau cycle démarré (${etat.cycle_date})`);
+    }
+
+    if (mode === "db") etat.phase = "db";
+    if (mode === "storage" && etat.phase === "db") etat.phase = "storage";
+
+    const token = await obtenirTokenGraph(env);
+    const driveId = await obtenirDriveId(env, token);
+
+    let encoreDuTravail = false;
+
+    if (etat.phase === "db") {
+      encoreDuTravail = await trancheDB(env, token, driveId, etat, log);
+      if (!encoreDuTravail) {
+        etat.phase = "storage";
+        etat.storage_index = 0;
+        log("Phase DB terminée -> passage à Storage");
+        await preparerListeStorage(env, log);
+        encoreDuTravail = true;
+      }
+      await ecrireEtat(env, etat);
+    } else if (etat.phase === "storage") {
+      encoreDuTravail = await trancheStorage(env, token, driveId, etat, log);
+      await ecrireEtat(env, etat);
+      if (!encoreDuTravail) {
+        // La purge des anciens dumps ne doit JAMAIS bloquer la fin du cycle :
+        // si elle échoue (limite de subrequests, droit SharePoint…), on le note
+        // et on termine quand même. Sinon le cycle reste coincé en "storage"
+        // et plus aucune sauvegarde ne démarre.
+        try {
+          const purges = await purgerAnciensDumps(token, driveId, log);
+          log(`Purge: ${purges} dossier(s)`);
+        } catch (ePurge) {
+          etat.purge_erreur = ePurge && ePurge.message ? ePurge.message : String(ePurge);
+          log(`Purge ERREUR (ignorée, reprise au prochain cycle): ${etat.purge_erreur}`);
+        }
+        etat.phase = "termine";
+        etat.termine_le = new Date().toISOString();
+        await ecrireEtat(env, etat);
+        await env.BACKUP_KV.put(KV_DERNIERE_REUSSITE, etat.termine_le);
+        await ecrireRapport(token, driveId, etat, source, log.journal(), true);
+        log("CYCLE TERMINÉ");
+      }
+    }
+
+    // Note : l'auto-relance interne (fetch vers soi-même) n'est pas fiable sur
+    // le plan Free. C'est désormais le cron (toutes les 2 min) qui enchaîne les
+    // tranches. On la conserve seulement pour les déclenchements manuels /run
+    // hors cron, où elle peut aider sans nuire.
+    if (encoreDuTravail && mode === "auto" && source === "manuel" && env.WORKER_URL) {
+      await autoRelance(env);
+    }
+
+    return { ok: true };
+  } catch (e) {
+    const msg = e && e.message ? e.message : String(e);
+    log(`ERREUR: ${msg}`);
+    try {
+      const token = await obtenirTokenGraph(env);
+      const driveId = await obtenirDriveId(env, token);
+      const etat = await lireEtat(env);
+      await ecrireRapport(token, driveId, etat || {}, source, log.journal(), false);
+    } catch (_) {}
+    return { ok: false, erreur: msg };
+  }
+}
+
+async function trancheDB(env, token, driveId, etat, log) {
+  const [annee, mois] = etat.cycle_date.split("-");
+  const dossier = `${DOSSIER_DB}/${annee}/${mois}/dsihotel_${etat.cycle_date}`;
+  if (typeof etat.db_offset !== "number") etat.db_offset = 0;
+  if (typeof etat.db_part !== "number") etat.db_part = 1;
+
+  const tables = Array.isArray(etat.tables) && etat.tables.length ? etat.tables : TABLES;
+  let budget = DB_BUDGET_SUBREQ;
+  while (etat.db_index < tables.length && budget >= 4) {
+    const table = tables[etat.db_index];
+    const taillePage = etat.db_taille || DB_PAGE_PAR_TABLE[table] || DB_PAGE_DEFAUT;
+    const debut = etat.db_offset;
+
+    // 1) Lecture d'UNE page de lignes (triée par id quand la colonne existe).
+    budget -= 2; // lecture (+ éventuelle relecture sans tri)
+    const page = await lirePageTable(env, table, debut, taillePage);
+
+    // 2) Écriture immédiate de cette page dans son propre fichier.
+    const nomPart = `${table}_p${String(etat.db_part).padStart(4, "0")}.json`;
+    let octets = new TextEncoder().encode(JSON.stringify({
+      table, partie: etat.db_part, offset: debut, exporte_le: new Date().toISOString(),
+      nb_lignes: page.length, data: page,
+    }));
+    const tailleFichier = octets.byteLength;
+    budget -= tailleFichier < SEUIL_UPLOAD_SESSION ? 1 : 1 + Math.ceil(tailleFichier / CHUNK_UPLOAD);
+    await uploadFichier(token, driveId, `${dossier}/${nomPart}`, octets);
+    octets = null;
+    log(`DB ${table} partie ${etat.db_part}: ${page.length} lignes (offset ${debut})`);
+
+    // 3) Page suivante ou table suivante.
+    if (page.length < taillePage) {
+      etat.db_index++;
+      etat.db_offset = 0;
+      etat.db_part = 1;
+      etat.db_taille = null; // table suivante : taille par défaut
+    } else {
+      etat.db_offset += taillePage;
+      etat.db_part++;
+      // Ajuste la taille de la prochaine page pour viser ~2 Mo par fichier
+      const parLigne = tailleFichier / Math.max(1, page.length);
+      etat.db_taille = Math.max(DB_PAGE_MIN, Math.min(DB_PAGE_MAX, Math.floor(DB_CIBLE_OCTETS / Math.max(1, parLigne))));
+    }
+  }
+  return etat.db_index < tables.length;
+}
+
+// Lit une page de lignes d'une table. Tri par "id" pour une pagination stable ;
+// si la table n'a pas de colonne id, on relit sans tri.
+async function lirePageTable(env, table, debut, taille) {
+  const essai = async (avecTri) => fetch(
+    `${env.SUPABASE_URL}/rest/v1/${table}?select=*${avecTri ? "&order=id.asc" : ""}`,
+    { headers: { ...entetesSupabase(env), Range: `${debut}-${debut + taille - 1}`, "Range-Unit": "items" } }
+  );
+  let resp = await essai(true);
+  if (resp.status === 400) resp = await essai(false); // pas de colonne id
+  if (!resp.ok && resp.status !== 416) {
+    const txt = await resp.text();
+    throw new Error(`Supabase ${table} HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  if (resp.status === 416) return []; // plage au-delà de la fin de table
+  const lg = Number(resp.headers.get("content-length") || 0);
+  if (lg > DB_PAGE_MAX_OCTETS) throw new Error(`Page trop volumineuse pour ${table} (${lg} octets) : réduire DB_PAGE_PAR_TABLE`);
+  const page = await resp.json();
+  return Array.isArray(page) ? page : [];
+}
+
+// Liste des tables exposées par l'API Supabase (schéma OpenAPI de PostgREST).
+// Ne garde que les tables (pas les vues ni les fonctions rpc/).
+async function decouvrirTables(env) {
+  const resp = await fetch(`${env.SUPABASE_URL}/rest/v1/`, {
+    headers: { ...entetesSupabase(env), Accept: "application/openapi+json" },
+  });
+  if (!resp.ok) throw new Error(`OpenAPI HTTP ${resp.status}`);
+  const doc = await resp.json();
+  const chemins = Object.keys(doc.paths || {});
+  const tables = chemins
+    .filter(c => c !== "/" && !c.startsWith("/rpc/"))
+    .map(c => c.slice(1))
+    .filter(t => {
+      const p = doc.paths["/" + t] || {};
+      return p.post || p.patch || p.delete; // une vue en lecture seule n'a que "get"
+    })
+    .sort();
+  if (tables.length < 5) throw new Error(`seulement ${tables.length} table(s) trouvée(s)`);
+  // On garde l'ordre historique en premier pour les tables connues
+  return [...TABLES.filter(t => tables.includes(t)), ...tables.filter(t => !TABLES.includes(t))];
+}
+
+async function preparerListeStorage(env, log) {
+  const fichiers = await listerStorage(env, "");
+  await env.BACKUP_KV.put(KV_LISTE_STORAGE, JSON.stringify(fichiers));
+  log(`Storage: ${fichiers.length} fichier(s) à traiter`);
+}
+
+async function trancheStorage(env, token, driveId, etat, log) {
+  const brut = await env.BACKUP_KV.get(KV_LISTE_STORAGE);
+  const fichiers = brut ? JSON.parse(brut) : [];
+  if (fichiers.length === 0) return false;
+
+  const fin = Math.min(etat.storage_index + FICHIERS_PAR_TRANCHE, fichiers.length);
+  for (let i = etat.storage_index; i < fin; i++) {
+    const f = fichiers[i];
+    try {
+      const cible = `${DOSSIER_STORAGE}/${STORAGE_BUCKET}/${f.chemin}`;
+      const existant = await tailleFichierSP(token, driveId, cible);
+      if (existant !== null && existant === f.taille) {
+        etat.storage_ignores++;
+        continue;
+      }
+      const dl = await fetch(
+        `${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURI(f.chemin)}`,
+        { headers: entetesSupabase(env) }
+      );
+      if (!dl.ok) throw new Error(`download HTTP ${dl.status}`);
+      const donnees = new Uint8Array(await dl.arrayBuffer());
+      await uploadFichier(token, driveId, cible, donnees);
+      etat.storage_copies++;
+    } catch (e) {
+      etat.storage_erreurs++;
+      log(`Storage ERREUR ${f.chemin}: ${e && e.message ? e.message : String(e)}`);
+    }
+  }
+  etat.storage_index = fin;
+  log(`Storage tranche: ${fin}/${fichiers.length} (copiés=${etat.storage_copies}, ignorés=${etat.storage_ignores}, erreurs=${etat.storage_erreurs})`);
+  return fin < fichiers.length;
+}
+
+async function autoRelance(env) {
+  try {
+    await fetch(`${env.WORKER_URL}/run?token=${encodeURIComponent(env.BACKUP_TRIGGER_TOKEN)}`, {
+      method: "POST",
+    });
+  } catch (_) {}
+}
+
+// ====== ÉTAT KV ======
+
+async function lireEtat(env) {
+  const brut = await env.BACKUP_KV.get(KV_ETAT);
+  return brut ? JSON.parse(brut) : null;
+}
+async function ecrireEtat(env, etat) {
+  await env.BACKUP_KV.put(KV_ETAT, JSON.stringify(etat));
+}
+
+// ====== SUPABASE : DUMP PAGINÉ ======
+
+function entetesSupabase(env) {
+  return {
+    apikey: env.SUPABASE_SERVICE_ROLE,
+    ...(String(env.SUPABASE_SERVICE_ROLE || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE}` }),
+  };
+}
+
+async function dumpTable(env, table) {
+  const lignes = [];
+  let debut = 0;
+  while (true) {
+    const fin = debut + PAGE_SIZE - 1;
+    const resp = await fetch(`${env.SUPABASE_URL}/rest/v1/${table}?select=*`, {
+      headers: { ...entetesSupabase(env), Range: `${debut}-${fin}`, "Range-Unit": "items" },
+    });
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(`Supabase ${table} HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+    }
+    const page = await resp.json();
+    lignes.push(...page);
+    if (!Array.isArray(page) || page.length < PAGE_SIZE) break;
+    debut += PAGE_SIZE;
+  }
+  return lignes;
+}
+
+// ====== SUPABASE STORAGE : LISTE RÉCURSIVE ======
+
+async function listerStorage(env, prefixe) {
+  const resultats = [];
+  let offset = 0;
+  while (true) {
+    const resp = await fetch(
+      `${env.SUPABASE_URL}/storage/v1/object/list/${STORAGE_BUCKET}`,
+      {
+        method: "POST",
+        headers: { ...entetesSupabase(env), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prefix: prefixe,
+          limit: PAGE_SIZE,
+          offset,
+          sortBy: { column: "name", order: "asc" },
+        }),
+      }
+    );
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(`Storage list HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+    }
+    const items = await resp.json();
+    if (!Array.isArray(items) || items.length === 0) break;
+    for (const it of items) {
+      const estFichier = it.id !== null && it.metadata != null;
+      const chemin = prefixe ? `${prefixe}/${it.name}` : it.name;
+      if (estFichier) {
+        resultats.push({ chemin, taille: it.metadata.size || 0 });
+      } else {
+        const sous = await listerStorage(env, chemin);
+        resultats.push(...sous);
+      }
+    }
+    if (items.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
+  }
+  return resultats;
+}
+
+// ====== MICROSOFT GRAPH ======
+
+async function obtenirTokenGraph(env) {
+  const resp = await fetch(
+    `https://login.microsoftonline.com/${env.MS_TENANT_ID}/oauth2/v2.0/token`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: env.MS_CLIENT_ID,
+        client_secret: env.MS_CLIENT_SECRET,
+        scope: "https://graph.microsoft.com/.default",
+        grant_type: "client_credentials",
+      }),
+    }
+  );
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Token Graph HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  return (await resp.json()).access_token;
+}
+
+async function obtenirDriveId(env, token) {
+  const resp = await fetch(
+    `https://graph.microsoft.com/v1.0/sites/${env.SP_SITE_ID}/drive`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Drive HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  return (await resp.json()).id;
+}
+
+async function tailleFichierSP(token, driveId, chemin) {
+  const resp = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/root:/${encodeCheminSP(chemin)}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (resp.status === 404) return null;
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Lookup SP HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  const data = await resp.json();
+  return typeof data.size === "number" ? data.size : null;
+}
+
+async function uploadFichier(token, driveId, chemin, donnees) {
+  if (donnees.byteLength < SEUIL_UPLOAD_SESSION) {
+    return uploadSimple(token, driveId, chemin, donnees);
+  }
+  return uploadSession(token, driveId, chemin, donnees);
+}
+
+async function uploadSimple(token, driveId, chemin, donnees) {
+  // conflictBehavior=replace : autorise l'écrasement d'un fichier existant
+  // (sinon Graph renvoie 409 Conflict quand la cible existe déjà).
+  const url =
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/root:/${encodeCheminSP(chemin)}:/content` +
+    `?@microsoft.graph.conflictBehavior=replace`;
+  const resp = await fetch(url, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/octet-stream" },
+    body: donnees,
+  });
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Upload HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  return resp.json();
+}
+
+async function uploadSession(token, driveId, chemin, donnees) {
+  const creer = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/root:/${encodeCheminSP(chemin)}:/createUploadSession`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ item: { "@microsoft.graph.conflictBehavior": "replace" } }),
+    }
+  );
+  if (!creer.ok) {
+    const txt = await creer.text();
+    throw new Error(`Session HTTP ${creer.status}: ${txt.slice(0, 200)}`);
+  }
+  const { uploadUrl } = await creer.json();
+  const total = donnees.byteLength;
+  let debut = 0;
+  let derniere = null;
+  while (debut < total) {
+    const fin = Math.min(debut + CHUNK_UPLOAD, total);
+    const fragment = donnees.subarray(debut, fin);
+    const resp = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Length": String(fragment.byteLength),
+        "Content-Range": `bytes ${debut}-${fin - 1}/${total}`,
+      },
+      body: fragment,
+    });
+    if (!(resp.status === 200 || resp.status === 201 || resp.status === 202)) {
+      const txt = await resp.text();
+      throw new Error(`Fragment HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+    }
+    derniere = resp;
+    debut = fin;
+  }
+  return derniere ? derniere.json().catch(() => ({})) : {};
+}
+
+// ====== PURGE ======
+
+async function purgerAnciensDumps(token, driveId, log) {
+  const limite = Date.now() - RETENTION_JOURS * 24 * 60 * 60 * 1000;
+  let supprimes = 0;
+  const annees = await listerEnfantsSP(token, driveId, DOSSIER_DB);
+  for (const an of annees) {
+    if (!an.folder) continue;
+    const mois = await listerEnfantsSP(token, driveId, `${DOSSIER_DB}/${an.name}`);
+    for (const m of mois) {
+      if (!m.folder) continue;
+      const dumps = await listerEnfantsSP(token, driveId, `${DOSSIER_DB}/${an.name}/${m.name}`);
+      for (const d of dumps) {
+        if (!d.folder) continue;
+        const match = /dsihotel_(\d{4}-\d{2}-\d{2})/.exec(d.name);
+        if (!match) continue;
+        const t = Date.parse(match[1] + "T00:00:00Z");
+        if (Number.isFinite(t) && t < limite) {
+          if (supprimes >= PURGE_MAX_PAR_CYCLE) return supprimes; // le reste au prochain cycle
+          await supprimerElementSP(token, driveId, d.id);
+          supprimes++;
+          log(`Purge: ${an.name}/${m.name}/${d.name}`);
+        }
+      }
+    }
+  }
+  return supprimes;
+}
+
+async function listerEnfantsSP(token, driveId, chemin) {
+  const resp = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/root:/${encodeCheminSP(chemin)}:/children?$select=id,name,folder&$top=999`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (resp.status === 404) return [];
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Children HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  const data = await resp.json();
+  return Array.isArray(data.value) ? data.value : [];
+}
+
+async function supprimerElementSP(token, driveId, itemId) {
+  const resp = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/items/${itemId}`,
+    { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!(resp.status === 204 || resp.status === 200)) {
+    const txt = await resp.text();
+    throw new Error(`Delete HTTP ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+}
+
+// ====== RAPPORT ======
+
+async function ecrireRapport(token, driveId, etat, source, journal, succes) {
+  const contenu =
+    `Rapport de sauvegarde DSI Hotel\n` +
+    `Date        : ${new Date().toISOString()}\n` +
+    `Déclencheur : ${source}\n` +
+    `Statut      : ${succes ? "SUCCÈS" : "ÉCHEC"}\n` +
+    `Cycle       : ${etat && etat.cycle_date ? etat.cycle_date : "?"}\n` +
+    `Storage     : copiés=${etat.storage_copies || 0} ignorés=${etat.storage_ignores || 0} erreurs=${etat.storage_erreurs || 0}\n` +
+    `----------------------------------------\n` +
+    journal.join("\n") + "\n";
+  const horod = etat && etat.cycle_date ? etat.cycle_date : dateDuJour();
+  await uploadFichier(
+    token, driveId,
+    `rapports/backup_${horod}_${succes ? "ok" : "echec"}.txt`,
+    new TextEncoder().encode(contenu)
+  );
+}
+
+// ====== UTILITAIRES ======
+
+function faireLogger() {
+  const lignes = [];
+  const fn = (msg) => {
+    const l = `[${new Date().toISOString()}] ${msg}`;
+    lignes.push(l);
+    console.log(l);
+  };
+  fn.journal = () => lignes;
+  return fn;
+}
+
+function verifierConfig(env) {
+  const requis = [
+    "MS_TENANT_ID", "MS_CLIENT_ID", "MS_CLIENT_SECRET",
+    "SP_SITE_ID", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE",
+  ];
+  const manquants = requis.filter((k) => !env[k]);
+  if (manquants.length) throw new Error(`Variables manquantes: ${manquants.join(", ")}`);
+  if (!env.BACKUP_KV) throw new Error("Binding KV 'BACKUP_KV' manquant");
+}
+
+function tokenValide(url, env) {
+  const t = url.searchParams.get("token");
+  return env.BACKUP_TRIGGER_TOKEN && t === env.BACKUP_TRIGGER_TOKEN;
+}
+
+function dateDuJour() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function encodeCheminSP(chemin) {
+  return chemin.split("/").map(encodeURIComponent).join("/");
+}
+
+function json(obj, statut = 200) {
+  return new Response(JSON.stringify(obj), {
+    status: statut,
+    headers: { "Content-Type": "application/json" },
+  });
+}

@@ -1,0 +1,1885 @@
+/**
+ * Worker DSI Hotel — API Admin sécurisée + Envoi d'emails (Resend) + Réception d'emails (Inbound)
+ *
+ * Routes :
+ *   POST /send                         → envoie un email (texte + HTML, via Resend)
+ *   POST /inbound                      → reçoit un email entrant (webhook Resend) et crée un ticket
+ *   POST /notify-projet                → notifie team@dsihotel.fr de la création d'un projet
+ *   POST /admin/create-client          → crée un hôtel + un compte superviseur (+ un compte standard optionnel)
+ *   POST /admin/reset-password         → réinitialise le mot de passe d'un compte
+ *   POST /admin/update-account-email   → change l'adresse email (et le mot de passe) d'un compte existant
+ *   POST /admin/delete-client          → supprime l'hôtel et ses comptes de connexion
+ *   POST /admin/list-admins            → liste les admins (super-admin uniquement)
+ *   POST /admin/create-admin           → crée un admin avec permissions + email de bienvenue (super-admin uniquement)
+ *   POST /admin/update-admin-permissions → modifie les permissions d'un admin (super-admin uniquement)
+ *   POST /admin/delete-admin           → supprime un admin (super-admin uniquement)
+ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ENVOI D'EMAILS VIA MICROSOFT 365 (Microsoft Graph API)
+ * ---------------------------------------------------------------------------
+ * Remplace Resend. Envoie depuis support@dsihotel.fr (boîte M365, domaine
+ * déjà vérifié dans le tenant) avec un Reply-To forcé sur support@dsihotel.com
+ * afin que les réponses des clients arrivent sur Cloudflare Email Routing
+ * (inbound .com) et non sur M365 — ce qui préserve le threading par sujet.
+ *
+ * VARIABLES CLOUDFLARE À CONFIGURER (Settings → Variables) :
+ *   - MS_TENANT_ID       (Texte)   : ID du tenant Entra ID (Azure AD)
+ *   - MS_CLIENT_ID       (Texte)   : Application (client) ID de l'App Registration
+ *   - MS_CLIENT_SECRET   (Secret)  : valeur du client secret créé dans l'App
+ *   - MS_SENDER          (Texte, optionnel) : boîte expéditrice.
+ *       Défaut : support@dsihotel.fr
+ *   - MS_REPLY_TO        (Texte, optionnel) : adresse de réponse forcée.
+ *       Défaut : support@dsihotel.com
+ *
+ * PERMISSION AZURE REQUISE : Mail.Send (type Application) + consentement admin.
+ * Restreindre de préférence via ApplicationAccessPolicy (PowerShell) à la
+ * seule boîte support@dsihotel.fr.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+const MS_SENDER_DEFAUT = "support@dsihotel.fr";
+const MS_REPLY_TO_DEFAUT = "support@dsihotel.com";
+const PLANNING_MAILBOX_DEFAUT = "info@dsihotel.fr"; // boîte dont le calendrier sert de planning d'équipe
+const PLANNING_TZ = "Romance Standard Time";          // fuseau Paris / Madrid (nom Windows)
+
+// Cache du token en mémoire du Worker (isolate). Évite de redemander un token
+// à chaque envoi. Le token M365 dure ~3600 s ; on garde une marge de sécurité.
+let _msTokenCache = { token: null, exp: 0 };
+
+async function msGetToken(env) {
+  const now = Math.floor(Date.now() / 1000);
+  if (_msTokenCache.token && _msTokenCache.exp > now + 60) {
+    return _msTokenCache.token;
+  }
+  const tenant = env.MS_TENANT_ID;
+  const url = `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`;
+  const params = new URLSearchParams({
+    client_id: env.MS_CLIENT_ID,
+    client_secret: env.MS_CLIENT_SECRET,
+    scope: "https://graph.microsoft.com/.default",
+    grant_type: "client_credentials",
+  });
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error("Token M365 refusé (" + res.status + ") " + t.slice(0, 200));
+  }
+  const data = await res.json();
+  _msTokenCache = {
+    token: data.access_token,
+    exp: now + (data.expires_in || 3600),
+  };
+  return data.access_token;
+}
+
+// Normalise une liste d'adresses (chaîne, tableau, séparateurs , ou ;) vers
+// le format Graph : [{ emailAddress: { address } }].
+function msRecipients(value) {
+  if (!value) return [];
+  const arr = Array.isArray(value) ? value : String(value).split(/[,;]/);
+  return arr
+    .map((a) => String(a).trim())
+    .filter((a) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a))
+    .map((a) => ({ emailAddress: { address: a } }));
+}
+
+/**
+ * Envoie un email via Microsoft Graph.
+ * @param {object} env
+ * @param {object} msg
+ *   - to          (string | string[])           destinataires (requis)
+ *   - subject     (string)                        objet (requis)
+ *   - text        (string)                        corps texte (fallback si pas de html)
+ *   - html        (string, optionnel)             corps HTML
+ *   - cc          (string | string[], optionnel)  copies
+ *   - replyTo     (string, optionnel)             remplace le Reply-To par défaut
+ *   - fromName    (string, optionnel)             nom affiché de l'expéditeur
+ *   - attachments ([{ filename, content(base64) }], optionnel)
+ * @returns {Promise<{ok:boolean, status:number, error?:string}>}
+ */
+async function sendViaGraph(env, msg) {
+  const sender = (env.MS_SENDER || MS_SENDER_DEFAUT).trim();
+  const replyToAddr = (msg.replyTo || env.MS_REPLY_TO || MS_REPLY_TO_DEFAUT).trim();
+
+  const toList = msRecipients(msg.to);
+  if (toList.length === 0) {
+    return { ok: false, status: 400, error: "Aucun destinataire valide" };
+  }
+
+  const useHtml = !!msg.html;
+  const body = {
+    contentType: useHtml ? "HTML" : "Text",
+    content: useHtml ? msg.html : (msg.text || ""),
+  };
+
+  const message = {
+    subject: msg.subject || "(Sans objet)",
+    body,
+    toRecipients: toList,
+  };
+
+  const ccList = msRecipients(msg.cc);
+  if (ccList.length > 0) message.ccRecipients = ccList;
+
+  const replyList = msRecipients(replyToAddr);
+  if (replyList.length > 0) message.replyTo = replyList;
+
+  // Nom affiché de l'expéditeur (facultatif). L'adresse reste la boîte M365.
+  const cleanName = String(msg.fromName || "").replace(/["<>\r\n]/g, "").trim();
+  if (cleanName) {
+    message.from = { emailAddress: { name: cleanName, address: sender } };
+  }
+
+  // Pièces jointes : Graph attend @odata.type + contentBytes (base64).
+  // Si l'attachement porte un "cid" (Content-ID), on le marque inline : il est
+  // alors référencé dans le HTML par <img src="cid:LE_CID"> et s'affiche DANS le
+  // corps du mail (façon Outlook) au lieu d'apparaître en pièce jointe séparée.
+  if (Array.isArray(msg.attachments) && msg.attachments.length > 0) {
+    message.attachments = msg.attachments
+      .filter((a) => a && a.content)
+      .map((a) => {
+        const att = {
+          "@odata.type": "#microsoft.graph.fileAttachment",
+          name: a.filename || "piece-jointe",
+          contentBytes: a.content,
+        };
+        if (a.contentType) att.contentType = a.contentType;
+        if (a.cid) {
+          att.contentId = String(a.cid);
+          att.isInline = true;
+        }
+        return att;
+      });
+  }
+
+  let token;
+  try {
+    token = await msGetToken(env);
+  } catch (e) {
+    return { ok: false, status: 500, error: String((e && e.message) || e) };
+  }
+
+  const endpoint =
+    `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(sender)}/sendMail`;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message, saveToSentItems: true }),
+  });
+
+  // Graph renvoie 202 Accepted sans corps en cas de succès.
+  if (res.status === 202) return { ok: true, status: 202 };
+
+  const detail = await res.text().catch(() => "");
+  return { ok: false, status: res.status, error: detail.slice(0, 300) };
+}
+
+
+const ALLOWED_ORIGINS = [
+  "https://jeremiebeal-png.github.io",
+  "https://portail.dsihotel.com",
+];
+
+const SUPERADMIN_EMAIL = "support@dsihotel.com";
+
+let CURRENT_ORIGIN = ALLOWED_ORIGINS[0];
+
+function corsHeaders() {
+  const allowed = ALLOWED_ORIGINS.includes(CURRENT_ORIGIN) ? CURRENT_ORIGIN : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...corsHeaders() } });
+}
+
+function sbHeaders(env) {
+  return {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    ...(String(env.SUPABASE_SERVICE_ROLE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }),
+  };
+}
+
+function sbJsonHeaders(env) {
+  return { ...sbHeaders(env), "Content-Type": "application/json" };
+}
+
+// ===================== TOTP "maison" (RFC 6238) =====================
+// Implémentation sans dépendance, via WebCrypto (disponible sur Workers).
+const TOTP_B32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+// Génère un secret base32 aléatoire (par défaut 20 octets -> 32 caractères).
+function genTotpSecret(bytes = 20) {
+  const buf = new Uint8Array(bytes);
+  crypto.getRandomValues(buf);
+  let bits = 0, value = 0, out = "";
+  for (let i = 0; i < buf.length; i++) {
+    value = (value << 8) | buf[i];
+    bits += 8;
+    while (bits >= 5) {
+      out += TOTP_B32[(value >>> (bits - 5)) & 31];
+      bits -= 5;
+    }
+  }
+  if (bits > 0) out += TOTP_B32[(value << (5 - bits)) & 31];
+  return out;
+}
+
+// Décode un secret base32 en octets.
+function b32Decode(secret) {
+  const clean = String(secret || "").toUpperCase().replace(/=+$/g, "").replace(/\s/g, "");
+  let bits = 0, value = 0;
+  const out = [];
+  for (const ch of clean) {
+    const idx = TOTP_B32.indexOf(ch);
+    if (idx === -1) continue;
+    value = (value << 5) | idx;
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return new Uint8Array(out);
+}
+
+// Calcule le code TOTP (6 chiffres) pour un secret et un "compteur" de fenêtre.
+async function totpAt(secret, counter) {
+  const key = b32Decode(secret);
+  const msg = new Uint8Array(8);
+  let c = counter;
+  for (let i = 7; i >= 0; i--) { msg[i] = c & 0xff; c = Math.floor(c / 256); }
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw", key, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]
+  );
+  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, msg));
+  const offset = sig[sig.length - 1] & 0x0f;
+  const bin = ((sig[offset] & 0x7f) << 24) | ((sig[offset + 1] & 0xff) << 16) |
+              ((sig[offset + 2] & 0xff) << 8) | (sig[offset + 3] & 0xff);
+  return String(bin % 1000000).padStart(6, "0");
+}
+
+// Vérifie un code sur une fenêtre de +/- 1 pas (30 s) pour tolérer le décalage d'horloge.
+async function totpVerify(secret, code, stepSeconds = 30, window = 1) {
+  const clean = String(code || "").replace(/\s/g, "");
+  if (!/^[0-9]{6}$/.test(clean)) return false;
+  const counter = Math.floor(Date.now() / 1000 / stepSeconds);
+  for (let w = -window; w <= window; w++) {
+    if (await totpAt(secret, counter + w) === clean) return true;
+  }
+  return false;
+}
+
+// Construit l'URI otpauth:// (pour le QR code).
+function otpauthUri(secret, label, issuer) {
+  const l = encodeURIComponent(label);
+  const i = encodeURIComponent(issuer);
+  return `otpauth://totp/${i}:${l}?secret=${secret}&issuer=${i}&algorithm=SHA1&digits=6&period=30`;
+}
+
+// Récupère l'hôtel (id + emails) à partir de l'email de connexion fourni.
+// Génère un PDF d'attestation minimal (sans dépendance) et le renvoie en base64.
+function buildAttestationPdfBase64(lignes) {
+  const esc = (s) => String(s == null ? "" : s).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+  let content = "BT\n";
+  // bandeau (rectangle bleu foncé)
+  let pre = "0.10 0.10 0.24 rg\n0 800 595 42 re\nf\n";
+  for (const ln of lignes) {
+    const size = ln.size || 11;
+    const font = ln.bold ? "F2" : "F1";
+    const col = ln.white ? "1 1 1 rg" : (ln.gold ? "0.66 0.53 0.18 rg" : "0.15 0.15 0.20 rg");
+    content += `${col}\n/${font} ${size} Tf\n1 0 0 1 ${ln.x || 55} ${ln.y} Tm\n(${esc(ln.text)}) Tj\n`;
+  }
+  content += "ET";
+  const stream = pre + content;
+  const objs = [];
+  objs.push("<< /Type /Catalog /Pages 2 0 R >>");
+  objs.push("<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
+  objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>");
+  objs.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+  objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  let pdf = "%PDF-1.4\n";
+  const offsets = [];
+  objs.forEach((o, i) => { offsets.push(pdf.length); pdf += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = pdf.length;
+  pdf += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`;
+  offsets.forEach(off => { pdf += String(off).padStart(10, "0") + " 00000 n \n"; });
+  pdf += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  // Encode en base64 (latin1)
+  let bin = "";
+  for (let i = 0; i < pdf.length; i++) bin += String.fromCharCode(pdf.charCodeAt(i) & 0xff);
+  return btoa(bin);
+}
+
+// Construit les lignes de l'attestation à partir d'une validation.
+function attestationLignes(v) {
+  const wrap = (s, n) => {
+    const mots = String(s || "").split(/\s+/); const out = []; let cur = "";
+    for (const m of mots) { if ((cur + " " + m).trim().length > n) { out.push(cur.trim()); cur = m; } else cur += " " + m; }
+    if (cur.trim()) out.push(cur.trim()); return out;
+  };
+  const L = [
+    { text: "ATTESTATION DE VALIDATION", size: 17, bold: true, white: true, y: 812 },
+    { text: "Etablissement :", size: 11, bold: true, y: 760 }, { text: v.hotel_name || "-", size: 11, x: 200, y: 760 },
+    { text: "Reference du ticket :", size: 11, bold: true, y: 742 }, { text: v.reference || "-", size: 11, x: 200, y: 742 },
+    { text: "Demande :", size: 11, bold: true, y: 724 }, { text: v.titre || "-", size: 11, x: 200, y: 724 },
+    { text: "Validee par :", size: 11, bold: true, y: 706 }, { text: v.validateur_email || "-", size: 11, x: 200, y: 706 },
+    { text: "Date de validation :", size: 11, bold: true, y: 688 }, { text: (v.validated_at ? new Date(v.validated_at).toLocaleString("fr-FR") : "-"), size: 11, x: 200, y: 688 },
+    { text: "Recapitulatif de la demande", size: 12, bold: true, gold: true, y: 656 },
+  ];
+  let y = 636;
+  const recapLignes = String(v.recap || "").split("\n");
+  for (const rl of recapLignes) {
+    for (const sub of wrap(rl, 82)) { L.push({ text: sub, size: 9, y }); y -= 12; if (y < 60) break; }
+    if (y < 60) break;
+  }
+  L.push({ text: "Document genere par le portail DSI Hotel - preuve de validation.", size: 8, y: 40 });
+  return L;
+}
+
+async function hotelParEmailCompte(env, email) {
+  const enc = encodeURIComponent(String(email || "").trim().toLowerCase());
+  const res = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/hotels?or=(account_email.eq.${enc},standard_email.eq.${enc})&select=id,name,account_email,standard_email`,
+    { headers: sbHeaders(env) }
+  );
+  const arr = await res.json().catch(() => []);
+  return arr[0] || null;
+}
+// ===================================================================
+
+function extractEmail(raw) {
+  if (!raw) return "";
+  const m = String(raw).match(/<([^>]+)>/);
+  if (m) return m[1].trim().toLowerCase();
+  const m2 = String(raw).match(/[\w.+-]+@[\w.-]+\.\w+/);
+  return m2 ? m2[0].trim().toLowerCase() : "";
+}
+
+function extractName(raw) {
+  if (!raw) return "";
+  const m = String(raw).match(/^\s*"?([^"<]+?)"?\s*</);
+  return m ? m[1].trim() : "";
+}
+
+function stripHtml(html) {
+  if (!html) return "";
+  return String(html)
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Recherche fiable d'un utilisateur Auth par son email EXACT.
+// Le paramètre ?email= de GoTrue (Supabase Auth) n'est pas fiable selon la
+// version (souvent ignoré -> renvoie tous les users). On pagine donc la liste
+// et on compare l'email nous-mêmes. Retourne l'objet user, ou null.
+async function trouverUserParEmail(env, mail) {
+  const cible = String(mail || "").trim().toLowerCase();
+  if (!cible) return null;
+  const PER_PAGE = 200;
+  for (let page = 1; page <= 50; page++) {
+    const res = await fetch(
+      `${env.SUPABASE_URL}/auth/v1/admin/users?page=${page}&per_page=${PER_PAGE}`,
+      { headers: sbHeaders(env) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => ({}));
+    const users = data.users || [];
+    if (users.length === 0) break; // vraie fin de liste (Supabase peut plafonner per_page)
+    const trouve = users.find(u => String(u.email || "").trim().toLowerCase() === cible);
+    if (trouve) return trouve;
+  }
+  return null;
+}
+
+// Retrouve le compte Auth d'un hôtel pour un niveau donné (supervisor / client)
+// via son profil (profiles.hotel_id + role) : ne dépend pas de l'email.
+// Repli sur la recherche par email si aucun profil n'est trouvé.
+async function trouverUserDuCompteHotel(env, hotelId, level, email) {
+  const cible = String(email || "").trim().toLowerCase();
+  const pRes = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/profiles?hotel_id=eq.${hotelId}&role=eq.${level}&select=id`,
+    { headers: sbHeaders(env) }
+  );
+  const profs = await pRes.json().catch(() => []);
+  const liste = Array.isArray(profs) ? profs : [];
+  for (const p of liste) {
+    const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${p.id}`, { headers: sbHeaders(env) });
+    if (!uRes.ok) continue;
+    const u = await uRes.json().catch(() => null);
+    if (!u || !u.id) continue;
+    if (liste.length === 1 || String(u.email || "").trim().toLowerCase() === cible) return u;
+  }
+  return await trouverUserParEmail(env, cible);
+}
+
+// Adresse email valide pour Supabase Auth : pas d'accents, d'espaces ni de caractères spéciaux.
+function emailValide(mail) {
+  return /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/.test(String(mail || ""));
+}
+
+// Session + profil (role, hotel_id) de l'appelant. Retourne null si non connecté.
+async function sessionEtProfil(request, env) {
+  const user = await verifySession(request, env);
+  if (!user || !user.id) return null;
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=role,hotel_id`, { headers: sbHeaders(env) });
+  const arr = await r.json().catch(() => []);
+  const prof = (Array.isArray(arr) && arr[0]) || {};
+  return { user, role: prof.role || null, hotelId: prof.hotel_id || null };
+}
+
+async function deleteAuthUserByEmail(env, mail) {
+  if (!mail) return;
+  const targetUser = await trouverUserParEmail(env, mail);
+  if (!targetUser) return;
+  await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${targetUser.id}`, {
+    method: "DELETE",
+    headers: sbHeaders(env),
+  });
+}
+
+// Envoie l'email de bienvenue à un nouvel administrateur
+async function envoyerBienvenueAdmin(env, email, password, permissions) {
+  const permLabels = {
+    clients: "Gérer les clients",
+    procedures: "Gérer les procédures",
+    docs: "Documentation technique",
+    tickets: "Tickets",
+    projets: "Projets",
+  };
+  const listeAcces = (permissions || []).length
+    ? (permissions || []).map(p => "• " + (permLabels[p] || p)).join("\n")
+    : "• Aucun accès configuré pour le moment (contactez le super-administrateur)";
+
+  try {
+    await sendViaGraph(env, {
+      fromName: "DSI Hotel",
+      to: [email],
+      subject: "Votre accès administrateur au portail DSI Hotel",
+      text: `Bonjour,
+
+Un compte administrateur vient d'être créé pour vous sur le portail DSI Hotel.
+
+Adresse du portail : https://portail.dsihotel.com
+Identifiant : ${email}
+Mot de passe provisoire : ${password}
+
+Vos accès :
+${listeAcces}
+
+Lors de votre première connexion, il vous sera demandé de configurer la double authentification (MFA) : vous scannerez un QR code avec une application comme Google Authenticator ou Microsoft Authenticator sur votre téléphone. Conservez ensuite cet accès sur votre appareil.
+
+Pour votre sécurité, nous vous recommandons de changer votre mot de passe après la première connexion.
+
+Cordialement,
+L'équipe DSI Hotel
+support@dsihotel.com`,
+    });
+  } catch (e) {
+    // On n'échoue pas la création si l'email ne part pas ; le compte reste créé.
+  }
+}
+
+async function verifySession(request, env) {
+  const authHeader = request.headers.get("Authorization") || "";
+  const token = authHeader.replace("Bearer ", "");
+  if (!token) return null;
+  const userRes = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_SERVICE_ROLE_KEY },
+  });
+  if (!userRes.ok) return null;
+  return await userRes.json();
+}
+
+async function verifyAdmin(request, env) {
+  const authHeader = request.headers.get("Authorization") || "";
+  const token = authHeader.replace("Bearer ", "");
+  if (!token) return null;
+
+  const userRes = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_SERVICE_ROLE_KEY },
+  });
+  if (!userRes.ok) return null;
+  const user = await userRes.json();
+
+  const profRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=role`, {
+    headers: sbHeaders(env),
+  });
+  if (!profRes.ok) return null;
+  const profiles = await profRes.json();
+  if (!profiles[0] || profiles[0].role !== "admin") return null;
+
+  return user;
+}
+
+async function verifySuperAdmin(request, env) {
+  const authHeader = request.headers.get("Authorization") || "";
+  const token = authHeader.replace("Bearer ", "");
+  if (!token) return null;
+
+  const userRes = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_SERVICE_ROLE_KEY },
+  });
+  if (!userRes.ok) return null;
+  const user = await userRes.json();
+
+  if ((user.email || "").toLowerCase() !== SUPERADMIN_EMAIL) return null;
+  return user;
+}
+
+const app = {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    CURRENT_ORIGIN = request.headers.get("Origin") || ALLOWED_ORIGINS[0];
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders() });
+    }
+
+    // ---------- ROUTE PUBLIQUE (GET) : validation d'une demande via lien email ----------
+    // Le validateur clique sur le bouton "Valider" reçu par email. On marque la
+    // validation, on affiche une page de confirmation et on notifie DSI.
+    if (url.pathname === "/valider" && request.method === "GET") {
+      const token = url.searchParams.get("token") || "";
+      const pageHtml = (titre, corps, couleur) => new Response(
+        `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>${titre}</title><style>body{font-family:system-ui,-apple-system,sans-serif;background:#F0F2F8;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+        .card{background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.08);padding:36px 40px;max-width:440px;text-align:center}
+        .ic{font-size:46px;margin-bottom:8px}h1{color:#1a1a3e;font-size:21px;margin:6px 0 10px}p{color:#555;font-size:14px;line-height:1.6}
+        .b{display:inline-block;margin-top:6px;font-size:12px;color:#888}.acc{color:${couleur};font-weight:700}</style></head>
+        <body><div class="card">${corps}<div class="b">DSI Hotel • www.dsihotel.com</div></div></body></html>`,
+        { headers: { "Content-Type": "text/html; charset=utf-8", ...corsHeaders() } }
+      );
+
+      if (!token) return pageHtml("Lien invalide", '<div class="ic">\u26A0\uFE0F</div><h1>Lien invalide</h1><p>Ce lien de validation est incomplet.</p>', "#B03A2E");
+
+      const vRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_validations?token=eq.${encodeURIComponent(token)}&select=*`, { headers: sbHeaders(env) });
+      const vArr = await vRes.json().catch(() => []);
+      const v = vArr[0];
+      if (!v) return pageHtml("Lien inconnu", '<div class="ic">\u26A0\uFE0F</div><h1>Lien inconnu</h1><p>Cette demande de validation est introuvable ou a expiré.</p>', "#B03A2E");
+
+      if (v.status === "validated") {
+        return pageHtml("Déjà validée", `<div class="ic">\u2705</div><h1>Demande déjà validée</h1><p>La demande <span class="acc">${v.reference || ""}</span> pour <b>${v.hotel_name || ""}</b> a déjà été validée.</p>`, "#256029");
+      }
+
+      const ip = request.headers.get("CF-Connecting-IP") || "";
+      const upd = await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_validations?token=eq.${encodeURIComponent(token)}`, {
+        method: "PATCH",
+        headers: sbJsonHeaders(env),
+        body: JSON.stringify({ status: "validated", validated_at: new Date().toISOString(), validated_ip: ip }),
+      });
+      if (!upd.ok) return pageHtml("Erreur", '<div class="ic">\u26A0\uFE0F</div><h1>Erreur</h1><p>La validation n\'a pas pu être enregistrée. Réessayez ou contactez DSI Hotel.</p>', "#B03A2E");
+
+      const dateValid = new Date().toLocaleString("fr-FR");
+
+      // Trace : ajoute un message horodaté dans le fil du ticket (preuve dans le ticket).
+      if (v.ticket_id) {
+        try {
+          const preuve = `\u2705 DEMANDE VALIDÉE\nValidée par : ${v.validateur_email}\nDate : ${dateValid}\nAdresse IP : ${ip || "non disponible"}\nRéférence : ${v.reference || "-"}`;
+          await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_messages`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({
+              ticket_id: v.ticket_id,
+              sender_role: "admin",
+              sender_name: "Validation",
+              body: preuve,
+            }),
+          });
+        } catch (e) {}
+      }
+
+      // Confirmation au validateur (preuve de son côté aussi) AVEC l'attestation PDF jointe.
+      try {
+        let attB64 = null;
+        try { attB64 = buildAttestationPdfBase64(attestationLignes({ ...v, validated_at: new Date().toISOString() })); } catch (e) {}
+        await sendViaGraph(env, {
+          to: v.validateur_email,
+          subject: `\u2705 Confirmation de validation ${v.reference || ""} — ${v.hotel_name || ""}`,
+          text:
+            `Vous avez validé la demande interne suivante.\n\n` +
+            `Établissement : ${v.hotel_name || "-"}\n` +
+            `Référence : ${v.reference || "-"}\n` +
+            `Demande : ${v.titre || "-"}\n` +
+            `Validée le : ${dateValid}\n\n` +
+            `Vous trouverez ci-joint l'attestation de validation. Conservez-la comme preuve.\n\n` +
+            `--- Récapitulatif ---\n${v.recap || ""}`,
+          fromName: "DSI Hotel — Validations",
+          attachments: attB64 ? [{ filename: `Attestation_${v.reference || "validation"}.pdf`, content: attB64 }] : undefined,
+        });
+      } catch (e) {}
+
+      // Notifie DSI de la validation
+      try {
+        await sendViaGraph(env, {
+          to: env.MS_REPLY_TO || "support@dsihotel.com",
+          subject: `\u2705 Demande VALIDÉE ${v.reference || ""} — ${v.hotel_name || ""}`,
+          text:
+            `La demande interne a été validée.\n\n` +
+            `Établissement : ${v.hotel_name || "-"}\n` +
+            `Référence ticket : ${v.reference || "-"}\n` +
+            `Demande : ${v.titre || "-"}\n` +
+            `Validée par : ${v.validateur_email}\n` +
+            `Le : ${new Date().toLocaleString("fr-FR")}\n\n` +
+            `--- Récapitulatif ---\n${v.recap || ""}`,
+          fromName: "DSI Hotel — Validations",
+        });
+      } catch (e) {}
+
+      return pageHtml("Demande validée", `<div class="ic">\u2705</div><h1>Demande validée</h1><p>Merci. La demande <span class="acc">${v.reference || ""}</span> pour <b>${v.hotel_name || ""}</b> est maintenant validée.<br>L'équipe DSI Hotel en est informée.</p>`, "#256029");
+    }
+
+    // ---------- ROUTE PUBLIQUE (GET) : refus d'une demande via lien email ----------
+    if (url.pathname === "/refuser" && request.method === "GET") {
+      const token = url.searchParams.get("token") || "";
+      const pageHtml = (titre, corps, couleur) => new Response(
+        `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>${titre}</title><style>body{font-family:system-ui,-apple-system,sans-serif;background:#F0F2F8;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+        .card{background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.08);padding:36px 40px;max-width:440px;text-align:center}
+        .ic{font-size:46px;margin-bottom:8px}h1{color:#1a1a3e;font-size:21px;margin:6px 0 10px}p{color:#555;font-size:14px;line-height:1.6}
+        .b{display:inline-block;margin-top:6px;font-size:12px;color:#888}.acc{color:${couleur};font-weight:700}</style></head>
+        <body><div class="card">${corps}<div class="b">DSI Hotel • www.dsihotel.com</div></div></body></html>`,
+        { headers: { "Content-Type": "text/html; charset=utf-8", ...corsHeaders() } }
+      );
+      if (!token) return pageHtml("Lien invalide", '<div class="ic">\u26A0\uFE0F</div><h1>Lien invalide</h1><p>Ce lien est incomplet.</p>', "#B03A2E");
+
+      const vRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_validations?token=eq.${encodeURIComponent(token)}&select=*`, { headers: sbHeaders(env) });
+      const vArr = await vRes.json().catch(() => []);
+      const v = vArr[0];
+      if (!v) return pageHtml("Lien inconnu", '<div class="ic">\u26A0\uFE0F</div><h1>Lien inconnu</h1><p>Cette demande est introuvable ou a expiré.</p>', "#B03A2E");
+      if (v.status === "validated") return pageHtml("Déjà validée", `<div class="ic">\u2705</div><h1>Déjà validée</h1><p>La demande <span class="acc">${v.reference || ""}</span> a déjà été validée et ne peut plus être refusée.</p>`, "#256029");
+      if (v.status === "refused") return pageHtml("Déjà refusée", `<div class="ic">\u26D4</div><h1>Déjà refusée</h1><p>La demande <span class="acc">${v.reference || ""}</span> a déjà été refusée.</p>`, "#B03A2E");
+
+      const ip = request.headers.get("CF-Connecting-IP") || "";
+      const dateRef = new Date().toLocaleString("fr-FR");
+      await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_validations?token=eq.${encodeURIComponent(token)}`, {
+        method: "PATCH", headers: sbJsonHeaders(env),
+        body: JSON.stringify({ status: "refused", validated_at: new Date().toISOString(), validated_ip: ip }),
+      });
+
+      // Trace dans le ticket
+      if (v.ticket_id) {
+        try {
+          const preuve = `\u26D4 DEMANDE REFUSÉE\nRefusée par : ${v.validateur_email}\nDate : ${dateRef}\nAdresse IP : ${ip || "non disponible"}\nRéférence : ${v.reference || "-"}`;
+          await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_messages`, {
+            method: "POST", headers: sbJsonHeaders(env),
+            body: JSON.stringify({ ticket_id: v.ticket_id, sender_role: "admin", sender_name: "Validation", body: preuve }),
+          });
+        } catch (e) {}
+      }
+
+      // Email à DSI + au demandeur
+      try {
+        await sendViaGraph(env, {
+          to: env.MS_REPLY_TO || "support@dsihotel.com",
+          subject: `\u26D4 Demande REFUSÉE ${v.reference || ""} — ${v.hotel_name || ""}`,
+          text: `La demande interne a été REFUSÉE.\n\nÉtablissement : ${v.hotel_name || "-"}\nRéférence : ${v.reference || "-"}\nDemande : ${v.titre || "-"}\nRefusée par : ${v.validateur_email}\nLe : ${dateRef}\n\n--- Récapitulatif ---\n${v.recap || ""}`,
+          fromName: "DSI Hotel — Validations",
+        });
+      } catch (e) {}
+      if (v.demandeur_email) {
+        try {
+          await sendViaGraph(env, {
+            to: v.demandeur_email,
+            subject: `\u26D4 Votre demande ${v.reference || ""} a été refusée`,
+            text: `Bonjour,\n\nVotre demande interne (${v.titre || "-"}) pour ${v.hotel_name || "-"} a été refusée par ${v.validateur_email} le ${dateRef}.\n\nRapprochez-vous de votre responsable pour connaître les raisons du refus.\n\nRéférence : ${v.reference || "-"}`,
+            fromName: "DSI Hotel — Validations",
+          });
+        } catch (e) {}
+      }
+
+      return pageHtml("Demande refusée", `<div class="ic">\u26D4</div><h1>Demande refusée</h1><p>La demande <span class="acc">${v.reference || ""}</span> pour <b>${v.hotel_name || ""}</b> a été refusée.<br>Le demandeur et l'équipe DSI Hotel en sont informés.</p>`, "#B03A2E");
+    }
+
+    if (request.method !== "POST") {
+      return json({ error: "Méthode non autorisée" }, 405);
+    }
+
+    // ---------- ROUTE : créer une demande de validation (génère le token) ----------
+    // ---------- ROUTE : statut des validations d'un hôtel (pour le portail) ----------
+    if (url.pathname === "/validations-hotel") {
+      const ctx = await sessionEtProfil(request, env);
+      if (!ctx) return json({ error: "Non authentifié" }, 401);
+      const b = await request.json().catch(() => ({}));
+      const estAdmin = ctx.role === "admin";
+      // Un compte hôtel ne voit QUE les validations de son hôtel, quoi qu'il envoie.
+      const hotelId = estAdmin ? b.hotelId : ctx.hotelId;
+      const all = estAdmin && b.all;
+      if (!estAdmin && !hotelId) return json({ success: true, validations: [] });
+      let query = `${env.SUPABASE_URL}/rest/v1/ticket_validations?select=ticket_id,reference,hotel_id,titre,validateur_email,status,created_at,validated_at&order=created_at.desc`;
+      if (!all && hotelId) query += `&hotel_id=eq.${hotelId}`;
+      const res = await fetch(query, { headers: sbHeaders(env) });
+      const validations = await res.json().catch(() => []);
+      return json({ success: true, validations });
+    }
+
+    if (url.pathname === "/creer-validation") {
+      const ctx = await sessionEtProfil(request, env);
+      if (!ctx) return json({ error: "Non authentifié" }, 401);
+      const b = await request.json().catch(() => ({}));
+      const { ticketId, reference, hotelName, titre, recap, demandeurEmail, validateurEmail } = b;
+      // Un compte hôtel ne peut créer une validation que pour son propre hôtel.
+      const hotelId = ctx.role === "admin" ? b.hotelId : ctx.hotelId;
+      if (!validateurEmail) return json({ error: "Email du validateur requis" }, 400);
+      // Token aléatoire (URL-safe)
+      const rnd = new Uint8Array(24); crypto.getRandomValues(rnd);
+      const token = btoa(String.fromCharCode(...rnd)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      const insRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ticket_validations`, {
+        method: "POST",
+        headers: { ...sbJsonHeaders(env), Prefer: "return=representation" },
+        body: JSON.stringify({
+          token, ticket_id: ticketId || null, reference: reference || null,
+          hotel_id: hotelId || null, hotel_name: hotelName || null,
+          titre: titre || null, recap: recap || null,
+          demandeur_email: demandeurEmail || null, validateur_email: validateurEmail,
+          status: "pending",
+        }),
+      });
+      if (!insRes.ok) { const e = await insRes.json().catch(() => ({})); return json({ error: "Erreur création validation", details: e }, 500); }
+      const lien = `${url.origin}/valider?token=${encodeURIComponent(token)}`;
+      return json({ success: true, token, lien });
+    }
+
+    // ========== TOTP : enrôlement et vérification (compte hôtel partagé) ==========
+    // Démarrer l'enrôlement d'un nouvel appareil : génère un secret + QR.
+    // Nécessite une session valide (mot de passe déjà saisi).
+    if (url.pathname === "/totp/enroll-start") {
+      const user = await verifySession(request, env);
+      if (!user) return json({ error: "Session requise" }, 401);
+      const body = await request.json();
+      const email = (user.email || "").toLowerCase();
+      const deviceName = String(body.deviceName || "").trim();
+      if (!deviceName) return json({ error: "Nom de l'appareil requis" }, 400);
+      const hotel = await hotelParEmailCompte(env, email);
+      if (!hotel) return json({ error: "Hôtel introuvable pour ce compte" }, 404);
+
+      const secret = genTotpSecret();
+      const label = `${hotel.name} (${deviceName})`;
+      const uri = otpauthUri(secret, label, "DSI Hotel");
+      // On renvoie le secret au front UNIQUEMENT le temps de l'enrôlement ;
+      // il ne sera stocké qu'après vérification du 1er code (enroll-verify).
+      return json({ success: true, secret, otpauth: uri, hotelId: hotel.id, deviceName });
+    }
+
+    // Vérifier le 1er code et enregistrer l'appareil EN ATTENTE de validation DSI.
+    if (url.pathname === "/totp/enroll-verify") {
+      const user = await verifySession(request, env);
+      if (!user) return json({ error: "Session requise" }, 401);
+      const body = await request.json();
+      const email = (user.email || "").toLowerCase();
+      const { secret, code, deviceName } = body;
+      if (!secret || !code || !deviceName) return json({ error: "Champs manquants" }, 400);
+      const hotel = await hotelParEmailCompte(env, email);
+      if (!hotel) return json({ error: "Hôtel introuvable pour ce compte" }, 404);
+
+      const ok = await totpVerify(secret, code);
+      if (!ok) return json({ error: "Code incorrect ou expiré. Vérifiez l'heure de votre téléphone." }, 400);
+
+      const insRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotel_totp_devices`, {
+        method: "POST",
+        headers: { ...sbJsonHeaders(env), Prefer: "return=representation" },
+        body: JSON.stringify({
+          hotel_id: hotel.id,
+          device_name: String(deviceName).trim(),
+          secret,
+          status: "pending",
+        }),
+      });
+      if (!insRes.ok) {
+        const e = await insRes.json().catch(() => ({}));
+        return json({ error: "Erreur enregistrement de l'appareil", details: e }, 500);
+      }
+      return json({ success: true, status: "pending" });
+    }
+
+    // Vérifier un code à la connexion : teste contre TOUS les appareils APPROUVÉS de l'hôtel.
+    if (url.pathname === "/totp/verify") {
+      const user = await verifySession(request, env);
+      if (!user) return json({ error: "Session requise" }, 401);
+      const body = await request.json();
+      const email = (user.email || "").toLowerCase();
+      const code = String(body.code || "").replace(/\s/g, "");
+      const hotel = await hotelParEmailCompte(env, email);
+      if (!hotel) return json({ error: "Hôtel introuvable pour ce compte" }, 404);
+
+      const devRes = await fetch(
+        `${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?hotel_id=eq.${hotel.id}&status=eq.approved&select=id,device_name,secret`,
+        { headers: sbHeaders(env) }
+      );
+      const devices = await devRes.json().catch(() => []);
+      if (!devices.length) {
+        // Aucun appareil approuvé : la personne doit s'enrôler (ou attendre la validation DSI).
+        return json({ ok: false, reason: "no_approved_device" });
+      }
+      for (const d of devices) {
+        if (await totpVerify(d.secret, code)) {
+          // Traçabilité : on note quel appareil a validé.
+          await fetch(`${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?id=eq.${d.id}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ last_used_at: new Date().toISOString() }),
+          });
+          return json({ ok: true, deviceId: d.id, deviceName: d.device_name });
+        }
+      }
+      return json({ ok: false, reason: "bad_code" });
+    }
+
+    // Statut des appareils pour le compte courant (pour la page "Mes téléphones" côté client).
+    if (url.pathname === "/totp/my-devices") {
+      const user = await verifySession(request, env);
+      if (!user) return json({ error: "Session requise" }, 401);
+      const email = (user.email || "").toLowerCase();
+      const hotel = await hotelParEmailCompte(env, email);
+      if (!hotel) return json({ error: "Hôtel introuvable pour ce compte" }, 404);
+      const devRes = await fetch(
+        `${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?hotel_id=eq.${hotel.id}&select=id,device_name,status,created_at,last_used_at&order=created_at.desc`,
+        { headers: sbHeaders(env) }
+      );
+      const devices = await devRes.json().catch(() => []);
+      return json({ success: true, devices });
+    }
+    // ============================================================================
+
+    // ---------- ROUTE : envoi d'email (Resend) ----------
+    if (url.pathname === "/send") {
+      // Envoi réservé aux utilisateurs connectés au portail : sans ce contrôle,
+      // n'importe qui pouvait envoyer des mails au nom de support@dsihotel.fr.
+      const expediteur = await verifySession(request, env);
+      if (!expediteur || !expediteur.id) return json({ error: "Non authentifié" }, 401);
+      try {
+        const body = await request.json();
+        const { to, subject, text, html, replyTo, attachments, fromName, cc } = body;
+        if (!to || !subject || !text) return json({ error: "Champs manquants" }, 400);
+
+        // Libellé d'expéditeur : nom fourni (Prénom Nom de l'admin) ou repli générique.
+        // On nettoie les caractères qui casseraient l'en-tête From.
+        const cleanFrom = String(fromName || "").replace(/["<>\r\n]/g, "").trim();
+
+        // Envoi via Microsoft 365 (Graph). Expéditeur : boîte M365 support@dsihotel.fr.
+        // Reply-To par défaut : support@dsihotel.com (préserve le fil côté client via
+        // Cloudflare Email Routing). Un replyTo explicite du portail reste prioritaire.
+        const r = await sendViaGraph(env, {
+          to,
+          subject,
+          text,
+          html: html || undefined,
+          cc: cc || undefined,
+          replyTo: replyTo || undefined,
+          fromName: cleanFrom || "DSI Hotel Support",
+          attachments: (attachments || []).map((a) => ({ filename: a.filename, content: a.content })),
+        });
+        if (!r.ok) return json({ error: "Erreur M365", details: r.error }, r.status || 502);
+        return json({ success: true });
+      } catch (err) {
+        return json({ error: "Erreur serveur", message: err.message }, 500);
+      }
+    }
+
+    // ---------- ROUTE : réception d'email entrant (webhook Resend) → crée un ticket ----------
+    if (url.pathname === "/inbound") {
+      try {
+        const providedSecret = url.searchParams.get("secret") || request.headers.get("x-inbound-secret");
+        if (env.INBOUND_SECRET && providedSecret !== env.INBOUND_SECRET) {
+          return json({ error: "Non autorisé" }, 401);
+        }
+
+        const payload = await request.json();
+        const data = payload.data || payload;
+
+        const fromRaw = data.from || (data.envelope && data.envelope.from) || "";
+        const fromEmail = extractEmail(fromRaw);
+        const fromName = extractName(fromRaw) || fromEmail || "Expéditeur inconnu";
+
+        // Ignore nos propres emails sortants (formulaire du portail envoyé via Resend,
+        // ou support/team internes). Le ticket est déjà créé en base par le portail ;
+        // les laisser passer créerait un doublon dont le contact_email serait une
+        // adresse technique injoignable (…@send.dsihotel.com).
+        const fromLc = String(fromRaw).toLowerCase();
+        const emailLc = String(fromEmail || "").toLowerCase();
+        const IGNORER = ["send.dsihotel.com", "support@dsihotel.com", "soporte@dsihotel.com", "team@dsihotel.fr"];
+        if (IGNORER.some(x => fromLc.includes(x) || emailLc.includes(x))) {
+          return json({ success: true, ignored: true });
+        }
+        const subject = data.subject || "(Sans objet)";
+        const bodyText = data.text || stripHtml(data.html || "") || "(Message vide)";
+        const inboundId = data.email_id || data.id || null;
+
+        if (inboundId) {
+          const dupRes = await fetch(
+            `${env.SUPABASE_URL}/rest/v1/tickets?inbound_id=eq.${encodeURIComponent(inboundId)}&select=id`,
+            { headers: sbHeaders(env) }
+          );
+          const dup = await dupRes.json().catch(() => []);
+          if (Array.isArray(dup) && dup.length > 0) {
+            return json({ success: true, duplicate: true });
+          }
+        }
+
+        let hotelId = null;
+        if (fromEmail) {
+          const enc = encodeURIComponent(fromEmail);
+          const hotelRes = await fetch(
+            `${env.SUPABASE_URL}/rest/v1/hotels?or=(account_email.eq.${enc},standard_email.eq.${enc})&select=id`,
+            { headers: sbHeaders(env) }
+          );
+          const hotelMatch = await hotelRes.json().catch(() => []);
+          if (Array.isArray(hotelMatch) && hotelMatch.length > 0) {
+            hotelId = hotelMatch[0].id;
+          }
+        }
+
+        const ticket = {
+          hotel_id: hotelId,
+          contact_name: fromName,
+          contact_role: "Email",
+          contact_email: fromEmail,
+          contact_phone: null,
+          category: "Autre",
+          priority: "Moyenne",
+          message: bodyText.slice(0, 5000),
+          subject: subject,
+          status: "open",
+          source: "email",
+          inbound_id: inboundId,
+        };
+
+        const insertRes = await fetch(`${env.SUPABASE_URL}/rest/v1/tickets`, {
+          method: "POST",
+          headers: { ...sbJsonHeaders(env), Prefer: "return=representation" },
+          body: JSON.stringify(ticket),
+        });
+
+        if (!insertRes.ok) {
+          const errText = await insertRes.text().catch(() => "");
+          return json({ error: "Création du ticket échouée", detail: errText.slice(0, 300) }, 500);
+        }
+
+        const created = await insertRes.json().catch(() => null);
+        return json({ success: true, ticket: created });
+      } catch (err) {
+        return json({ error: "Erreur serveur", message: err.message }, 500);
+      }
+    }
+
+    // ---------- ROUTE : notification de création d'un projet → team@dsihotel.fr ----------
+    // Appelée par le portail (React) juste après un INSERT réussi dans `projets`.
+    // Protégée par l'auth admin (même mécanisme que les routes /admin/*).
+    if (url.pathname === "/notify-projet") {
+      try {
+        const admin = await verifyAdmin(request, env);
+        if (!admin) return json({ error: "Non autorisé : connexion admin requise" }, 401);
+
+        const body = await request.json();
+        const {
+          titre,
+          description,
+          statut,
+          priorite,
+          hotelName,
+          responsable,
+          technicien,
+          budget,
+          dateDebut,
+          dateEcheance,
+          taches,      // [{ libelle, done }]
+          createurEmail,
+        } = body;
+
+        if (!titre) return json({ error: "Titre manquant" }, 400);
+
+        const OR = "#C9A84C";
+
+        // Libellés lisibles pour le statut (les valeurs stockées sont des slugs).
+        const STATUT_LABELS = {
+          todo: "À faire",
+          doing: "En cours",
+          waiting: "En attente",
+          done: "Terminé",
+        };
+        const statutLabel = STATUT_LABELS[statut] || statut;
+
+        // — Helpers d'affichage —
+        const val = (v) => (v === undefined || v === null || v === "" ? "—" : String(v));
+        const fmtDate = (d) => {
+          if (!d) return "—";
+          try {
+            const dt = new Date(d);
+            if (isNaN(dt)) return String(d);
+            return dt.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+          } catch (e) { return String(d); }
+        };
+        const fmtBudget = (b) => {
+          if (b === undefined || b === null || b === "") return "—";
+          const n = Number(b);
+          if (isNaN(n)) return String(b);
+          return n.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+        };
+        const esc = (s) => String(s === undefined || s === null ? "" : s)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        const nl2br = (s) => esc(s).replace(/\r?\n/g, "<br>");
+
+        const listeTaches = Array.isArray(taches) ? taches : [];
+        const nbTaches = listeTaches.length;
+        const nbFaites = listeTaches.filter(t => t && t.done).length;
+
+        const lienPortail = "https://portail.dsihotel.com/?page=projets";
+
+        // ---------- Version TEXTE (fallback) ----------
+        const lignesTexteTaches = nbTaches
+          ? listeTaches.map(t => `  ${t && t.done ? "[x]" : "[ ]"} ${t ? (t.libelle || "") : ""}`).join("\n")
+          : "  (aucune tâche)";
+
+        const texte =
+`Nouveau projet créé sur le portail DSI Hotel
+
+Titre        : ${val(titre)}
+Hôtel        : ${val(hotelName)}
+Statut       : ${val(statutLabel)}
+Priorité     : ${val(priorite)}
+Responsable  : ${val(responsable)}
+Technicien   : ${val(technicien)}
+Budget       : ${fmtBudget(budget)}
+Date début   : ${fmtDate(dateDebut)}
+Échéance     : ${fmtDate(dateEcheance)}
+Créé par     : ${val(createurEmail)}
+
+Description :
+${description ? String(description) : "(aucune description)"}
+
+Checklist (${nbFaites}/${nbTaches}) :
+${lignesTexteTaches}
+
+—————————————————————
+Accéder aux projets : ${lienPortail}`;
+
+        // ---------- Version HTML (brandée) ----------
+        const ligneInfo = (label, value) =>
+          `<tr>
+             <td style="padding:7px 14px;font-size:13px;color:#777;white-space:nowrap;vertical-align:top;border-bottom:1px solid #F0F0F4;">${esc(label)}</td>
+             <td style="padding:7px 14px;font-size:13px;color:#1a1a3e;font-weight:600;border-bottom:1px solid #F0F0F4;">${esc(value)}</td>
+           </tr>`;
+
+        const htmlTaches = nbTaches
+          ? `<ul style="margin:8px 0 0;padding-left:18px;font-size:13px;color:#333;line-height:1.7;">` +
+            listeTaches.map(t => {
+              const done = t && t.done;
+              return `<li style="color:${done ? "#8a8a8a" : "#333"};${done ? "text-decoration:line-through;" : ""}">${esc(t ? (t.libelle || "") : "")}</li>`;
+            }).join("") +
+            `</ul>`
+          : `<p style="margin:8px 0 0;font-size:13px;color:#999;">Aucune tâche.</p>`;
+
+        const html =
+`<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;background:#FFFFFF;border:1px solid #E8E8F0;border-radius:12px;overflow:hidden;">
+  <div style="background:#1a1a3e;padding:20px 24px;">
+    <img src="https://www.dsihotel.com/dsi-logo-gold.png" alt="DSI Hotel" style="height:34px;display:block;">
+  </div>
+  <div style="padding:24px;">
+    <div style="display:inline-block;background:${OR};color:#111;font-size:11px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:14px;">Nouveau projet</div>
+    <h1 style="margin:0 0 4px;font-size:19px;color:#1a1a3e;">${esc(titre)}</h1>
+    <p style="margin:0 0 18px;font-size:13px;color:#888;">Créé par ${esc(val(createurEmail))}</p>
+
+    <table style="width:100%;border-collapse:collapse;border:1px solid #F0F0F4;border-radius:8px;overflow:hidden;">
+      ${ligneInfo("Hôtel", val(hotelName))}
+      ${ligneInfo("Statut", val(statutLabel))}
+      ${ligneInfo("Priorité", val(priorite))}
+      ${ligneInfo("Responsable", val(responsable))}
+      ${ligneInfo("Technicien", val(technicien))}
+      ${ligneInfo("Budget", fmtBudget(budget))}
+      ${ligneInfo("Date de début", fmtDate(dateDebut))}
+      ${ligneInfo("Échéance", fmtDate(dateEcheance))}
+    </table>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:12px;font-weight:bold;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Description</div>
+      <div style="font-size:13px;color:#333;line-height:1.6;">${description ? nl2br(description) : '<span style="color:#999;">(aucune description)</span>'}</div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:12px;font-weight:bold;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Checklist (${nbFaites}/${nbTaches})</div>
+      ${htmlTaches}
+    </div>
+
+    <div style="margin-top:26px;padding-top:18px;border-top:1px solid #E8E8F0;">
+      <a href="${lienPortail}" style="display:inline-block;background:${OR};color:#111;text-decoration:none;font-weight:bold;font-size:14px;padding:11px 22px;border-radius:6px;">Accéder aux projets</a>
+    </div>
+  </div>
+  <div style="background:#FAFAFA;padding:14px 24px;border-top:1px solid #E8E8F0;">
+    <p style="margin:0;font-size:11px;color:#AAA;">Portail DSI Hotel — notification automatique. www.dsihotel.com</p>
+  </div>
+</div>`;
+
+        const r = await sendViaGraph(env, {
+          fromName: (String(body.createurNom || "").replace(/["<>\r\n]/g, "").trim()) || "Portail DSI Hotel",
+          to: ["team@dsihotel.fr"],
+          subject: `Nouveau projet : ${titre}${hotelName ? " — " + hotelName : ""}`,
+          text: texte,
+          html: html,
+        });
+        if (!r.ok) return json({ error: "Erreur M365", details: r.error }, r.status || 502);
+        return json({ success: true });
+      } catch (err) {
+        return json({ error: "Erreur serveur", message: err.message }, 500);
+      }
+    }
+
+    // ---------- ROUTES ADMIN ----------
+    if (url.pathname.startsWith("/admin/")) {
+      try {
+        if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+          return json({ error: "Configuration manquante sur le Worker : vérifiez les variables SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY." }, 500);
+        }
+
+        const admin = await verifyAdmin(request, env);
+        if (!admin) return json({ error: "Non autorisé : connexion admin requise" }, 401);
+
+        const body = await request.json();
+
+        // ================= PLANNING D'ÉQUIPE (calendrier Outlook partagé) =================
+        // Lit / écrit le calendrier de la boîte PLANNING_MAILBOX (défaut info@dsihotel.fr)
+        // via Microsoft Graph. Nécessite la permission d'application Calendars.ReadWrite
+        // (consentement administrateur) sur l'app Entra utilisée pour l'envoi des mails.
+        // Affectation d'un RDV à un technicien : catégorie Outlook = nom du technicien
+        // (+ invitation Outlook facultative).
+        if (url.pathname.startsWith("/admin/planning-")) {
+          const boite = (env.PLANNING_MAILBOX || PLANNING_MAILBOX_DEFAUT).trim();
+          const base = `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(boite)}`;
+          let token;
+          try { token = await msGetToken(env); }
+          catch (e) { return json({ error: "Connexion Microsoft impossible : " + e.message }, 502); }
+          const gh = { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Prefer: `outlook.timezone="${PLANNING_TZ}"` };
+          const erreurGraph = async (r, quoi) => {
+            const d = await r.json().catch(() => ({}));
+            const m = (d.error && (d.error.message || d.error.code)) || ("statut " + r.status);
+            const aide = (r.status === 403 || r.status === 401)
+              ? " — vérifiez la permission Calendars.ReadWrite (application) + consentement administrateur dans Entra."
+              : "";
+            return json({ error: quoi + " : " + m + aide }, r.status === 404 ? 404 : 502);
+          };
+
+          // Équipe = profils admin (nom + email)
+          if (url.pathname === "/admin/planning-list") {
+            const { start, end } = body; // "YYYY-MM-DD"
+            if (!start || !end) return json({ error: "start et end requis" }, 400);
+            const profRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?role=eq.admin&select=id,full_name`, { headers: sbHeaders(env) });
+            const profs = await profRes.json().catch(() => []);
+            const equipe = [];
+            for (const p of (Array.isArray(profs) ? profs : [])) {
+              const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${p.id}`, { headers: sbHeaders(env) });
+              const u = uRes.ok ? await uRes.json().catch(() => ({})) : {};
+              const email = String(u.email || "").toLowerCase();
+              const nom = (p.full_name || "").trim() || (email.split("@")[0] || "Admin");
+              if (email) equipe.push({ id: p.id, nom, email });
+            }
+            equipe.sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+
+            const evts = [];
+            let next = `${base}/calendarView?startDateTime=${encodeURIComponent(start + "T00:00:00")}&endDateTime=${encodeURIComponent(end + "T23:59:59")}` +
+              `&$top=200&$orderby=start/dateTime&$select=id,subject,start,end,isAllDay,location,categories,attendees,bodyPreview,webLink`;
+            for (let i = 0; next && i < 10; i++) {
+              const r = await fetch(next, { headers: gh });
+              if (!r.ok) return await erreurGraph(r, "Lecture du calendrier " + boite);
+              const d = await r.json();
+              for (const e of (d.value || [])) {
+                evts.push({
+                  id: e.id,
+                  titre: e.subject || "(sans titre)",
+                  debut: e.start && e.start.dateTime ? e.start.dateTime.slice(0, 16) : null,
+                  fin: e.end && e.end.dateTime ? e.end.dateTime.slice(0, 16) : null,
+                  journee: !!e.isAllDay,
+                  lieu: (e.location && e.location.displayName) || "",
+                  categories: e.categories || [],
+                  participants: (e.attendees || []).map(a => String((a.emailAddress && a.emailAddress.address) || "").toLowerCase()).filter(Boolean),
+                  notes: e.bodyPreview || "",
+                  lien: e.webLink || null,
+                });
+              }
+              next = d["@odata.nextLink"] || null;
+            }
+            return json({ success: true, boite, equipe, evenements: evts });
+          }
+
+          // Construit le corps Graph d'un événement à partir du formulaire portail
+          const corpsEvenement = (b) => {
+            const { titre, date, dateFin, heureDebut, heureFin, journee, lieu, notes, techniciens, inviter, autresCategories } = b;
+            const techs = Array.isArray(techniciens) ? techniciens.filter(t => t && t.email) : [];
+            const autres = Array.isArray(autresCategories) ? autresCategories.map(String) : [];
+            const ev = {
+              subject: String(titre || "").trim() || "Intervention",
+              isAllDay: !!journee,
+              location: { displayName: String(lieu || "") },
+              // Catégories = techniciens affectés + catégories Outlook existantes conservées
+              categories: [...new Set([...techs.map(t => String(t.nom || t.email)), ...autres])],
+            };
+            // Le corps n'est envoyé que s'il a été modifié (le portail ne reçoit qu'un aperçu tronqué).
+            if (notes !== undefined) ev.body = { contentType: "text", content: String(notes || "") };
+            if (journee) {
+              const fin = new Date((dateFin || date) + "T00:00:00Z"); fin.setUTCDate(fin.getUTCDate() + 1);
+              ev.start = { dateTime: date + "T00:00:00", timeZone: PLANNING_TZ };
+              ev.end = { dateTime: fin.toISOString().slice(0, 10) + "T00:00:00", timeZone: PLANNING_TZ };
+            } else {
+              ev.start = { dateTime: `${date}T${heureDebut || "09:00"}:00`, timeZone: PLANNING_TZ };
+              ev.end = { dateTime: `${dateFin || date}T${heureFin || "10:00"}:00`, timeZone: PLANNING_TZ };
+            }
+            if (inviter) ev.attendees = techs.map(t => ({ emailAddress: { address: t.email, name: t.nom || t.email }, type: "required" }));
+            return ev;
+          };
+          const valider = (b) => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.date || ""))) return "Date invalide";
+            if (b.dateFin && !/^\d{4}-\d{2}-\d{2}$/.test(String(b.dateFin))) return "Date de fin invalide";
+            if (!b.journee) {
+              const hd = String(b.heureDebut || ""), hf = String(b.heureFin || "");
+              if (!/^\d{2}:\d{2}$/.test(hd) || !/^\d{2}:\d{2}$/.test(hf)) return "Heures invalides";
+              if (`${b.dateFin || b.date}T${hf}` <= `${b.date}T${hd}`) return "L'heure de fin doit être après l'heure de début";
+            } else if (b.dateFin && b.dateFin < b.date) return "La date de fin doit être après la date de début";
+            return null;
+          };
+
+          if (url.pathname === "/admin/planning-create") {
+            const err = valider(body); if (err) return json({ error: err }, 400);
+            const r = await fetch(`${base}/events`, { method: "POST", headers: gh, body: JSON.stringify(corpsEvenement(body)) });
+            if (!r.ok) return await erreurGraph(r, "Création du RDV");
+            const d = await r.json();
+            return json({ success: true, id: d.id });
+          }
+
+          if (url.pathname === "/admin/planning-update") {
+            if (!body.id) return json({ error: "id requis" }, 400);
+            const err = valider(body); if (err) return json({ error: err }, 400);
+            const ev = corpsEvenement(body);
+            if (!body.inviter) delete ev.attendees; // ne touche pas aux invités existants
+            const r = await fetch(`${base}/events/${encodeURIComponent(body.id)}`, { method: "PATCH", headers: gh, body: JSON.stringify(ev) });
+            if (!r.ok) return await erreurGraph(r, "Modification du RDV");
+            return json({ success: true });
+          }
+
+          if (url.pathname === "/admin/planning-delete") {
+            if (!body.id) return json({ error: "id requis" }, 400);
+            const r = await fetch(`${base}/events/${encodeURIComponent(body.id)}`, { method: "DELETE", headers: gh });
+            if (!r.ok && r.status !== 404) return await erreurGraph(r, "Suppression du RDV");
+            return json({ success: true });
+          }
+
+          return json({ error: "Route planning inconnue" }, 404);
+        }
+
+        // --- Créer un client ---
+        if (url.pathname === "/admin/create-client") {
+          const {
+            email, password, hotelName, city, stars, phone, logoUrl,
+            standardEmail, standardPassword,
+          } = body;
+          if (!email || !password || !hotelName) return json({ error: "Champs manquants" }, 400);
+
+          const supRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ email, password, email_confirm: true }),
+          });
+          const supData = await supRes.json();
+          if (!supRes.ok) return json({ error: "Erreur création compte superviseur", details: supData }, supRes.status);
+
+          let stdData = null;
+          if (standardEmail && standardPassword) {
+            const stdRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
+              method: "POST",
+              headers: sbJsonHeaders(env),
+              body: JSON.stringify({ email: standardEmail, password: standardPassword, email_confirm: true }),
+            });
+            const parsed = await stdRes.json();
+            if (!stdRes.ok) {
+              await deleteAuthUserByEmail(env, email);
+              return json({ error: "Erreur création compte standard", details: parsed }, stdRes.status);
+            }
+            stdData = parsed;
+          }
+
+          const hotelRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels`, {
+            method: "POST",
+            headers: { ...sbJsonHeaders(env), Prefer: "return=representation" },
+            body: JSON.stringify({
+              name: hotelName,
+              city,
+              stars,
+              phone,
+              logo_url: logoUrl || null,
+              account_email: email,
+              standard_email: stdData ? standardEmail : null,
+            }),
+          });
+          const hotelData = await hotelRes.json();
+          if (!hotelRes.ok) {
+            await deleteAuthUserByEmail(env, email);
+            if (stdData) await deleteAuthUserByEmail(env, standardEmail);
+            return json({ error: "Erreur création hôtel", details: hotelData }, hotelRes.status);
+          }
+          const hotel = hotelData[0];
+
+          const profiles = [{ id: supData.id, role: "supervisor", hotel_id: hotel.id }];
+          if (stdData) profiles.push({ id: stdData.id, role: "client", hotel_id: hotel.id });
+
+          const profRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify(profiles),
+          });
+          if (!profRes.ok) {
+            const profErrData = await profRes.json().catch(() => ({}));
+            return json({ error: "Erreur liaison profil", details: profErrData }, 500);
+          }
+
+          return json({ success: true, hotel });
+        }
+
+        // --- Ajouter un compte à un hôtel existant (situation B) ---
+        // --- TOTP : lister les appareils (tous hôtels ou un hôtel) pour validation DSI ---
+        if (url.pathname === "/admin/totp-list") {
+          const { hotelId, onlyPending } = body;
+          let query = `${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?select=id,hotel_id,device_name,status,created_at,approved_at,approved_by,last_used_at&order=created_at.desc`;
+          if (hotelId) query += `&hotel_id=eq.${hotelId}`;
+          if (onlyPending) query += `&status=eq.pending`;
+          const res = await fetch(query, { headers: sbHeaders(env) });
+          const devices = await res.json().catch(() => []);
+          return json({ success: true, devices });
+        }
+
+        // --- TOTP : approuver un appareil en attente ---
+        if (url.pathname === "/admin/totp-approve") {
+          const { deviceId } = body;
+          if (!deviceId) return json({ error: "deviceId manquant" }, 400);
+          const res = await fetch(`${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?id=eq.${deviceId}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({
+              status: "approved",
+              approved_at: new Date().toISOString(),
+              approved_by: (admin.email || "").toLowerCase(),
+            }),
+          });
+          if (!res.ok) { const e = await res.text().catch(() => ""); return json({ error: "Erreur validation", detail: e.slice(0, 200) }, 500); }
+          return json({ success: true });
+        }
+
+        // --- TOTP : rejeter / supprimer un appareil ---
+        if (url.pathname === "/admin/totp-remove") {
+          const { deviceId } = body;
+          if (!deviceId) return json({ error: "deviceId manquant" }, 400);
+          const res = await fetch(`${env.SUPABASE_URL}/rest/v1/hotel_totp_devices?id=eq.${deviceId}`, {
+            method: "DELETE",
+            headers: sbHeaders(env),
+          });
+          if (!res.ok) { const e = await res.text().catch(() => ""); return json({ error: "Erreur suppression", detail: e.slice(0, 200) }, 500); }
+          return json({ success: true });
+        }
+
+        // --- Forcer le changement de mot de passe à la prochaine connexion ---
+        // Pose un drapeau must_change_password sur le compte choisi (supervisor ou client).
+        // Le portail le lit à la connexion et impose le changement, puis le désarme.
+        if (url.pathname === "/admin/force-password-change") {
+          const { hotelId, level } = body;
+          if (!hotelId || !level) return json({ error: "Champs manquants (hotelId, level)" }, 400);
+          if (level !== "supervisor" && level !== "client") return json({ error: "Niveau invalide" }, 400);
+
+          const hRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}&select=id,name,account_email,standard_email`, {
+            headers: sbHeaders(env),
+          });
+          const hArr = await hRes.json().catch(() => []);
+          if (!hArr[0]) return json({ error: "Hôtel introuvable" }, 404);
+          const hotel = hArr[0];
+
+          // Garde-fou : jamais pour VOCO ni Sheraton.
+          const nomLc = String(hotel.name || "").toLowerCase();
+          if (nomLc.includes("voco") || nomLc.includes("sheraton")) {
+            return json({ error: "Action non autorisée pour cet établissement." }, 403);
+          }
+
+          const email = level === "supervisor" ? hotel.account_email : hotel.standard_email;
+          if (!email) return json({ error: "Aucun compte de ce niveau sur cet hôtel." }, 400);
+
+          const targetUser = await trouverUserParEmail(env, email);
+          if (!targetUser) return json({ error: "Compte introuvable dans Auth." }, 404);
+
+          // Fusionne avec les métadonnées existantes pour ne rien écraser.
+          const meta = { ...(targetUser.user_metadata || {}), must_change_password: true };
+          const updRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${targetUser.id}`, {
+            method: "PUT",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ user_metadata: meta }),
+          });
+          if (!updRes.ok) {
+            const e = await updRes.json().catch(() => ({}));
+            return json({ error: "Erreur mise à jour du compte", details: e }, 500);
+          }
+          return json({ success: true, email, level });
+        }
+
+        if (url.pathname === "/admin/add-hotel-account") {
+          const { hotelId, email, password, level } = body;
+          if (!hotelId || !email || !password || !level) return json({ error: "Champs manquants (hotelId, email, password, level)" }, 400);
+          if (level !== "supervisor" && level !== "client") return json({ error: "Niveau invalide" }, 400);
+
+          // Récupère l'hôtel et vérifie qu'un compte de ce niveau n'existe pas déjà
+          const hRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}&select=id,account_email,standard_email`, {
+            headers: sbHeaders(env),
+          });
+          const hArr = await hRes.json().catch(() => []);
+          if (!hArr[0]) return json({ error: "Hôtel introuvable" }, 404);
+          const hotel = hArr[0];
+
+          if (level === "supervisor" && hotel.account_email) {
+            return json({ error: "Cet hôtel a déjà un compte administrateur." }, 400);
+          }
+          if (level === "client" && hotel.standard_email) {
+            return json({ error: "Cet hôtel a déjà un compte standard." }, 400);
+          }
+
+          // Crée le compte auth
+          const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ email, password, email_confirm: true }),
+          });
+          const uData = await uRes.json();
+          if (!uRes.ok) return json({ error: "Erreur création compte", details: uData }, uRes.status);
+
+          // Crée le profil lié à l'hôtel
+          const pRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ id: uData.id, role: level, hotel_id: hotelId }),
+          });
+          if (!pRes.ok) {
+            await deleteAuthUserByEmail(env, email);
+            const e = await pRes.json().catch(() => ({}));
+            return json({ error: "Erreur création profil", details: e }, 500);
+          }
+
+          // Met à jour l'email correspondant sur la fiche hôtel
+          const patchField = level === "supervisor" ? { account_email: email } : { standard_email: email };
+          await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify(patchField),
+          });
+
+          return json({ success: true, email, level });
+        }
+
+        // --- Modifier l'adresse email (et éventuellement le mot de passe) d'un compte ---
+        // Le portail ne permettait pas de changer l'email d'un compte existant
+        // (Auth impose 1 seul ADMIN et 1 seul STD par hôtel). Cette route met à jour
+        // l'email côté Supabase Auth ET le champ correspondant de la fiche hôtel,
+        // sans supprimer le compte (l'ID, le profil et les tickets sont conservés).
+        if (url.pathname === "/admin/update-account-email") {
+          const { hotelId, level, oldEmail, newEmail, newPassword } = body;
+          if (!hotelId || !level || !oldEmail || !newEmail) {
+            return json({ error: "Champs manquants (hotelId, level, oldEmail, newEmail)" }, 400);
+          }
+          if (level !== "supervisor" && level !== "client") return json({ error: "Niveau invalide" }, 400);
+
+          const emailNorm = String(newEmail).trim().toLowerCase();
+          const ancienNorm = String(oldEmail).trim().toLowerCase();
+          if (!emailValide(emailNorm)) {
+            return json({ error: "Adresse invalide : pas d'accents, d'espaces ni de caractères spéciaux (ex. cezanne_admin@dsihotel.fr)." }, 400);
+          }
+
+          // 1) Vérifie que l'hôtel existe et que le compte de ce niveau correspond bien à oldEmail.
+          const hRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}&select=id,account_email,standard_email`, {
+            headers: sbHeaders(env),
+          });
+          const hArr = await hRes.json().catch(() => []);
+          if (!hArr[0]) return json({ error: "Hôtel introuvable" }, 404);
+          const hotel = hArr[0];
+          const emailActuel = level === "supervisor" ? hotel.account_email : hotel.standard_email;
+          if (!emailActuel) {
+            return json({ error: "Aucun compte de ce niveau sur cet hôtel." }, 400);
+          }
+          if (String(emailActuel).trim().toLowerCase() !== ancienNorm) {
+            return json({ error: "L'ancienne adresse fournie ne correspond pas au compte enregistré." }, 400);
+          }
+
+          // 2) Si l'adresse ne change pas, on peut quand même mettre à jour le mot de passe.
+          //    Sinon, on vérifie que la nouvelle adresse n'est pas déjà utilisée par un autre compte.
+          if (emailNorm !== ancienNorm) {
+            // NB : le paramètre ?email= de GoTrue (Supabase Auth) n'est pas fiable
+            // (souvent ignoré -> renvoie tous les users). On filtre donc nous-mêmes
+            // sur l'adresse exacte, via l'helper trouverUserParEmail.
+            const existant = await trouverUserParEmail(env, emailNorm);
+            if (existant) {
+              return json({ error: "Cette adresse email est déjà utilisée par un autre compte." }, 400);
+            }
+          }
+
+          // 3) Retrouve le compte auth via le profil de l'hôtel (fiable), sinon par l'ancienne adresse.
+          const targetUser = await trouverUserDuCompteHotel(env, hotelId, level, ancienNorm);
+          if (!targetUser) return json({ error: "Compte introuvable dans Auth pour l'ancienne adresse." }, 404);
+
+          // 4) Met à jour l'email (+ mot de passe si fourni) côté Supabase Auth.
+          const updatePayload = { email: emailNorm, email_confirm: true };
+          if (newPassword) updatePayload.password = newPassword;
+          const updRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${targetUser.id}`, {
+            method: "PUT",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify(updatePayload),
+          });
+          if (!updRes.ok) {
+            const updErr = await updRes.json().catch(() => ({}));
+            const raison = updErr.msg || updErr.message || updErr.error_description || updErr.error || ("statut " + updRes.status);
+            return json({ error: "Erreur mise à jour du compte Auth : " + raison, details: updErr }, 500);
+          }
+
+          // 5) Met à jour l'email correspondant sur la fiche hôtel (cohérence portail + rattachement tickets).
+          const patchField = level === "supervisor" ? { account_email: emailNorm } : { standard_email: emailNorm };
+          const patchRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify(patchField),
+          });
+          if (!patchRes.ok) {
+            const pErr = await patchRes.text().catch(() => "");
+            return json({ error: "Compte modifié mais mise à jour de la fiche hôtel échouée", detail: pErr.slice(0, 200) }, 500);
+          }
+
+          return json({ success: true, email: emailNorm, level, passwordChanged: !!newPassword });
+        }
+
+        // --- Réinitialiser un mot de passe ---
+        if (url.pathname === "/admin/reset-password") {
+          const { userEmail, newPassword } = body;
+          if (!userEmail || !newPassword) return json({ error: "Champs manquants" }, 400);
+
+          // Recherche sur l'adresse EXACTE (l'ancien ?email= pouvait renvoyer un autre compte).
+          const targetUser = await trouverUserParEmail(env, userEmail);
+          if (!targetUser) return json({ error: "Utilisateur introuvable" }, 404);
+
+          const updateRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${targetUser.id}`, {
+            method: "PUT",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ password: newPassword }),
+          });
+          if (!updateRes.ok) {
+            const updErrData = await updateRes.json().catch(() => ({}));
+            return json({ error: "Erreur réinitialisation", details: updErrData }, 500);
+          }
+          return json({ success: true });
+        }
+
+        // --- Supprimer un client ---
+        if (url.pathname === "/admin/delete-client") {
+          const { hotelId, userEmail, standardEmail } = body;
+          if (!hotelId) return json({ error: "Champ manquant : hotelId" }, 400);
+
+          const delHotelRes = await fetch(`${env.SUPABASE_URL}/rest/v1/hotels?id=eq.${hotelId}`, {
+            method: "DELETE",
+            headers: sbHeaders(env),
+          });
+          if (!delHotelRes.ok) return json({ error: "Erreur suppression hôtel" }, 500);
+
+          for (const mail of [userEmail, standardEmail].filter(Boolean)) {
+            await deleteAuthUserByEmail(env, mail);
+          }
+
+          return json({ success: true });
+        }
+
+        // --- Lister les admins (super-admin uniquement) ---
+        if (url.pathname === "/admin/list-admins") {
+          if (!(await verifySuperAdmin(request, env))) return json({ error: "Réservé au super-admin" }, 403);
+
+          const profRes = await fetch(
+            `${env.SUPABASE_URL}/rest/v1/profiles?role=eq.admin&select=id,permissions`,
+            { headers: sbHeaders(env) }
+          );
+          const profs = await profRes.json();
+
+          const admins = [];
+          for (const p of profs) {
+            const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${p.id}`, { headers: sbHeaders(env) });
+            const u = uRes.ok ? await uRes.json() : {};
+            admins.push({
+              id: p.id,
+              email: u.email || "?",
+              permissions: p.permissions || [],
+              is_superadmin: (u.email || "").toLowerCase() === SUPERADMIN_EMAIL,
+            });
+          }
+          return json({ success: true, admins });
+        }
+
+        // --- Rattacher un rapport NinjaOne à un hôtel (admin) ---
+        if (url.pathname === "/admin/rattacher-rapport") {
+          const { rapportId, hotelId } = body;
+          if (!rapportId || !hotelId) return json({ error: "rapportId et hotelId requis" }, 400);
+          const upRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ninjaone_rapports?id=eq.${rapportId}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ hotel_id: hotelId, a_rattacher: false }),
+          });
+          if (!upRes.ok) {
+            const e = await upRes.text().catch(() => "");
+            return json({ error: "Erreur rattachement", detail: e.slice(0, 200) }, 500);
+          }
+          return json({ success: true });
+        }
+
+        // --- Définir les hôtels d'une procédure (remplace toutes les liaisons) ---
+        if (url.pathname === "/admin/set-procedure-hotels") {
+          const { procedureId, hotelIds } = body;
+          if (!procedureId || !Array.isArray(hotelIds)) {
+            return json({ error: "procedureId et hotelIds (tableau) requis" }, 400);
+          }
+
+          // 1. Supprime toutes les liaisons existantes de cette procédure
+          const delRes = await fetch(`${env.SUPABASE_URL}/rest/v1/procedure_hotels?procedure_id=eq.${procedureId}`, {
+            method: "DELETE",
+            headers: sbHeaders(env),
+          });
+          if (!delRes.ok) {
+            const e = await delRes.text().catch(() => "");
+            return json({ error: "Erreur suppression des liaisons", detail: e.slice(0, 200) }, 500);
+          }
+
+          // 2. Réinsère une liaison par hôtel coché
+          const uniqueIds = [...new Set(hotelIds.filter(Boolean))];
+          if (uniqueIds.length > 0) {
+            const rows = uniqueIds.map(hid => ({ procedure_id: procedureId, hotel_id: hid }));
+            const insRes = await fetch(`${env.SUPABASE_URL}/rest/v1/procedure_hotels`, {
+              method: "POST",
+              headers: sbJsonHeaders(env),
+              body: JSON.stringify(rows),
+            });
+            if (!insRes.ok) {
+              const e = await insRes.text().catch(() => "");
+              return json({ error: "Erreur insertion des liaisons", detail: e.slice(0, 200) }, 500);
+            }
+
+            // 3. Compatibilité : hotel_id d'origine = 1er hôtel coché
+            await fetch(`${env.SUPABASE_URL}/rest/v1/procedures?id=eq.${procedureId}`, {
+              method: "PATCH",
+              headers: sbJsonHeaders(env),
+              body: JSON.stringify({ hotel_id: uniqueIds[0] }),
+            }).catch(() => {});
+          }
+
+          return json({ success: true, count: uniqueIds.length });
+        }
+
+        // --- Supprimer un rapport NinjaOne (ligne + fichier Storage) ---
+        if (url.pathname === "/admin/supprimer-rapport") {
+          const { rapportId } = body;
+          if (!rapportId) return json({ error: "rapportId requis" }, 400);
+
+          // Récupère l'URL du fichier pour en déduire le chemin Storage
+          const getRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ninjaone_rapports?id=eq.${rapportId}&select=file_url`, {
+            headers: sbHeaders(env),
+          });
+          const rows = await getRes.json().catch(() => []);
+          const fileUrl = rows[0] && rows[0].file_url ? rows[0].file_url : null;
+
+          // Supprime le fichier du bucket "uploads" si on peut extraire le chemin
+          if (fileUrl) {
+            const marker = "/object/public/uploads/";
+            const idx = fileUrl.indexOf(marker);
+            if (idx !== -1) {
+              const objectPath = fileUrl.slice(idx + marker.length);
+              await fetch(`${env.SUPABASE_URL}/storage/v1/object/uploads/${objectPath}`, {
+                method: "DELETE",
+                headers: sbHeaders(env),
+              }).catch(() => {});
+            }
+          }
+
+          // Supprime la ligne
+          const delRes = await fetch(`${env.SUPABASE_URL}/rest/v1/ninjaone_rapports?id=eq.${rapportId}`, {
+            method: "DELETE",
+            headers: sbHeaders(env),
+          });
+          if (!delRes.ok) {
+            const e = await delRes.text().catch(() => "");
+            return json({ error: "Erreur suppression", detail: e.slice(0, 200) }, 500);
+          }
+          return json({ success: true });
+        }
+
+        // --- Journal de connexions (super-admin uniquement) ---
+        if (url.pathname === "/admin/login-logs") {
+          if (!(await verifySuperAdmin(request, env))) return json({ error: "Réservé au super-admin" }, 403);
+
+          const { limit, email } = body || {};
+          const lim = Math.min(Math.max(parseInt(limit || 200, 10) || 200, 1), 1000);
+          let query = `login_logs?select=id,email,role,logged_at&order=email.asc&limit=${lim}`;
+          if (email && String(email).trim()) {
+            query += `&email=ilike.*${encodeURIComponent(String(email).trim())}*`;
+          }
+
+          const res = await fetch(`${env.SUPABASE_URL}/rest/v1/${query}`, {
+            headers: sbHeaders(env),
+          });
+          if (!res.ok) {
+            const e = await res.text().catch(() => "");
+            return json({ error: "Erreur lecture journal", detail: e.slice(0, 300) }, 500);
+          }
+          const logs = await res.json().catch(() => []);
+          return json({ success: true, logs });
+        }
+
+        // --- Créer un admin (super-admin uniquement) + email de bienvenue ---
+        if (url.pathname === "/admin/create-admin") {
+          if (!(await verifySuperAdmin(request, env))) return json({ error: "Réservé au super-admin" }, 403);
+
+          const { email, password, permissions, fullName } = body;
+          if (!email || !password) return json({ error: "Email et mot de passe requis" }, 400);
+
+          const uRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ email, password, email_confirm: true }),
+          });
+          const uData = await uRes.json();
+          if (!uRes.ok) return json({ error: "Erreur création compte", details: uData }, uRes.status);
+
+          const profRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
+            method: "POST",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ id: uData.id, role: "admin", hotel_id: null, permissions: permissions || [], full_name: fullName || null }),
+          });
+          if (!profRes.ok) {
+            await deleteAuthUserByEmail(env, email);
+            const e = await profRes.json().catch(() => ({}));
+            return json({ error: "Erreur création profil", details: e }, 500);
+          }
+
+          // Email de bienvenue avec les accès (n'échoue pas la création si l'envoi rate)
+          await envoyerBienvenueAdmin(env, email, password, permissions || []);
+
+          return json({ success: true, admin: { id: uData.id, email, permissions: permissions || [] } });
+        }
+
+        // --- Modifier les permissions (super-admin uniquement) ---
+        if (url.pathname === "/admin/update-admin-permissions") {
+          if (!(await verifySuperAdmin(request, env))) return json({ error: "Réservé au super-admin" }, 403);
+
+          const { adminId, permissions } = body;
+          if (!adminId) return json({ error: "adminId requis" }, 400);
+
+          const upRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${adminId}`, {
+            method: "PATCH",
+            headers: sbJsonHeaders(env),
+            body: JSON.stringify({ permissions: permissions || [] }),
+          });
+          if (!upRes.ok) return json({ error: "Erreur mise à jour" }, 500);
+          return json({ success: true });
+        }
+
+        // --- Téléphones MFA d'un administrateur (super-admin uniquement) ---
+        // Supabase ne permet pas d'enrôler un téléphone pour un autre compte : on liste,
+        // retire un téléphone, ou réinitialise la MFA. À sa prochaine connexion, l'admin
+        // concerné voit automatiquement un nouveau QR code à scanner.
+        if (["/admin/list-admin-factors", "/admin/delete-admin-factor", "/admin/reset-admin-mfa"].includes(url.pathname)) {
+          const sup = await verifySuperAdmin(request, env);
+          if (!sup) return json({ error: "Réservé au super-admin" }, 403);
+          // Exige une session validée par la double authentification (AAL2)
+          let aal = "";
+          try {
+            const tk = (request.headers.get("Authorization") || "").replace("Bearer ", "");
+            const part = tk.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+            aal = JSON.parse(atob(part + "=".repeat((4 - part.length % 4) % 4))).aal || "";
+          } catch (e) {}
+          if (aal !== "aal2") return json({ error: "Double authentification requise pour cette action." }, 403);
+
+          const adminId = String(body.adminId || "");
+          if (!/^[0-9a-f-]{36}$/i.test(adminId)) return json({ error: "adminId invalide" }, 400);
+          if (adminId === sup.id) return json({ error: "Gérez vos propres téléphones depuis la page « Double authentification »." }, 400);
+          const pRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${adminId}&select=role`, { headers: sbHeaders(env) });
+          const prof = pRes.ok ? await pRes.json() : [];
+          if (!prof[0] || prof[0].role !== "admin") return json({ error: "Ce compte n'est pas un administrateur" }, 400);
+
+          const listerFacteurs = async () => {
+            const r = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${adminId}`, { headers: sbHeaders(env) });
+            if (!r.ok) throw new Error("Lecture du compte impossible (" + r.status + ")");
+            const u = await r.json();
+            return (u.factors || []).map(f => ({ id: f.id, friendly_name: f.friendly_name || "", factor_type: f.factor_type, status: f.status, created_at: f.created_at }));
+          };
+          const supprimerFacteur = async (factorId) => {
+            const r = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${adminId}/factors/${factorId}`, { method: "DELETE", headers: sbHeaders(env) });
+            if (!r.ok && r.status !== 404) throw new Error("Suppression refusée (" + r.status + ") : " + (await r.text()).slice(0, 200));
+          };
+
+          if (url.pathname === "/admin/list-admin-factors") {
+            return json({ success: true, factors: await listerFacteurs() });
+          }
+          if (url.pathname === "/admin/delete-admin-factor") {
+            const factorId = String(body.factorId || "");
+            const facteurs = await listerFacteurs();
+            if (!facteurs.some(f => f.id === factorId)) return json({ error: "Téléphone introuvable pour ce compte" }, 404);
+            await supprimerFacteur(factorId);
+            return json({ success: true });
+          }
+          // /admin/reset-admin-mfa : retire tous les téléphones
+          const facteurs = await listerFacteurs();
+          for (const f of facteurs) await supprimerFacteur(f.id);
+          return json({ success: true, supprimes: facteurs.length });
+        }
+
+        // --- Supprimer un admin (super-admin uniquement) ---
+        if (url.pathname === "/admin/delete-admin") {
+          if (!(await verifySuperAdmin(request, env))) return json({ error: "Réservé au super-admin" }, 403);
+
+          const { adminId, adminEmail } = body;
+          if (adminEmail && adminEmail.toLowerCase() === SUPERADMIN_EMAIL) {
+            return json({ error: "Impossible de supprimer le super-admin" }, 400);
+          }
+          if (adminEmail) await deleteAuthUserByEmail(env, adminEmail);
+          if (adminId) {
+            await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${adminId}`, {
+              method: "DELETE", headers: sbHeaders(env),
+            });
+          }
+          return json({ success: true });
+        }
+
+        return json({ error: "Route admin inconnue" }, 404);
+      } catch (err) {
+        return json({ error: "Erreur serveur inattendue", message: err.message }, 500);
+      }
+    }
+
+    return json({ error: "Route inconnue" }, 404);
+  },
+};
+
+// Point d'entrée : nettoie les variables (espaces / retours à la ligne collés par erreur
+// dans Cloudflare, qui font planter fetch() avec "Invalid header value") et garantit
+// une réponse JSON avec en-têtes CORS même en cas d'erreur inattendue.
+export default {
+  async fetch(request, env, ctx) {
+    const envPropre = { ...env };
+    for (const k of ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "MS_CLIENT_ID", "MS_CLIENT_SECRET", "MS_TENANT_ID"]) {
+      if (typeof envPropre[k] === "string") envPropre[k] = envPropre[k].trim();
+    }
+    try {
+      return await app.fetch(request, envPropre, ctx);
+    } catch (e) {
+      CURRENT_ORIGIN = request.headers.get("Origin") || ALLOWED_ORIGINS[0];
+      return json({ error: "Erreur interne du Worker : " + String((e && e.message) || e) }, 500);
+    }
+  },
+};

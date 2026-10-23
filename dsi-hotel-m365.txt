@@ -1,0 +1,357 @@
+/**
+ * dsi-hotel-m365 — Supervision des alertes de sécurité Microsoft 365
+ * ---------------------------------------------------------------------------
+ * Lit les alertes Microsoft Defender (Graph /security/alerts_v2) et les
+ * licences (/subscribedSkus) de chaque tenant client, et les enregistre dans
+ * Supabase (tables m365_tenants, m365_alertes).
+ *
+ * Plan Cloudflare Free : max 50 sous-requêtes par exécution, CPU limité.
+ *  -> à chaque déclenchement, on traite les TENANTS_PAR_TICK tenants dont la
+ *     dernière synchro est la plus ancienne (pas de KV nécessaire).
+ *
+ * Variables (Settings > Variables and Secrets) :
+ *   M365_CLIENT_ID         (Text)    ID d'application de « DSI Hotel – Supervision M365 »
+ *   M365_CLIENT_SECRET     (Secret)  Valeur du secret client
+ *   SUPABASE_URL           (Text)    https://vkamubvlbezhpbunvdai.supabase.co
+ *   SUPABASE_SERVICE_ROLE  (Secret)  clé service_role
+ *   TRIGGER_TOKEN          (Secret)  jeton protégeant /status et /run
+ *
+ *   Facultatif — e-mail à l'équipe pour les nouvelles alertes HAUTES
+ *   (mêmes identifiants que l'application d'envoi de dsi-hotel-api-v2) :
+ *   MAIL_TENANT_ID         (Text)    ID du tenant DSI Hotel
+ *   MAIL_CLIENT_ID         (Text)    ID de l'application d'envoi
+ *   MAIL_CLIENT_SECRET     (Secret)  secret de cette application
+ *   MAIL_FROM              (Text)    support@dsihotel.fr (par défaut)
+ *   MAIL_TO                (Text)    team@dsihotel.fr (par défaut)
+ *
+ * Nouvelle alerte HAUTE (créée il y a moins de 48 h) :
+ *   - ticket automatique « Cyber Sécurité » si le tenant est rattaché à un hôtel ;
+ *   - e-mail récapitulatif à l'équipe si MAIL_* est configuré.
+ *
+ * Cron Trigger : toutes les 2 minutes  ->  * /2 * * * *  (sans espace)
+ *
+ * Routes :
+ *   GET  /status?token=...                 état de chaque tenant
+ *   POST /run?token=...                    exécute un passage immédiatement
+ *   POST /run?token=...&tenant=<id>        force la synchro d'un tenant
+ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+const TENANTS_PAR_TICK = 3;          // ~11 sous-requêtes max par tenant (limite Free : 50)
+const PAGES_MAX = 3;                 // pages d'alertes lues par tenant et par passage
+const TAILLE_PAGE = 100;
+const HISTORIQUE_INITIAL_JOURS = 30; // au premier passage d'un tenant
+const LICENCES_TOUTES_LES_H = 24;
+const FENETRE_NOTIF_H = 48;          // pas de ticket / mail pour les alertes plus anciennes (import initial)
+const PORTAIL_URL = 'https://portail.dsihotel.com';
+
+// skuPartNumber -> capacités (liste non exhaustive, à compléter si besoin)
+const SKU_DEFENDER = ['SPB', 'ATP_ENTERPRISE', 'THREAT_INTELLIGENCE', 'SPE_E5', 'ENTERPRISEPREMIUM',
+  'ENTERPRISEPREMIUM_NOPSTNCONF', 'M365_SECURITY_COMPLIANCE_FOR_FLW', 'IDENTITY_THREAT_PROTECTION', 'Microsoft_365_E5_Security'];
+const SKU_ENTRA_P1 = ['SPB', 'AAD_PREMIUM', 'EMS', 'SPE_E3', 'SPE_E5', 'SPE_F1', 'EMSPREMIUM', 'M365_F1', 'Microsoft_365_E3'];
+const SKU_ENTRA_P2 = ['AAD_PREMIUM_P2', 'EMSPREMIUM', 'SPE_E5', 'IDENTITY_THREAT_PROTECTION', 'Microsoft_365_E5_Security'];
+
+export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(passage(env).catch(e => console.log('ERREUR passage', e.message)));
+  },
+
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (!env.TRIGGER_TOKEN || url.searchParams.get('token') !== env.TRIGGER_TOKEN) {
+      return json({ erreur: 'non autorisé' }, 401);
+    }
+    try {
+      if (url.pathname === '/status' && request.method === 'GET') {
+        const tenants = await sb(env, 'GET',
+          'm365_tenants?select=nom,tenant_id,actif,defender,entra_p1,entra_p2,licences_maj,derniere_synchro,curseur_alertes,derniere_erreur&order=nom');
+        const ouvertes = await sb(env, 'GET',
+          "m365_alertes?select=tenant_id,severite&statut=neq.resolved");
+        const parTenant = {};
+        for (const a of ouvertes) {
+          parTenant[a.tenant_id] ??= { total: 0, high: 0 };
+          parTenant[a.tenant_id].total++;
+          if (a.severite === 'high') parTenant[a.tenant_id].high++;
+        }
+        return json(tenants.map(t => ({ ...t, alertes_ouvertes: parTenant[t.tenant_id] || { total: 0, high: 0 } })));
+      }
+      if (url.pathname === '/run' && request.method === 'POST') {
+        const resultat = await passage(env, url.searchParams.get('tenant'));
+        return json(resultat);
+      }
+      return json({ erreur: 'route inconnue' }, 404);
+    } catch (e) {
+      return json({ erreur: e.message }, 500);
+    }
+  },
+};
+
+// ---------------------------------------------------------------------------
+async function passage(env, tenantForce = null) {
+  verifierConfig(env);
+  const filtre = tenantForce
+    ? `tenant_id=eq.${encodeURIComponent(tenantForce)}`
+    : `actif=eq.true&order=derniere_synchro.asc.nullsfirst&limit=${TENANTS_PAR_TICK}`;
+  const tenants = await sb(env, 'GET', `m365_tenants?select=*&${filtre}`);
+  const bilan = [];
+  const cache = {};                  // jeton d'envoi de mail partagé sur le passage
+  for (const t of tenants) {
+    bilan.push(await synchroTenant(env, t, cache));
+  }
+  return { traites: bilan.length, bilan };
+}
+
+async function synchroTenant(env, t, cache = {}) {
+  const maj = { derniere_synchro: new Date().toISOString() };
+  const res = { tenant: t.nom, nouvelles_ou_modifiees: 0 };
+  try {
+    const token = await jetonGraph(env, t.tenant_id);
+
+    // Licences : une fois par jour
+    const ageLic = t.licences_maj ? (Date.now() - Date.parse(t.licences_maj)) / 36e5 : Infinity;
+    if (ageLic >= LICENCES_TOUTES_LES_H) {
+      const skus = (await graph(token, '/v1.0/subscribedSkus')).value || [];
+      const actifs = skus.filter(s => (s.prepaidUnits?.enabled || 0) > 0 || (s.consumedUnits || 0) > 0)
+                         .map(s => s.skuPartNumber);
+      Object.assign(maj, {
+        licences: actifs,
+        defender: actifs.some(s => SKU_DEFENDER.includes(s)),
+        entra_p1: actifs.some(s => SKU_ENTRA_P1.includes(s)),
+        entra_p2: actifs.some(s => SKU_ENTRA_P2.includes(s)),
+        licences_maj: new Date().toISOString(),
+      });
+    }
+
+    // Alertes modifiées depuis le dernier curseur
+    const depuis = t.curseur_alertes
+      ? new Date(t.curseur_alertes)
+      : new Date(Date.now() - HISTORIQUE_INITIAL_JOURS * 864e5);
+    let chemin = `/v1.0/security/alerts_v2?$top=${TAILLE_PAGE}` +
+      `&$filter=${encodeURIComponent(`lastUpdateDateTime gt ${depuis.toISOString()}`)}`;
+    let curseur = depuis;
+    const lignes = [];
+    for (let page = 0; chemin && page < PAGES_MAX; page++) {
+      const r = await graph(token, chemin);
+      for (const a of r.value || []) {
+        lignes.push(versLigne(a, t.tenant_id));
+        const d = new Date(a.lastUpdateDateTime || a.createdDateTime);
+        if (d > curseur) curseur = d;
+      }
+      chemin = r['@odata.nextLink'] || null;
+    }
+    let nouvelles = [];
+    if (lignes.length) {
+      // Quelles alertes sont nouvelles (jamais vues) ?
+      const connues = new Set();
+      for (let i = 0; i < lignes.length; i += 100) {
+        const ids = lignes.slice(i, i + 100).map(l => '"' + String(l.id).replace(/"/g, '') + '"').join(',');
+        const ex = await sb(env, 'GET', `m365_alertes?select=id&id=in.(${encodeURIComponent(ids)})`);
+        (ex || []).forEach(x => connues.add(x.id));
+      }
+      nouvelles = lignes.filter(l => !connues.has(l.id));
+      await sb(env, 'POST', 'm365_alertes?on_conflict=id', lignes,
+        { Prefer: 'resolution=merge-duplicates,return=minimal' });
+    }
+    const limite = Date.now() - FENETRE_NOTIF_H * 36e5;
+    const graves = nouvelles.filter(l => l.severite === 'high' && l.statut !== 'resolved'
+      && Date.parse(l.cree_le || 0) >= limite);
+    if (graves.length) {
+      res.hautes = graves.length;
+      let ticket = null;
+      if (t.hotel_id) {
+        try { ticket = await creerTicket(env, t, graves); res.ticket = ticket && ticket.reference; }
+        catch (e) { res.erreur_ticket = e.message; console.log('ERREUR ticket', t.nom, e.message); }
+      }
+      if (ticket) {
+        const ids = graves.map(g => '"' + String(g.id).replace(/"/g, '') + '"').join(',');
+        await sb(env, 'PATCH', `m365_alertes?id=in.(${encodeURIComponent(ids)})`,
+          { ticket_id: ticket.id, ticket_ref: ticket.reference || null }, { Prefer: 'return=minimal' })
+          .catch(e => console.log('ERREUR lien ticket', e.message));
+      }
+      try { if (await envoyerMail(env, cache, t, graves, ticket)) res.mail = true; }
+      catch (e) { res.erreur_mail = e.message; console.log('ERREUR mail', t.nom, e.message); }
+    }
+    maj.curseur_alertes = curseur.toISOString();
+    maj.derniere_erreur = chemin ? 'Plus de ' + PAGES_MAX * TAILLE_PAGE + ' alertes : suite au prochain passage' : null;
+    res.nouvelles_ou_modifiees = lignes.length;
+    res.nouvelles = nouvelles.length;
+  } catch (e) {
+    maj.derniere_erreur = traduireErreur(e.message).slice(0, 500);
+    res.erreur = maj.derniere_erreur;
+    console.log('ERREUR', t.nom, e.message);
+  }
+  await sb(env, 'PATCH', `m365_tenants?tenant_id=eq.${encodeURIComponent(t.tenant_id)}`, maj,
+    { Prefer: 'return=minimal' });
+  return res;
+}
+
+function versLigne(a, tenantId) {
+  const ev = a.evidence || [];
+  const utilisateurs = [...new Set(ev
+    .map(e => e.userAccount?.userPrincipalName || e.userAccount?.accountName)
+    .filter(Boolean))].slice(0, 20);
+  const messages = ev
+    .filter(e => (e['@odata.type'] || '').includes('analyzedMessageEvidence'))
+    .map(e => ({ sujet: e.subject || null, expediteur: e.p2Sender?.emailAddress || e.p1Sender?.emailAddress || null, ip_expediteur: e.senderIp || null,
+                 destinataire: e.recipientEmailAddress || null, recu_le: e.receivedDateTime || null }))
+    .slice(0, 20);
+  // Ne jamais inclure vu_par / vu_le / ticket_id / note : gérés par le portail
+  return {
+    id: a.id,
+    tenant_id: tenantId,
+    incident_id: a.incidentId || null,
+    titre: a.title || null,
+    description: (a.description || '').slice(0, 4000) || null,
+    severite: a.severity || null,
+    statut: a.status || null,
+    categorie: a.category || null,
+    service_source: a.serviceSource || null,
+    detection_source: a.detectionSource || null,
+    classification: a.classification || null,
+    utilisateurs,
+    messages,
+    lien_microsoft: a.alertWebUrl || a.incidentWebUrl || null,
+    cree_le: a.createdDateTime || null,
+    maj_le: a.lastUpdateDateTime || null,
+    resolu_le: a.resolvedDateTime || null,
+  };
+}
+
+// ---------------------------------------------------------------------------
+const SOURCES = {
+  microsoftDefenderForOffice365: 'Defender pour Office 365', azureAdIdentityProtection: 'Entra ID Protection',
+  microsoftDefenderForCloudApps: 'Defender for Cloud Apps', microsoftDefenderForEndpoint: 'Defender for Endpoint',
+  microsoftDefenderForIdentity: 'Defender for Identity', microsoft365Defender: 'Defender XDR',
+  microsoftDataLossPrevention: 'Protection contre la perte de données',
+};
+const resumeAlerte = (g) => {
+  const l = ['• ' + (g.titre || '(sans titre)') + ' — ' + (SOURCES[g.service_source] || g.service_source || '') ];
+  if (g.utilisateurs && g.utilisateurs.length) l.push('  Comptes : ' + g.utilisateurs.join(', '));
+  (g.messages || []).slice(0, 3).forEach(m => l.push('  E-mail : « ' + (m.sujet || '?') + ' » de ' + (m.expediteur || '?') + ' → ' + (m.destinataire || '?')));
+  if (g.description) l.push('  ' + g.description.replace(/\s+/g, ' ').slice(0, 400));
+  if (g.cree_le) l.push('  Détectée le : ' + new Date(g.cree_le).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }));
+  if (g.lien_microsoft) l.push('  Microsoft Defender : ' + g.lien_microsoft);
+  return l.join('\n');
+};
+
+async function creerTicket(env, t, graves) {
+  const message =
+    '🔴 ALERTE DE SÉCURITÉ MICROSOFT 365 — GRAVITÉ HAUTE\n\n' +
+    'Tenant : ' + t.nom + '\n' +
+    graves.length + ' nouvelle' + (graves.length > 1 ? 's' : '') + ' alerte' + (graves.length > 1 ? 's' : '') + ' haute' + (graves.length > 1 ? 's' : '') + ' :\n\n' +
+    graves.map(resumeAlerte).join('\n\n') +
+    '\n\nTicket créé automatiquement par la supervision Microsoft 365 (onglet Pilotage → Sécurité Microsoft).';
+  const titre = graves.length === 1 ? (graves[0].titre || 'Alerte haute') : graves.length + ' alertes hautes';
+  const rows = await sb(env, 'POST', 'tickets', {
+    hotel_id: t.hotel_id,
+    contact_name: 'Supervision Microsoft 365',
+    contact_role: 'Alerte automatique',
+    contact_email: env.MAIL_TO || 'team@dsihotel.fr',
+    category: 'Cyber Sécurité',
+    priority: 'Urgent',
+    subject: '🔴 [Sécurité M365] ' + titre,
+    message,
+    status: 'open',
+  }, { Prefer: 'return=representation' });
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
+async function envoyerMail(env, cache, t, graves, ticket) {
+  if (!env.MAIL_TENANT_ID || !env.MAIL_CLIENT_ID || !env.MAIL_CLIENT_SECRET) return false;
+  if (!cache.mailToken) cache.mailToken = await jetonGraph(env, env.MAIL_TENANT_ID, env.MAIL_CLIENT_ID, env.MAIL_CLIENT_SECRET);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const lignes = graves.map(g => {
+    const msgs = (g.messages || []).slice(0, 3).map(m => `<div style="color:#555">✉️ « ${esc(m.sujet || '?')} » de ${esc(m.expediteur || '?')} → ${esc(m.destinataire || '?')}</div>`).join('');
+    return `<div style="border-left:4px solid #C53030;background:#FDECEC;padding:10px 12px;margin:10px 0;border-radius:6px">
+      <div style="font-weight:700;color:#1a1a3e">${esc(g.titre || '(sans titre)')}</div>
+      <div style="font-size:12px;color:#777">${esc(SOURCES[g.service_source] || g.service_source || '')} · ${g.cree_le ? esc(new Date(g.cree_le).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })) : ''}</div>
+      ${g.utilisateurs && g.utilisateurs.length ? `<div>👤 ${esc(g.utilisateurs.join(', '))}</div>` : ''}${msgs}
+      ${g.description ? `<div style="margin-top:4px;color:#333">${esc(g.description.slice(0, 600))}</div>` : ''}
+      ${g.lien_microsoft ? `<div style="margin-top:6px"><a href="${esc(g.lien_microsoft)}">Ouvrir dans Microsoft Defender</a></div>` : ''}
+    </div>`;
+  }).join('');
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px">
+    <p><b>${esc(t.nom)}</b> : ${graves.length} nouvelle${graves.length > 1 ? 's' : ''} alerte${graves.length > 1 ? 's' : ''} de sécurité Microsoft 365 de gravité <b style="color:#C53030">haute</b>.</p>
+    ${lignes}
+    <p>${ticket ? 'Ticket créé : <b>' + esc(ticket.reference || '') + '</b> — ' : (t.hotel_id ? '' : '⚠️ Tenant non rattaché à un hôtel : aucun ticket créé. ')}
+    <a href="${PORTAIL_URL}">Portail DSI Hotel</a> → Pilotage → Sécurité Microsoft</p></div>`;
+  const from = env.MAIL_FROM || 'support@dsihotel.fr';
+  const r = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(from)}/sendMail`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${cache.mailToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: {
+        subject: `${t.nom} — [Sécurité M365] ${graves.length} alerte${graves.length > 1 ? 's' : ''} haute${graves.length > 1 ? 's' : ''}`,
+        body: { contentType: 'HTML', content: html },
+        toRecipients: [{ emailAddress: { address: env.MAIL_TO || 'team@dsihotel.fr' } }],
+      },
+      saveToSentItems: false,
+    }),
+  });
+  if (!r.ok) throw new Error(`sendMail ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  return true;
+}
+
+async function jetonGraph(env, tenantId, clientId = env.M365_CLIENT_ID, clientSecret = env.M365_CLIENT_SECRET) {
+  const r = await fetch(`https://login.microsoftonline.com/${encodeURIComponent(tenantId)}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: 'https://graph.microsoft.com/.default',
+      grant_type: 'client_credentials',
+    }),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || !d.access_token) throw new Error(`Jeton: ${d.error || r.status} ${d.error_description || ''}`);
+  return d.access_token;
+}
+
+async function graph(token, chemin) {
+  const url = chemin.startsWith('http') ? chemin : `https://graph.microsoft.com${chemin}`;
+  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`Graph ${r.status} sur ${url.split('?')[0].replace('https://graph.microsoft.com', '')}: ${t.slice(0, 300)}`);
+  }
+  return r.json();
+}
+
+async function sb(env, method, chemin, corps, entetes = {}) {
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/${chemin}`, {
+    method,
+    headers: {
+      apikey: env.SUPABASE_SERVICE_ROLE,
+      ...(String(env.SUPABASE_SERVICE_ROLE || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE}` }),
+      'Content-Type': 'application/json',
+      ...entetes,
+    },
+    body: corps === undefined ? undefined : JSON.stringify(corps),
+  });
+  if (!r.ok) throw new Error(`Supabase ${r.status} ${method} ${chemin.split('?')[0]}: ${(await r.text()).slice(0, 300)}`);
+  if (r.status === 204 || method === 'PATCH' || (entetes.Prefer || '').includes('return=minimal')) return null;
+  return r.json();
+}
+
+function traduireErreur(m) {
+  if (/AADSTS7000215/.test(m)) return 'Secret client invalide ou expiré (M365_CLIENT_SECRET) — ' + m;
+  if (/AADSTS7000222/.test(m)) return 'Secret client expiré : le renouveler dans Entra — ' + m;
+  if (/AADSTS700016|AADSTS650052|AADSTS65001|AADSTS500011/.test(m)) return 'Consentement administrateur manquant sur ce tenant — ' + m;
+  if (/AADSTS90002|AADSTS900023/.test(m)) return 'ID de tenant introuvable — ' + m;
+  if (/Graph 403/.test(m)) return 'Accès refusé par Graph (permission non accordée ou licence absente) — ' + m;
+  return m;
+}
+
+function verifierConfig(env) {
+  const manquantes = ['M365_CLIENT_ID', 'M365_CLIENT_SECRET', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE']
+    .filter(k => !env[k]);
+  if (manquantes.length) throw new Error('Variables manquantes : ' + manquantes.join(', '));
+}
+
+function json(obj, status = 200) {
+  return new Response(JSON.stringify(obj, null, 2), {
+    status, headers: { 'Content-Type': 'application/json; charset=utf-8' },
+  });
+}

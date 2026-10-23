@@ -1,0 +1,380 @@
+/**
+ * Worker Cloudflare : dsi-hotel-blocage  (PILOTE / TEST) — version sans Azure
+ * ---------------------------------------------------------------
+ * Bloque un expéditeur frauduleux dans la Tenant Allow/Block List M365
+ * d'un hôtel, en appelant directement l'endpoint REST d'Exchange Online
+ * (celui qu'utilise le module PowerShell ExchangeOnlineManagement) :
+ *   POST https://outlook.office365.com/adminapi/beta/{tenantId}/InvokeCommand
+ *
+ * ⚠ Endpoint non documenté officiellement par Microsoft (utilisé par le module
+ *   PowerShell lui-même et par des outils MSP comme CIPP) : peut évoluer.
+ *
+ * Prérequis côté tenant : app Entra avec Exchange.ManageAsApp (Application,
+ * consentement admin) + rôle Entra « Administrateur de la sécurité ».
+ *
+ * Routes :
+ *   POST /blocage            → exécute une action (auth : JWT Supabase admin, ou X-Test-Key en mode test)
+ *   GET  /blocage/tenants    → établissements activés (clé, nom, domaines) pour le portail
+ *   GET  /blocage/historique → 50 dernières actions
+ *   GET  /blocage/test       → page de test (uniquement si MODE_TEST = "1")
+ *
+ * Variables d'environnement :
+ *   SUPABASE_URL                 (texte)   https://vkamubvlbezhpbunvdai.supabase.co
+ *   SUPABASE_ANON_KEY            (texte)   clé anon (vérification des JWT)
+ *   SUPABASE_SERVICE_ROLE_KEY    (SECRET)  écriture dans blocages_expediteurs
+ *   BLOCAGE_CLIENT_ID            (texte)   ID d'application Entra
+ *   BLOCAGE_CLIENT_SECRET        (SECRET)  secret client de l'app Entra
+ *   TENANTS                      (texte)   JSON :
+ *      {"voparisclichy.com":{"tenantId":"<GUID>","org":"xxx.onmicrosoft.com","nom":"VOCO Paris Porte de Clichy",
+ *        "domaines":["voparisclichy.com","hiparisclichy.com"]}}
+ *      "domaines" (facultatif) : tous les domaines email du tenant — sert à présélectionner
+ *      l'établissement depuis l'adresse du demandeur, et ces domaines ne peuvent jamais être bloqués.
+ *   ADMINS_AUTORISES             (texte)   facultatif : si rempli, seuls ces emails peuvent agir ;
+ *                                          sinon, tout compte au rôle « admin » du portail
+ *   MODE_TEST                    (texte)   "1" pour activer la page de test, sinon absent
+ *   TEST_KEY                     (SECRET)  clé de la page de test
+ */
+
+const ORIGINES_AUTORISEES = ['https://portail.dsihotel.com'];
+
+// Domaines dont on ne bloque jamais une adresse depuis cet outil.
+// Les domaines des tenants clients (clés de TENANTS) sont ajoutés automatiquement.
+const DOMAINES_PROTEGES = [
+  'dsihotel.fr', 'dsihotel.com',
+  'hilton.com', 'ihg.com', 'marriott.com', 'accor.com',
+  'oracle.com', 'oracleindustry.com', 'custhelp.com',
+  'microsoft.com', 'office365.com', 'sophos.com', 'ninjaone.com', 'veeam.com',
+];
+
+const ACTIONS = ['test', 'bloquer', 'lister', 'debloquer'];
+const RE_EMAIL = /^[^@\s*]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+// Boîte système fixe utilisée pour le routage des appels d'administration Exchange
+const ANCRE = 'SystemMailbox{bb558c35-97f1-4cb9-8ff7-d53741dc928c}';
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const cors = enTetesCors(request);
+
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+
+    try {
+      if (url.pathname === '/blocage/test' && request.method === 'GET') {
+        if (env.MODE_TEST !== '1') return new Response('Introuvable', { status: 404 });
+        return new Response(pageTest(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+
+      if (url.pathname.startsWith('/blocage')) {
+        const user = await authentifier(request, env);
+        if (!user) return json({ erreur: 'Non autorisé' }, 401, cors);
+
+        if (url.pathname === '/blocage' && request.method === 'POST') return await lancer(request, env, user, cors);
+        if (url.pathname === '/blocage/historique' && request.method === 'GET') return await historique(env, cors);
+        if (url.pathname === '/blocage/tenants' && request.method === 'GET') {
+          const t = lireTenants(env);
+          return json(Object.entries(t).map(([k, v]) => ({ key: k, nom: v.nom || k, domaines: domainesDe(k, v) })), 200, cors);
+        }
+      }
+      return json({ erreur: 'Route inconnue' }, 404, cors);
+    } catch (e) {
+      return json({ erreur: 'Erreur interne : ' + (e && e.message ? e.message : String(e)) }, 500, cors);
+    }
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* Action                                                              */
+/* ------------------------------------------------------------------ */
+
+async function lancer(request, env, user, cors) {
+  let body;
+  try { body = await request.json(); } catch { return json({ erreur: 'JSON invalide' }, 400, cors); }
+
+  const tenants = lireTenants(env);
+  const action = String(body.action || '').trim();
+  const tenant = String(body.tenant || '').trim().toLowerCase();
+  const expediteur = String(body.expediteur || '').trim().toLowerCase();
+  const ticketRef = String(body.ticketRef || '').trim().slice(0, 40);
+  const notesLibres = String(body.notes || '').trim().slice(0, 80);
+
+  if (!ACTIONS.includes(action)) return json({ erreur: 'Action inconnue' }, 400, cors);
+  const t = tenants[tenant];
+  if (!t || !t.tenantId || !t.org) return json({ erreur: 'Établissement non activé pour le blocage : ' + tenant }, 400, cors);
+
+  const avecAdresse = action === 'bloquer' || action === 'debloquer';
+  if (avecAdresse) {
+    if (!RE_EMAIL.test(expediteur)) return json({ erreur: 'Adresse email invalide (adresse complète obligatoire, pas de domaine ni de *)' }, 400, cors);
+    const domaine = expediteur.split('@')[1];
+    const proteges = DOMAINES_PROTEGES.concat(...Object.entries(tenants).map(([k, v]) => domainesDe(k, v)));
+    if (action === 'bloquer' && proteges.some(d => domaine === d || domaine.endsWith('.' + d))) {
+      return json({ erreur: `Refusé : ${domaine} est un domaine protégé. À traiter manuellement si nécessaire.` }, 400, cors);
+    }
+  }
+
+  const notes = ['Ticket ' + (ticketRef || 'n/a'), 'par ' + user.email, notesLibres].filter(Boolean).join(' - ').slice(0, 200);
+
+  // 1. Trace
+  const ligne = await sb(env, 'POST', 'blocages_expediteurs', {
+    tenant, organisation: t.org, action,
+    expediteur: avecAdresse ? expediteur : null,
+    ticket_ref: ticketRef || null,
+    demande_par: user.email,
+    statut: 'en_cours',
+  });
+  const id = ligne[0].id;
+
+  // 2. Exécution
+  let statut = 'erreur', resultat = '';
+  try {
+    const token = await jetonExchange(env, t.tenantId);
+    const exo = (cmdlet, params) => invoquer(token, t, cmdlet, params);
+
+    if (action === 'test') {
+      const items = await exo('Get-TenantAllowBlockListItems', { ListType: 'Sender', Block: true });
+      statut = 'ok';
+      resultat = `Connexion OK à ${t.org} — ${items.length} expéditeur(s) actuellement bloqué(s). Aucune modification effectuée.`;
+
+    } else if (action === 'bloquer') {
+      const items = await exo('Get-TenantAllowBlockListItems', { ListType: 'Sender', Block: true });
+      if (items.some(i => String(i.Value || '').toLowerCase() === expediteur)) {
+        statut = 'ok';
+        resultat = `${expediteur} était déjà bloqué dans ${t.org} (aucun changement).`;
+      } else {
+        await exo('New-TenantAllowBlockListItems', {
+          ListType: 'Sender', Block: true, Entries: [expediteur], NoExpiration: true, Notes: notes,
+        });
+        statut = 'ok';
+        resultat = `${expediteur} bloqué dans ${t.org} (sans expiration). Les nouveaux emails de cet expéditeur iront en quarantaine.`;
+      }
+
+    } else if (action === 'debloquer') {
+      await exo('Remove-TenantAllowBlockListItems', { ListType: 'Sender', Entries: [expediteur] });
+      statut = 'ok';
+      resultat = `${expediteur} retiré de la liste de blocage de ${t.org}.`;
+
+    } else if (action === 'lister') {
+      const items = await exo('Get-TenantAllowBlockListItems', { ListType: 'Sender', Block: true });
+      items.sort((a, b) => String(b.LastModifiedDateTime || '').localeCompare(String(a.LastModifiedDateTime || '')));
+      const lignes = items.slice(0, 100).map(i => {
+        const exp = i.ExpirationDate ? new Date(i.ExpirationDate).toLocaleDateString('fr-FR') : 'jamais';
+        return `${i.Value}  |  expire : ${exp}  |  ${i.Notes || ''}`;
+      });
+      statut = 'ok';
+      resultat = `${items.length} expéditeur(s) bloqué(s) dans ${t.org} :\n` + lignes.join('\n');
+    }
+  } catch (e) {
+    statut = 'erreur';
+    resultat = `Échec (${action}) : ${e && e.message ? e.message : String(e)}`;
+  }
+
+  // 3. Mise à jour de la trace
+  await sb(env, 'PATCH', `blocages_expediteurs?id=eq.${id}`, {
+    statut, resultat: resultat.slice(0, 8000), termine_at: new Date().toISOString(),
+  });
+
+  return json({ id, statut, resultat }, statut === 'ok' ? 200 : 502, cors);
+}
+
+async function historique(env, cors) {
+  const rows = await sb(env, 'GET', 'blocages_expediteurs?select=*&order=created_at.desc&limit=50');
+  return json(rows, 200, cors);
+}
+
+/* ------------------------------------------------------------------ */
+/* Exchange Online                                                     */
+/* ------------------------------------------------------------------ */
+
+async function jetonExchange(env, tenantId) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(tenantId || ''))) {
+    throw new Error(`tenantId invalide dans TENANTS : « ${tenantId} » (attendu : le GUID « ID de l'annuaire (locataire) » d'Entra)`);
+  }
+  if (!env.BLOCAGE_CLIENT_ID || !env.BLOCAGE_CLIENT_SECRET) {
+    throw new Error('BLOCAGE_CLIENT_ID ou BLOCAGE_CLIENT_SECRET manquant dans les variables du Worker');
+  }
+  const r = await fetch(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: env.BLOCAGE_CLIENT_ID,
+      client_secret: env.BLOCAGE_CLIENT_SECRET,
+      grant_type: 'client_credentials',
+      scope: 'https://outlook.office365.com/.default',
+    }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) {
+    throw new Error('Jeton Entra refusé : ' + (j.error_description || j.error || r.status).toString().split('\r\n')[0]);
+  }
+  return j.access_token;
+}
+
+async function invoquer(token, t, cmdlet, params) {
+  let url = `https://outlook.office365.com/adminapi/beta/${t.tenantId}/InvokeCommand`;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'X-AnchorMailbox': `UPN:${ANCRE}@${t.org}`,
+    Prefer: 'odata.maxpagesize=1000',
+  };
+  const corps = JSON.stringify({ CmdletInput: { CmdletName: cmdlet, Parameters: params } });
+  const resultats = [];
+
+  for (let page = 0; page < 20 && url; page++) {
+    const r = await fetch(url, { method: 'POST', headers, body: corps });
+    const txt = await r.text();
+    let j = {};
+    try { j = txt ? JSON.parse(txt) : {}; } catch { /* non JSON */ }
+    if (!r.ok || j.error) {
+      const err = j.error || {};
+      const detail = (err.details && err.details[0] && err.details[0].message) || err.message || txt.slice(0, 300) || r.status;
+      throw new Error(`${cmdlet} : ${detail}`);
+    }
+    if (Array.isArray(j.value)) resultats.push(...j.value);
+    url = j['@odata.nextLink'] || null;
+  }
+  return resultats;
+}
+
+/* ------------------------------------------------------------------ */
+/* Utilitaires                                                         */
+/* ------------------------------------------------------------------ */
+
+async function authentifier(request, env) {
+  if (env.MODE_TEST === '1' && env.TEST_KEY) {
+    const k = request.headers.get('X-Test-Key') || '';
+    if (k && egaliteConstante(k, env.TEST_KEY)) return { email: 'mode-test@dsihotel.fr' };
+  }
+  const token = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!token) return null;
+  const r = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_ANON_KEY },
+  });
+  if (!r.ok) return null;
+  const u = await r.json();
+  const email = String(u.email || '').toLowerCase();
+  const admins = String(env.ADMINS_AUTORISES || '').toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+  if (admins.length) return admins.includes(email) ? { email } : null;
+  // Sinon : rôle « admin » dans la table profiles du portail
+  if (!/^[0-9a-f-]{36}$/i.test(String(u.id || ''))) return null;
+  const p = await sb(env, 'GET', `profiles?id=eq.${u.id}&select=role,full_name`);
+  if (!p.length || p[0].role !== 'admin') return null;
+  return { email, nom: p[0].full_name || email };
+}
+
+function domainesDe(cle, v) {
+  const d = Array.isArray(v && v.domaines) ? v.domaines : [];
+  return [...new Set([cle].concat(d).map(x => String(x).trim().toLowerCase()).filter(Boolean))];
+}
+
+async function sb(env, method, chemin, body) {
+  const key = env.SUPABASE_SERVICE_ROLE_KEY;
+  const headers = { apikey: key, 'Content-Type': 'application/json', Prefer: 'return=representation' };
+  if (key.startsWith('eyJ')) headers.Authorization = `Bearer ${key}`; // anciennes clés JWT
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/${chemin}`, {
+    method, headers, body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) throw new Error(`Supabase ${method} ${chemin.split('?')[0]} : ${r.status} ${(await r.text()).slice(0, 200)}`);
+  const t = await r.text();
+  return t ? JSON.parse(t) : [];
+}
+
+function lireTenants(env) {
+  try {
+    const t = JSON.parse(env.TENANTS || '{}');
+    const out = {};
+    for (const [k, v] of Object.entries(t)) out[k.toLowerCase()] = v;
+    return out;
+  } catch { return {}; }
+}
+
+function egaliteConstante(a, b) {
+  if (a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
+function enTetesCors(request) {
+  const o = request.headers.get('Origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ORIGINES_AUTORISEES.includes(o) ? o : ORIGINES_AUTORISEES[0],
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, X-Test-Key',
+    Vary: 'Origin',
+  };
+}
+
+function json(data, status, extra) {
+  return new Response(JSON.stringify(data), {
+    status, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, extra || {}),
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Page de test                                                        */
+/* ------------------------------------------------------------------ */
+
+function pageTest(env) {
+  const tenants = lireTenants(env);
+  const options = Object.entries(tenants)
+    .map(([k, v]) => `<option value="${esc(k)}">${esc(v.nom || k)} (${esc(k)})</option>`).join('');
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Blocage expéditeur — test</title>
+<style>
+:root{--navy:#0F0F24;--gold:#C9A84C;--line:#E6E4DC;--ink:#1a1a2e;--muted:#6b6a66}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#F4F4F1;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:16px 20px}header b{color:var(--gold);letter-spacing:1.5px}
+main{max-width:620px;margin:20px auto;padding:0 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;margin:12px 0 4px}
+input,select{width:100%;padding:9px 10px;border:1px solid #cfcdc4;border-radius:8px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+button{padding:10px 14px;border:0;border-radius:8px;font-weight:600;cursor:pointer;background:var(--navy);color:#fff}
+button.sec{background:#e9e7df;color:var(--ink)}button.danger{background:#b3261e}
+pre{white-space:pre-wrap;background:#FAFAF7;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12.5px;min-height:60px;margin:0}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FEF4DC;color:#7a5600}
+small{color:var(--muted)}
+</style></head><body>
+<header><b>DSI HOTEL</b> · Blocage d'expéditeur <span class="badge">MODE TEST</span></header>
+<main>
+ <div class="card">
+  <label>Clé de test</label><input id="k" type="password" autocomplete="off">
+  <label>Établissement</label><select id="t">${options}</select>
+  <label>Adresse de l'expéditeur</label><input id="e" placeholder="exemple@domaine.com" autocomplete="off">
+  <label>Référence ticket</label><input id="r" placeholder="DSI-2026-XXXX">
+  <div class="row">
+   <button class="sec" onclick="go('test')">1 · Tester la connexion</button>
+   <button class="danger" onclick="go('bloquer')">Bloquer</button>
+   <button class="sec" onclick="go('lister')">Lister</button>
+   <button class="sec" onclick="go('debloquer')">Débloquer</button>
+  </div>
+  <p><small>« Tester la connexion » ne modifie rien dans le tenant.</small></p>
+ </div>
+ <div class="card"><label style="margin-top:0">Résultat</label><pre id="out">—</pre></div>
+</main>
+<script>
+const out = document.getElementById('out');
+function log(t){ out.textContent = t; }
+async function go(action){
+  const k = document.getElementById('k').value.trim();
+  const tenant = document.getElementById('t').value;
+  const expediteur = document.getElementById('e').value.trim();
+  const ticketRef = document.getElementById('r').value.trim();
+  if(!k){ log('Saisis la clé de test.'); return; }
+  if((action==='bloquer'||action==='debloquer') && !expediteur){ log('Saisis une adresse.'); return; }
+  if(action==='bloquer' && !confirm('Bloquer ' + expediteur + ' dans ' + tenant + ' ?')) return;
+  log('En cours… (quelques secondes)');
+  try{
+    const r = await fetch('/blocage', { method:'POST', headers:{'Content-Type':'application/json','X-Test-Key':k},
+      body: JSON.stringify({ action, tenant, expediteur, ticketRef }) });
+    const j = await r.json();
+    if(j.statut){ log((j.statut === 'ok' ? '✓ ' : '✗ ') + (j.resultat || '')); }
+    else { log('Erreur : ' + (j.erreur || r.status)); }
+  }catch(e){ log('Erreur réseau : ' + e.message); }
+}
+</script></body></html>`;
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}

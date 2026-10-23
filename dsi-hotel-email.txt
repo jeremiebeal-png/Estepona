@@ -1,0 +1,1572 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ENVOI D'EMAILS VIA MICROSOFT 365 (Microsoft Graph API)
+ * ---------------------------------------------------------------------------
+ * Remplace Resend. Envoie depuis support@dsihotel.fr (boîte M365, domaine
+ * déjà vérifié dans le tenant) avec un Reply-To forcé sur support@dsihotel.com
+ * afin que les réponses des clients arrivent sur Cloudflare Email Routing
+ * (inbound .com) et non sur M365 — ce qui préserve le threading par sujet.
+ *
+ * VARIABLES CLOUDFLARE À CONFIGURER (Settings → Variables) :
+ *   - MS_TENANT_ID       (Texte)   : ID du tenant Entra ID (Azure AD)
+ *   - MS_CLIENT_ID       (Texte)   : Application (client) ID de l'App Registration
+ *   - MS_CLIENT_SECRET   (Secret)  : valeur du client secret créé dans l'App
+ *   - MS_SENDER          (Texte, optionnel) : boîte expéditrice.
+ *       Défaut : support@dsihotel.fr
+ *   - MS_REPLY_TO        (Texte, optionnel) : adresse de réponse forcée.
+ *       Défaut : support@dsihotel.com
+ *
+ * PERMISSION AZURE REQUISE : Mail.Send (type Application) + consentement admin.
+ * Restreindre de préférence via ApplicationAccessPolicy (PowerShell) à la
+ * seule boîte support@dsihotel.fr.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+// Clés Supabase : accepte l'ancienne clé service_role (JWT « eyJ… ») ET la nouvelle clé secrète « sb_secret_… ».
+// Une clé sb_ n'est pas un JWT : elle passe seulement dans l'en-tête apikey, jamais en « Authorization: Bearer ».
+const MS_SENDER_DEFAUT = "support@dsihotel.fr";
+const MS_REPLY_TO_DEFAUT = "support@dsihotel.com";
+
+// Cache du token en mémoire du Worker (isolate). Évite de redemander un token
+// à chaque envoi. Le token M365 dure ~3600 s ; on garde une marge de sécurité.
+let _msTokenCache = { token: null, exp: 0 };
+
+async function msGetToken(env) {
+  const now = Math.floor(Date.now() / 1000);
+  if (_msTokenCache.token && _msTokenCache.exp > now + 60) {
+    return _msTokenCache.token;
+  }
+  const tenant = env.MS_TENANT_ID;
+  const url = `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`;
+  const params = new URLSearchParams({
+    client_id: env.MS_CLIENT_ID,
+    client_secret: env.MS_CLIENT_SECRET,
+    scope: "https://graph.microsoft.com/.default",
+    grant_type: "client_credentials",
+  });
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error("Token M365 refusé (" + res.status + ") " + t.slice(0, 200));
+  }
+  const data = await res.json();
+  _msTokenCache = {
+    token: data.access_token,
+    exp: now + (data.expires_in || 3600),
+  };
+  return data.access_token;
+}
+
+// Normalise une liste d'adresses (chaîne, tableau, séparateurs , ou ;) vers
+// le format Graph : [{ emailAddress: { address } }].
+function msRecipients(value) {
+  if (!value) return [];
+  const arr = Array.isArray(value) ? value : String(value).split(/[,;]/);
+  return arr
+    .map((a) => String(a).trim())
+    .filter((a) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a))
+    .map((a) => ({ emailAddress: { address: a } }));
+}
+
+/**
+ * Envoie un email via Microsoft Graph.
+ * @param {object} env
+ * @param {object} msg
+ *   - to          (string | string[])           destinataires (requis)
+ *   - subject     (string)                        objet (requis)
+ *   - text        (string)                        corps texte (fallback si pas de html)
+ *   - html        (string, optionnel)             corps HTML
+ *   - cc          (string | string[], optionnel)  copies
+ *   - replyTo     (string, optionnel)             remplace le Reply-To par défaut
+ *   - fromName    (string, optionnel)             nom affiché de l'expéditeur
+ *   - attachments ([{ filename, content(base64) }], optionnel)
+ * @returns {Promise<{ok:boolean, status:number, error?:string}>}
+ */
+async function sendViaGraph(env, msg) {
+  const sender = (env.MS_SENDER || MS_SENDER_DEFAUT).trim();
+  const replyToAddr = (msg.replyTo || env.MS_REPLY_TO || MS_REPLY_TO_DEFAUT).trim();
+
+  const toList = msRecipients(msg.to);
+  if (toList.length === 0) {
+    return { ok: false, status: 400, error: "Aucun destinataire valide" };
+  }
+
+  const useHtml = !!msg.html;
+  const body = {
+    contentType: useHtml ? "HTML" : "Text",
+    content: useHtml ? msg.html : (msg.text || ""),
+  };
+
+  const message = {
+    subject: msg.subject || "(Sans objet)",
+    body,
+    toRecipients: toList,
+  };
+
+  const ccList = msRecipients(msg.cc);
+  if (ccList.length > 0) message.ccRecipients = ccList;
+
+  const replyList = msRecipients(replyToAddr);
+  if (replyList.length > 0) message.replyTo = replyList;
+
+  // Nom affiché de l'expéditeur (facultatif). L'adresse reste la boîte M365.
+  const cleanName = String(msg.fromName || "").replace(/["<>\r\n]/g, "").trim();
+  if (cleanName) {
+    message.from = { emailAddress: { name: cleanName, address: sender } };
+  }
+
+  // Pièces jointes : Graph attend @odata.type + contentBytes (base64).
+  if (Array.isArray(msg.attachments) && msg.attachments.length > 0) {
+    message.attachments = msg.attachments
+      .filter((a) => a && a.content)
+      .map((a) => {
+        const pj = {
+          "@odata.type": "#microsoft.graph.fileAttachment",
+          name: a.filename || "piece-jointe",
+          contentBytes: a.content,
+        };
+        // Image intégrée au corps (<img src="cid:...">) : affichée dans le
+        // message par Outlook au lieu d'apparaître en vignette de pièce jointe.
+        if (a.contentId) {
+          pj.isInline = true;
+          pj.contentId = a.contentId;
+          if (a.contentType) pj.contentType = a.contentType;
+        }
+        return pj;
+      });
+  }
+
+  let token;
+  try {
+    token = await msGetToken(env);
+  } catch (e) {
+    return { ok: false, status: 500, error: String((e && e.message) || e) };
+  }
+
+  const endpoint =
+    `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(sender)}/sendMail`;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message, saveToSentItems: true }),
+  });
+
+  // Graph renvoie 202 Accepted sans corps en cas de succès.
+  if (res.status === 202) return { ok: true, status: 202 };
+
+  const detail = await res.text().catch(() => "");
+  return { ok: false, status: res.status, error: detail.slice(0, 300) };
+}
+
+
+const REF_RE = /DSI-\d{4}-\d{4}/i;
+
+// Bucket Supabase Storage utilisé par le portail pour les pièces jointes de tickets.
+// Si tes fichiers ne s'affichent pas après déploiement, vérifie ce nom dans Supabase > Storage.
+const STORAGE_BUCKET = 'uploads';
+const STORAGE_PREFIX = 'tickets';
+
+function sb(env, path, options = {}) {
+  return fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      apikey: env.SUPABASE_SERVICE_KEY,
+      ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }),
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+}
+
+/* =========================================================================
+   PARSEUR MIME ROBUSTE (travaille sur les octets bruts, gère le charset,
+   le multipart imbriqué, quoted-printable et base64, HTML seul, ET les
+   pièces jointes).
+   ========================================================================= */
+
+async function streamToBytes(stream) {
+  const reader = stream.getReader();
+  const chunks = [];
+  let done, value;
+  while (({ done, value } = await reader.read()), !done) chunks.push(value);
+  const total = chunks.reduce((n, c) => n + c.length, 0);
+  const buf = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) { buf.set(c, off); off += c.length; }
+  return buf;
+}
+
+function decodeBytes(bytes, charset) {
+  const cs = (charset || 'utf-8').toLowerCase().trim()
+    .replace('iso8859', 'iso-8859').replace('latin1', 'iso-8859-1');
+  const candidates = [cs, 'utf-8', 'iso-8859-1', 'windows-1252'];
+  for (const c of candidates) {
+    try {
+      return new TextDecoder(c, { fatal: false }).decode(bytes);
+    } catch (e) { /* essaie le suivant */ }
+  }
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return s;
+}
+
+function binStringToBytes(str) {
+  const out = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i++) out[i] = str.charCodeAt(i) & 0xff;
+  return out;
+}
+
+function qpToBytes(str) {
+  const noSoft = str.replace(/=\r?\n/g, '');
+  const bytes = [];
+  for (let i = 0; i < noSoft.length; i++) {
+    if (noSoft[i] === '=' && /^[0-9A-Fa-f]{2}$/.test(noSoft.substr(i + 1, 2))) {
+      bytes.push(parseInt(noSoft.substr(i + 1, 2), 16));
+      i += 2;
+    } else {
+      bytes.push(noSoft.charCodeAt(i) & 0xff);
+    }
+  }
+  return new Uint8Array(bytes);
+}
+
+function b64ToBytes(str) {
+  try {
+    const bin = atob(str.replace(/\s/g, ''));
+    return binStringToBytes(bin);
+  } catch (e) {
+    return new Uint8Array(0);
+  }
+}
+
+// Convertit des octets (Uint8Array) en base64 (pour joindre à un envoi Resend)
+function bytesToBase64(bytes) {
+  let bin = '';
+  const CHUNK = 32768;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  return btoa(bin);
+}
+
+function parseHeaders(headerText) {
+  const headers = {};
+  headerText.replace(/\r?\n[ \t]+/g, ' ').split(/\r?\n/).forEach(line => {
+    const m = line.match(/^([^:]+):\s*(.*)$/);
+    if (m) headers[m[1].toLowerCase().trim()] = m[2];
+  });
+  return headers;
+}
+
+function getCharset(ctype) {
+  const m = (ctype || '').match(/charset="?([^";]+)"?/i);
+  return m ? m[1] : 'utf-8';
+}
+
+// Échappe le HTML et convertit le texte en HTML (sauts de ligne -> <br>)
+function escapeHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+function textToHtml(s) {
+  return escapeHtml(s).replace(/\r?\n/g, '<br>');
+}
+
+// Extrait un nom de fichier depuis Content-Disposition ou Content-Type (name=)
+function getFilename(headers) {
+  const cd = headers['content-disposition'] || '';
+  const ct = headers['content-type'] || '';
+  // filename*=UTF-8''... (RFC 5987)
+  let m = cd.match(/filename\*=([^'']*)''([^;]+)/i);
+  if (m) { try { return decodeURIComponent(m[2]); } catch (e) { return m[2]; } }
+  m = cd.match(/filename="?([^";]+)"?/i);
+  if (m) return decodeMimeHeader(m[1].trim());
+  m = ct.match(/name="?([^";]+)"?/i);
+  if (m) return decodeMimeHeader(m[1].trim());
+  return null;
+}
+
+// Convertit un fragment HTML en texte lisible (liens propres, sans cid:)
+function htmlEnTexte(html) {
+  if (!html) return '';
+  let t = html;
+  t = t.replace(/<!--[\s\S]*?-->/g, ' ');
+  t = t.replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  t = t.replace(/<script[\s\S]*?<\/script>/gi, ' ');
+  t = t.replace(/<head[\s\S]*?<\/head>/gi, ' ');
+  // Images inline (logos, icônes de signature) : on les retire proprement
+  t = t.replace(/<img\b[^>]*>/gi, '');
+  // Liens : "<a href="URL">Texte</a>" -> "Texte" si le texte diffère de l'URL,
+  // sinon juste l'URL. Évite le "Website<https://...>" disgracieux.
+  t = t.replace(/<a\b[^>]*href=["']?([^"'>\s]+)["']?[^>]*>([\s\S]*?)<\/a>/gi, (_, href, inner) => {
+    const label = inner.replace(/<[^>]+>/g, '').trim();
+    const url = href.trim();
+    if (!label) return url;
+    if (/^https?:\/\//i.test(label) || label === url) return url;
+    if (/^(mailto:|tel:)/i.test(url)) return label;
+    return `${label} (${url})`;
+  });
+  t = t.replace(/<\/(p|div|tr|li|h[1-6]|table)>/gi, '\n');
+  t = t.replace(/<br\s*\/?>/gi, '\n');
+  t = t.replace(/<[^>]+>/g, ' ');
+  t = t.replace(/&nbsp;/gi, ' ')
+       .replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+       .replace(/&quot;/gi, '"').replace(/&#39;/gi, "'").replace(/&apos;/gi, "'")
+       .replace(/&eacute;/gi, 'é').replace(/&egrave;/gi, 'è').replace(/&agrave;/gi, 'à')
+       .replace(/&ecirc;/gi, 'ê').replace(/&ccedil;/gi, 'ç').replace(/&ugrave;/gi, 'ù')
+       .replace(/&ocirc;/gi, 'ô').replace(/&icirc;/gi, 'î').replace(/&acirc;/gi, 'â');
+  t = t.replace(/&#(\d+);/g, (_, n) => { try { return String.fromCodePoint(parseInt(n, 10)); } catch (e) { return ''; } });
+  t = t.replace(/&#x([0-9a-f]+);/gi, (_, n) => { try { return String.fromCodePoint(parseInt(n, 16)); } catch (e) { return ''; } });
+  // Nettoie tout placeholder d'image inline resté sous forme [cid:...] ou cid:...
+  t = t.replace(/\[?cid:[^\]\s>]+\]?/gi, '');
+  t = t.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n');
+  return t.trim();
+}
+
+function decodePartText(rawPart, headers) {
+  const enc = (headers['content-transfer-encoding'] || '').toLowerCase();
+  const charset = getCharset(headers['content-type'] || '');
+  let bytes;
+  if (enc.includes('base64')) bytes = b64ToBytes(rawPart);
+  else if (enc.includes('quoted-printable')) bytes = qpToBytes(rawPart);
+  else bytes = binStringToBytes(rawPart);
+  return decodeBytes(bytes, charset);
+}
+
+// Décode le corps d'une partie en OCTETS bruts (pour pièces jointes binaires)
+function decodePartBytes(rawPart, headers) {
+  const enc = (headers['content-transfer-encoding'] || '').toLowerCase();
+  if (enc.includes('base64')) return b64ToBytes(rawPart);
+  if (enc.includes('quoted-printable')) return qpToBytes(rawPart);
+  return binStringToBytes(rawPart);
+}
+
+// Parse récursivement un message/partie MIME.
+// Retourne { text, html, attachments: [{filename, mime, bytes, inline}] }
+function parseMimePart(rawStr, depth, attachments) {
+  if (depth > 8) return { text: '', html: '' };
+
+  const sep = rawStr.search(/\r?\n\r?\n/);
+  const headerText = sep >= 0 ? rawStr.slice(0, sep) : rawStr;
+  const body = sep >= 0 ? rawStr.slice(sep).replace(/^\r?\n\r?\n/, '') : '';
+  const headers = parseHeaders(headerText);
+  const ctype = (headers['content-type'] || 'text/plain').toLowerCase();
+  const disposition = (headers['content-disposition'] || '').toLowerCase();
+  const filename = getFilename(headers);
+
+  // Multipart : on découpe selon la frontière et on parcourt chaque sous-partie
+  const bMatch = (headers['content-type'] || '').match(/boundary="?([^";]+)"?/i);
+  if (ctype.startsWith('multipart/') && bMatch) {
+    const boundary = '--' + bMatch[1];
+    const segments = body.split(boundary);
+    let found = { text: '', html: '' };
+    for (const seg of segments) {
+      if (!seg.trim() || seg.trim() === '--') continue;
+      const cleaned = seg.replace(/^\r?\n/, '');
+      const sub = parseMimePart(cleaned, depth + 1, attachments);
+      if (sub.text && !found.text) found.text = sub.text;
+      if (sub.html && !found.html) found.html = sub.html;
+    }
+    return found;
+  }
+
+  // Une partie est une PIÈCE JOINTE si :
+  //  - Content-Disposition: attachment, OU
+  //  - elle porte un nom de fichier, OU
+  //  - ce n'est ni du texte ni du HTML (image, pdf, zip…).
+  const isText = ctype.startsWith('text/plain');
+  const isHtml = ctype.startsWith('text/html');
+  const isAttachment =
+    disposition.includes('attachment') ||
+    (!!filename && !isText && !isHtml) ||
+    (!isText && !isHtml && !ctype.startsWith('multipart/'));
+
+  if (isAttachment) {
+    const isInline = disposition.includes('inline') || !!headers['content-id'];
+    const mime = (ctype.split(';')[0] || 'application/octet-stream').trim();
+    // Content-ID : identifiant de l'image inline, référencé dans le HTML par
+    // <img src="cid:XXX">. On le normalise (sans chevrons ni espaces) pour
+    // pouvoir replacer l'image à sa position exacte dans le corps.
+    let cid = (headers['content-id'] || '').trim();
+    cid = cid.replace(/^<|>$/g, '').trim();
+    // On garde TOUTES les pièces jointes, y compris les images inline (captures
+    // d'écran collées dans le mail). Cela peut inclure de petits logos de
+    // signature, mais on préfère ne jamais perdre une image utile du client.
+    const bytes = decodePartBytes(body, headers);
+    if (bytes && bytes.length > 0) {
+      attachments.push({
+        filename: filename || ('image-collee.' + (mime.split('/')[1] || 'bin')),
+        mime,
+        bytes,
+        inline: isInline,
+        cid: cid || null,
+      });
+    }
+    return { text: '', html: '' };
+  }
+
+  if (isText) return { text: decodePartText(body, headers), html: '' };
+  if (isHtml) return { text: '', html: decodePartText(body, headers) };
+  return { text: '', html: '' };
+}
+
+// Détecte si un mail risque de contenir une image "perdue" à cause du format
+// propriétaire Microsoft TNEF (Outlook configuré en RTF au lieu de HTML).
+// Dans ce cas, l'image collée est enfermée dans un blob winmail.dat que les
+// parseurs MIME standard (comme le nôtre) ne savent pas décoder : elle
+// n'apparaît donc jamais comme pièce jointe exploitable.
+//
+// Signaux TNEF :
+//   - en-tête "X-MS-TNEF-Correlator" présent, OU
+//   - une pièce jointe winmail.dat / application/ms-tnef.
+//
+// On ne veut PAS avertir à tort : on ne déclenche que si, en plus du signal
+// TNEF, AUCUNE image exploitable n'a été extraite (sinon l'image est bien là,
+// pas besoin d'alerter).
+function detecterTnef(message, attachments) {
+  let signalTnef = false;
+
+  // 1) En-tête TNEF (le plus fiable, présent même sans winmail.dat visible).
+  try {
+    const corr = message.headers.get('x-ms-tnef-correlator');
+    if (corr !== null && corr !== undefined && String(corr).trim() !== '') {
+      signalTnef = true;
+    }
+  } catch (e) { /* headers.get peut varier selon l'environnement */ }
+
+  // 2) Pièce jointe winmail.dat / ms-tnef.
+  const aWinmail = (attachments || []).some(a =>
+    (a.filename && /winmail\.dat$/i.test(a.filename)) ||
+    (a.mime && /application\/ms-tnef/i.test(a.mime))
+  );
+  if (aWinmail) signalTnef = true;
+
+  if (!signalTnef) return false;
+
+  // Y a-t-il déjà une image exploitable extraite ? Si oui, pas d'alerte.
+  const aImageExploitable = (attachments || []).some(a =>
+    (a.mime && /^image\//i.test(a.mime)) ||
+    (a.filename && /\.(png|jpe?g|gif|bmp|webp)$/i.test(a.filename))
+  );
+
+  return !aImageExploitable;
+}
+
+// Bandeau d'avertissement inséré dans le corps du ticket quand un TNEF est
+// détecté sans image exploitable. Prévient l'équipe support qu'une capture a
+// pu être envoyée en format Outlook non affichable, sans laisser croire que le
+// portail l'a perdue.
+const BANDEAU_TNEF =
+  "\n\n----------------------------------------\n" +
+  "⚠️ Ce message a été envoyé au format Outlook (RTF/TNEF). " +
+  "Une éventuelle image collée par l'expéditeur n'a pas pu être affichée. " +
+  "Si une capture d'écran manque, demandez au client de la renvoyer " +
+  "en pièce jointe classique, ou de configurer Outlook pour envoyer au format HTML.\n" +
+  "----------------------------------------";
+
+// Point d'entrée : extrait le meilleur texte ET la liste des pièces jointes
+function extractFromBytes(bytes) {
+  let rawStr = '';
+  const CHUNK = 32768;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    rawStr += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  const attachments = [];
+  const { text, html } = parseMimePart(rawStr, 0, attachments);
+  let corps = '';
+  if (text && text.trim()) corps = text.trim();
+  else if (html && html.trim()) corps = htmlEnTexte(html).trim();
+  return { corps, attachments, html: html || '' };
+}
+
+function decodeMimeHeader(s) {
+  if (!s) return '';
+  return s.replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=/gi, (_, charset, enc, txt) => {
+    try {
+      let bytes;
+      if (enc.toUpperCase() === 'B') bytes = b64ToBytes(txt);
+      else bytes = qpToBytes(txt.replace(/_/g, ' '));
+      return decodeBytes(bytes, charset);
+    } catch (e) { return txt; }
+  }).replace(/\?=\s+=\?/g, '');
+}
+
+// Extrait l'en-tête Cc du mail entrant, décode les mots MIME (=?...?=),
+// et renvoie une chaîne propre "Nom <a@x.com>, b@y.com" ou null si absent.
+// .trim() sécurisé : on ne l'appelle jamais sur undefined.
+function extraireCc(message) {
+  const raw = message.headers.get('cc');
+  if (!raw) return null;
+  const decoded = decodeMimeHeader(raw).replace(/\r?\n[ \t]+/g, ' ').trim();
+  return decoded || null;
+}
+
+// Destinataires principaux du message (champ To). Peut contenir plusieurs
+// adresses, séparées par des virgules. Même traitement que extraireCc.
+function extraireTo(message) {
+  const raw = message.headers.get('to');
+  if (!raw) return null;
+  const decoded = decodeMimeHeader(raw).replace(/\r?\n[ \t]+/g, ' ').trim();
+  return decoded || null;
+}
+
+// Convertit les balises de réaction Outlook/Teams ([like], [heart]…) en emojis.
+// Outlook envoie une réaction à un message sous forme d'email dont le corps
+// texte contient une balise entre crochets (ex. "[like] Marco reacted…").
+// On ne remplace QUE les balises reconnues : les [cid:...] et [DSI-XXXX] sont
+// donc préservés.
+const REACTIONS_EMOJI = {
+  like: '👍', heart: '❤️', love: '❤️', laugh: '😂', smile: '😊',
+  surprised: '😮', surprise: '😮', wow: '😮', sad: '😢', cry: '😢',
+  angry: '😠', mad: '😠', thumbsup: '👍', thumbsdown: '👎',
+  dislike: '👎', checkmark: '✅', check: '✅', question: '❓',
+  fire: '🔥', clap: '👏', '100': '💯', celebrate: '🎉', party: '🎉',
+};
+function convertirReactions(texte) {
+  if (!texte) return texte;
+  return String(texte).replace(/\[([a-z0-9]+)\]/gi, (m, mot) => {
+    const e = REACTIONS_EMOJI[mot.toLowerCase()];
+    return e ? e : m;
+  });
+}
+
+// Nettoie le corps : retire les citations de réponse et les mentions "envoyé depuis".
+// NB : on NE coupe PLUS la signature du client (on la conserve, juste bien formatée).
+function nettoyerCorps(texte) {
+  if (!texte) return '';
+  texte = convertirReactions(texte); // réactions Outlook ([like]…) -> emoji
+  const marqueurs = [
+    /^-{2,}\s*Message d'origine\s*-{2,}/mi,
+    /^_{5,}$/m,
+    /^De\s*:.*\nEnvoyé\s*:/mi,
+    /^On .+ wrote:$/mi,
+    /^Le .+ a écrit\s*:$/mi,
+    /^Envoyé de mon /mi,
+    /^Envoyé depuis mon /mi,
+    /^Enviado desde mi /mi,
+    /^Sent from my /mi,
+    /^Obtenez Outlook pour /mi,
+    /^Get Outlook for /mi,
+    /^Télécharg(er|ez) Outlook pour /mi,
+  ];
+  let out = texte;
+  for (const re of marqueurs) {
+    const m = out.match(re);
+    if (m && m.index !== undefined) out = out.slice(0, m.index);
+  }
+  out = out.replace(/(\n>.*)+\s*$/g, '');
+  // Retire les placeholders d'images inline "[cid:...]" ou "cid:..." (captures
+  // collées dans le mail) qui restent parfois dans le texte, même en texte brut.
+  out = out.replace(/\[?cid:[^\]\s>]+\]?/gi, '');
+  // Retire les placeholders d'images EXTERNES "[https://....png]" laissés par le
+  // texte brut (ex. signatures Letsignit) : ces images sont désormais affichées
+  // comme de vraies images dans le message, le placeholder texte est redondant.
+  out = out.replace(/\[\s*https?:\/\/[^\]\s]+\.(?:png|jpe?g|gif|webp|bmp)(?:\?[^\]\s]*)?\s*\]/gi, '');
+  out = out.replace(/\[\s*https?:\/\/[^\]\s]*(?:letsignit|signature|effects|generated)[^\]\s]*\s*\]/gi, '');
+  // Compacte les lignes vides multiples et les espaces en début de ligne laissés
+  // après le retrait des [cid:...].
+  out = out.replace(/^[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n');
+  return out.trim().slice(0, 20000);
+}
+
+// ---- Upload d'une pièce jointe dans Supabase Storage + ligne ticket_fichiers ----
+async function uploadAttachment(env, att, ticketId, messageId) {
+  const cleanName = (att.filename || 'fichier').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `${STORAGE_PREFIX}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${cleanName}`;
+  // Upload binaire via l'API Storage (service key)
+  const up = await fetch(
+    `${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURI(path)}`,
+    {
+      method: 'POST',
+      headers: {
+        apikey: env.SUPABASE_SERVICE_KEY,
+        ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }),
+        'Content-Type': att.mime || 'application/octet-stream',
+        'x-upsert': 'true',
+      },
+      body: att.bytes,
+    }
+  );
+  if (!up.ok) return false;
+  const fileUrl = `${env.SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURI(path)}`;
+  // Ligne dans ticket_fichiers (mêmes colonnes que le portail : file_name, file_url, uploaded_by)
+  await sb(env, 'ticket_fichiers', {
+    method: 'POST',
+    body: JSON.stringify({
+      ticket_id: ticketId,
+      message_id: messageId || null,
+      file_name: att.filename || cleanName,
+      file_url: fileUrl,
+      uploaded_by: 'client',
+    }),
+  });
+  return true;
+}
+
+// Détermine si une pièce jointe est un logo de signature à ignorer :
+// image INLINE de très petite taille (< 8 Ko), typique des logos/icônes de
+// signature (réseaux sociaux, bannières). Les captures d'écran collées par les
+// clients sont conservées et affichées dans le message.
+function estLogoSignature(att) {
+  if (!att) return false;
+  const SEUIL = 8 * 1024; // 8 Ko — les logos de signature sont minuscules
+  const estImage = (att.mime && /^image\//i.test(att.mime)) ||
+                   (att.filename && /\.(png|gif|jpe?g|bmp|webp|svg)$/i.test(att.filename));
+  if (!att.inline || !estImage) return false;
+  // Les SVG et GIF de signature sont presque toujours des logos décoratifs
+  const estDecoratif = (att.mime && /image\/(svg|gif)/i.test(att.mime)) ||
+                       (att.filename && /\.(svg|gif)$/i.test(att.filename));
+  const petite = att.bytes && att.bytes.length < SEUIL;
+  return petite || estDecoratif;
+}
+
+// Image inline "de contenu" : une image intégrée au corps (inline) qui n'est
+// PAS un simple logo de signature — typiquement une capture d'écran du client.
+function estImageContenu(att) {
+  if (!att || !att.inline) return false;
+  const estImage = (att.mime && /^image\//i.test(att.mime)) ||
+                   (att.filename && /\.(png|jpe?g|bmp|webp)$/i.test(att.filename));
+  return estImage && !estLogoSignature(att);
+}
+
+async function uploadAllAttachments(env, attachments, ticketId, messageId) {
+  for (const att of attachments) {
+    // On saute les logos de signature (petites images inline décoratives)
+    if (estLogoSignature(att)) continue;
+    // On saute les images inline de contenu DÉJÀ uploadées (intégrées au body_html)
+    if (att.__uploadedUrl) continue;
+    try { await uploadAttachment(env, att, ticketId, messageId); }
+    catch (e) { /* un échec ne bloque pas les autres */ }
+  }
+}
+
+// Upload une image (déjà en octets) dans Storage et renvoie son URL publique.
+// Utilisé pour les captures d'écran collées inline, afin de les afficher
+// directement dans le corps du message (body_html).
+async function uploadImageInline(env, att, ticketId) {
+  const cleanName = (att.filename || 'image.png').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `${STORAGE_PREFIX}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${cleanName}`;
+  const up = await fetch(
+    `${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURI(path)}`,
+    {
+      method: 'POST',
+      headers: {
+        apikey: env.SUPABASE_SERVICE_KEY,
+        ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }),
+        'Content-Type': att.mime || 'image/png',
+        'x-upsert': 'true',
+      },
+      body: att.bytes,
+    }
+  );
+  if (!up.ok) return null;
+  const fileUrl = `${env.SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURI(path)}`;
+  // On crée aussi la ligne ticket_fichiers (rattachée au message), pour cohérence
+  // avec le reste du portail et pour garder la capture téléchargeable.
+  try {
+    await sb(env, 'ticket_fichiers', {
+      method: 'POST',
+      body: JSON.stringify({
+        ticket_id: ticketId,
+        message_id: null, // rattaché après si besoin ; l'image s'affiche déjà dans le body_html
+        file_name: att.filename || cleanName,
+        file_url: fileUrl,
+        uploaded_by: 'client',
+      }),
+    });
+  } catch (e) { /* non bloquant */ }
+  return fileUrl;
+}
+
+// Construit le HTML du message : le texte, suivi des captures d'écran collées
+// inline par le client, uploadées dans Storage. Retourne null si aucune image
+// de contenu (dans ce cas on garde l'affichage texte simple).
+// NOTE : les images uploadées sont marquées (__uploadedUrl) pour ne pas être
+// ré-uploadées ensuite par uploadAllAttachments.
+// Extrait les URL d'images EXTERNES (https://...) présentes dans le HTML de
+// l'email (balises <img src="https://...">). Ce sont typiquement des captures
+// hébergées sur un serveur (ex. Letsignit) que le texte brut réduit à
+// "[https://...png]". On les récupère pour les afficher comme vraies images.
+function extraireImagesExternes(html) {
+  if (!html) return [];
+  const urls = [];
+  const re = /<img\b[^>]*\bsrc\s*=\s*["']?(https?:\/\/[^"'>\s]+)["']?[^>]*>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    let u = m[1].trim();
+    // Décodage minimal des entités dans l'URL
+    u = u.replace(/&amp;/gi, '&');
+    // On ne garde que ce qui ressemble à une image
+    if (/\.(png|jpe?g|gif|webp|bmp)(\?|#|$)/i.test(u) || /image|logo|signature|effects|generated/i.test(u)) {
+      if (!urls.includes(u)) urls.push(u);
+    }
+  }
+  return urls;
+}
+
+// Nettoyage HTML minimal et sûr côté Worker (le rendu final passe de toute
+// façon par DOMPurify côté React). On retire le dangereux évident : scripts,
+// styles, balises <head>, commentaires conditionnels et gestionnaires on*.
+function nettoyerHtmlSource(html) {
+  if (!html) return '';
+  let h = html;
+  h = h.replace(/<!--[\s\S]*?-->/g, ' ');
+  h = h.replace(/<script[\s\S]*?<\/script>/gi, ' ');
+  h = h.replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  h = h.replace(/<\/?(?:html|head|body|meta|title|link|base)\b[^>]*>/gi, ' ');
+  // Retire les gestionnaires d'événements inline (onclick, onload, …).
+  h = h.replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+  // Neutralise les src/href en javascript:
+  h = h.replace(/(src|href)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1="#"');
+  return h;
+}
+
+// Remplace, dans le HTML d'origine, chaque <img src="cid:XXX"> par l'image
+// correspondante uploadée dans Storage (à sa position exacte). Les images
+// inline dont on a l'URL uploadée sont ainsi affichées là où le client les a
+// placées, au lieu d'être empilées en bas.
+function remplacerCidDansHtml(html, mapCidUrl) {
+  if (!html) return html;
+  return html.replace(
+    /<img\b([^>]*?)\bsrc\s*=\s*(["']?)cid:([^"'>\s]+)\2([^>]*)>/gi,
+    (balise, avant, quote, cidBrut, apres) => {
+      const cid = decodeURIComponent(cidBrut).replace(/^<|>$/g, '').trim();
+      const url = mapCidUrl[cid];
+      if (!url) return balise; // pas d'URL trouvée : on laisse tel quel
+      // On reconstruit une balise <img> propre pointant vers l'URL Storage.
+      return `<img src="${url}" alt="Image" style="max-width:100%;height:auto;border:1px solid #E2E2EA;border-radius:6px;" />`;
+    }
+  );
+}
+
+async function construireBodyHtml(env, corps, attachments, ticketId, htmlSource) {
+  // 1) On uploade toutes les images inline "de contenu" et on construit une
+  //    correspondance Content-ID -> URL Storage.
+  const images = (attachments || []).filter(estImageContenu);
+  const mapCidUrl = {};
+  const urlsSansCid = []; // images inline sans Content-ID exploitable
+  for (const img of images) {
+    try {
+      const url = await uploadImageInline(env, img, ticketId);
+      if (url) {
+        img.__uploadedUrl = url;
+        if (img.cid) mapCidUrl[img.cid] = url;
+        else urlsSansCid.push(url);
+      }
+    } catch (e) { /* on ignore cette image en cas d'échec */ }
+  }
+
+  const htmlPropre = nettoyerHtmlSource(htmlSource);
+
+  // 2) CAS PRINCIPAL : on a le HTML d'origine du mail -> on le conserve et on
+  //    replace les images inline (cid:) à leur position exacte.
+  if (htmlPropre && htmlPropre.trim()) {
+    let out = remplacerCidDansHtml(htmlPropre, mapCidUrl);
+    // Images inline sans cid identifiable : on ne peut pas les repositionner,
+    // on les ajoute à la fin pour ne pas les perdre.
+    if (urlsSansCid.length > 0) {
+      out += urlsSansCid.map(u =>
+        `<div style="margin-top:10px;"><img src="${u}" alt="Image" style="max-width:100%;border:1px solid #E2E2EA;border-radius:6px;" /></div>`
+      ).join('');
+    }
+    return out;
+  }
+
+  // 3) REPLI : pas de HTML source (mail texte seul). On garde l'ancien
+  //    comportement : texte converti en HTML + images inline + images externes,
+  //    empilées à la suite (faute de positions connues).
+  const externes = extraireImagesExternes(htmlSource);
+  const toutes = Object.values(mapCidUrl).concat(urlsSansCid).concat(externes);
+  if (toutes.length === 0) return null;
+  const imgsHtml = toutes.map(u =>
+    `<div style="margin-top:10px;"><img src="${u}" alt="Image" style="max-width:100%;border:1px solid #E2E2EA;border-radius:6px;" /></div>`
+  ).join('');
+  return textToHtml(corps || '') + imgsHtml;
+}
+
+/* =========================================================================
+   NINJAONE — Réception des rapports PDF par email
+   ========================================================================= */
+
+// Normalise un nom d'hôtel pour comparaison tolérante :
+// minuscules, sans accents, sans ponctuation, espaces compactés.
+function normaliserNom(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire les accents
+    .replace(/[^a-z0-9]+/g, ' ')                       // ponctuation -> espace
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Tente d'identifier l'hôtel à partir d'un texte (objet du mail + nom du PDF).
+// Retourne { hotelId, hint } — hotelId peut être null si aucune correspondance.
+async function identifierHotelNinjaOne(env, texteRecherche) {
+  const cible = normaliserNom(texteRecherche);
+  if (!cible) return { hotelId: null, hint: texteRecherche || '' };
+
+  // On charge aussi ninjaone_nom (identifiant explicite prioritaire)
+  const hotels = await sb(env, 'hotels?select=id,name,ninjaone_nom').then(r => r.json()).catch(() => []);
+  if (!Array.isArray(hotels) || hotels.length === 0) {
+    return { hotelId: null, hint: texteRecherche || '' };
+  }
+
+  // 0) PRIORITÉ ABSOLUE : correspondance sur ninjaone_nom (identifiant explicite).
+  //    Si le nom NinjaOne configuré est contenu dans le texte du rapport, c'est
+  //    une correspondance fiable, on la prend immédiatement.
+  let meilleurNj = null;
+  for (const h of hotels) {
+    if (!h.ninjaone_nom) continue;
+    const nj = normaliserNom(h.ninjaone_nom);
+    if (!nj) continue;
+    if (nj === cible || cible.includes(nj) || nj.includes(cible)) {
+      if (!meilleurNj || nj.length > normaliserNom(meilleurNj.ninjaone_nom).length) meilleurNj = h;
+    }
+  }
+  if (meilleurNj) return { hotelId: meilleurNj.id, hint: meilleurNj.name };
+
+  // 1) Correspondance exacte sur le nom normalisé
+  for (const h of hotels) {
+    const n = normaliserNom(h.name);
+    if (n && n === cible) return { hotelId: h.id, hint: h.name };
+  }
+  // 2) Le nom de l'hôtel est CONTENU dans le texte cible (ou inversement),
+  //    en exigeant au moins 4 caractères pour éviter les faux positifs.
+  let meilleur = null;
+  for (const h of hotels) {
+    const n = normaliserNom(h.name);
+    if (n.length >= 4 && (cible.includes(n) || n.includes(cible))) {
+      if (!meilleur || n.length > normaliserNom(meilleur.name).length) meilleur = h;
+    }
+  }
+  if (meilleur) return { hotelId: meilleur.id, hint: meilleur.name };
+
+  return { hotelId: null, hint: texteRecherche || '' };
+}
+
+// Upload un PDF NinjaOne dans Storage et crée la ligne ninjaone_rapports.
+async function enregistrerRapportNinjaOne(env, att, titre, hotelId, hint) {
+  const cleanName = (att.filename || 'rapport.pdf').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `ninjaone/${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${cleanName}`;
+
+  const up = await fetch(
+    `${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURI(path)}`,
+    {
+      method: 'POST',
+      headers: {
+        apikey: env.SUPABASE_SERVICE_KEY,
+        ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }),
+        'Content-Type': att.mime || 'application/pdf',
+        'x-upsert': 'true',
+      },
+      body: att.bytes,
+    }
+  );
+  if (!up.ok) return false;
+
+  const fileUrl = `${env.SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURI(path)}`;
+  await sb(env, 'ninjaone_rapports', {
+    method: 'POST',
+    body: JSON.stringify({
+      hotel_id: hotelId,
+      titre: titre || att.filename || 'Rapport NinjaOne',
+      file_name: att.filename || cleanName,
+      file_url: fileUrl,
+      hotel_hint: hint || null,
+      a_rattacher: hotelId === null,
+    }),
+  });
+
+  // Purge : on ne conserve que le rapport le plus récent pour ce couple
+  // (hôtel + titre). Uniquement pour les rapports RATTACHÉS à un hôtel — les
+  // rapports "à rattacher" (hotel_id null) sont laissés intacts.
+  try {
+    await purgerAnciensRapports(env, hotelId, titre || att.filename || 'Rapport NinjaOne');
+  } catch (e) { /* la purge ne doit jamais bloquer l'enregistrement */ }
+
+  return true;
+}
+
+// Garde le(s) N rapport(s) le(s) plus récent(s) pour un (hotel_id, titre) donné et
+// supprime les plus anciens (ligne en base + fichier dans Storage).
+const RAPPORTS_A_CONSERVER = 1;
+
+// Clé "d'intitulé récurrent" : on retire de la comparaison tout ce qui change
+// d'un jour à l'autre (date AAAA-MM-JJ, heure type 083107, tokens THIS_MONTH…,
+// suffixe -1/-2, extension .pdf). Ainsi deux rapports du même modèle reçus des
+// jours différents ont la MÊME clé → seul le plus récent est conservé.
+function cleRapportTitre(titre) {
+  let s = String(titre || '');
+  s = s.replace(/\.pdf$/i, '');
+  s = s.replace(/\b\d{4}-\d{2}-\d{2}\b/g, ' ');            // dates AAAA-MM-JJ
+  s = s.replace(/\b\d{2}[/.]\d{2}[/.]\d{2,4}\b/g, ' ');    // dates JJ/MM/AAAA
+  s = s.replace(/\b\d{5,}\b/g, ' ');                        // horodatage type 083107
+  s = s.replace(/\b(THIS|LAST|NEXT)_(MONTH|WEEK|DAY|YEAR)\b/gi, ' '); // tokens NinjaOne
+  s = s.replace(/[-_\s]+\d+\s*$/, '');                      // suffixe " -2" en fin
+  s = s.replace(/[\s\-_]+/g, ' ').trim().toLowerCase();     // normalise séparateurs/casse
+  return s;
+}
+
+async function purgerAnciensRapports(env, hotelId, titre) {
+  if (!hotelId) return; // on ne purge pas les rapports non rattachés
+  const cible = cleRapportTitre(titre);
+  // On récupère TOUS les rapports rattachés à cet hôtel, puis on regroupe par
+  // clé d'intitulé (indépendante de la date/heure) côté Worker.
+  const rows = await sb(env,
+    `ninjaone_rapports?hotel_id=eq.${hotelId}&select=id,titre,file_url&order=received_at.desc,id.desc`
+  ).then(r => r.json()).catch(() => []);
+  if (!Array.isArray(rows)) return;
+
+  const memeRapport = rows.filter(r => cleRapportTitre(r.titre) === cible);
+  if (memeRapport.length <= RAPPORTS_A_CONSERVER) return;
+
+  const aSupprimer = memeRapport.slice(RAPPORTS_A_CONSERVER); // au-delà des N plus récents
+  for (const row of aSupprimer) {
+    // 1) Supprime le fichier dans Storage (best effort) à partir de son URL publique.
+    try {
+      const marqueur = `/object/public/${STORAGE_BUCKET}/`;
+      const idx = (row.file_url || '').indexOf(marqueur);
+      if (idx !== -1) {
+        const objPath = row.file_url.slice(idx + marqueur.length);
+        await fetch(
+          `${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${objPath}`,
+          { method: 'DELETE', headers: { apikey: env.SUPABASE_SERVICE_KEY, ...(String(env.SUPABASE_SERVICE_KEY || "").startsWith("sb_") ? {} : { Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` }) } }
+        );
+      }
+    } catch (e) { /* non bloquant */ }
+    // 2) Supprime la ligne en base.
+    try {
+      await sb(env, `ninjaone_rapports?id=eq.${row.id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
+    } catch (e) { /* non bloquant */ }
+  }
+}
+
+async function envoyerAccuse(env, dest, reference, sujet) {
+  // Reply-To par défaut = support@dsihotel.com (via env.MS_REPLY_TO), pour que
+  // la réponse du client arrive sur Cloudflare Email Routing et alimente le fil.
+  await sendViaGraph(env, {
+    fromName: 'Support DSI Hotel',
+    to: [dest],
+    subject: `[${reference}] ${sujet}`,
+    text: `Bonjour,
+
+Nous avons bien reçu votre demande, enregistrée sous la référence ${reference}.
+
+Notre équipe la traitera dans les meilleurs délais. Pour toute information complémentaire, répondez directement à cet email en conservant la référence dans l'objet.
+
+Cordialement,
+Le support DSI Hotel
+support@dsihotel.com — www.dsihotel.com`,
+  });
+}
+
+/* =========================================================================
+   COPIE ÉQUIPE — retrait de l'historique cité
+   Les clients répondent en gardant tout le fil (« De : … Envoyé : … »).
+   Le portail garde le message complet ; dans la copie envoyée à
+   team@dsihotel.fr on ne montre que le NOUVEAU message.
+   ========================================================================= */
+function couperHistoriqueHtml(html) {
+  if (!html) return { html: '', coupe: false };
+  const positions = [];
+  const chercher = (re) => { const m = re.exec(html); if (m) positions.push(m.index); };
+  // Outlook web / nouvel Outlook
+  chercher(/<div[^>]*\bid\s*=\s*["']?(?:divRplyFwdMsg|appendonsend)\b/i);
+  // Gmail, Thunderbird, Apple Mail, Yahoo
+  chercher(/<div[^>]*\bclass\s*=\s*["']?[^"'>]*\b(?:gmail_quote|moz-cite-prefix|yahoo_quoted)\b/i);
+  chercher(/<blockquote[^>]*\btype\s*=\s*["']?cite/i);
+  // Séparateurs texte classiques
+  chercher(/-{3,}\s*(?:Original Message|Message d(?:'|&#39;|&#x27;|’)origine|Mensaje original)\s*-{3,}/i);
+  // Outlook bureau : <div style="border:none;border-top:solid #E1E1E1 ..."> puis « De : »
+  // ou <hr> puis « De : / From: » à proximité.
+  const reEntete = /<(?:div[^>]*border-top\s*:\s*solid[^>]*|hr\b[^>]*)>/gi;
+  let m;
+  while ((m = reEntete.exec(html)) !== null) {
+    const suite = html.slice(m.index, m.index + 1500).replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/gi, ' ').replace(/&eacute;|&#233;|&#xe9;/gi, 'é');
+    if (/\b(?:De|From|Von|Da)\s*:\s*\S[\s\S]{0,400}?\b(?:Envoy[ée]|Sent|Date|Gesendet|Inviato)\s*:/i.test(suite)) {
+      positions.push(m.index);
+      break;
+    }
+  }
+  if (positions.length === 0) return { html, coupe: false };
+  const pos = Math.min(...positions);
+  const avant = html.slice(0, pos);
+  // On ne coupe pas si le nouveau message serait vide (transfert sans texte…)
+  const texteAvant = avant.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim();
+  if (texteAvant.length < 3) return { html, coupe: false };
+  return { html: avant, coupe: true };
+}
+
+function couperHistoriqueTexte(texte) {
+  if (!texte) return { texte: '', coupe: false };
+  const lignes = String(texte).split(/\r?\n/);
+  let coupe = -1;
+  for (let i = 0; i < lignes.length && coupe < 0; i++) {
+    const l = lignes[i].trim();
+    if (/^-{3,}\s*(Original Message|Message d['’]origine|Mensaje original)\s*-{3,}$/i.test(l) || /^_{10,}$/.test(l)) { coupe = i; break; }
+    if (/^(Le|On)\s.{4,200}\s(a écrit|wrote)\s*:$/i.test(l)) { coupe = i; break; }
+    if (/^(De|From)\s*:\s*\S/i.test(l)) {
+      const suite = lignes.slice(i + 1, i + 5).join('\n');
+      if (/^\s*(Envoy[ée]|Sent|Date)\s*:/im.test(suite)) { coupe = i; break; }
+    }
+  }
+  if (coupe <= 0) return { texte, coupe: false };
+  const avant = lignes.slice(0, coupe).join('\n').trim();
+  if (avant.length < 3) return { texte, coupe: false };
+  return { texte: avant, coupe: true };
+}
+
+async function copierVersEquipe(env, from, fromNom, sujet, corps, reference, attachments, destinataires, cc, htmlSource) {
+  const pj = attachments || [];
+
+  // Corps HTML d'origine du client (mise en forme, liens, captures à leur place),
+  // sans l'historique cité. Repli sur le texte si le mail n'a pas de HTML.
+  const htmlNettoye = nettoyerHtmlSource(htmlSource || '');
+  const hc = htmlNettoye.trim() ? couperHistoriqueHtml(htmlNettoye) : { html: '', coupe: false };
+  const tc = couperHistoriqueTexte(corps);
+  const corpsHtmlClient = hc.html.trim() ? hc.html : '';
+  const corpsTexte = tc.texte;
+  const historiqueCoupe = corpsHtmlClient ? hc.coupe : tc.coupe;
+  // Content-ID encore référencés dans le corps affiché -> images intégrées.
+  const cidsUtilises = new Set();
+  if (corpsHtmlClient) {
+    const reCid = /\bsrc\s*=\s*["']?cid:([^"'>\s]+)/gi;
+    let mc;
+    while ((mc = reCid.exec(corpsHtmlClient)) !== null) {
+      try { cidsUtilises.add(decodeURIComponent(mc[1]).replace(/^<|>$/g, '').trim()); } catch (e) { cidsUtilises.add(mc[1]); }
+    }
+  }
+  // Resend plafonne le poids total d'un email à ~40 Mo. On garde une marge de sécurité.
+  const LIMITE = 30 * 1024 * 1024; // 30 Mo d'octets bruts (≈ 40 Mo une fois en base64)
+  const joints = [];
+  let total = 0;
+  let ignores = 0;
+  let nbFichiers = 0;
+  for (const att of pj) {
+    if (!att.bytes || att.bytes.length === 0) continue;
+    const integree = !!(att.cid && cidsUtilises.has(att.cid));
+    // Image inline qui n'est plus référencée (elle était dans l'historique coupé,
+    // ou c'est un logo de signature) : on ne la joint pas.
+    if (!integree && att.inline && att.cid && corpsHtmlClient && historiqueCoupe) continue;
+    if (!integree && estLogoSignature(att)) continue; // on ne joint pas les logos de signature
+    if (total + att.bytes.length > LIMITE) { ignores++; continue; }
+    total += att.bytes.length;
+    const j = {
+      filename: att.filename || 'piece-jointe',
+      content: bytesToBase64(att.bytes),
+    };
+    if (integree) { j.contentId = att.cid; j.contentType = att.mime; }
+    else nbFichiers++;
+    joints.push(j);
+  }
+
+  let mentionPJ = '';
+  if (nbFichiers > 0 || ignores > 0) {
+    mentionPJ = `\n\n${nbFichiers} pièce(s) jointe(s) transmise(s) avec cet email.`;
+    if (ignores > 0) {
+      mentionPJ += `\n(${ignores} pièce(s) trop volumineuse(s) non jointe(s) — consultez le portail DSI Hotel.)`;
+    }
+  }
+
+  const lienTicket = `https://portail.dsihotel.com/?ticket=${encodeURIComponent(reference)}`;
+
+  // Rappel des destinataires d'origine du message client (À / Cc), pour que
+  // l'équipe voie à qui le client avait écrit — utile quand plusieurs personnes
+  // étaient en destinataire ou en copie.
+  let origineTexte = '';
+  let origineHtml = '';
+  if (destinataires || cc) {
+    origineTexte = '\n\n— Message client adressé à —';
+    if (destinataires) origineTexte += `\nÀ : ${destinataires}`;
+    if (cc) origineTexte += `\nCc : ${cc}`;
+    origineHtml =
+      `<div style="margin-top:14px;padding:10px 12px;background:#F6F6FA;border:1px solid #E2E2E8;border-radius:6px;font-size:12px;color:#555;">` +
+      `<div style="font-weight:bold;color:#777;margin-bottom:4px;">Message client adressé à</div>` +
+      (destinataires ? `<div>À : ${escapeHtml(destinataires)}</div>` : '') +
+      (cc ? `<div>Cc : ${escapeHtml(cc)}</div>` : '') +
+      `</div>`;
+  }
+
+  // Outlook écrase le "from.name" pour les expéditeurs du même tenant M365
+  // (support@dsihotel.fr résolu via l'annuaire -> affiché "support"). Le seul
+  // champ qu'Outlook ne réécrit pas est l'OBJET : on y préfixe donc le nom du
+  // client pour qu'il soit visible dans la liste de la boîte équipe sans ouvrir.
+  // On retire le domaine (présent dans fromNom au format "Nom — domaine") pour
+  // garder un objet lisible ; le [reference] reste intact -> threading préservé.
+  let prefixeNom = String(fromNom || '').split(' — ')[0].trim();
+  // Si fromNom est retombé sur une adresse email (client non identifié), on la
+  // garde telle quelle comme préfixe : on voit au moins de qui vient le message.
+  const prefixe = prefixeNom ? `${prefixeNom} — ` : '';
+
+  const payload = {
+    fromName: fromNom,
+    to: ['team@dsihotel.fr'],
+    // Reply-To = client + support@dsihotel.com : répondre à cet email interne
+    // répond au client ET envoie une copie à l'inbound support, qui la ré-ingère
+    // et la rattache au ticket du portail. Sans cette copie, les réponses faites
+    // depuis Outlook/mobile n'alimentent pas le fil.
+    replyTo: `${from}, support@dsihotel.com`,
+    subject: `${prefixe}[${reference}] ${sujet}`,
+    text: `${corpsTexte}${historiqueCoupe ? '\n\n[Historique de la conversation masqué — voir le ticket sur le portail]' : ''}${mentionPJ}${origineTexte}
+
+—————————————————————
+👉 Accéder au ticket ${reference} : ${lienTicket}
+
+Répondre à cet email répond directement au client (${from}).`,
+    html:
+      `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333;line-height:1.6;">` +
+      (corpsHtmlClient ? `<div>${corpsHtmlClient}</div>` : textToHtml(corpsTexte)) +
+      (historiqueCoupe ? `<p style="margin-top:14px;color:#999;font-size:12px;font-style:italic;">Historique de la conversation masqué — <a href="${lienTicket}" style="color:#999;">voir le ticket complet sur le portail</a>.</p>` : '') +
+      (mentionPJ ? `<p style="color:#666;font-size:13px;">${textToHtml(mentionPJ.trim())}</p>` : '') +
+      origineHtml +
+      `<div style="margin-top:22px;padding-top:16px;border-top:1px solid #E2E2E8;">` +
+        `<a href="${lienTicket}" style="display:inline-block;background:#C9A84C;color:#111;text-decoration:none;font-weight:bold;font-size:14px;padding:10px 20px;border-radius:6px;">Accéder au ticket ${escapeHtml(reference)}</a>` +
+        `<p style="font-size:12px;color:#999;margin-top:12px;">Répondre à cet email répond directement au client (${escapeHtml(from)}).</p>` +
+      `</div></div>`,
+  };
+  if (joints.length > 0) payload.attachments = joints;
+
+  await sendViaGraph(env, payload);
+}
+
+// Nettoie une adresse email des préfixes techniques de validation/rewriting
+// ajoutés par les passerelles (BATV, SRS, bounces...). Extrait l'adresse réelle.
+// Exemples :
+//   prvs=367653d786=nathalie.tudes@x.com   -> nathalie.tudes@x.com
+//   btv1=ABC=jean@x.com                     -> jean@x.com
+//   msprvs1=xxx=marie@x.com                 -> marie@x.com
+//   support+srs=m/qli=f4=hotel.com=user@dsihotel.fr -> user@dsihotel.fr (garde la vraie boîte)
+//   bounces+12345-abc=user@x.com            -> user@x.com
+function nettoyerEmail(adresse) {
+  if (!adresse) return adresse;
+  let a = String(adresse).trim();
+  // On isole d'abord l'adresse si elle est entre chevrons "Nom <a@b.com>"
+  const chev = a.match(/<([^>]+)>/);
+  if (chev) a = chev[1].trim();
+  a = a.toLowerCase();
+
+  // Cas BATV/PRVS/etc : "prvs=TAG=vraie@adresse.com" -> on prend ce qui suit le dernier "="
+  // qui ressemble à une adresse email complète.
+  if (/^(prvs|btv1?|msprvs1|bv1)=/.test(a) || /=[^@=]+@[^@=]+\.[^@=]+$/.test(a)) {
+    // Cherche la dernière sous-chaîne qui est une adresse email valide
+    const m = a.match(/([^=\s<>]+@[^=\s<>]+\.[^=\s<>]+)\s*$/);
+    if (m) return m[1];
+  }
+  // Cas bounces+... / bounce-... : "bounces+123-abc=user@x.com"
+  const bounce = a.match(/^bounce[s]?[+\-][^=]*=([^@\s]+@[^@\s]+\.[^@\s]+)$/);
+  if (bounce) return bounce[1];
+
+  return a;
+}
+
+export default {
+  async email(message, env, ctx) {
+    const bytes = await streamToBytes(message.raw);
+
+    // En-tête From brut (contient le VRAI expéditeur, nom + adresse).
+    // Ex. : '"Delacroix, Louis" <Louis.Delacroix@ihg.com>'.
+    const rawFrom = decodeMimeHeader(message.headers.get('from') || '');
+
+    // Adresse de l'expéditeur.
+    // IMPORTANT : on privilégie l'adresse de l'EN-TÊTE From:, pas message.from.
+    // message.from est l'adresse d'enveloppe (MAIL FROM) : lorsqu'un email est
+    // relayé/redirigé via Cloudflare Email Routing (adresse @dsihotel.fr), cette
+    // enveloppe est réécrite (SRS) avec le domaine de renvoi @dsihotel.fr, ce qui
+    // faisait apparaître de faux expéditeurs "prenom.nom@dsihotel.fr" à la place
+    // du vrai (ex. @ihg.com). L'en-tête From:, lui, conserve le vrai expéditeur.
+    let fromHeaderEmail = '';
+    const mAddr = rawFrom.match(/<([^>]+@[^>]+)>/) || rawFrom.match(/([^\s<>]+@[^\s<>]+\.[^\s<>]+)/);
+    if (mAddr) fromHeaderEmail = nettoyerEmail(mAddr[1].toLowerCase().trim());
+    const fromEnvelope = nettoyerEmail((message.from || '').toLowerCase().trim());
+    // On garde l'adresse de l'en-tête si elle est valide, sinon repli sur l'enveloppe.
+    const emailValide = (a) => a && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a);
+    const from = emailValide(fromHeaderEmail) ? fromHeaderEmail : fromEnvelope;
+
+    // Nom affiché de l'expéditeur, extrait de l'en-tête From brut.
+    // Robuste aux variantes réelles :
+    //   '"Cornet Ludivine" <l.cornet@metropole.ch>'  -> 'Cornet Ludivine'
+    //   'Delacroix, Louis <louis@ihg.com>'           -> 'Delacroix, Louis'
+    //   '<jean.dupont@gmail.com>' / 'jean@gmail.com'  -> 'Jean Dupont' (déduit du local-part)
+    // On NE retombe JAMAIS sur l'adresse d'enveloppe (message.from), qui peut être
+    // réécrite en support@dsihotel.* par Cloudflare Email Routing.
+    let fromNom = '';
+    // 1) Partie avant les chevrons <...> = nom affiché candidat (si présent).
+    const posChevron = rawFrom.indexOf('<');
+    if (posChevron > 0) {
+      fromNom = rawFrom.slice(0, posChevron);
+    }
+    // 2) Nettoyage : guillemets encadrants, apostrophes, espaces, restes MIME.
+    fromNom = String(fromNom)
+      .replace(/["<>\r\n]/g, '')
+      .replace(/^\s*'+|'+\s*$/g, '')
+      .trim();
+    // 3) Un "nom" qui est en réalité une adresse email n'est pas un nom : on l'ignore.
+    if (/@/.test(fromNom)) fromNom = '';
+    // 3bis) Un "nom" générique (support, contact, noreply...) n'identifie pas le
+    //    client : on l'ignore pour ne pas afficher "support" dans la boîte équipe.
+    //    Ce cas survient surtout quand l'en-tête From n'a pas de vrai nom et qu'on
+    //    déduisait le nom d'un local-part générique (support@, contact@, ...).
+    const NOMS_GENERIQUES = /^(support|soporte|contact|contacto|noreply|no-reply|info|admin|postmaster|mailer|newsletter|notification|notifications|hello|bonjour|team|equipe|service|sav|hotline|helpdesk)$/i;
+    if (fromNom && NOMS_GENERIQUES.test(fromNom.replace(/\s+/g, ''))) fromNom = '';
+    // 4) Repli : déduire un nom lisible du local-part de l'adresse expéditrice réelle
+    //    (ex. 'jean.dupont@gmail.com' -> 'Jean Dupont'). Jamais l'adresse complète,
+    //    jamais l'enveloppe. On rejette aussi les local-parts génériques.
+    if (!fromNom && from && /@/.test(from)) {
+      const local = from.split('@')[0] || '';
+      if (!NOMS_GENERIQUES.test(local)) {
+        const jolis = local
+          .split(/[._\-+]+/)
+          .filter(Boolean)
+          .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+          .join(' ')
+          .trim();
+        if (jolis) fromNom = jolis;
+      }
+    }
+    // 5) Mise en forme finale du nom affiché dans la boîte équipe :
+    //    - nom identifié      -> "Nicolas MARTIN — cp-paris.com"  (nom + domaine client)
+    //    - nom introuvable    -> "nicolas.martin@cp-paris.com"    (adresse complète)
+    const domaineClient = (from && from.includes('@')) ? from.split('@')[1] : '';
+    if (fromNom && domaineClient) {
+      fromNom = `${fromNom} — ${domaineClient}`;
+    } else if (!fromNom) {
+      fromNom = from;
+    }
+
+    const EXPEDITEURS_IGNORES = [
+      'team@dsihotel.fr',
+      'dsihotel2017.freshdesk.com',
+      'support@dsihotel.com',
+      'soporte@dsihotel.com',
+      // Adresse technique d'envoi Resend : ce sont NOS propres emails (formulaire
+      // de contact du portail) qui reviennent dans la boîte support. Le ticket a
+      // déjà été créé en base par le portail — ne pas en recréer un second, cassé
+      // (dont le contact_email serait cette adresse technique, injoignable).
+      'send.dsihotel.com',
+    ];
+    if (EXPEDITEURS_IGNORES.some(x => from.includes(x))) return;
+
+    // ---- Filtrage des expéditeurs internes @dsihotel.fr ----
+    // Le domaine @dsihotel.fr est AUSSI notre domaine d'envoi (accusés de
+    // réception, notifications, copies équipe). Pour éviter les boucles de
+    // tickets, on n'accepte QUE les adresses humaines explicitement listées
+    // ci-dessous ; toute autre adresse @dsihotel.fr (support@, team@, envois
+    // automatiques, adresses inconnues) est ignorée. Les expéditeurs EXTERNES
+    // (clients, hôtels, Gmail, etc.) ne sont pas concernés par ce filtre.
+    const EXPEDITEURS_INTERNES_AUTORISES = [
+      'pascal.sanglier@dsihotel.fr',
+      'ps@dsihotel.fr',
+      'jb@dsihotel.fr',
+      'jeremie.beal@dsihotel.fr',
+      'mp@dsihotel.fr',
+      'marc.pratlong@dsihotel.fr',
+      'dl@dsihotel.fr',
+      'ie@dsihotel.fr',
+      'as@dsihotel.fr',
+      'gj@dsihotel.fr',
+    ];
+    if (/@dsihotel\.fr$/i.test(from) && !EXPEDITEURS_INTERNES_AUTORISES.includes(from)) return;
+
+    // Extraction du sujet et des pièces jointes AVANT le filtre newsletter,
+    // car les rapports NinjaOne arrivent depuis noreply@rmmservice.com (qui
+    // serait sinon rejeté comme newsletter).
+    let sujet = (decodeMimeHeader(message.headers.get('subject')) || '(sans objet)').trim();
+    const extracted = extractFromBytes(bytes);
+    let corps = nettoyerCorps(extracted.corps);
+    const attachments = extracted.attachments || [];
+
+    // Détection TNEF (Outlook RTF) : une image collée a pu être perdue dans un
+    // winmail.dat non décodable. On ajoute un bandeau d'avertissement au corps
+    // pour que l'équipe support ne croie pas à une perte du portail.
+    const alerteTnef = detecterTnef(message, attachments);
+    if (alerteTnef) {
+      corps = (corps || '') + BANDEAU_TNEF;
+    }
+
+    // ---- INTERCEPTION PRIORITAIRE DES RAPPORTS NINJAONE ----
+    // Placée AVANT le filtre newsletter : NinjaOne envoie depuis une adresse
+    // "noreply@rmmservice.com" qui déclencherait le filtre.
+    {
+      const expNinja =
+        /@ninjaone\.com$/i.test(from) || /@ninjarmm\.com$/i.test(from) ||
+        /@rmmservice\.com$/i.test(from) || /ninja/i.test(from) || /rmmservice/i.test(from);
+      const aRapportNj = (attachments || []).some(a =>
+        a.filename && /^Rapport_/i.test(a.filename) && /\.pdf$/i.test(a.filename)
+      );
+      if (aRapportNj || expNinja) {
+        // On enregistre TOUS les PDF joints, pas seulement le premier.
+        const pdfs = (attachments || []).filter(a =>
+          (a.mime && a.mime.toLowerCase().includes('pdf')) ||
+          (a.filename && /\.pdf$/i.test(a.filename))
+        );
+        if (pdfs.length > 0) {
+          for (const pdf of pdfs) {
+            const texteRecherche = `${sujet || ''} ${pdf.filename || ''}`;
+            const { hotelId, hint } = await identifierHotelNinjaOne(env, texteRecherche);
+            // Titre distinct par PDF quand il y en a plusieurs (sujet + nom de
+            // fichier) pour que la purge n'efface pas les autres rapports du mail.
+            const titreRapport = pdfs.length > 1
+              ? `${sujet || 'Rapport NinjaOne'} \u2014 ${pdf.filename || ''}`.trim()
+              : (sujet || pdf.filename);
+            ctx.waitUntil(enregistrerRapportNinjaOne(env, pdf, titreRapport, hotelId, hint));
+          }
+          return;
+        }
+      }
+    }
+
+    // ---- EXPÉDITEURS AUTOMATIQUES AUTORISÉS ----
+    // Emails métier légitimes envoyés depuis une adresse "noreply" : sans cette
+    // liste, le filtre newsletter ci-dessous les supprime SILENCIEUSEMENT
+    // (ni ticket, ni copie équipe). Ex. : formulaires SOX Hilton (création de
+    // comptes), envoyés par noreply@hilton.com à support@dsihotel.com.
+    // Pour en ajouter un : mettre l'adresse exacte, en minuscules.
+    const EXPEDITEURS_AUTO_AUTORISES = [
+      'noreply@hilton.com',
+      // Support Oracle Hospitality (ICCP / Opera) — système de tickets Oracle
+      // Service Cloud (custhelp.com). Sans cette ligne, ses en-têtes automatiques
+      // déclenchent le filtre newsletter et le mail est ignoré.
+      'oracle_iccp_support@mailpi.custhelp.com',
+    ];
+    const estAutoAutorise = EXPEDITEURS_AUTO_AUTORISES.includes(from);
+
+    const listId = message.headers.get('list-id') || message.headers.get('list-unsubscribe') || '';
+    const autoSubmitted = (message.headers.get('auto-submitted') || '').toLowerCase();
+    const precedence = (message.headers.get('precedence') || '').toLowerCase();
+    const returnPath = (message.headers.get('return-path') || '').toLowerCase();
+    const estNewsletter = !estAutoAutorise && (
+      !!listId ||
+      autoSubmitted.includes('auto-generated') ||
+      autoSubmitted.includes('auto-replied') ||
+      precedence === 'bulk' || precedence === 'list' ||
+      /(^|[<@.])(no[-.]?reply|newsletter|mailing|bulletin|marketing|notification|digest|mailer|postmaster)/i.test(from) ||
+      /bounce|mailchimp|sendgrid|sendinblue|mailjet|checkcentral|amazonses|sparkpost|mandrill/i.test(from) ||
+      /bounce|checkcentral/i.test(returnPath));
+    if (estNewsletter) return;
+
+    // ---- INTERCEPTION DES RAPPORTS NINJAONE (bloc de secours, la détection
+    //      principale a lieu plus haut, avant le filtre newsletter) ----
+    // Détection PRINCIPALE : un PDF joint dont le nom commence par "Rapport_"
+    // (format des rapports NinjaOne). Très spécifique => pas de faux positif
+    // sur les tickets clients. On garde aussi la détection par expéditeur "ninja".
+    // Dans ces cas : PAS de ticket, on enregistre le PDF comme rapport, rattaché
+    // à l'hôtel identifié par le nom présent dans l'objet / le nom du PDF.
+    const aRapportSecours = (attachments || []).some(a =>
+      a.filename && /^Rapport_/i.test(a.filename) && /\.pdf$/i.test(a.filename)
+    );
+    const expediteurNinja =
+      /@ninjaone\.com$/i.test(from) ||
+      /@ninjarmm\.com$/i.test(from) ||
+      /@rmmservice\.com$/i.test(from) ||
+      /ninja/i.test(from) ||
+      /rmmservice/i.test(from);
+
+    if (aRapportSecours || expediteurNinja) {
+      // On enregistre TOUS les PDF joints, pas seulement le premier.
+      const pdfs = (attachments || []).filter(a =>
+        (a.mime && a.mime.toLowerCase().includes('pdf')) ||
+        (a.filename && /\.pdf$/i.test(a.filename))
+      );
+      // On n'intercepte QUE s'il y a effectivement au moins un PDF (évite de
+      // perdre un mail qui ne serait pas un vrai rapport).
+      if (pdfs.length > 0) {
+        for (const pdf of pdfs) {
+          const texteRecherche = `${sujet || ''} ${pdf.filename || ''}`;
+          const { hotelId, hint } = await identifierHotelNinjaOne(env, texteRecherche);
+          const titreRapport = pdfs.length > 1
+            ? `${sujet || 'Rapport NinjaOne'} \u2014 ${pdf.filename || ''}`.trim()
+            : (sujet || pdf.filename);
+          ctx.waitUntil(enregistrerRapportNinjaOne(env, pdf, titreRapport, hotelId, hint));
+        }
+        // Un rapport NinjaOne ne crée jamais de ticket : on s'arrête ici.
+        return;
+      }
+      // Expéditeur "ninja" mais sans PDF : on laisse suivre le flux normal
+      // (au cas où ce serait un autre type de message).
+    }
+
+    if (!corps) {
+      corps = attachments.length > 0
+        ? '(Message sans texte — voir les pièces jointes.)'
+        : '(Le message reçu ne contenait pas de texte lisible. Consultez la boîte support ou team pour le contenu original.)';
+    }
+
+    const messageId = message.headers.get('message-id') || null;
+    const cc = extraireCc(message);
+    const destinataires = extraireTo(message);
+
+    const inReplyTo = message.headers.get('in-reply-to') || '';
+    const references = message.headers.get('references') || '';
+    const refIds = [];
+    const idRe = /<[^>]+>/g;
+    let m;
+    while ((m = idRe.exec(inReplyTo + ' ' + references)) !== null) refIds.push(m[0]);
+
+    if (messageId) {
+      const vus = await sb(env,
+        `tickets?inbound_id=eq.${encodeURIComponent(messageId)}&select=id&limit=1`
+      ).then(r => r.json());
+      if (vus.length) return;
+      const vus2 = await sb(env,
+        `ticket_messages?email_message_id=eq.${encodeURIComponent(messageId)}&select=id&limit=1`
+      ).then(r => r.json());
+      if (vus2.length) return;
+    }
+
+    // Ajoute la réponse à un ticket existant, rouvre si besoin, et attache les PJ
+    async function ajouterAuTicket(ticket) {
+      // Capture(s) inline (cid:) + images externes (https) : intégrées au body_html
+      const bodyHtml = await construireBodyHtml(env, corps, attachments, ticket.id, extracted.html);
+      const ins = await sb(env, 'ticket_messages', {
+        method: 'POST',
+        headers: { Prefer: 'return=representation' },
+        body: JSON.stringify({
+          ticket_id: ticket.id,
+          sender_role: 'client',
+          sender_name: from,
+          body: corps,
+          body_html: bodyHtml,
+          email_message_id: messageId,
+          cc: cc,
+          destinataires: destinataires,
+        }),
+      });
+      let newMsgId = null;
+      try { const [row] = await ins.json(); newMsgId = row ? row.id : null; } catch (e) {}
+      await sb(env, `tickets?id=eq.${ticket.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(
+          ticket.status === 'closed'
+            ? { status: 'open', last_email_message_id: messageId }
+            : { last_email_message_id: messageId }
+        ),
+      });
+      if (attachments.length > 0) {
+        await uploadAllAttachments(env, attachments, ticket.id, newMsgId);
+      }
+      // Copie de la réponse du client à l'équipe (team@dsihotel.fr), exactement
+      // comme pour un nouveau ticket. On récupère la référence si elle n'est pas
+      // déjà présente sur l'objet ticket transmis.
+      let refCopie = ticket.reference;
+      if (!refCopie) {
+        try {
+          const [t] = await sb(env,
+            `tickets?id=eq.${ticket.id}&select=reference&limit=1`
+          ).then(r => r.json());
+          refCopie = t ? t.reference : '';
+        } catch (e) { refCopie = ''; }
+      }
+      ctx.waitUntil(copierVersEquipe(env, from, fromNom, sujet, corps, refCopie, attachments, destinataires, cc, extracted.html));
+    }
+
+    // MÉTHODE 1 — Threading par In-Reply-To / References
+    if (refIds.length > 0) {
+      for (const rid of refIds) {
+        const enc = encodeURIComponent(rid);
+        let [t] = await sb(env,
+          `tickets?or=(inbound_id.eq.${enc},last_email_message_id.eq.${enc})&select=id,status,reference&limit=1`
+        ).then(r => r.json());
+        if (!t) {
+          const [tm] = await sb(env,
+            `ticket_messages?email_message_id=eq.${enc}&select=ticket_id&limit=1`
+          ).then(r => r.json());
+          if (tm) {
+            [t] = await sb(env,
+              `tickets?id=eq.${tm.ticket_id}&select=id,status,reference&limit=1`
+            ).then(r => r.json());
+          }
+        }
+        if (t) { await ajouterAuTicket(t); return; }
+      }
+    }
+
+    // MÉTHODE 2 — Threading par référence [DSI-XXXX] dans l'objet
+    const ref = sujet.match(REF_RE)?.[0]?.toUpperCase();
+    if (ref) {
+      const [ticket] = await sb(env,
+        `tickets?reference=eq.${ref}&select=id,status,reference&limit=1`
+      ).then(r => r.json());
+      if (ticket) { await ajouterAuTicket(ticket); return; }
+    }
+
+    // Identification de l'hôtel
+    let hotelId = null;
+    const [mapping] = await sb(env,
+      `email_hotel_mapping?email=eq.${encodeURIComponent(from)}&select=hotel_id&limit=1`
+    ).then(r => r.json());
+    if (mapping) hotelId = mapping.hotel_id;
+
+    if (!hotelId) {
+      const enc = encodeURIComponent(from);
+      const [hotel] = await sb(env,
+        `hotels?or=(account_email.eq.${enc},standard_email.eq.${enc})&select=id&limit=1`
+      ).then(r => r.json());
+      if (hotel) hotelId = hotel.id;
+    }
+
+    // Expéditeur automatique partagé par plusieurs hôtels (ex. noreply@hilton.com) :
+    // on cherche le nom de l'hôtel dans l'objet + le début du message.
+    if (!hotelId && estAutoAutorise) {
+      try {
+        const r = await identifierHotelNinjaOne(env, `${sujet} ${String(corps || '').slice(0, 800)}`);
+        if (r && r.hotelId) hotelId = r.hotelId;
+      } catch (e) { /* non bloquant : ticket "à rattacher" */ }
+    }
+
+    const creation = await sb(env, 'tickets', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        hotel_id: hotelId,
+        contact_name: from,
+        contact_email: from,
+        category: 'Email entrant',
+        priority: 'Moyenne',
+        subject: sujet,
+        message: corps,
+        status: 'open',
+        source: 'email',
+        inbound_id: messageId,
+        email_from: from,
+        a_rattacher: hotelId === null,
+      }),
+    });
+    const [ticket] = await creation.json();
+
+    // Captures inline (cid:) + images externes (https) dans la demande initiale
+    const bodyHtmlInit = await construireBodyHtml(env, corps, attachments, ticket.id, extracted.html);
+
+    const insMsg = await sb(env, 'ticket_messages', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        ticket_id: ticket.id,
+        sender_role: 'client',
+        sender_name: from,
+        body: corps,
+        body_html: bodyHtmlInit,
+        email_message_id: messageId,
+        cc: cc,
+        destinataires: destinataires,
+      }),
+    });
+    let firstMsgId = null;
+    try { const [row] = await insMsg.json(); firstMsgId = row ? row.id : null; } catch (e) {}
+
+    // Les pièces jointes de la demande initiale : rattachées au ticket
+    // (message_id null = "pièces jointes de la demande", comme le fait le portail)
+    if (attachments.length > 0) {
+      ctx.waitUntil(uploadAllAttachments(env, attachments, ticket.id, null));
+    }
+
+    // Pas d'accusé de réception vers une adresse noreply (rebond assuré).
+    if (!estAutoAutorise) ctx.waitUntil(envoyerAccuse(env, from, ticket.reference, sujet));
+    ctx.waitUntil(copierVersEquipe(env, from, fromNom, sujet, corps, ticket.reference, attachments, destinataires, cc, extracted.html));
+  },
+};

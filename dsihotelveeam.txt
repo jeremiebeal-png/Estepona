@@ -1,0 +1,235 @@
+/**
+ * dsi-hotel-veeam.js
+ * ---------------------------------------------------------------------------
+ * Worker Cloudflare qui REÇOIT les mails de notification Veeam envoyés à
+ * backup@dsihotel.com (Cloudflare Email Routing → Send to a Worker) et les
+ * enregistre dans Supabase (tables veeam_jobs / veeam_runs).
+ * Remplace la réception CheckCentral. Aucun Cron : il ne fait que recevoir.
+ *
+ * VARIABLES (Cloudflare → ce Worker → Settings → Variables) :
+ *   - SUPABASE_URL              (Texte)  : même valeur que dans dsi-hotel-api-v2
+ *   - SUPABASE_SERVICE_ROLE_KEY (Secret) : même valeur que dans dsi-hotel-api-v2
+ *
+ * ROUTAGE : Email Routing → dsihotel.com → backup@dsihotel.com → Send to a Worker → dsi-hotel-veeam
+ *
+ * FORMAT ATTENDU (objet configuré dans Veeam, Options → E-mail Settings) :
+ *   [%JobResult%] %JobName% (%ObjectCount% objects) %Issues%
+ *   ex. « [Success] HEBODHASMSPA01_SPA (1 objects) »
+ *
+ * RATTACHEMENT À L'HÔTEL
+ *   - par l'adresse « From » du mail (ex. IC-Bordeaux@dsihotel.fr),
+ *   - ou par l'étiquette si Veeam envoie à backup+etiquette@dsihotel.com.
+ *   La clé doit être déclarée dans la table veeam_senders (sinon le mail est
+ *   ignoré et noté dans veeam_inconnus — protection contre les faux « Success »).
+ *
+ * Note : message.from (enveloppe SMTP) est réécrit par Cloudflare (SRS) :
+ *        on utilise toujours l'en-tête « From: ».
+ * ---------------------------------------------------------------------------
+ */
+
+const TAILLE_MAX = 3 * 1024 * 1024; // 3 Mo
+
+/* ---------------------------- Supabase ---------------------------------- */
+function sbHeaders(env) {
+  const k = String(env.SUPABASE_SERVICE_ROLE_KEY || "");
+  return { apikey: k, ...(k.startsWith("sb_") ? {} : { Authorization: `Bearer ${k}` }), "Content-Type": "application/json" };
+}
+async function sbPost(env, path, body) {
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, {
+    method: "POST", headers: { ...sbHeaders(env), Prefer: "return=minimal" }, body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error("Supabase " + r.status + " sur " + path + " : " + (await r.text().catch(() => "")).slice(0, 200));
+  return r;
+}
+async function sbGet(env, path) {
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, { headers: sbHeaders(env) });
+  if (!r.ok) throw new Error("Supabase " + r.status + " sur " + path.split("?")[0] + " : " + (await r.text().catch(() => "")).slice(0, 200));
+  return r.json();
+}
+async function journal(env, ligne) {
+  console.log("dsi-hotel-veeam ignoré :", JSON.stringify(ligne));
+  try { await sbPost(env, "veeam_inconnus", ligne); } catch (e) { console.log("journal :", e && e.message); }
+}
+
+/* ---------------------------- MIME minimal ------------------------------ */
+function binStr(buf) {
+  const u = new Uint8Array(buf); let s = "";
+  for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+  return s;
+}
+function bytesOf(s) { const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i) & 255; return u; }
+function decodeCharset(bytes, cs) {
+  let c = String(cs || "utf-8").toLowerCase().trim();
+  if (c === "us-ascii" || c === "ascii") c = "utf-8";
+  try { return new TextDecoder(c).decode(bytes); } catch (e) { return new TextDecoder("utf-8").decode(bytes); }
+}
+function splitHead(s) {
+  const m = s.match(/\r?\n\r?\n/);
+  if (!m) return { head: s, body: "" };
+  return { head: s.slice(0, m.index), body: s.slice(m.index + m[0].length) };
+}
+function parseHeaders(head) {
+  const h = {};
+  head.replace(/\r?\n[ \t]+/g, " ").split(/\r?\n/).forEach(l => {
+    const i = l.indexOf(":");
+    if (i > 0) { const k = l.slice(0, i).trim().toLowerCase(); (h[k] = h[k] || []).push(l.slice(i + 1).trim()); }
+  });
+  return h;
+}
+function param(v, name) {
+  const m = String(v || "").match(new RegExp(name + '\\s*=\\s*(?:"([^"]*)"|([^;\\s]+))', "i"));
+  return m ? (m[1] !== undefined ? m[1] : m[2]) : null;
+}
+function decodeBody(body, enc, cs) {
+  enc = String(enc || "").toLowerCase().trim();
+  let bytes;
+  if (enc === "base64") {
+    try { bytes = bytesOf(atob(body.replace(/[^A-Za-z0-9+/=]/g, ""))); } catch (e) { bytes = bytesOf(body); }
+  } else if (enc === "quoted-printable") {
+    bytes = bytesOf(body.replace(/=\r?\n/g, "").replace(/=([0-9A-Fa-f]{2})/g, (_, x) => String.fromCharCode(parseInt(x, 16))));
+  } else {
+    bytes = bytesOf(body);
+  }
+  return decodeCharset(bytes, cs);
+}
+// Parcourt le message (multipart compris) ; remplit out["text/html"] / out["text/plain"] ; renvoie les en-têtes du niveau courant
+function extraireParties(s, out, prof = 0) {
+  const { head, body } = splitHead(s);
+  const h = parseHeaders(head);
+  const ct = (h["content-type"] || ["text/plain"])[0];
+  const type = ct.split(";")[0].trim().toLowerCase();
+  if (type.startsWith("multipart/") && prof < 5) {
+    const b = param(ct, "boundary");
+    if (b) {
+      const parts = body.split("--" + b);
+      for (let i = 1; i < parts.length; i++) {
+        if (parts[i].startsWith("--")) break;
+        extraireParties(parts[i].replace(/^\r?\n/, ""), out, prof + 1);
+      }
+    }
+    return h;
+  }
+  if ((type === "text/html" || type === "text/plain") && !out[type]) {
+    out[type] = decodeBody(body, (h["content-transfer-encoding"] || [""])[0], param(ct, "charset"));
+  }
+  return h;
+}
+// En-têtes encodés RFC 2047 (=?utf-8?B?...?=)
+function decodeMot(s) {
+  return String(s || "").replace(/\?=\s+=\?/g, "?==?").replace(/=\?([^?]+)\?([BbQq])\?([^?]*)\?=/g, (_, cs, e, t) => {
+    let bytes;
+    if (e.toUpperCase() === "B") { try { bytes = bytesOf(atob(t)); } catch (x) { return t; } }
+    else bytes = bytesOf(t.replace(/_/g, " ").replace(/=([0-9A-Fa-f]{2})/g, (_, x) => String.fromCharCode(parseInt(x, 16))));
+    return decodeCharset(bytes, cs);
+  });
+}
+function htmlTexte(html) {
+  return String(html || "")
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(tr|p|div|h\d|table)>/gi, "\n")
+    .replace(/<\/t[dh]>/gi, " | ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&amp;/g, "&")
+    .replace(/[ \t]+/g, " ").replace(/ *\n[\s|]*\n/g, "\n").replace(/\n /g, "\n").trim();
+}
+
+// Rapport HTML d'origine compressé (gzip + base64) pour l'affichage « détail / PDF » du portail
+async function gzipB64(str) {
+  const cs = new CompressionStream("gzip");
+  const w = cs.writable.getWriter();
+  w.write(new TextEncoder().encode(str)); w.close();
+  return btoa(binStr(await new Response(cs.readable).arrayBuffer()));
+}
+
+/* ---------------------------- Analyse Veeam ----------------------------- */
+const RE_OBJET = /^\s*\[(success|warning|failed|failure|error)\]\s+(.+?)\s+\((\d+)\s+(?:objects?|vms?|machines?)\)\s*(.*)$/i;
+function statutNormalise(s) {
+  s = String(s).toLowerCase();
+  return s === "success" ? "Success" : s === "warning" ? "Warning" : "Failure";
+}
+function champ(texte, label, motif) {
+  const m = texte.match(new RegExp(label + "[\\s|:]*(" + motif + ")", "i"));
+  return m ? m[1].trim() : null;
+}
+const HEURE = "\\d{1,2}:\\d{2}:\\d{2}";
+const TAILLE = "[\\d.,]+\\s*[KMGTP]?B";
+function analyserCorps(texte) {
+  return {
+    debut: champ(texte, "Start time", HEURE),
+    fin: champ(texte, "End time", HEURE),
+    duree: champ(texte, "Duration", "\\d+:\\d{2}:\\d{2}"),
+    taille_totale: champ(texte, "Total size", TAILLE),
+    taille_backup: champ(texte, "Backup size", TAILLE),
+    lu: champ(texte, "Data read", TAILLE),
+    transfere: champ(texte, "Transferred", TAILLE),
+  };
+}
+function messageErreur(texte, statut, issues) {
+  if (statut === "Success") return null;
+  const m = texte.match(/(?:Error|Warning|Erreur|Avertissement)\s*:\s*([^|\n]{4,500})/i);
+  if (m) return m[1].trim();
+  return String(issues || "").trim() || null;
+}
+
+/* ---------------------------- Traitement -------------------------------- */
+async function traiter(message, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY non configurés");
+  if (message.rawSize > TAILLE_MAX) return journal(env, { cle: null, expediteur: null, objet: null, raison: "mail trop volumineux (" + message.rawSize + " octets)" });
+
+  const raw = binStr(await new Response(message.raw).arrayBuffer());
+  const parties = {};
+  const h = extraireParties(raw, parties);
+
+  const fromHdr = decodeMot((h["from"] || [""])[0]);
+  const fromAddr = ((fromHdr.match(/<([^>]+)>/) || [])[1] || fromHdr).trim().toLowerCase();
+  const objet = decodeMot((h["subject"] || [""])[0]).replace(/\s+/g, " ").trim();
+  const to = String(message.to || "").toLowerCase();
+  const tag = (to.match(/^[^+@]+\+([^@]+)@/) || [])[1] || null;
+  const cle = tag || fromAddr;
+
+  const auth = (h["authentication-results"] || []).join(" ").toLowerCase();
+  if (/dmarc=fail/.test(auth)) return journal(env, { cle, expediteur: fromAddr, objet, raison: "DMARC en échec" });
+
+  const m = objet.match(RE_OBJET);
+  if (!m) return journal(env, { cle, expediteur: fromAddr, objet, raison: "objet non reconnu (rapport quotidien, test…)" });
+
+  const senders = await sbGet(env, `veeam_senders?cle=eq.${encodeURIComponent(cle)}&actif=eq.true&select=cle,hotel_id,libelle`);
+  if (!Array.isArray(senders) || !senders.length) return journal(env, { cle, expediteur: fromAddr, objet, raison: "expéditeur non déclaré dans veeam_senders" });
+  const s = senders[0];
+
+  const statut = statutNormalise(m[1]);
+  const nom = m[2].trim();
+  const texte = parties["text/html"] ? htmlTexte(parties["text/html"]) : String(parties["text/plain"] || "").trim();
+
+  let html_gz = null;
+  if (parties["text/html"] && parties["text/html"].length < 1500000) {
+    try { html_gz = await gzipB64(parties["text/html"]); } catch (e) { console.log("compression :", e && e.message); }
+  }
+
+  const now = Date.now();
+  let recu = new Date((h["date"] || [""])[0]);
+  if (isNaN(recu.getTime()) || recu.getTime() > now + 3600000 || recu.getTime() < now - 7 * 86400000) recu = new Date(now);
+
+  await sbPost(env, "rpc/veeam_enregistrer", { p: {
+    job_id: cle + "|" + nom.toLowerCase(),
+    cle, nom, hotel_id: s.hotel_id || null, libelle: s.libelle || null,
+    statut, recu_le: recu.toISOString(), objet, nb_objets: m[3],
+    ...analyserCorps(texte),
+    message: messageErreur(texte, statut, m[4]),
+    texte,
+    html_gz,
+  } });
+}
+
+export default {
+  async email(message, env, ctx) {
+    // Jamais de rejet SMTP (évite les rebonds côté SMTP2GO) : on journalise et on sort.
+    try { await traiter(message, env); }
+    catch (e) { console.log("dsi-hotel-veeam :", (e && e.message) || e); }
+  },
+  async fetch() {
+    return new Response("dsi-hotel-veeam : OK (réception des mails Veeam uniquement)", { status: 200, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+  },
+};
